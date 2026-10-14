@@ -42,12 +42,17 @@ def jaccard(a: set[str], b: set[str]) -> float:
     return inter / (len(a) + len(b) - inter)
 
 
-def containment(a: Counter, b: Counter) -> float:
-    """Share of the shorter post's words (with multiplicity) that the other post also has."""
+def containment(a: Counter, b: Counter, min_len_ratio: float = 0.5) -> float:
+    """Share of the shorter post's words (with multiplicity) that the other post also has.
+    A short post swallowed by a much longer one is a quote, not a copy: when the shorter is under
+    `min_len_ratio` of the longer, score 0."""
     if not a or not b:
         return 0.0
+    la, lb = sum(a.values()), sum(b.values())
+    if min(la, lb) < min_len_ratio * max(la, lb):
+        return 0.0
     inter = sum((a & b).values())
-    return inter / min(sum(a.values()), sum(b.values()))
+    return inter / min(la, lb)
 
 
 class UnionFind:
@@ -68,7 +73,7 @@ class UnionFind:
 
 
 def find_copies(posts: list[dict[str, Any]], k: int = 3, threshold: float = 0.90,
-                min_words: int = 6) -> dict[str, str | None]:
+                min_words: int = 4) -> dict[str, str | None]:
     """Return {post_id: origin_id or None}. Posts shorter than min_words never cluster (too generic)."""
     sh: dict[str, set[str]] = {}
     bag: dict[str, Counter] = {}

@@ -50,17 +50,31 @@ def fetch_markets(inc: Incident) -> list[dict[str, Any]]:
     from zoneinfo import ZoneInfo
     start = int(datetime.fromisoformat(inc.start).replace(tzinfo=ZoneInfo(inc.timezone)).timestamp())
     end = int(time.time())
+    cache_path = inc.out_dir / "markets.json"
+    previous: dict[str, Any] = {}
+    if cache_path.exists():
+        try:
+            previous = {m["ticker"]: m for m in json.loads(cache_path.read_text())}
+        except ValueError:
+            previous = {}
     out = []
     for m in cfg:
-        try:
-            pts = fetch_candles(m["series"], m["ticker"], start, end)
-        except Exception as e:  # keep the chart alive when Kalshi is down
-            print(f"  market {m.get('ticker')}: fetch failed ({e})")
-            pts = []
+        pts: list[dict[str, Any]] = []
+        for attempt in range(3):
+            try:
+                pts = fetch_candles(m["series"], m["ticker"], start, end)
+                if pts:
+                    break
+            except Exception as e:  # keep the chart alive when Kalshi is down
+                print(f"  market {m.get('ticker')}: fetch failed ({e}), attempt {attempt + 1}/3")
+            time.sleep(2 * (attempt + 1))
+        stale = False
+        if not pts and previous.get(m["ticker"], {}).get("points"):
+            pts, stale = previous[m["ticker"]]["points"], True
         out.append({"label": m.get("label", m["ticker"]), "ticker": m["ticker"], "series": m["series"],
-                    "source": "Kalshi", "points": pts, "last": pts[-1]["p"] if pts else None})
-        print(f"  market {m['ticker']}: {len(pts)} hourly points, last {pts[-1]['p'] if pts else '—'}¢")
-    (inc.out_dir / "markets.json").write_text(json.dumps(out))
+                    "source": "Kalshi", "points": pts, "last": pts[-1]["p"] if pts else None, "stale": stale})
+        print(f"  market {m['ticker']}: {len(pts)} hourly points, last {pts[-1]['p'] if pts else '—'}¢{' (cached)' if stale else ''}")
+    cache_path.write_text(json.dumps(out))
     return out
 
 
