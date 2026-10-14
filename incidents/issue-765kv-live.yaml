@@ -1,0 +1,58 @@
+# Live issue tracker: the 765-kV transmission build-out in Texas — the PUC/ERCOT extra-high-voltage backbone
+# (Permian Basin reliability plan and the statewide 765-kV network), routing fights, landowner and eminent-domain
+# objections, cost allocation to ratepayers, and who the lines are for (data centers, oil and gas, West Texas load).
+# Runs daily with the other *-live incidents.
+
+slug: issue-765kv-live
+title: "765-kV transmission lines, {days} days of posts"
+subject: "the 765-kilovolt transmission line build-out in Texas — the PUC and ERCOT extra-high-voltage backbone (Permian Basin reliability plan and statewide 765-kV network), line routing, landowner and eminent-domain objections, cost to ratepayers, and whether the lines serve data centers and industry or everyday reliability"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas's 765-kV transmission lines, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-06"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+
+queries:
+  - '"765 kV"'
+  - '"765-kV"'
+  - '765kV Texas'
+  - '"765 kilovolt"'
+  - '"transmission line" Texas'
+  - '"transmission lines" Texas'
+  - 'ERCOT transmission'
+  - '"Permian Basin" transmission'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Posts about transmission lines in other states with no Texas angle, or
+  about power lines in general, are off-topic. Expect frames about landowners and eminent domain, routing
+  through specific counties, cost to ratepayers, data centers and oil-and-gas load as the beneficiaries,
+  reliability and the Permian plan, and the PUC's and ERCOT's handling of it.
+
+lanes: []
+
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

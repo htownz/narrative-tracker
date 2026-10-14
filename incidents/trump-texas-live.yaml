@@ -1,0 +1,56 @@
+# Live tracker: President Trump's footprint in Texas politics on X — his involvement in the Texas races
+# (endorsements, rallies, attacks on Texas Democrats), Texas-related actions and how Texans talk about him
+# in the state races. Scoped to Texas on purpose: an unscoped "Trump" query is tens of thousands of posts a
+# day and would exhaust the API balance. Runs with the other *-live incidents.
+
+slug: trump-texas-live
+title: "Trump in Texas, {days} days of posts"
+subject: "President Donald Trump's role in Texas politics — endorsements and rallies for Ken Paxton, Greg Abbott and Dan Patrick, attacks on James Talarico and Gina Hinojosa, federal actions affecting Texas, and how Texas voters and candidates invoke him before the Nov 3, 2026 election"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Trump and Texas, plus every post
+  repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-06"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+
+queries:
+  - 'Trump Texas'
+  - 'Trump Paxton'
+  - 'Trump Abbott'
+  - 'Trump "Dan Patrick"'
+  - 'Trump Talarico'
+  - 'Trump Hinojosa'
+  - '"Trump rally" Texas'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  These lanes will be used unchanged through the election, so prefer durable narratives (a line of attack
+  or defense that will recur) over one-day events. Fold single-day stories into the durable narrative they
+  serve. Cover both sides: narratives that Trump's involvement helps the Texas GOP ticket, narratives that it
+  hurts it or that Texas is slipping from him, and narratives about Trump's own actions affecting Texas.
+  Posts about Trump with no Texas angle are off-topic.
+
+lanes: []
+
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

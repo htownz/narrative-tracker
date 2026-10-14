@@ -1,2 +1,4 @@
-# full live run: pull + classify + claims + verify + control + features + analysis for every *-live tracker
-live
+# the three new trackers: first pull, lane discovery, full pipeline (queued behind the run in progress)
+incidents/trump-texas-live.yaml
+incidents/vance-texas-live.yaml
+incidents/issue-765kv-live.yaml

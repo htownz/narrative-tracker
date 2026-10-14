@@ -28,7 +28,7 @@ events:
   - at: "2026-10-07"
     label: "Trump rally in San Antonio (Patrick on stage, Abbott absent)"
     type: rally
-    trackers: [governor-race-live, patrick-live, abbott-oct-2026, paxton-live]
+    trackers: [governor-race-live, patrick-live, abbott-oct-2026, paxton-live, trump-texas-live]
     source: "@DanPatrick: 'this Wednesday'"
   - at: "2026-10-07 14:58"
     label: "Public First Action/Guidant polls (Texas Senate and governor)"
@@ -63,7 +63,7 @@ events:
   - at: "2026-10-13"
     label: "Vance rallies for Paxton in Tyler"
     type: rally
-    trackers: [paxton-live]
+    trackers: [paxton-live, vance-texas-live, trump-texas-live]
     source: "posts peak 12-2 PM CT"
   - at: "2026-10-14 07:18"
     label: "UT/Texas Politics Project poll"
