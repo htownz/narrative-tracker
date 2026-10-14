@@ -235,7 +235,8 @@ def accounts(inc: Incident) -> list[dict[str, Any]]:
 # ---------------------------------------------------------------------------- cross-incident
 def accounts_all() -> Path:
     incs = []
-    for y in sorted((ROOT / "incidents").glob("*.yaml")):
+    from .config import incident_paths
+    for y in incident_paths():
         inc = load_incident(y)
         if inc.db_path.exists() and inc.lanes:
             incs.append(inc)

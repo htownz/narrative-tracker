@@ -145,6 +145,19 @@ def load_incident(path: str | Path) -> Incident:
     )
 
 
+def incident_paths() -> list[Path]:
+    """Every incident YAML in incidents/ — files with a `slug` (events.yaml and other shared files are not incidents)."""
+    out = []
+    for y in sorted((ROOT / "incidents").glob("*.yaml")):
+        try:
+            raw = yaml.safe_load(y.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            continue
+        if isinstance(raw, dict) and raw.get("slug"):
+            out.append(y)
+    return out
+
+
 def save_lanes(incident: Incident, lanes: list[dict[str, Any]]) -> None:
     """Write a discovered lane list back into the incident YAML (keeps everything else)."""
     assert incident.path is not None

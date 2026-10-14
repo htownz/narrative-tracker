@@ -1,1 +1,2 @@
-incidents/patrick-live.yaml
+# deploy-only: no incidents, just assemble and publish what is in out/
+none

@@ -16,7 +16,7 @@ from typing import Any
 
 import requests
 
-from .config import ROOT, Incident, env, load_incident
+from .config import incident_paths, ROOT, Incident, env, load_incident
 from .store import Store
 
 CREDITS_PER_USD = 100_000
@@ -65,7 +65,7 @@ def tracker_state(inc: Incident) -> dict[str, Any]:
 
 def build(site_dir: Path) -> dict[str, Any]:
     trackers = []
-    for y in sorted((ROOT / "incidents").glob("*.yaml")):
+    for y in incident_paths():
         try:
             trackers.append(tracker_state(load_incident(y)))
         except Exception as e:  # noqa: BLE001
