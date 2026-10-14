@@ -1,0 +1,92 @@
+# Things that happen off X: hearings, votes, filings, rulings, debates, ad buys, rallies, poll releases,
+# endorsements, news. The chart marks them, analysis.html shows how each lane moved in the 12 hours after
+# versus the 12 before, claims that first appear within 6 hours after one are tagged with it, and a burst
+# that follows one is not counted against a lane's control score.
+#
+# Fields: at (local time in `timezone`, "YYYY-MM-DD HH:MM", or a date only for an all-day event), label, type,
+# trackers (slugs, or all), source (where the time comes from — a first post on X is a lower bound, not the moment).
+# Types: poll | rally | debate | hearing | vote | filing | ruling | ad | endorsement | campaign | news | calendar
+
+timezone: America/Chicago
+
+events:
+  - at: "2026-10-06 08:51"
+    label: "Paxton leaked fundraiser audio surfaces"
+    type: news
+    trackers: [paxton-live]
+    source: "first post on X (@atrupar)"
+  - at: "2026-10-06 14:59"
+    label: "YouGov Texas poll: Talarico 50-44, Hinojosa 48-47"
+    type: poll
+    trackers: [governor-race-live, paxton-live, patrick-live, abbott-oct-2026]
+    source: "first post on X (@PollTracker2024)"
+  - at: "2026-10-07"
+    label: "Oct 7 anniversary: Abbott orders flags to half-staff"
+    type: news
+    trackers: [governor-race-live, abbott-oct-2026]
+    source: "Governor's office"
+  - at: "2026-10-07"
+    label: "Trump rally in San Antonio (Patrick on stage, Abbott absent)"
+    type: rally
+    trackers: [governor-race-live, patrick-live, abbott-oct-2026, paxton-live]
+    source: "@DanPatrick: 'this Wednesday'"
+  - at: "2026-10-07 14:58"
+    label: "Public First Action/Guidant polls (Texas Senate and governor)"
+    type: poll
+    trackers: [governor-race-live, paxton-live, abbott-oct-2026]
+    source: "first post on X (@burgessev)"
+  - at: "2026-10-08 08:58"
+    label: "UMass Lowell/YouGov poll: Senate tied 45-45, Abbott 48-44"
+    type: poll
+    trackers: [governor-race-live, paxton-live, patrick-live, abbott-oct-2026]
+    source: "first post on X (@IAPolls2022)"
+  - at: "2026-10-08 12:37"
+    label: "Paxton 'proof of life' post, Tala-freak-out tip line"
+    type: campaign
+    trackers: [paxton-live]
+    source: "@KenPaxtonTX post"
+  - at: "2026-10-11 16:54"
+    label: "Talarico 'proof of spine' line"
+    type: campaign
+    trackers: [paxton-live]
+    source: "first post on X (@AesPolitics1)"
+  - at: "2026-10-13 06:12"
+    label: "UH Hobby School Harris County poll"
+    type: poll
+    trackers: [governor-race-live, paxton-live]
+    source: "first post on X (@IAPolls2022)"
+  - at: "2026-10-13 12:28"
+    label: "Quantus poll: Paxton 47.2-46.7"
+    type: poll
+    trackers: [paxton-live]
+    source: "first post on X (@PollTracker2024)"
+  - at: "2026-10-13"
+    label: "Vance rallies for Paxton in Tyler"
+    type: rally
+    trackers: [paxton-live]
+    source: "posts peak 12-2 PM CT"
+  - at: "2026-10-14 07:18"
+    label: "UT/Texas Politics Project poll"
+    type: poll
+    trackers: [governor-race-live, paxton-live, patrick-live]
+    source: "first post on X (@PollTracker2024)"
+  - at: "2026-10-15 10:00"
+    label: "Hinojosa's debate challenge at the Governor's Mansion"
+    type: campaign
+    trackers: [governor-race-live]
+    source: "@GinaHinojosaTX post"
+  - at: "2026-10-19"
+    label: "Early voting begins"
+    type: calendar
+    trackers: all
+    source: "Texas Secretary of State"
+  - at: "2026-10-30"
+    label: "Early voting ends"
+    type: calendar
+    trackers: all
+    source: "Texas Secretary of State"
+  - at: "2026-11-03"
+    label: "Election day"
+    type: calendar
+    trackers: all
+    source: "Texas Secretary of State"

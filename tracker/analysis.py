@@ -95,8 +95,14 @@ def analysis(inc: Incident) -> Path:
     markets = data.get("markets") or []
     ll = lead_lag(data["posts"], [l for l in data["lanes"] if l["key"] != PUSHBACK_KEY] + [l for l in data["lanes"] if l["key"] == PUSHBACK_KEY],
                   markets[0]) if markets else []
+    from .events import response
+    try:
+        data_end = max(datetime.fromisoformat(p["t"]) for p in data["posts"] if p.get("t"))
+    except ValueError:
+        data_end = None
+    ev_rows = response(data["posts"], data["lanes"], data.get("events") or [], data_end=data_end)
     out = {"lanes": rows, "early_vs_late": evl, "market": markets[0]["label"] if markets else None, "lead_lag": ll,
-           "generated_at": datetime.now(timezone.utc).isoformat()}
+           "events": ev_rows, "generated_at": datetime.now(timezone.utc).isoformat()}
     (inc.out_dir / "analysis.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     page = render_html(inc, data, out)
     print(f"wrote {page}  ({len(rows)} lanes; early-pushback lanes={evl['early']['lanes']}, lead/lag rows={len(ll)})")
@@ -149,6 +155,34 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
         ll_html = f"""<h2>Lane velocity vs. {html.escape(out["market"])}</h2>
 <p class="sub">Correlation between each lane's hourly views (log) and the market's hourly price change, at the lag where it is strongest (±24h). A positive lag means the narrative moved before the price; |r| below about 0.2 is noise. Descriptive, not causal — one week of hourly data.</p>
 <div class="wrap"><table><thead><tr><th>Lane</th><th class="n">Views</th><th class="n">Best lag</th><th class="n">r</th><th>Reading</th></tr></thead><tbody>{lrows}</tbody></table></div>"""
+    ev_html = ""
+    if out.get("events"):
+        from .events import AFTER_H
+        lanes_all = data["lanes"]
+        head = "".join(f'<th class="n" title="{html.escape(l["label"])}"><span style="color:{l["color"]}">{html.escape(l["label"][:18])}</span></th>' for l in lanes_all)
+        etrs = []
+        for e in out["events"]:
+            cells = []
+            for l in lanes_all:
+                c = e["lanes"].get(l["key"]) or {}
+                r = c.get("ratio")
+                if c.get("after_views", 0) == 0 and c.get("before_views", 0) == 0:
+                    cells.append('<td class="n muted">—</td>')
+                else:
+                    txt = "new" if r is None or r == float("inf") else f"{r:.1f}×"
+                    tone = "#ff8a80" if (r is None or r == float("inf") or r >= 3) and c.get("after_views", 0) >= 50_000 else "#f0b06a" if (r or 0) >= 1.5 else "var(--ink-2)"
+                    cells.append(f'<td class="n" title="after {_fmt(c["after_views"])} views / {c["after_posts"]} posts; before {_fmt(c["before_views"])} / {c["before_posts"]}"><span style="color:{tone}">{txt}</span><div class="muted">{_fmt(c["after_views"])}</div></td>')
+            tot = e["ratio"]
+            tot_txt = "new" if tot is None or tot == float("inf") else f"{tot:.1f}×"
+            when = (datetime.fromisoformat(e["at"]).astimezone(tz).strftime("%a %b %d").replace(" 0", " ") + " (all day)") if e.get("all_day") else fmt(e["at"])
+            top = next((l["label"] for l in lanes_all if l["key"] == e.get("top_lane")), "")
+            etrs.append(f'<tr><td><b>{html.escape(e["label"])}</b><div class="muted">{html.escape(e["type"])} · {when}{(" · " + html.escape(e["source"])) if e.get("source") else ""}</div></td>'
+                        f'<td class="n">{tot_txt}<div class="muted">{_fmt(e["after_views"])}</div></td>{"".join(cells)}<td class="muted">{html.escape(top)}</td></tr>')
+        ev_html = f"""<h2>Events and how the lanes answered</h2>
+<p class="sub">From <code>incidents/events.yaml</code>: for each off-platform event, views posted in the {AFTER_H} hours after it versus the {AFTER_H} hours before, per lane
+(an all-day event compares its day with the day before). "new" means the lane had nothing in the hours before. Times taken from the first post on X are a lower bound for the moment itself.
+Red: three times the views or more, at 50K+ views after.</p>
+<div class="wrap"><table><thead><tr><th style="min-width:230px">Event</th><th class="n">All lanes</th>{head}<th>Biggest lane after</th></tr></thead><tbody>{"".join(etrs)}</tbody></table></div>"""
     ctrl_html = ""
     ctrl_path = inc.out_dir / "control.json"
     if ctrl_path.exists():
@@ -173,6 +207,7 @@ and top-5 share (views carried by the five biggest accounts). {FLAG}+ is flagged
 {tiles}
 <h2>Lanes</h2>
 <div class="wrap"><table><thead><tr><th>Lane</th><th>First post</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Half-life h</th><th class="n">Peak hour</th><th class="n">Pushback lag h</th><th class="n">Pushback posts</th><th class="n">Pushback share</th><th>First pushback</th></tr></thead><tbody>{trs}</tbody></table></div>
+{ev_html}
 {ll_html}
 {ctrl_html}
 <footer>Generated {datetime.now(tz).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")}. Small-N: treat group means as description of this incident, not a law.</footer>

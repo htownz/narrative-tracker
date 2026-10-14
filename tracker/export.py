@@ -77,8 +77,10 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
     from .markets import fetch_markets
     markets = fetch_markets(inc) if inc.raw.get("markets") else []
 
+    from .events import load_events
     data = {
         "markets": markets,
+        "events": load_events(inc),
         "meta": {
             "slug": inc.slug,
             "title": inc.title,

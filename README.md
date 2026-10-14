@@ -117,6 +117,7 @@ incidents (fixed window) wherever you like.
 | `accounts.html` | who moved it: roles (originator / bridge / copier / pushback), reach, lane mix, first movers |
 | `analysis.html` | lane timing, half-life, pushback lag and share, lane-velocity vs market price lead/lag |
 | `review.html` | lane spot-check: 20 posts per lane with a dropdown; builds the lines for `incidents/<slug>.overrides.csv` |
+| `analysis.html` (events section) | how each lane moved in the 12h after each calendar event |
 | `analysis.html` (narrative control section) | per-lane and per-claim control score with its five features |
 | `claims.html` | what is being claimed: atomic claims extracted from every in-lane post, grouped into canonical claims with type, checkable flag, stance, first poster, spread |
 | `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
@@ -191,6 +192,16 @@ hour (15), regularity — copies spaced on a clock (15), top-5 account share of 
 accounts). The features are shown next to the score on `analysis.html`; anything at 70+ is listed on the
 hub as a coordinated push. A poll release bursts and gets copied on its own, so read the score with the
 events behind it (ROADMAP: events calendar).
+
+## Events calendar
+
+`incidents/events.yaml` is the hand-kept list of what happens off X — poll releases, rallies, hearings,
+votes, rulings, debates, ad buys, endorsements, calendar dates — each with a local time (or a date for an
+all-day event), a type, the trackers it bears on and where the time comes from. It feeds four things:
+markers on every chart; the "Events and how the lanes answered" table on `analysis.html` (views in the 12
+hours after vs. the 12 before, per lane); an "after: <event>" tag on canonical claims that first appear
+within 6 hours of one; and the control score, which stops counting a burst that follows an event. Times
+taken from the first post on X are a lower bound for the moment itself — put the real time in when known.
 
 ## Next
 

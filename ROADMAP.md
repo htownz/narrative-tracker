@@ -10,7 +10,7 @@ The next phase makes it *predictive* and *claim-aware*: what is being asserted, 
 false, who is pushing them in a coordinated way, which legislation or campaign event they attach to,
 and which of the stories forming right now will be big tomorrow.
 
-## 1. Claims layer (`tracker/claims.py`)
+## 1. Claims layer (`tracker/claims.py`) — built Oct 14
 
 Lanes answer "what is this post arguing?". Claims answer "what does this post assert is true?".
 
@@ -28,7 +28,7 @@ Lanes answer "what is this post arguing?". Claims answer "what does this post as
 
 Why first: everything below (mistruths, narrative-control, prediction) keys off a claim, not a post.
 
-## 2. Narrative-control score (`tracker/control.py`)
+## 2. Narrative-control score (`tracker/control.py`) — built Oct 14
 
 A 0–100 score per lane and per canonical claim for "how much does this look like a push rather than
 organic spread", from features we already have:
@@ -43,13 +43,13 @@ organic spread", from features we already have:
 Shown on the analysis page as a table with the features exposed (never a bare number), and on the
 hub as "Coordinated pushes" when a lane or claim crosses 70.
 
-## 3. Human corrections as few-shot examples
+## 3. Human corrections as few-shot examples — built Oct 14
 
 `incidents/<slug>.overrides.csv` already corrects labels after the fact. The same rows become
 examples inside the classification prompt (up to 20, most recent first), so a correction teaches the
 classifier instead of only patching one post. Same mechanism later for claim extraction.
 
-## 4. Events calendar and correlation (`incidents/events.yaml`)
+## 4. Events calendar and correlation (`incidents/events.yaml`, `tracker/events.py`) — built Oct 14
 
 A shared, hand-maintained list of things that happen off X: bill filings, hearings, floor votes,
 court rulings, debates, ad buys, rallies, poll releases, endorsements. Each has a time, label, type

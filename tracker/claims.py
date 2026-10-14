@@ -290,6 +290,8 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
         end_ts = max(datetime.fromisoformat(p["created_at"]) for p in posts.values() if p["created_at"])
     except ValueError:
         end_ts = datetime.now(timezone.utc)
+    from .events import load_events, nearest_before
+    events = load_events(inc)
     out = []
     for cl in store.clusters():
         cid = int(cl["id"])
@@ -306,7 +308,9 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
         first = ps[0]
         last24 = sum(int(p["view_count"] or 0) for p in ps if (end_ts - datetime.fromisoformat(p["created_at"])).total_seconds() <= 86400)
         series = [[p["created_at"], int(p["view_count"] or 0)] for p in ps]
+        ev = nearest_before(first["created_at"], events) if events else None
         out.append({
+            "event": ev["label"] if ev else None, "event_type": ev["type"] if ev else None,
             "id": cid, "text": cl["text"], "type": cl["type"], "checkable": bool(cl["checkable"]), "stance": cl["stance"],
             "entities": json.loads(cl["entities"] or "[]"),
             "verdict": cl["verdict"], "verdict_basis": cl["verdict_basis"],
@@ -410,7 +414,8 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
             verdict_html = f'<details><summary>why</summary><div class="muted" style="max-width:52ch">{html.escape(r.get("verdict_basis") or "")} {src}</div></details>'
         trs.append(
             f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}">'
-            f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>{verdict_html}</td>'
+            f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>'
+            + (f'<div class="muted">after: {html.escape(r["event"])}</div>' if r.get("event") else "") + f'{verdict_html}</td>'
             f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">@{html.escape(r["first_handle"])}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
             f'<td class="n"><a href="{html.escape(r["top_post"] or "#")}" style="color:var(--ink)">{r["posts"]}</a></td><td class="n">{_fmt(r["views"])}</td>'
             f'<td class="n">{_fmt(r["views_24h"])}</td><td class="n">{r["accounts"]}</td><td class="n">{r["copies"]}</td>'

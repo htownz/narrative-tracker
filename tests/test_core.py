@@ -271,3 +271,33 @@ def test_overrides_become_few_shot_examples(tmp_path):
     finally:
         (ROOT / "incidents" / f"{inc.slug}.overrides.csv").unlink()
         st.close()
+
+
+# ------------------------------------------------------------------ events
+def test_events_load_window_response_and_follow(tmp_path):
+    from tracker import events
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    ev_path = tmp_path / "events.yaml"
+    ev_path.write_text("""timezone: America/Chicago
+events:
+  - {at: "2026-10-08 09:00", label: Poll, type: poll, trackers: [t-test]}
+  - {at: "2026-10-09", label: Rally, type: rally, trackers: all}
+  - {at: "2026-10-10 09:00", label: Elsewhere, type: news, trackers: [other-slug]}
+  - {at: "bad", label: Broken, type: news, trackers: all}
+""", encoding="utf-8")
+    ev = events.load_events(inc, ev_path)
+    assert [e["label"] for e in ev] == ["Poll", "Rally"]
+    assert ev[0]["at"] == "2026-10-08T14:00:00+00:00" and not ev[0]["all_day"]      # 9 AM CDT -> 14:00 UTC
+    assert ev[1]["at"] == "2026-10-09T05:00:00+00:00" and ev[1]["all_day"]
+    lanes = [{"key": "x", "label": "X", "color": "#fff"}]
+    posts = [{"id": "a", "t": "2026-10-08T10:00:00+00:00", "lane": "x", "views": 1000},    # 4h before the poll
+             {"id": "b", "t": "2026-10-08T15:00:00+00:00", "lane": "x", "views": 5000},    # 1h after
+             {"id": "c", "t": "2026-10-09T12:00:00+00:00", "lane": "x", "views": 700}]     # rally day
+    from datetime import datetime
+    rows = events.response(posts, lanes, ev, data_end=datetime.fromisoformat("2026-10-10T12:00:00+00:00"))
+    assert rows[0]["lanes"]["x"]["ratio"] == 5.0 and rows[0]["after_views"] == 5000 and rows[0]["top_lane"] == "x"
+    assert rows[1]["lanes"]["x"]["before_views"] == 6000 and rows[1]["lanes"]["x"]["after_views"] == 700   # day before vs the day
+    assert events.response(posts, lanes, ev, data_end=datetime.fromisoformat("2026-10-09T03:00:00+00:00")) == rows[:1]   # not enough data after the rally yet
+    assert events.nearest_before("2026-10-08T19:00:00+00:00", ev)["label"] == "Poll"
+    assert events.nearest_before("2026-10-08T21:00:00+00:00", ev) is None            # 7h later: outside the follow window
+    assert events.nearest_before("2026-10-09T23:00:00+00:00", ev)["label"] == "Rally"  # anywhere inside an all-day event

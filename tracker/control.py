@@ -91,13 +91,20 @@ def features(posts: list[dict[str, Any]], origin_handle: dict[str, str] | None =
     }
 
 
-def score(f: dict[str, Any]) -> tuple[int, list[str]]:
-    """0-100 and the features that drove it, strongest first."""
+def score(f: dict[str, Any], events: list[dict[str, Any]] | None = None) -> tuple[int, list[str]]:
+    """0-100 and the features that drove it, strongest first. A burst inside the hours after a calendar
+    event (incidents/events.yaml) is what an event does, so it does not count."""
     if not f.get("posts"):
         return 0, []
     parts = {k: _norm(k, float(f.get(k, 0.0))) * w for k, w in WEIGHTS.items()}
     if f.get("accounts", 0) < 10:
         parts["top5"] = 0.0          # five accounts out of six carrying the views says nothing
+    follows = None
+    if events and f.get("busiest_hour"):
+        from .events import nearest_before
+        follows = nearest_before(f["busiest_hour"] + ":00:00+00:00", events)
+        if follows:
+            parts["burst"] = 0.0
     total = int(round(sum(parts.values())))
     why = []
     for k, v in sorted(parts.items(), key=lambda kv: -kv[1]):
@@ -114,12 +121,15 @@ def score(f: dict[str, Any]) -> tuple[int, list[str]]:
             why.append(f"copies spaced on a clock (ring of {f['ring_size']})")
         elif k == "top5":
             why.append(f"top five accounts carry {raw:.0%} of views")
+    if follows and f.get("burst", 0) >= SCALE["burst"][0]:
+        why.append(f"burst follows: {follows['label']}")
     return total, why
 
 
-def _row(key: str, label: str, color: str | None, posts: list[dict[str, Any]], kind: str, origin_handle: dict[str, str] | None = None) -> dict[str, Any]:
+def _row(key: str, label: str, color: str | None, posts: list[dict[str, Any]], kind: str, origin_handle: dict[str, str] | None = None,
+         events: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     f = features(posts, origin_handle)
-    s, why = score(f)
+    s, why = score(f, events)
     return {"kind": kind, "key": key, "label": label, "color": color, "score": s, "why": why, **f}
 
 
@@ -127,13 +137,15 @@ def control(inc: Incident) -> Path:
     store = Store(inc.db_path)
     lanes = inc.lane_table()
     lane_keys = {l["key"] for l in lanes}
+    from .events import load_events
+    events = load_events(inc)
     drawn = store.drawable(inc.min_views)
     origin_handle = {p["id"]: p["author_handle"] for p in drawn}
     posts = [p for p in drawn if p["lane"] in lane_keys]
     by_lane: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for p in posts:
         by_lane[p["lane"]].append(p)
-    rows = [_row(l["key"], l["label"], l["color"], by_lane.get(l["key"], []), "lane", origin_handle) for l in lanes if l["key"] != PUSHBACK_KEY]
+    rows = [_row(l["key"], l["label"], l["color"], by_lane.get(l["key"], []), "lane", origin_handle, events) for l in lanes if l["key"] != PUSHBACK_KEY]
     # canonical claims with enough posts to judge
     by_id = {p["id"]: p for p in posts}
     cl_posts: dict[int, dict[str, dict[str, Any]]] = defaultdict(dict)
@@ -141,7 +153,7 @@ def control(inc: Incident) -> Path:
         if r["post_id"] in by_id:
             cl_posts[int(r["cluster_id"])][r["post_id"]] = by_id[r["post_id"]]
     cl_text = {int(c["id"]): c["text"] for c in store.clusters()}
-    claim_rows = [_row(str(cid), cl_text.get(cid, f"claim {cid}"), None, list(ps.values()), "claim", origin_handle)
+    claim_rows = [_row(str(cid), cl_text.get(cid, f"claim {cid}"), None, list(ps.values()), "claim", origin_handle, events)
                   for cid, ps in cl_posts.items() if len(ps) >= 5]
     claim_rows.sort(key=lambda r: (-r["score"], -r["views"]))
     store.close()
