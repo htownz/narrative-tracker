@@ -103,7 +103,7 @@ def main() -> None:
         render_mod.render(inc)
     elif args.command == "all":
         if not pull_mod.pull(inc, budget=args.budget, pause=args.pause):
-            sys.exit("pull paused on the time budget — run `pull` again to resume, then `all`")
+            print("pull paused on the time budget — continuing with what is stored; the next run resumes the pull", file=sys.stderr)
         if not inc.lanes:
             lanes = lanes_mod.discover(inc)
             save_lanes(inc, lanes)

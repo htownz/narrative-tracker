@@ -128,6 +128,7 @@ def detect(inc: Incident) -> list[dict[str, Any]]:
                 "first": min(p["created_at"] for p in members), "accounts": len({p["author_handle"] for p in members}),
                 "samples": [{"handle": p["author_handle"], "views": int(p["view_count"] or 0), "text": _clean(p["text"], 200), "url": p["url"]} for p in members[:3]],
                 "suggested_lane": {"key": c["key"], "label": c["label"], "description": c["description"], "keywords": c["keywords"]},
+                "_ids": [p["id"] for p in members],
             })
 
     # 2) lanes accelerating
@@ -144,18 +145,27 @@ def detect(inc: Incident) -> list[dict[str, Any]]:
                            "prior_6h_avg": int(prior_per6), "ratio": round(last6 / max(prior_per6, 1), 1),
                            "samples": [{"handle": p["author_handle"], "views": int(p["view_count"] or 0), "text": _clean(p["text"], 200), "url": p["url"]} for p in top]})
 
-    # suppress repeats within 48h
-    seen: dict[str, str] = store.get_meta("alerted", {}) or {}
+    # suppress repeats within 48h: lane surges by lane key, clusters by post overlap (their keys change run to run)
     cutoff = (now - timedelta(hours=48)).isoformat()
+    seen: dict[str, str] = {k: v for k, v in (store.get_meta("alerted", {}) or {}).items() if v >= cutoff}
+    seen_clusters = [c for c in (store.get_meta("alerted_clusters", []) or []) if c.get("t", "") >= cutoff]
     fresh = []
     for a in alerts:
-        k = f"{a['type']}:{a['key']}"
-        if seen.get(k, "") >= cutoff:
-            a["repeat"] = True
+        if a["type"] == "new_cluster":
+            ids = set(a.pop("_ids", []))
+            if any(len(ids & set(c["ids"])) >= 0.5 * max(1, len(ids)) for c in seen_clusters):
+                a["repeat"] = True
+            else:
+                seen_clusters.append({"t": now.isoformat(), "ids": sorted(ids)})
         else:
-            seen[k] = now.isoformat()
+            k = f"{a['type']}:{a['key']}"
+            if k in seen:
+                a["repeat"] = True
+            else:
+                seen[k] = now.isoformat()
         fresh.append(a)
     store.set_meta("alerted", seen)
+    store.set_meta("alerted_clusters", seen_clusters)
     store.close()
     return fresh
 
@@ -196,7 +206,7 @@ def alerts_cmd(inc: Incident) -> list[dict[str, Any]]:
     print(md)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
-        with open(summary, "a") as f:
+        with open(summary, "a", encoding="utf-8") as f:
             f.write(md + "\n")
     new = [a for a in found if not a.get("repeat")]
     if new:

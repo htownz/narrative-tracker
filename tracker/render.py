@@ -56,10 +56,10 @@ def render(inc: Incident, avatars: bool = True) -> Path:
     data_path = inc.out_dir / "data.json"
     if not data_path.exists():
         raise SystemExit("no data.json yet — run export first")
-    template = (WEB_DIR / "index.html").read_text()
+    template = (WEB_DIR / "index.html").read_text(encoding="utf-8")
     if MARKER not in template:
         raise SystemExit("web/index.html is missing the /*__DATA__*/ marker")
-    data = json.loads(data_path.read_text())
+    data = json.loads(data_path.read_text(encoding="utf-8"))
     if avatars and not data.get("meta", {}).get("synthetic"):
         n = inline_avatars(data)
         print(f"inlined {n} avatars", file=sys.stderr)
@@ -67,6 +67,6 @@ def render(inc: Incident, avatars: bool = True) -> Path:
     html = template.replace(MARKER, f"window.__DATA__ = {payload};")
     html = html.replace("<title>Narrative Tracker</title>", f"<title>{inc.title}</title>", 1)
     out = inc.out_dir / "index.html"
-    out.write_text(html)
+    out.write_text(html, encoding="utf-8")
     print(f"wrote {out}  ({out.stat().st_size // 1024} KB)")
     return out

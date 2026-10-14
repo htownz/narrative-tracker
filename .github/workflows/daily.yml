@@ -41,8 +41,8 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
-            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | tr '\n' ' ')
-            case " $INC " in *" live "*) INC="$LIVE ${INC/live/}";; esac
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | tr '\n' ' ' || true)
+            case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
           fi
           INC="${INC:-$LIVE}"
           echo "incidents=$INC" >> "$GITHUB_OUTPUT"
@@ -60,11 +60,14 @@ jobs:
         env:
           TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PULL_BUDGET: "780"     # seconds of pulling per incident per run; a paused pull resumes next run
         run: |
           set +e; FAILED=""; OK=0
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
-            if python run.py all "$inc"; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
+            if python run.py all "$inc" --budget "$PULL_BUDGET"; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
             echo "::endgroup::"
           done
           if [ -n "$FAILED" ]; then echo "::warning::failed:$FAILED"; fi
@@ -72,14 +75,15 @@ jobs:
           [ "$OK" -gt 0 ] || { echo "::error::every incident failed"; exit 1; }
 
       - name: Commit data and output
-        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}   # save pull progress even when every incident failed
+        if: ${{ always() && steps.pick.outcome == 'success' }}   # save pull progress even on failure or timeout
         run: |
           git config user.name "narrative-tracker bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/ out/ incidents/
-          git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%d)"
-          git pull --rebase --autostash origin main
-          git push
+          git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%dT%H:%MZ)"
+          # binary stores can't merge: on conflict keep this run's version (the newest pull)
+          git pull --rebase -X theirs --autostash origin "${{ github.ref_name }}" || { git rebase --abort 2>/dev/null; git reset --hard "origin/${{ github.ref_name }}"; echo "::warning::could not rebase; this run's data was not pushed"; exit 0; }
+          git push origin HEAD:"${{ github.ref_name }}"
 
       - name: Assemble site
         if: ${{ !cancelled() && steps.pick.outcome == 'success' }}

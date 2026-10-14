@@ -134,7 +134,7 @@
   if (!drawn.length) {
     const a = d3.select('#app');
     a.append('h1').text(meta.title);
-    a.append('p').attr('class', 'sub').text(lanes.length ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
+    a.append('p').attr('class', 'sub').text(lanes.length > 1 ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
     return;
   }
   const drawnIds = new Set(drawn.map(p => p.id));
@@ -148,6 +148,7 @@
   const fmtAxis = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', month: 'short', day: 'numeric' });
   const fmtFull = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   const fmtN = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'K' : String(n);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; };
 
   // ---- layout -------------------------------------------------------------
@@ -229,6 +230,12 @@
     const m = markets[0];
     const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
     const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    if (pts.length < 2) markets.length = 0;   // nothing in range: no strip (layout already reserved it; harmless)
+  }
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
     const pmin = Math.min(...pts.map(q => q.p)), pmax = Math.max(...pts.map(q => q.p));
     const pad = Math.max(2, (pmax - pmin) * 0.25);
     const y = d3.scaleLinear().domain([pmin - pad, pmax + pad]).range([sy1, sy0]);
@@ -293,7 +300,7 @@
   const bViews = barBlock('Views so far', 'each post’s views at pull time, counted when it went up');
 
   const foot = app.append('footer');
-  foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.`);
+  foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.${meta.partial ? ' Pull still in progress — counts will grow on the next run.' : ''}`);
   foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a>');
 
   // tooltip
@@ -301,11 +308,11 @@
   const showTip = (ev, p) => {
     const lane = laneByKey[p.lane] || {};
     tip.style('display', 'block').html(
-      `<span class="x">✕</span><div class="h"><span>@${p.handle}${p.name ? ' · ' + p.name : ''}</span><span>${fmtFull.format(new Date(p.ts))}</span></div>` +
-      `<div class="h"><span class="lane" style="color:${lane.color}">${lane.label || p.lane}</span><span>${fmtN(p.views)} views · ${fmtN(p.likes)} likes</span></div>` +
-      `<div class="txt">${p.text.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))}</div>` +
+      `<span class="x">✕</span><div class="h"><span>@${esc(p.handle)}${p.name ? ' · ' + esc(p.name) : ''}</span><span>${fmtFull.format(new Date(p.ts))}</span></div>` +
+      `<div class="h"><span class="lane" style="color:${lane.color}">${esc(lane.label || p.lane)}</span><span>${fmtN(p.views)} views · ${fmtN(p.likes)} likes</span></div>` +
+      `<div class="txt">${esc(p.text)}</div>` +
       (p.copy_origin ? `<div class="h"><span>same words as an earlier post</span></div>` : '') +
-      (p.url && !meta.synthetic ? `<a href="${p.url}" target="_blank" rel="noopener">open on X ↗</a>` : ''));
+      (p.url && !meta.synthetic && /^https:\/\//.test(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">open on X ↗</a>` : ''));
     const bw = tip.node().getBoundingClientRect();
     const px = Math.min(window.innerWidth - bw.width - 12, Math.max(12, ev.clientX - bw.width / 2));
     const py = ev.clientY + 18 + bw.height > window.innerHeight ? ev.clientY - bw.height - 14 : ev.clientY + 18;
@@ -345,7 +352,7 @@
     bPosts.style('display', 'flex').style('flex-direction', 'column'); bViews.style('display', 'flex').style('flex-direction', 'column');
     row(bPosts, 'n'); row(bViews, 'v');
     const last = vis[vis.length - 1];
-    ticker.html(last ? `<b>@${last.handle}</b> · <span style="color:${laneByKey[last.lane].color}">${laneByKey[last.lane].label}</span> · ${fmtN(last.views)} views${last.isCopy ? ' · <b>same words</b> as an earlier post' : ''}` : '');
+    ticker.html(last ? `<b>@${esc(last.handle)}</b> · <span style="color:${laneByKey[last.lane].color}">${esc(laneByKey[last.lane].label)}</span> · ${fmtN(last.views)} views${last.isCopy ? ' · <b>same words</b> as an earlier post' : ''}` : '');
   }
   function setCur(t, fromSlider) { cur = Math.max(tMin, Math.min(tMax, t)); if (!fromSlider) slider.property('value', Math.round(1000 * (cur - tMin) / span)); update(); }
   slider.on('input', function () { stop(); setCur(tMin + span * (+this.value / 1000), true); });

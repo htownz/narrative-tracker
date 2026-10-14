@@ -43,11 +43,11 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
         data_path = d / "data.json"
         if not (d / "index.html").exists() or not data_path.exists():
             continue
-        data = json.loads(data_path.read_text())
+        data = json.loads(data_path.read_text(encoding="utf-8"))
         meta, stats = data.get("meta", {}), data.get("stats", {})
         if meta.get("synthetic"):
             continue
-        live = (ROOT / "incidents" / f"{d.name}.yaml").exists() and "end: today" in (ROOT / "incidents" / f"{d.name}.yaml").read_text()
+        live = (ROOT / "incidents" / f"{d.name}.yaml").exists() and "end: today" in (ROOT / "incidents" / f"{d.name}.yaml").read_text(encoding="utf-8")
         w = meta.get("window", {})
         updated = ""
         if meta.get("pulled_at"):
@@ -69,7 +69,7 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
         if not ap.exists():
             continue
         try:
-            a = json.loads(ap.read_text())
+            a = json.loads(ap.read_text(encoding="utf-8"))
         except ValueError:
             continue
         for al in a.get("alerts", []):

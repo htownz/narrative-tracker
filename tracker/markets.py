@@ -54,7 +54,7 @@ def fetch_markets(inc: Incident) -> list[dict[str, Any]]:
     previous: dict[str, Any] = {}
     if cache_path.exists():
         try:
-            previous = {m["ticker"]: m for m in json.loads(cache_path.read_text())}
+            previous = {m["ticker"]: m for m in json.loads(cache_path.read_text(encoding="utf-8"))}
         except ValueError:
             previous = {}
     out = []
@@ -74,7 +74,7 @@ def fetch_markets(inc: Incident) -> list[dict[str, Any]]:
         out.append({"label": m.get("label", m["ticker"]), "ticker": m["ticker"], "series": m["series"],
                     "source": "Kalshi", "points": pts, "last": pts[-1]["p"] if pts else None, "stale": stale})
         print(f"  market {m['ticker']}: {len(pts)} hourly points, last {pts[-1]['p'] if pts else '—'}¢{' (cached)' if stale else ''}")
-    cache_path.write_text(json.dumps(out))
+    cache_path.write_text(json.dumps(out), encoding="utf-8")
     return out
 
 

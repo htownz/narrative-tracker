@@ -100,7 +100,13 @@ Lanes are discovered on the first run and then frozen so days stay comparable; `
 shows what is landing outside them.
 
 Repo secrets needed: `TWITTERAPI_IO_KEY`, `ANTHROPIC_API_KEY`. Optional: `TELEGRAM_BOT_TOKEN` and
-`TELEGRAM_CHAT_ID` to receive alerts. Trigger a run by hand from the Actions tab, or commit a change to `.run`.
+`TELEGRAM_CHAT_ID` to receive alerts. Trigger a run by hand from the Actions tab, or commit a change to `.run`
+(one incident path per line, or the word `live` for all live trackers).
+
+Each incident gets `PULL_BUDGET` seconds of pulling per run (default 13 min); a pull that hits the budget resumes on
+the next run and the chart notes "pull still in progress". Live incidents should be pulled only by the job — the
+SQLite stores are committed, and a local run pushed from your PC would conflict with the job's commits. Run one-off
+incidents (fixed window) wherever you like.
 
 ## Pages each tracker produces
 

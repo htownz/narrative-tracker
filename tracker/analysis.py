@@ -89,7 +89,7 @@ def analysis(inc: Incident) -> Path:
     data_path = inc.out_dir / "data.json"
     if not data_path.exists():
         raise SystemExit("no data.json yet — run export first")
-    data = json.loads(data_path.read_text())
+    data = json.loads(data_path.read_text(encoding="utf-8"))
     rows = lane_timing(data)
     evl = early_vs_late(rows)
     markets = data.get("markets") or []
@@ -97,7 +97,7 @@ def analysis(inc: Incident) -> Path:
                   markets[0]) if markets else []
     out = {"lanes": rows, "early_vs_late": evl, "market": markets[0]["label"] if markets else None, "lead_lag": ll,
            "generated_at": datetime.now(timezone.utc).isoformat()}
-    (inc.out_dir / "analysis.json").write_text(json.dumps(out, ensure_ascii=False))
+    (inc.out_dir / "analysis.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     page = render_html(inc, data, out)
     print(f"wrote {page}  ({len(rows)} lanes; early-pushback lanes={evl['early']['lanes']}, lead/lag rows={len(ll)})")
     for r in rows:
@@ -161,5 +161,5 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
 <footer>Generated {datetime.now(tz).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")}. Small-N: treat group means as description of this incident, not a law.</footer>
 </body></html>"""
     page = inc.out_dir / "analysis.html"
-    page.write_text(doc)
+    page.write_text(doc, encoding="utf-8")
     return page

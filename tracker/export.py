@@ -90,6 +90,7 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
             "pulled_at": (lambda v: (v + "+00:00") if v and not re.search(r"(Z|[+-]\d\d:\d\d)$", v) else v)(store.get_meta("pulled_at")),
             "source": "SYNTHETIC SAMPLE — not real posts" if synthetic else "Data via twitterapi.io",
             "synthetic": synthetic,
+            "partial": bool(store.get_meta("pull_partial", False)),
             "credit": "",
         },
         "lanes": lanes,
@@ -98,7 +99,7 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
         "stats": {"pushing": n_push, "repeated": n_repeat, "pushback": n_back, "total": len(posts_out)},
     }
     out = inc.out_dir / "data.json"
-    out.write_text(json.dumps(data, ensure_ascii=False))
+    out.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {out}  ({len(posts_out)} posts, {len(edges)} edges; pushing={n_push} repeated={n_repeat} pushback={n_back})")
     store.close()
     return data

@@ -72,13 +72,22 @@ def _json_from(text: str) -> dict[str, Any]:
 
 
 def _ask(client, model: str, system: str, user: str, max_tokens: int = 4000) -> dict[str, Any]:
-    msg = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        system=system,
-        messages=[{"role": "user", "content": user}],
-    )
-    return _json_from("".join(getattr(b, "text", "") for b in msg.content))
+    """One call, one retry on a non-JSON reply; {} when it still will not parse (callers treat {} as 'no result')."""
+    last_err = None
+    for attempt in range(2):
+        msg = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            system=system,
+            messages=[{"role": "user", "content": user + ("\n\nReply with valid JSON only." if attempt else "")}],
+        )
+        text = "".join(getattr(b, "text", "") for b in msg.content)
+        try:
+            return _json_from(text)
+        except (ValueError, json.JSONDecodeError) as e:
+            last_err = e
+    print(f"  model reply was not JSON ({last_err}); treating as empty", file=sys.stderr)
+    return {}
 
 
 def _clean(text: str, limit: int = 280) -> str:

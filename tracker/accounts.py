@@ -205,13 +205,13 @@ Lane mix is coloured by lane; "first in" lists lanes where they were among the f
 <footer>{len(rows)} accounts · {sum(r["posts"] for r in rows)} posts · built {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}</footer>
 {SCRIPT}</body></html>"""
     out = inc.out_dir / "accounts.html"
-    out.write_text(doc)
+    out.write_text(doc, encoding="utf-8")
     return out
 
 
 def accounts(inc: Incident) -> list[dict[str, Any]]:
     rows = account_table(inc)
-    (inc.out_dir / "accounts.json").write_text(json.dumps(rows, ensure_ascii=False, default=list))
+    (inc.out_dir / "accounts.json").write_text(json.dumps(rows, ensure_ascii=False, default=list), encoding="utf-8")
     out = render_html(inc, rows)
     roles = defaultdict(int)
     for r in rows:
@@ -245,7 +245,7 @@ def accounts_all() -> Path:
         a["roles"] = dict(a["roles"])
     out_dir = OUT_DIR / "accounts"
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "accounts.json").write_text(json.dumps(rows, ensure_ascii=False))
+    (out_dir / "accounts.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
 
     cols = "".join(f'<th>{html.escape(i.slug.replace("-live", "").replace("-oct-2026", ""))}</th>' for i in incs)
     trs = []
@@ -272,6 +272,6 @@ def accounts_all() -> Path:
 <div class="wrap"><table><thead><tr><th class="n">#</th><th>Account</th><th class="n">Trackers</th><th class="n">Reach</th><th class="n">Posts</th><th class="n">First-mover</th>{cols}</tr></thead><tbody>{"".join(trs)}</tbody></table></div>
 <footer>{len(rows)} accounts across {len(incs)} trackers · built {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}</footer>{SCRIPT}</body></html>"""
     out = out_dir / "index.html"
-    out.write_text(doc)
+    out.write_text(doc, encoding="utf-8")
     print(f"wrote {out}  ({len(rows)} accounts across {len(incs)} trackers)")
     return out

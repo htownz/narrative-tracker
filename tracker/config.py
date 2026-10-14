@@ -107,7 +107,7 @@ def _resolve_window(w: dict[str, Any], tz: str) -> tuple[str, str, bool]:
 
 def load_incident(path: str | Path) -> Incident:
     p = Path(path)
-    raw = yaml.safe_load(p.read_text())
+    raw = yaml.safe_load(p.read_text(encoding="utf-8"))
     w = raw.get("window", {})
     tz = raw.get("timezone", "UTC")
     start, end, live = _resolve_window(w, tz)
@@ -148,17 +148,17 @@ def load_incident(path: str | Path) -> Incident:
 def save_lanes(incident: Incident, lanes: list[dict[str, Any]]) -> None:
     """Write a discovered lane list back into the incident YAML (keeps everything else)."""
     assert incident.path is not None
-    text = incident.path.read_text()
+    text = incident.path.read_text(encoding="utf-8")
     block = yaml.safe_dump({"lanes": lanes}, sort_keys=False, allow_unicode=True, width=100).rstrip() + "\n"
     import re
     if re.search(r"^lanes:\s*\[\s*\]\s*$", text, flags=re.M):
         # keep comments and formatting: swap only the empty lanes line
-        text = re.sub(r"^lanes:\s*\[\s*\]\s*$", block.rstrip(), text, count=1, flags=re.M)
-        incident.path.write_text(text)
+        text = re.sub(r"^lanes:\s*\[\s*\]\s*$", lambda m: block.rstrip(), text, count=1, flags=re.M)
+        incident.path.write_text(text, encoding="utf-8")
     else:
         raw = yaml.safe_load(text)
         raw["lanes"] = lanes
-        incident.path.write_text(yaml.safe_dump(raw, sort_keys=False, allow_unicode=True, width=100))
+        incident.path.write_text(yaml.safe_dump(raw, sort_keys=False, allow_unicode=True, width=100), encoding="utf-8")
     incident.lanes = lanes
 
 
@@ -169,7 +169,7 @@ def env(name: str, default: str | None = None) -> str | None:
     # .env in repo root, no dependency on python-dotenv
     envfile = ROOT / ".env"
     if envfile.exists():
-        for line in envfile.read_text().splitlines():
+        for line in envfile.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue

@@ -30,6 +30,10 @@ def log(msg: str) -> None:
     print(msg, flush=True)
 
 
+class BadRequest(Exception):
+    """400 from the API: a malformed query or an expired resume cursor. Scoped to one query, not the run."""
+
+
 class TwitterAPI:
     def __init__(self, api_key: str, pause: float = 0.2):
         self.session = requests.Session()
@@ -64,6 +68,8 @@ class TwitterAPI:
             if r.status_code == 402 or (r.status_code == 400 and "credit" in r.text.lower()):
                 sys.exit(f"twitterapi.io: out of credits ({r.status_code}): {r.text[:200]} — recharge at https://twitterapi.io/pricing; "
                          f"progress is saved, rerun to resume")
+            if r.status_code == 400:
+                raise BadRequest(r.text[:300])
             if r.status_code >= 400:
                 sys.exit(f"twitterapi.io error {r.status_code}: {r.text[:300]}")
             return r.json()
@@ -166,7 +172,7 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
         fresh = date.fromisoformat(inc.end) - timedelta(days=inc.refresh_days - 1)
         reset = 0
         for day, q in day_queries:
-            if day >= fresh and progress.get(q, {}).get("done"):
+            if day >= fresh and progress.get(q):          # done or paused mid-page: start the day over
                 progress[q] = {}
                 reset += 1
         if reset:
@@ -191,17 +197,29 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
         cursor = st.get("cursor") or ""
         pages = int(st.get("pages") or 0)
         n_rows = int(st.get("rows") or 0)
-        for tweets, nxt in api.search_pages(q, inc.query_type, cursor=cursor):
-            rows = _rows_from(tweets)
-            store.upsert_posts(rows)
-            pages += 1
-            n_rows += len(rows)
-            progress[q] = {"done": nxt is None, "cursor": nxt or "", "pages": pages, "rows": n_rows}
-            store.set_meta("pull_progress", progress)
-            if nxt is None:
+        for attempt in range(2):
+            try:
+                for tweets, nxt in api.search_pages(q, inc.query_type, cursor=cursor):
+                    rows = _rows_from(tweets)
+                    store.upsert_posts(rows)
+                    pages += 1
+                    n_rows += len(rows)
+                    progress[q] = {"done": nxt is None, "cursor": nxt or "", "pages": pages, "rows": n_rows}
+                    store.set_meta("pull_progress", progress)
+                    if nxt is None:
+                        break
+                    if out_of_time():
+                        complete = False
+                        break
                 break
-            if out_of_time():
-                complete = False
+            except BadRequest as e:
+                if attempt == 0 and cursor:
+                    log(f"  resume cursor rejected for {q[:50]} — restarting that query from page 1")
+                    cursor, pages, n_rows = "", 0, 0
+                    continue
+                log(f"  [skip] {q[:70]}: API rejected the query ({e[:120] if isinstance(e, str) else str(e)[:120]})")
+                progress[q] = {"done": True, "cursor": "", "pages": pages, "rows": n_rows, "error": str(e)[:200]}
+                store.set_meta("pull_progress", progress)
                 break
         log(f"  [{qi}/{len(queries)}] {q[:58]:<58} pages={pages:<3} rows={n_rows:<4} "
             f"{'done' if progress[q]['done'] else 'PAUSED'}  (calls {api.calls}, est ${api.est_cost_usd:.3f})")
@@ -218,7 +236,7 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
                 missing = [m for m in missing if m not in gone]
                 if missing:
                     log(f"fetching {len(missing)} referenced posts (replied-to parents), {-(-len(missing) // 50)} calls")
-                    fetched = api.lookup(missing)
+                    fetched = [t for t in api.lookup(missing) if t.get("id")]   # unavailable posts come back as {"id": ""}
                     store.upsert_posts([flatten_tweet(t, in_dataset=0) for t in fetched])
                     got = {str(t.get("id")) for t in fetched}
                     store.set_meta("refs_unavailable", sorted(gone | {m for m in missing if m not in got}))
@@ -230,6 +248,7 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
     prev_cost = float(store.get_meta("est_cost_usd", 0) or 0)
     store.set_meta("api_calls", prev_calls + api.calls)
     store.set_meta("est_cost_usd", round(prev_cost + api.est_cost_usd, 4))
+    store.set_meta("pull_partial", not complete)
     if complete:
         store.set_meta("pulled_at", datetime.now(timezone.utc).isoformat())
         store.set_meta("synthetic", False)
