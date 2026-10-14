@@ -44,7 +44,8 @@ EXTRACT_USER = """Subject: {subject}
 
 type: fact (asserts something about the world), opinion (a judgement or characterisation), prediction (what
 will happen), call_to_action (vote, donate, share, resign, debate).
-checkable: true when a diligent reporter could confirm or refute the claim with public records or reporting.
+checkable: true only for a claim about public matters that a diligent reporter could confirm or refute with public
+records or reporting; never for a claim about the poster's own life, feelings or intentions.
 stance: "for" when the claim favours the subject's side, "against" when it attacks the subject's side, "neutral" otherwise.
 entities: the proper nouns the claim is about (people, organisations, bills, places), 1-4 items.
 

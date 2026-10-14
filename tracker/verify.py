@@ -50,6 +50,7 @@ def candidates(store: Store, min_views: int, limit: int) -> list[dict[str, Any]]
         "SELECT cl.id, cl.text, cl.type, cl.checkable, MIN(p.created_at) first_seen, SUM(p.view_count) views, COUNT(DISTINCT p.id) posts "
         "FROM claim_clusters cl JOIN claims c ON c.cluster_id = cl.id JOIN posts p ON p.id = c.post_id "
         "WHERE cl.verdict IS NULL AND cl.checkable = 1 AND cl.type = 'fact' "
+        "AND cl.text NOT LIKE 'The author%' AND cl.text NOT LIKE 'The poster%' "
         "GROUP BY cl.id HAVING views >= ? ORDER BY views DESC LIMIT ?", (min_views, limit)).fetchall()
     return [dict(r) for r in rows]
 
