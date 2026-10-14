@@ -260,3 +260,40 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
         f"{(time.time() - t_start):.0f}s")
     store.close()
     return complete
+
+
+def refresh_views(inc: Incident, top_n: int = 500, min_age_hours: float = 24.0, pause: float | None = None) -> int:
+    """Re-look-up the most-viewed posts so view counts don't stay frozen at first-pull values.
+    50 ids per call, so 500 posts = 10 calls (~$0.075). Returns the number of posts updated."""
+    api_key = env("TWITTERAPI_IO_KEY")
+    if not api_key:
+        sys.exit("TWITTERAPI_IO_KEY is not set")
+    store = Store(inc.db_path)
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=min_age_hours)).isoformat()
+    rows = store.conn.execute(
+        "SELECT id FROM posts WHERE created_at IS NOT NULL AND created_at <= ? AND view_count >= ? ORDER BY view_count DESC LIMIT ?",
+        (cutoff, inc.min_views, top_n)).fetchall()
+    ids = [r["id"] for r in rows if r["id"]]
+    if not ids:
+        store.close()
+        return 0
+    api = TwitterAPI(api_key, pause=pause if pause is not None else float(env("TWITTERAPI_PAUSE", "0.2") or 0.2))
+    fetched = [t for t in api.lookup(ids) if t.get("id")]
+    updated = 0
+    for t in fetched:
+        row = store.conn.execute("SELECT in_dataset, view_count FROM posts WHERE id=?", (str(t["id"]),)).fetchone()
+        if not row:
+            continue
+        new = flatten_tweet(t, in_dataset=int(row["in_dataset"] or 0))
+        store.conn.execute(
+            "UPDATE posts SET view_count=?, like_count=?, retweet_count=?, reply_count=?, quote_count=?, author_followers=?, raw=? WHERE id=?",
+            (new["view_count"], new["like_count"], new["retweet_count"], new["reply_count"], new["quote_count"],
+             new["author_followers"], new["raw"], new["id"]))
+        updated += 1
+    store.conn.commit()
+    store.set_meta("views_refreshed_at", datetime.now(timezone.utc).isoformat())
+    prev_calls = int(store.get_meta("api_calls", 0) or 0); prev_cost = float(store.get_meta("est_cost_usd", 0) or 0)
+    store.set_meta("api_calls", prev_calls + api.calls); store.set_meta("est_cost_usd", round(prev_cost + api.est_cost_usd, 4))
+    log(f"views refreshed for {updated}/{len(ids)} posts ({api.calls} calls, est ${api.est_cost_usd:.3f})")
+    store.close()
+    return updated

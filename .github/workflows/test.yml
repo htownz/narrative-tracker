@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  push:
+    paths: ["tracker/**", "run.py", "web/**", "tests/**", "requirements*.txt", ".github/workflows/test.yml"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]     # the job runs on Ubuntu; Ben runs it on Windows
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - run: python -m pytest -q tests/
+      - name: Synthetic end-to-end (no keys, no network)
+        env:
+          PYTHONUTF8: "0"
+        shell: bash
+        run: |
+          python -c "import yaml; d=yaml.safe_load(open('incidents/abbott-oct-2026.yaml', encoding='utf-8')); d['slug']='ci-synth'; d.pop('markets', None); yaml.safe_dump(d, open('incidents/ci-synth.yaml', 'w', encoding='utf-8'), sort_keys=False, allow_unicode=True)"
+          python run.py synth incidents/ci-synth.yaml
+          python run.py accounts incidents/ci-synth.yaml
+          python run.py analysis incidents/ci-synth.yaml
+          python run.py review incidents/ci-synth.yaml
+          test -s out/ci-synth/index.html

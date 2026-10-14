@@ -65,8 +65,10 @@ jobs:
           PULL_BUDGET: "780"     # seconds of pulling per incident per run; a paused pull resumes next run
         run: |
           set +e; FAILED=""; OK=0
+          WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
+            [ "$WEEKLY" = "1" ] && python run.py refresh-views "$inc"
             if python run.py all "$inc" --budget "$PULL_BUDGET"; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
             echo "::endgroup::"
           done

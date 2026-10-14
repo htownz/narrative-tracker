@@ -14,6 +14,7 @@
   python run.py analysis  incidents/x.yaml                # lane timing, pushback lag, market lead/lag -> out/<slug>/analysis.html
   python run.py alerts    incidents/x.yaml                # early warning: stories forming outside the lanes, lanes surging
   python run.py review    incidents/x.yaml                # lane spot-check page + overrides builder -> out/<slug>/review.html
+  python run.py refresh-views incidents/x.yaml            # re-look-up the top 500 posts so view counts stop being first-pull values
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
 """
@@ -40,7 +41,7 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -99,6 +100,8 @@ def main() -> None:
     elif args.command == "review":
         from tracker import review
         review.review(inc)
+    elif args.command == "refresh-views":
+        pull_mod.refresh_views(inc, pause=args.pause)
     elif args.command == "synth":
         from tracker import synth
         synth.load(inc)

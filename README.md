@@ -126,6 +126,18 @@ Open `<slug>/review.html`, change the dropdown on any mislabelled post, copy the
 every run, so corrections survive re-labelling and live refreshes. If a whole lane is wrong, edit its label or
 description in the YAML and run `classify --relabel`.
 
+## View counts
+
+Posts keep the view count from when they were first pulled (the original chart's convention), except the last
+`refresh_days` days, which are re-pulled each run. Once a week (the Sunday 6:17 AM CT run) `refresh-views`
+re-looks-up each tracker's 500 most-viewed posts (10 calls, about 8 cents) so the big numbers stay current.
+
+## Tests
+
+`pip install pytest && pytest -q` — dedup rule, window and DST math, tweet flattening, store upserts, lane save,
+overrides. `.github/workflows/test.yml` runs them on Ubuntu and Windows, Python 3.10 and 3.12, plus a synthetic
+end-to-end render, on every push that touches code.
+
 ## Run health
 
 The hub shows the twitterapi.io balance (red under $1), the last run time, and any live tracker with no lanes,
