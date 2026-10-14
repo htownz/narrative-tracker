@@ -1,4 +1,2 @@
-# the three new trackers: first pull, lane discovery, full pipeline (queued behind the run in progress)
-incidents/trump-texas-live.yaml
-incidents/vance-texas-live.yaml
-incidents/issue-765kv-live.yaml
+# deploy-only: publish the navigation bar on every page
+none

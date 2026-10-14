@@ -317,3 +317,16 @@ def test_features_rank_and_outcomes():
     n = features._label_outcomes(rows, groups, datetime.fromisoformat("2026-10-11T13:00:00+00:00"))   # 25h later: 24h outcome only
     assert n == 7 and rows[6]["gain_24h"] == 7000 and rows[6]["top5_24h"] == 1 and rows[0]["top5_24h"] == 0 and rows[0]["gain_72h"] is None
     assert features._label_outcomes(rows, groups, datetime.fromisoformat("2026-10-11T14:00:00+00:00")) == 0       # already filled
+
+
+# ------------------------------------------------------------------ site navigation
+def test_site_nav_keeps_tab_and_marks_current():
+    from tracker import site
+    trackers = [{"slug": "a-live", "title": "A", "live": True, "group": "Races and people", "pages": ["index.html", "claims.html"]},
+                {"slug": "issue-b-live", "title": "B", "live": True, "group": "Issues", "pages": ["index.html"]}]
+    nav = site.nav_html(trackers, "a-live", "claims.html")
+    assert 'value="../a-live/claims.html" selected' in nav and 'value="../issue-b-live/"' in nav      # B has no claims page: falls back to its chart
+    assert '<a href="../a-live/claims.html" class="on">Claims</a>' in nav and 'href="../accounts/"' in nav
+    hub_nav = site.nav_html(trackers, None, None, depth=0)
+    assert 'href="a-live/claims.html"' not in hub_nav and 'value="a-live/"' in hub_nav
+    assert site.inject("<html><body class='x'><p>hi</p></body></html>", "<nav>n</nav>").startswith("<html><body class='x'>\n<nav>n</nav>")

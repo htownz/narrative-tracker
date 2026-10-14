@@ -17,8 +17,11 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
   * { box-sizing: border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif; padding:24px 16px 48px; max-width:960px; margin:0 auto; }
   h1 { font-size:22px; margin:0 0 4px; } .lead { color:var(--ink-3); font-size:13px; margin:0 0 20px; max-width:70ch; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
-  a.card { display:block; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; color:inherit; text-decoration:none; }
-  a.card:hover { border-color:#4a4a52; } .card h2 { font-size:15px; margin:0 0 6px; } .card .w { color:var(--ink-3); font-size:11.5px; margin-bottom:10px; }
+  .card { display:block; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; color:inherit; }
+  .card:hover { border-color:#4a4a52; } .card h2 { font-size:15px; margin:0 0 6px; } .card h2 a { color:inherit; text-decoration:none; } .card h2 a:hover { color:var(--accent); }
+  .card .w { color:var(--ink-3); font-size:11.5px; margin-bottom:10px; }
+  .card .links { margin-top:10px; font-size:11.5px; display:flex; gap:10px; flex-wrap:wrap; } .card .links a { color:#8cf; text-decoration:none; } .card .links a:hover { text-decoration:underline; }
+  h2.group { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); margin:22px 0 8px; }
   .nums { display:flex; gap:16px; } .n { font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; } .n small { display:block; font-size:10.5px; font-weight:400; color:var(--ink-3); }
   .n.push { color:var(--accent); } .n.back { color:#2fbf8c; } .live { display:inline-block; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:#2fbf8c; border:1px solid #2fbf8c55; border-radius:999px; padding:1px 7px; margin-left:6px; vertical-align:middle; }
   footer { margin-top:24px; color:var(--ink-3); font-size:11px; }
@@ -26,13 +29,14 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <h1>Texas Narrative Trackers</h1>
 <p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update every six hours.</p>
 @@ALERTS@@
-<div class="grid">@@CARDS@@</div>
+<div class="grid" style="display:none">@@CARDS@@</div>
 <p class="lead" style="margin-top:18px"><a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
 <footer>Built @@BUILT@@. Data via twitterapi.io; lanes assigned by Claude.</footer>
 </body></html>"""
 
-CARD = """<a class="card" href="{slug}/"><h2>{title}{live}</h2><div class="w">{window}{updated}</div>
-<div class="nums"><div class="n push">{pushing}<small>pushing the story</small></div><div class="n">{repeated}<small>repeated</small></div><div class="n back">{pushback}<small>pushing back</small></div></div></a>"""
+CARD = """<div class="card" data-group="{group}"><h2><a href="{slug}/">{title}</a>{live}</h2><div class="w">{window}{updated}</div>
+<div class="nums"><div class="n push">{pushing}<small>pushing the story</small></div><div class="n">{repeated}<small>repeated</small></div><div class="n back">{pushback}<small>pushing back</small></div></div>
+<div class="links"><a href="{slug}/">Chart</a>{links}</div></div>"""
 
 
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
@@ -56,12 +60,23 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                 updated = f" · updated {dt.strftime('%b %d, %I:%M %p').replace(' 0', ' ')}"
             except ValueError:
                 pass
-        cards.append(CARD.format(slug=d.name, title=html.escape(meta.get("title", d.name)),
-                                 live='<span class="live">live</span>' if live else "",
+        group = "Issues" if d.name.startswith("issue-") else "Races and people" if live else "Archive"
+        links = "".join(f'<a href="{d.name}/{p}">{label}</a>' for p, label in
+                        (("claims.html", "Claims"), ("accounts.html", "Who moved it"), ("analysis.html", "Timing &amp; control"), ("review.html", "Review"))
+                        if (d / p).exists())
+        cards.append((group, meta.get("title", d.name).lower(), CARD.format(slug=d.name, title=html.escape(meta.get("title", d.name)), group=group,
+                                 live='<span class="live">live</span>' if live else "", links=links,
                                  window=f"{w.get('start', '')} → {w.get('end', '')}", updated=updated,
-                                 pushing=stats.get("pushing", 0), repeated=stats.get("repeated", 0), pushback=stats.get("pushback", 0)))
-    # live trackers first
-    cards.sort(key=lambda c: ('class="live"' not in c, c))
+                                 pushing=stats.get("pushing", 0), repeated=stats.get("repeated", 0), pushback=stats.get("pushback", 0))))
+    order = {"Races and people": 0, "Issues": 1, "Archive": 2}
+    cards.sort(key=lambda c: (order[c[0]], c[1]))
+    grouped, last = [], None
+    for group, _, card in cards:
+        if group != last:
+            grouped.append(f'</div><h2 class="group">{group}</h2><div class="grid">')
+            last = group
+        grouped.append(card)
+    cards = grouped
     alerts_html = ""
     items = []
     for d in sorted(OUT_DIR.iterdir()):
@@ -174,7 +189,7 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     out = site_dir / "index.html"
     built = datetime.now(ZoneInfo(tz)).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")
     out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", status_html + alerts_html))
-    print(f"wrote {out} ({len(cards)} trackers)")
+    print(f"wrote {out} ({sum(1 for c in cards if c.startswith('<div class=' + chr(34) + 'card'))} trackers)")
     return out
 
 

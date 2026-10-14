@@ -97,16 +97,7 @@ jobs:
           mkdir -p site
           python -m tracker.status site || true
           python run.py accounts --all || true
-          for d in out/*/; do
-            slug=$(basename "$d")
-            [ -f "$d/index.html" ] || continue
-            mkdir -p "site/$slug" && cp "$d/index.html" "site/$slug/index.html"
-            [ -f "$d/accounts.html" ] && cp "$d/accounts.html" "site/$slug/accounts.html"
-            [ -f "$d/analysis.html" ] && cp "$d/analysis.html" "site/$slug/analysis.html"
-            [ -f "$d/review.html" ] && cp "$d/review.html" "site/$slug/review.html"
-            [ -f "$d/claims.html" ] && cp "$d/claims.html" "site/$slug/claims.html"
-          done
-          python -m tracker.hub site
+          python -m tracker.site site      # copies every tracker's pages, puts the navigation bar on each, builds the hub
 
       - uses: actions/configure-pages@v5
         if: ${{ !cancelled() && steps.pick.outcome == 'success' }}

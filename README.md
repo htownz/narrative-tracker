@@ -109,6 +109,14 @@ the next run and the chart notes "pull still in progress". Live incidents should
 SQLite stores are committed, and a local run pushed from your PC would conflict with the job's commits. Run one-off
 incidents (fixed window) wherever you like.
 
+## Site navigation
+
+`python -m tracker.site site` assembles the published site: every tracker's pages are copied into
+`site/<slug>/` with one navigation bar on top — a tracker switcher that keeps you on the same tab (claims to
+claims, timing to timing), tabs for the tracker's pages, the hub and the amplifier map — and the hub is built
+with its cards grouped into races and people, issues and archive, each card linking straight to the
+tracker's pages. The bar hides itself in video mode (`?video=1`).
+
 ## Pages each tracker produces
 
 | File | What it is |
