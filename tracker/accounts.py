@@ -5,7 +5,7 @@
 
 Roles (per account, per incident), from the stored posts and edges:
   originator  — wrote the first post in a same-words cluster, or a post that >= 2 others quoted/replied to
-  bridge      — quoted/replied to an earlier post and took it to >= 3x its views (and >= 20K views)
+  bridge      — quoted/replied to an earlier post and took it to >= 2x its views (and >= 10K views)
   copier      — half or more of their posts repeat someone else's words
   pushback    — >= 60% of their posts are in the pushback lane
   poster      — everyone else
@@ -26,7 +26,7 @@ from .store import Store, parse_created_at
 
 ROLE_ORDER = ["originator", "bridge", "pushback", "copier", "poster"]
 ROLE_COLOR = {"originator": "#e08a2e", "bridge": "#3987e5", "copier": "#ffffff", "pushback": "#2fbf8c", "poster": "#7c7c78"}
-BRIDGE_LIFT, BRIDGE_MIN_VIEWS, FIRST_MOVER_N = 3.0, 10_000, 5
+BRIDGE_LIFT, BRIDGE_MIN_VIEWS, FIRST_MOVER_N = 2.0, 10_000, 5
 
 
 def _account_age_years(raw: str | None) -> float | None:
@@ -43,18 +43,21 @@ def _account_age_years(raw: str | None) -> float | None:
 def account_table(inc: Incident) -> list[dict[str, Any]]:
     store = Store(inc.db_path)
     lane_keys = {l["key"] for l in inc.lane_table()}
-    posts = [p for p in store.all_posts()
-             if p["created_at"] and int(p["view_count"] or 0) >= inc.min_views and p["lane"] in lane_keys]
+    everything = [p for p in store.all_posts() if p["created_at"]]
     store.close()
+    posts = [p for p in everything if int(p["view_count"] or 0) >= inc.min_views and p["lane"] in lane_keys]
     by_id = {p["id"]: p for p in posts}
+    # lift is measured against the quoted post wherever it lives (any lane, 'other', or a reference row):
+    # a bridge is an account that took a small post big, and small posts are mostly outside the lanes
+    any_by_id = {p["id"]: p for p in everything}
 
     # edges: child -> parent (quote / reply), copy -> origin
     children: dict[str, list[dict]] = defaultdict(list)
     copies_of: dict[str, list[dict]] = defaultdict(list)
     for p in posts:
-        parent = by_id.get(p["quoted_id"] or "") or by_id.get(p["in_reply_to_id"] or "")
+        parent = any_by_id.get(p["quoted_id"] or "") or any_by_id.get(p["in_reply_to_id"] or "")
         p["_parent"] = parent
-        if parent:
+        if parent and parent["id"] in by_id:
             children[parent["id"]].append(p)
         if p["copy_origin"] and p["copy_origin"] in by_id:
             copies_of[p["copy_origin"]].append(p)
@@ -84,7 +87,7 @@ def account_table(inc: Incident) -> list[dict[str, Any]]:
         if p["copy_origin"]:
             a["copied"] += 1
         par = p["_parent"]
-        if par:
+        if par and int(par["view_count"] or 0) >= 100:   # unknown/zero parent views would make any quote look like a lift
             lift = int(p["view_count"] or 0) / max(1, int(par["view_count"] or 0))
             a["max_lift"] = max(a["max_lift"], lift)
             if lift >= BRIDGE_LIFT and int(p["view_count"] or 0) >= BRIDGE_MIN_VIEWS and par["author_handle"] != h:
@@ -96,6 +99,9 @@ def account_table(inc: Incident) -> list[dict[str, Any]]:
             a["top_post"] = {"id": p["id"], "views": int(p["view_count"] or 0), "lane": p["lane"],
                              "text": (p["text"] or "")[:200], "url": p["url"], "t": p["created_at"]}
 
+    edges = [(p, p["_parent"]) for p in posts if p["_parent"] and int(p["_parent"]["view_count"] or 0) >= 100
+             and p["_parent"]["author_handle"] != p["author_handle"]]
+    lifted = sum(1 for p, par in edges if int(p["view_count"] or 0) > int(par["view_count"] or 0))
     rows = []
     for a in acc.values():
         n = a["posts"]
@@ -118,6 +124,7 @@ def account_table(inc: Incident) -> list[dict[str, Any]]:
         a["max_lift"] = round(a["max_lift"], 1)
         rows.append(a)
     rows.sort(key=lambda r: -r["reach"])
+    account_table.last_edge_stats = {"edges": len(edges), "lifted": lifted}
     return rows
 
 
@@ -171,6 +178,7 @@ def _mix(lanes: dict[str, int], colors: dict[str, str], labels: dict[str, str]) 
 
 
 def render_html(inc: Incident, rows: list[dict[str, Any]], top_n: int = 80) -> Path:
+    es = getattr(account_table, "last_edge_stats", {"edges": 0, "lifted": 0})
     lanes = inc.lane_table()
     colors = {l["key"]: l["color"] for l in lanes}
     labels = {l["key"]: l["label"] for l in lanes}
@@ -197,8 +205,9 @@ def render_html(inc: Incident, rows: list[dict[str, Any]], top_n: int = 80) -> P
 <a class="back" href="./">← chart</a>
 <h1>Who moved it: {html.escape(inc.title)}</h1>
 <p class="sub">Every account with a post at {inc.min_views:,}+ views in a lane, ranked by reach (their own views plus the views of posts that quoted, replied to or copied them).
-Originator: first post in a same-words cluster, or quoted by two or more. Bridge: quoted an earlier post and took it to 3x its views. Copier: half or more of their posts repeat someone else's words. Pushback: most of their posts argue against the story.
-Lane mix is coloured by lane; "first in" lists lanes where they were among the first five posts.</p>
+Originator: first post in a same-words cluster, or quoted by two or more. Bridge: quoted an earlier post and took it to 2x its views. Copier: half or more of their posts repeat someone else's words. Pushback: most of their posts argue against the story.
+Lane mix is coloured by lane; "first in" lists lanes where they were among the first five posts.
+Quote lift: {es["lifted"]} of {es["edges"]} quotes and replies out-viewed the post they quoted — {"bridges are rare here; attention flows from big accounts down to small posts, not up" if es["edges"] and es["lifted"] / es["edges"] < 0.1 else "small posts get lifted fairly often in this story"}.</p>
 <div class="legend">{legend}</div>
 <div class="wrap"><table><thead><tr><th class="n">#</th><th>Account</th><th>Role</th><th class="n">Posts</th><th class="n">Own views</th><th class="n">Downstream</th><th class="n">Reach</th><th>Lane mix</th><th class="n">Max lift</th><th>First in</th><th>Top post</th></tr></thead>
 <tbody>{"".join(trs)}</tbody></table></div>
