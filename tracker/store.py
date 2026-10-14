@@ -180,12 +180,12 @@ class Store:
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def unlabeled_refs(self, min_views: int, window_start_utc: str) -> list[dict[str, Any]]:
+    def unlabeled_refs(self, min_views: int, window_start_utc: str, include_labeled: bool = False) -> list[dict[str, Any]]:
         """Reference-only posts (quoted / replied-to) that sit inside the window and clear the threshold —
         they get drawn, so they need a lane too."""
         rows = self.conn.execute(
-            "SELECT * FROM posts WHERE in_dataset=0 AND view_count >= ? AND created_at >= ? AND lane IS NULL "
-            "ORDER BY view_count DESC",
+            "SELECT * FROM posts WHERE in_dataset=0 AND view_count >= ? AND created_at >= ? "
+            + ("" if include_labeled else "AND lane IS NULL ") + "ORDER BY view_count DESC",
             (min_views, window_start_utc),
         ).fetchall()
         return [dict(r) for r in rows]

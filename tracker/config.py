@@ -148,9 +148,17 @@ def load_incident(path: str | Path) -> Incident:
 def save_lanes(incident: Incident, lanes: list[dict[str, Any]]) -> None:
     """Write a discovered lane list back into the incident YAML (keeps everything else)."""
     assert incident.path is not None
-    raw = yaml.safe_load(incident.path.read_text())
-    raw["lanes"] = lanes
-    incident.path.write_text(yaml.safe_dump(raw, sort_keys=False, allow_unicode=True, width=100))
+    text = incident.path.read_text()
+    block = yaml.safe_dump({"lanes": lanes}, sort_keys=False, allow_unicode=True, width=100).rstrip() + "\n"
+    import re
+    if re.search(r"^lanes:\s*\[\s*\]\s*$", text, flags=re.M):
+        # keep comments and formatting: swap only the empty lanes line
+        text = re.sub(r"^lanes:\s*\[\s*\]\s*$", block.rstrip(), text, count=1, flags=re.M)
+        incident.path.write_text(text)
+    else:
+        raw = yaml.safe_load(text)
+        raw["lanes"] = lanes
+        incident.path.write_text(yaml.safe_dump(raw, sort_keys=False, allow_unicode=True, width=100))
     incident.lanes = lanes
 
 

@@ -168,7 +168,7 @@ def classify(inc: Incident, relabel: bool = False) -> None:
     from datetime import datetime, timezone
     from zoneinfo import ZoneInfo
     window_start = datetime.fromisoformat(inc.start).replace(tzinfo=ZoneInfo(inc.timezone)).astimezone(timezone.utc).isoformat()
-    posts += store.unlabeled_refs(inc.min_views, window_start)
+    posts += store.unlabeled_refs(inc.min_views, window_start, include_labeled=relabel)
     if not posts:
         print("nothing to classify")
         store.close()

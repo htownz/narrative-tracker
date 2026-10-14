@@ -131,6 +131,12 @@
   posts.forEach(p => { p.ts = +new Date(p.t); p.isCopy = !!p.copy_origin; });
   const byId = Object.fromEntries(posts.map(p => [p.id, p]));
   const drawn = posts.filter(p => laneByKey[p.lane]);           // 'other' lane is not drawn
+  if (!drawn.length) {
+    const a = d3.select('#app');
+    a.append('h1').text(meta.title);
+    a.append('p').attr('class', 'sub').text(lanes.length ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
+    return;
+  }
   const drawnIds = new Set(drawn.map(p => p.id));
   const links = edges.filter(e => drawnIds.has(e.src) && drawnIds.has(e.dst));
   const tMin = d3.min(drawn, p => p.ts), tMax = d3.max(drawn, p => p.ts);

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from typing import Any
 
@@ -86,7 +87,7 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
             "window": {"start": inc.start, "end": inc.end, "tz": inc.timezone},
             "min_views": inc.min_views,
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "pulled_at": store.get_meta("pulled_at"),
+            "pulled_at": (lambda v: (v + "+00:00") if v and not re.search(r"(Z|[+-]\d\d:\d\d)$", v) else v)(store.get_meta("pulled_at")),
             "source": "SYNTHETIC SAMPLE — not real posts" if synthetic else "Data via twitterapi.io",
             "synthetic": synthetic,
             "credit": "",

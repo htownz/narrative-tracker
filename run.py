@@ -23,6 +23,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+for _stream in (sys.stdout, sys.stderr):   # Windows consoles default to a legacy code page; the logs use → and ¢
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 from tracker import dedup as dedup_mod  # noqa: E402
 from tracker import export as export_mod  # noqa: E402
@@ -110,10 +115,12 @@ def main() -> None:
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
         from tracker import accounts, analysis, alerts
-        accounts.accounts(inc)
-        analysis.analysis(inc)
-        alerts.alerts_cmd(inc)
-        lanes_mod.other_report(inc)
+        for name, fn in (("accounts", accounts.accounts), ("analysis", analysis.analysis),
+                         ("alerts", alerts.alerts_cmd), ("report", lanes_mod.other_report)):
+            try:
+                fn(inc)
+            except Exception as e:  # best-effort extras; the chart and data are already written
+                print(f"[{name}] failed: {type(e).__name__}: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

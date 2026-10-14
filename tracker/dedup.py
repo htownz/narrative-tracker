@@ -1,13 +1,14 @@
 """Near-duplicate detection: 'same words' clusters.
 
-Two posts are the same words when the Jaccard similarity of their word-shingle sets is >= threshold
-(default 0.90) after normalising away URLs, @mentions, case and punctuation. Each cluster's origin is
-the earliest post; every other member gets copy_origin = origin id.
+Two posts are the same words when at least `similarity` (default 0.90) of the shorter post's words appear
+in the other (word-multiset containment), after normalising away URLs, @mentions, case and punctuation —
+the original chart's "90% or more the same words" rule. Word shingles only propose candidate pairs.
+Each cluster's origin is the earliest post; every other member gets copy_origin = origin id.
 """
 from __future__ import annotations
 
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Any
 
 from .config import Incident
@@ -41,6 +42,14 @@ def jaccard(a: set[str], b: set[str]) -> float:
     return inter / (len(a) + len(b) - inter)
 
 
+def containment(a: Counter, b: Counter) -> float:
+    """Share of the shorter post's words (with multiplicity) that the other post also has."""
+    if not a or not b:
+        return 0.0
+    inter = sum((a & b).values())
+    return inter / min(sum(a.values()), sum(b.values()))
+
+
 class UnionFind:
     def __init__(self):
         self.parent: dict[str, str] = {}
@@ -62,10 +71,12 @@ def find_copies(posts: list[dict[str, Any]], k: int = 3, threshold: float = 0.90
                 min_words: int = 6) -> dict[str, str | None]:
     """Return {post_id: origin_id or None}. Posts shorter than min_words never cluster (too generic)."""
     sh: dict[str, set[str]] = {}
+    bag: dict[str, Counter] = {}
     for p in posts:
         words = normalise(p["text"])
         if len(words) >= min_words:
             sh[p["id"]] = shingles(words, k)
+            bag[p["id"]] = Counter(words)
 
     # inverted index on shingles -> candidate pairs only (avoids the full N^2)
     index: dict[str, list[str]] = defaultdict(list)
@@ -76,7 +87,7 @@ def find_copies(posts: list[dict[str, Any]], k: int = 3, threshold: float = 0.90
     uf = UnionFind()
     checked: set[tuple[str, str]] = set()
     for g, members in index.items():
-        if len(members) < 2 or len(members) > 2000:
+        if len(members) < 2 or len(members) > 400:   # a 3-gram shared by 400+ posts is boilerplate, not a copy
             continue
         for i in range(len(members)):
             for j in range(i + 1, len(members)):
@@ -85,7 +96,7 @@ def find_copies(posts: list[dict[str, Any]], k: int = 3, threshold: float = 0.90
                 if pair in checked:
                     continue
                 checked.add(pair)
-                if jaccard(sh[a], sh[b]) >= threshold:
+                if containment(bag[a], bag[b]) >= threshold:
                     uf.union(a, b)
 
     by_time = {p["id"]: p["created_at"] or "" for p in posts}
@@ -112,5 +123,5 @@ def dedup(inc: Incident) -> None:
     store.set_copy_origins(origins)
     n_copies = sum(1 for v in origins.values() if v)
     n_clusters = len({v for v in origins.values() if v})
-    print(f"same-words: {n_copies} repeated posts across {n_clusters} clusters (k={k}, jaccard>={thr})")
+    print(f"same-words: {n_copies} repeated posts across {n_clusters} clusters (word containment >= {thr}, {k}-gram candidates)")
     store.close()

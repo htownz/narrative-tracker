@@ -72,6 +72,7 @@ jobs:
           [ "$OK" -gt 0 ] || { echo "::error::every incident failed"; exit 1; }
 
       - name: Commit data and output
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}   # save pull progress even when every incident failed
         run: |
           git config user.name "narrative-tracker bot"
           git config user.email "actions@users.noreply.github.com"
@@ -81,6 +82,7 @@ jobs:
           git push
 
       - name: Assemble site
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}
         run: |
           mkdir -p site
           python run.py accounts --all || true
@@ -94,12 +96,15 @@ jobs:
           python -m tracker.hub site
 
       - uses: actions/configure-pages@v5
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}
         with:
           enablement: true
 
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}
         with:
           path: site
 
       - id: deployment
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' }}
         uses: actions/deploy-pages@v4

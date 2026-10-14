@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import sys
 import time
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Iterator
 from zoneinfo import ZoneInfo
 
@@ -59,9 +59,13 @@ class TwitterAPI:
             if r.status_code >= 500:
                 time.sleep(min(30, 2 ** attempt))
                 continue
-            if r.status_code == 401 or r.status_code == 403:
+            if r.status_code in (401, 403):
                 sys.exit(f"twitterapi.io refused the key ({r.status_code}): {r.text[:200]}")
-            r.raise_for_status()
+            if r.status_code == 402 or (r.status_code == 400 and "credit" in r.text.lower()):
+                sys.exit(f"twitterapi.io: out of credits ({r.status_code}): {r.text[:200]} — recharge at https://twitterapi.io/pricing; "
+                         f"progress is saved, rerun to resume")
+            if r.status_code >= 400:
+                sys.exit(f"twitterapi.io error {r.status_code}: {r.text[:300]}")
             return r.json()
         raise RuntimeError(f"twitterapi.io kept failing: {url} {params}")
 
@@ -210,9 +214,14 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
             if out_of_time():
                 complete = False
             else:
-                log(f"fetching {len(missing)} referenced posts (replied-to parents), {-(-len(missing) // 50)} calls")
-                fetched = api.lookup(missing)
-                store.upsert_posts([flatten_tweet(t, in_dataset=0) for t in fetched])
+                gone = set(store.get_meta("refs_unavailable", []) or [])
+                missing = [m for m in missing if m not in gone]
+                if missing:
+                    log(f"fetching {len(missing)} referenced posts (replied-to parents), {-(-len(missing) // 50)} calls")
+                    fetched = api.lookup(missing)
+                    store.upsert_posts([flatten_tweet(t, in_dataset=0) for t in fetched])
+                    got = {str(t.get("id")) for t in fetched}
+                    store.set_meta("refs_unavailable", sorted(gone | {m for m in missing if m not in got}))
                 store.set_meta("refs_fetched", True)
         else:
             store.set_meta("refs_fetched", True)
@@ -222,7 +231,7 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
     store.set_meta("api_calls", prev_calls + api.calls)
     store.set_meta("est_cost_usd", round(prev_cost + api.est_cost_usd, 4))
     if complete:
-        store.set_meta("pulled_at", datetime.utcnow().isoformat())
+        store.set_meta("pulled_at", datetime.now(timezone.utc).isoformat())
         store.set_meta("synthetic", False)
     n_in = store.count("in_dataset=1")
     n_thr = store.count(f"in_dataset=1 AND view_count >= {inc.min_views}")

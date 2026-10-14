@@ -111,11 +111,12 @@ def detect(inc: Incident) -> list[dict[str, Any]]:
     if len(unlaned) >= 3:
         if inc.classifier.get("provider", "claude") == "claude" and env("ANTHROPIC_API_KEY"):
             try:
-                clusters = _cluster_claude(inc, unlaned)
-            except SystemExit:
-                clusters = _cluster_fallback(unlaned, float(cfg["cluster_similarity"]))
+                clusters = _cluster_claude(inc, unlaned[:150])
+            except BaseException as e:  # no key, API error, bad JSON — never let early warning break the run
+                print(f"  claude clustering unavailable ({type(e).__name__}); using word overlap", file=sys.stderr)
+                clusters = _cluster_fallback(unlaned[:300], float(cfg["cluster_similarity"]))
         else:
-            clusters = _cluster_fallback(unlaned, float(cfg["cluster_similarity"]))
+            clusters = _cluster_fallback(unlaned[:300], float(cfg["cluster_similarity"]))
     by_id = {p["id"]: p for p in unlaned}
     for c in clusters:
         members = [by_id[i] for i in c["post_ids"] if i in by_id]
