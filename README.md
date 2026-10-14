@@ -126,8 +126,10 @@ incidents (fixed window) wherever you like.
 
 Open `<slug>/review.html`, change the dropdown on any mislabelled post, copy the box, paste into
 `incidents/<slug>.overrides.csv` (`post_id,lane`, one per line) and commit. `classify` applies the file last on
-every run, so corrections survive re-labelling and live refreshes. If a whole lane is wrong, edit its label or
-description in the YAML and run `classify --relabel`.
+every run, so corrections survive re-labelling and live refreshes. The newest 20 corrections also go into the
+classification prompt as labelled examples, so each one teaches the classifier about the posts that follow,
+not only the post it fixed. If a whole lane is wrong, edit its label or description in the YAML and run
+`classify --relabel`.
 
 ## View counts
 

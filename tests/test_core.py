@@ -255,3 +255,19 @@ def test_dedup_draws_small_copies_with_the_rings_lane(tmp_path):
     assert drawn["2"]["lane"] == "x" and drawn["2"]["lane_source"] == "copy" and drawn["2"]["copy_origin"] == "1"
     assert st.conn.execute("select copy_origin from posts where id='4'").fetchone()[0] is None
     st.close()
+
+
+def test_overrides_become_few_shot_examples(tmp_path):
+    from tracker import lanes
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    st.upsert_posts([flatten_tweet({"id": str(i), "text": f"example post {i}", "createdAt": "Mon Oct 12 23:32:30 +0000 2026", "viewCount": 5000, "author": {"userName": "h"}}) for i in range(25)])
+    (ROOT / "incidents" / f"{inc.slug}.overrides.csv").write_text("post_id,lane\n" + "".join(f"{i},{'x' if i % 2 else 'pushback'}\n" for i in range(25)) + "99,nope\n", encoding="utf-8")
+    try:
+        ex = lanes.few_shot(inc, st, {"x", "pushback", "other"})
+        assert ex.count("\n@h | ") == lanes.EXAMPLES_MAX and ex.splitlines()[2].startswith("@h | example post 24 -> ")   # newest first, capped
+        assert "nope" not in ex and lanes.few_shot(inc, None, {"x"}) == ""
+        assert "{examples}" in lanes.CLASSIFY_USER and lanes.CLASSIFY_USER.format(subject="s", lanes="", pushback="", examples="", posts="")
+    finally:
+        (ROOT / "incidents" / f"{inc.slug}.overrides.csv").unlink()
+        st.close()

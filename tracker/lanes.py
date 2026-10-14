@@ -45,11 +45,32 @@ Lanes:
 {lanes}
 pushback: {pushback}
 other: off-topic or no fit
-
+{examples}
 Posts (id | handle | text):
 {posts}
 
 Return JSON: {{"assignments": {{"<post id>": "<lane key>", ...}}}} covering every post id listed."""
+
+EXAMPLES_MAX = 20
+
+
+def few_shot(inc: Incident, store: Store | None, valid: set[str]) -> str:
+    """Human corrections (incidents/<slug>.overrides.csv) as labelled examples in the prompt, newest first,
+    so a correction teaches the classifier instead of only patching one post."""
+    if store is None:
+        return ""
+    from .review import load_overrides
+    ov = [(pid, lane) for pid, lane in load_overrides(inc).items() if lane in valid]
+    if not ov:
+        return ""
+    lines = []
+    for pid, lane in reversed(ov[-EXAMPLES_MAX:]):
+        row = store.conn.execute("SELECT author_handle, text FROM posts WHERE id=?", (pid,)).fetchone()
+        if row and row["text"]:
+            lines.append(f"@{row['author_handle']} | {_clean(row['text'], 200)} -> {lane}")
+    if not lines:
+        return ""
+    return "\nExamples of correct labels from human review (handle | text -> lane):\n" + "\n".join(lines) + "\n"
 
 
 def _client():
@@ -148,6 +169,9 @@ def classify_claude(inc: Incident, posts: list[dict[str, Any]], store: Store | N
     lanes = [l for l in inc.lane_table() if l["key"] != PUSHBACK_KEY]
     lane_text = "\n".join(f"{l['key']}: {l['label']} — {l['description']}" for l in lanes)
     valid = {l["key"] for l in lanes} | {PUSHBACK_KEY, OTHER_KEY}
+    examples = few_shot(inc, store, valid)
+    if examples:
+        print(f"  using {examples.count(chr(10) + '@')} human-reviewed examples in the prompt")
     out: dict[str, str] = {}
     for i in range(0, len(posts), batch):
         chunk = posts[i:i + batch]
@@ -155,7 +179,7 @@ def classify_claude(inc: Incident, posts: list[dict[str, Any]], store: Store | N
         res = _ask(client, model, CLASSIFY_SYSTEM,
                    CLASSIFY_USER.format(subject=inc.subject, lanes=lane_text,
                                         pushback=inc.pushback.get("description", "doubting or mocking the story"),
-                                        posts=listing))
+                                        examples=examples, posts=listing))
         got = res.get("assignments") or {}
         part: dict[str, str] = {}
         for p in chunk:
