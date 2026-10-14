@@ -44,11 +44,12 @@ jobs:
             INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | tr '\n' ' ' || true)
             case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
           fi
-          INC="${INC:-$LIVE}"
+          case " $INC " in *" none "*) INC="";; *) INC="${INC:-$LIVE}";; esac
           echo "incidents=$INC" >> "$GITHUB_OUTPUT"
-          echo "running: $INC"
+          echo "running: ${INC:-<deploy only>}"
 
       - name: Check secrets
+        if: ${{ steps.pick.outputs.incidents != '' }}
         env:
           TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -57,6 +58,7 @@ jobs:
           [ -n "$ANTHROPIC_API_KEY" ] || { echo "::error::ANTHROPIC_API_KEY secret is not set (Settings > Secrets and variables > Actions)"; exit 1; }
 
       - name: Pull, classify, dedup, export, render (each incident)
+        if: ${{ steps.pick.outputs.incidents != '' }}
         env:
           TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
