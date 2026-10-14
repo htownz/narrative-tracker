@@ -16,6 +16,7 @@
   python run.py review    incidents/x.yaml                # lane spot-check page + overrides builder -> out/<slug>/review.html
   python run.py claims    incidents/x.yaml                # what is being claimed: extract + group claims -> out/<slug>/claims.html
   python run.py control   incidents/x.yaml                # narrative-control score per lane and claim -> out/<slug>/control.json (shown on analysis.html)
+  python run.py features  incidents/x.yaml                # prediction feature rows -> data/features/<slug>.csv; "likely to grow" -> out/<slug>/features.json
   python run.py refresh-views incidents/x.yaml            # re-look-up the top 500 posts so view counts stop being first-pull values
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
@@ -43,7 +44,7 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "control", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "control", "features", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -108,6 +109,9 @@ def main() -> None:
     elif args.command == "control":
         from tracker import control
         control.control(inc)
+    elif args.command == "features":
+        from tracker import features
+        features.features(inc)
     elif args.command == "refresh-views":
         pull_mod.refresh_views(inc, pause=args.pause)
     elif args.command == "synth":
@@ -129,10 +133,10 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
-        from tracker import accounts, analysis, alerts, claims, control, review
+        from tracker import accounts, analysis, alerts, claims, control, features, review
         for name, fn in (("accounts", accounts.accounts), ("claims", claims.claims), ("control", control.control),
-                         ("analysis", analysis.analysis), ("review", review.review), ("alerts", alerts.alerts_cmd),
-                         ("report", lanes_mod.other_report)):
+                         ("features", features.features), ("analysis", analysis.analysis), ("review", review.review),
+                         ("alerts", alerts.alerts_cmd), ("report", lanes_mod.other_report)):
             try:
                 fn(inc)
             except Exception as e:  # best-effort extras; the chart and data are already written

@@ -73,7 +73,7 @@ basis, and sources. Stored with the claim; shown on the claims page and surfaced
 
 Verdicts are advisory and sourced; the page shows the sources, not just the label.
 
-## 6. Prediction (`tracker/features.py`, then a model)
+## 6. Prediction (`tracker/features.py`, then a model) — feature table built Oct 14; model after 2-3 weeks of rows
 
 Every run appends one row per canonical claim (and per lane) to `data/features/<slug>.csv`:
 age in hours, posts and views so far, growth over the last 1h/6h/24h, distinct accounts,

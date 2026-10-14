@@ -92,6 +92,25 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
         for r in c.get("flagged", [])[:3]:
             page = "analysis.html" if r["kind"] == "lane" else "claims.html"
             pushes.append(f'<li><b>{html.escape(r["label"])}</b> <span style="color:#7c7c78">{r["kind"]} in <a href="{html.escape(d.name)}/{page}" style="color:#8cf">{html.escape(d.name)}</a> · control {r["score"]} · {r["posts"]} posts · {r["accounts"]} accounts</span><br><span style="color:#b9b9b3;font-size:12px">{html.escape("; ".join(r["why"]))}</span></li>')
+    # gaining now: claims with the most momentum over the last six hours (tracker.features heuristic, until the model exists)
+    gaining = []
+    for d in sorted(OUT_DIR.iterdir()):
+        fp = d / "features.json"
+        if not fp.exists():
+            continue
+        try:
+            fj = json.loads(fp.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        for r in fj.get("likely_to_grow", [])[:3]:
+            if r["accounts"] >= 3 and r["views_6h"] >= 20_000:
+                gaining.append((r["heuristic"], d.name, r))
+    gaining.sort(key=lambda g: -g[0])
+    if gaining:
+        lis = "".join(f'<li><b>{html.escape(r["label"])}</b> <span style="color:#7c7c78">in <a href="{html.escape(slug)}/claims.html" style="color:#8cf">{html.escape(slug)}</a> · {r["views_6h"]:,} views in 6h'
+                      f'{" · " + str(r["momentum_6h"]) + "× the prior 6h" if r["momentum_6h"] not in (None, 99.0) else " · new"} · {r["accounts"]} accounts{" · after a calendar event" if r["event_follow"] else ""}</span></li>'
+                      for _, slug, r in gaining[:6])
+        alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#8fb4ff">Gaining now</h2><p class="lead" style="margin:0 0 6px">Claims with the most momentum over the last six hours of data, from more than one account.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
     if pushes:
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff5252">Coordinated pushes</h2><p class="lead" style="margin:0 0 6px">Lanes and claims whose spread looks engineered: copies across accounts, new accounts, bursts, clockwork timing.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(pushes) + "</ul>"
     # run health strip from status.json (written by tracker.status just before the hub)

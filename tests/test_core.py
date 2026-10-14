@@ -301,3 +301,19 @@ events:
     assert events.nearest_before("2026-10-08T19:00:00+00:00", ev)["label"] == "Poll"
     assert events.nearest_before("2026-10-08T21:00:00+00:00", ev) is None            # 7h later: outside the follow window
     assert events.nearest_before("2026-10-09T23:00:00+00:00", ev)["label"] == "Rally"  # anywhere inside an all-day event
+
+
+# ------------------------------------------------------------------ prediction features
+def test_features_rank_and_outcomes():
+    from tracker import features
+    from datetime import datetime
+    base = {"kind": "claim", "accounts": 4, "views_6h": 10_000, "momentum_6h": 2.0, "control": 10, "event_follow": 0}
+    ranked = features.rank_now([{**base, "key": "a"}, {**base, "key": "b", "views_6h": 50_000}, {**base, "key": "c", "accounts": 1},
+                                {**base, "key": "d", "control": 60}, {**base, "key": "lane", "kind": "lane"}])
+    assert {r["key"] for r in ranked[:2]} == {"b", "d"} and all(r["key"] not in ("c", "lane") for r in ranked)
+    t0 = "2026-10-10T12:00:00+00:00"
+    rows = [{"asof": t0, "kind": "claim", "key": k, "gain_24h": None, "gain_72h": None, "top5_24h": None} for k in "abcdefg"]
+    groups = {"claim": {k: [{"created_at": f"2026-10-10T{13 + i:02d}:00:00+00:00", "view_count": (ord(k) - 96) * 1000}] for i, k in enumerate("abcdefg")}}
+    n = features._label_outcomes(rows, groups, datetime.fromisoformat("2026-10-11T13:00:00+00:00"))   # 25h later: 24h outcome only
+    assert n == 7 and rows[6]["gain_24h"] == 7000 and rows[6]["top5_24h"] == 1 and rows[0]["top5_24h"] == 0 and rows[0]["gain_72h"] is None
+    assert features._label_outcomes(rows, groups, datetime.fromisoformat("2026-10-11T14:00:00+00:00")) == 0       # already filled

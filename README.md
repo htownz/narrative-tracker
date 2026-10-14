@@ -203,6 +203,17 @@ hours after vs. the 12 before, per lane); an "after: <event>" tag on canonical c
 within 6 hours of one; and the control score, which stops counting a burst that follows an event. Times
 taken from the first post on X are a lower bound for the moment itself — put the real time in when known.
 
+## Prediction features
+
+`python run.py features incidents/x.yaml` (part of `all`) appends one row per lane and per canonical claim
+to `data/features/<slug>.csv` every run: age, posts, views, accounts, copies, first poster's views and
+followers, views in the last 1/6/24 hours, 6-hour momentum, control score, new-account share, burst,
+whether it followed a calendar event, and the Kalshi price and its 24h change. The outcome columns
+(`gain_24h`, `gain_72h`, `top5_24h`) are filled in by later runs once the store reaches 24 and 72 hours past
+the row's moment, so after two or three weeks the file is a labelled training set. Until then, a heuristic
+(6h views × momentum × accounts, unexplained bursts up-weighted) ranks claims "likely to grow" into
+`out/<slug>/features.json`, and the hub shows the strongest across trackers as "Gaining now".
+
 ## Next
 
 See `ROADMAP.md`: narrative-control score, human corrections as few-shot examples, an events calendar
