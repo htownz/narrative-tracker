@@ -1,0 +1,62 @@
+# Calibration run: reproduce @theGhostOfRiel's "Talarico incident, five days of posts" (Oct 7–12, 2026).
+# Original counts: 1,118 posts pushing the story, 286 repeated posts, 228 posts pushing back.
+# Lanes below are the original's, verbatim, so the comparison is like for like.
+
+slug: talarico-oct-2026
+title: "Talarico incident, {days} days of posts"
+subject: "James Talarico (Democratic nominee for U.S. Senate, Texas)"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views, plus every post repeating an earlier one,
+  in the lane for what it mentions. Higher and bigger means more views. White means 90% or more the same
+  words as an earlier post, with a white line back to it. Coloured lines link a post to the post it
+  quoted or replied to.
+
+window:
+  start: "2026-10-07"
+  end: "2026-10-12"
+timezone: America/Chicago
+
+queries:
+  - 'Talarico'
+  - '@jamestalarico'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+lanes:
+  - key: missing
+    label: "He's missing, \"Where is Talarico?\""
+    description: Posts asking where Talarico is, saying he has vanished, gone quiet, or cannot be found.
+    keywords: ["where is talarico", "missing", "disappeared", "where's talarico", "gone quiet", "hasn't been seen"]
+  - key: breakdown_facility
+    label: "He had a breakdown, he's in a mental facility"
+    description: Posts claiming Talarico had a breakdown, is in rehab, a mental facility, or a psychiatric hold.
+    keywords: ["breakdown", "mental facility", "rehab", "psych", "mental health facility", "institution"]
+  - key: ohio_hospital
+    label: "He was in an Ohio mental hospital"
+    description: Posts naming an Ohio hospital or saying he was treated in Ohio.
+    keywords: ["ohio", "cleveland", "columbus hospital"]
+  - key: discharged_confirmed
+    label: "He was \"discharged\", the hospital \"confirms\" it"
+    description: Posts saying he was discharged, or that the hospital confirmed his stay or discharge.
+    keywords: ["discharged", "hospital confirms", "confirmed", "discharge"]
+  - key: lied_drop_out
+    label: "He lied and covered it up, he should drop out"
+    description: Posts saying Talarico lied, hid it, covered it up, or should drop out of the race.
+    keywords: ["lied", "cover up", "covered it up", "drop out", "hiding it", "withdraw"]
+
+pushback:
+  label: Pushback
+  description: Posts doubting or mocking the story, fact-checking it, or defending Talarico against it.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90
