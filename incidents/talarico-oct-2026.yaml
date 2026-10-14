@@ -18,7 +18,6 @@ timezone: America/Chicago
 
 queries:
   - 'Talarico'
-  - '@jamestalarico'
 
 min_faves_hint: 10
 exclude_retweets: true

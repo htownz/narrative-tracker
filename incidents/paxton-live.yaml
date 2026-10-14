@@ -20,7 +20,6 @@ queries:
   - '"Ken Paxton"'
   - '@KenPaxtonTX'
   - 'Paxton Talarico'
-  - 'Paxton Senate Texas'
 
 min_faves_hint: 10
 exclude_retweets: true

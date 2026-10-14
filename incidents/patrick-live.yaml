@@ -20,7 +20,6 @@ queries:
   - '"Dan Patrick"'
   - '@DanPatrick'
   - '"Lt. Gov. Patrick"'
-  - 'Patrick Goodwin Texas'
 
 min_faves_hint: 10
 exclude_retweets: true
