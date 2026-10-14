@@ -301,7 +301,7 @@
 
   const foot = app.append('footer');
   foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.${meta.partial ? ' Pull still in progress — counts will grow on the next run.' : ''}`);
-  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a> · <a href="review.html" style="color:var(--ink-2)">Review lanes →</a>');
+  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a> · <a href="claims.html" style="color:var(--ink-2)">What is claimed →</a> · <a href="review.html" style="color:var(--ink-2)">Review lanes →</a>');
 
   // tooltip
   const tip = d3.select('#tip');

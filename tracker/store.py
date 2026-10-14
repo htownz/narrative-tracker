@@ -38,6 +38,38 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+-- claims layer (tracker/claims.py): what each post asserts, grouped into canonical claims
+CREATE TABLE IF NOT EXISTS claims (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id TEXT NOT NULL,
+    text TEXT NOT NULL,
+    type TEXT,                -- fact | opinion | prediction | call_to_action
+    checkable INTEGER DEFAULT 0,
+    stance TEXT,              -- for | against | neutral (toward the subject)
+    entities TEXT,            -- JSON list of proper nouns
+    cluster_id INTEGER,       -- claim_clusters.id, NULL until clustered
+    extracted_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_claims_post ON claims(post_id);
+CREATE INDEX IF NOT EXISTS idx_claims_cluster ON claims(cluster_id);
+CREATE TABLE IF NOT EXISTS claims_done (   -- posts that went through extraction, including ones with no claim
+    post_id TEXT PRIMARY KEY,
+    n INTEGER,
+    at TEXT
+);
+CREATE TABLE IF NOT EXISTS claim_clusters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    text TEXT NOT NULL,       -- canonical statement
+    type TEXT,
+    checkable INTEGER DEFAULT 0,
+    stance TEXT,
+    entities TEXT,
+    verdict TEXT,             -- supported | unsupported | misleading | unverifiable (verification phase)
+    verdict_basis TEXT,
+    verdict_sources TEXT,     -- JSON list of URLs
+    verified_at TEXT,
+    created_at TEXT
+);
 """
 
 
@@ -198,6 +230,51 @@ class Store:
                 if r[col] and r[col] not in have:
                     wanted.add(r[col])
         return wanted
+
+    # ---- claims ---------------------------------------------------------------
+    def claims_pending(self, min_views: int, window_start_utc: str, limit: int) -> list[dict[str, Any]]:
+        """In-lane posts (not 'other') that have not been through claim extraction, biggest first."""
+        rows = self.conn.execute(
+            "SELECT p.* FROM posts p LEFT JOIN claims_done d ON d.post_id = p.id "
+            "WHERE d.post_id IS NULL AND p.lane IS NOT NULL AND p.lane != 'other' AND p.view_count >= ? "
+            "AND p.created_at >= ? ORDER BY p.view_count DESC LIMIT ?",
+            (min_views, window_start_utc, limit),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def add_claims(self, post_id: str, claims: list[dict[str, Any]], at: str) -> None:
+        self.conn.executemany(
+            "INSERT INTO claims (post_id, text, type, checkable, stance, entities, extracted_at) VALUES (?,?,?,?,?,?,?)",
+            [(post_id, c["text"], c.get("type"), int(bool(c.get("checkable"))), c.get("stance"),
+              json.dumps(c.get("entities") or [], ensure_ascii=False), at) for c in claims],
+        )
+        self.conn.execute("INSERT OR REPLACE INTO claims_done (post_id, n, at) VALUES (?,?,?)", (post_id, len(claims), at))
+        self.conn.commit()
+
+    def unclustered_claims(self) -> list[dict[str, Any]]:
+        return [dict(r) for r in self.conn.execute("SELECT * FROM claims WHERE cluster_id IS NULL ORDER BY id")]
+
+    def claims_all(self) -> list[dict[str, Any]]:
+        return [dict(r) for r in self.conn.execute("SELECT * FROM claims ORDER BY id")]
+
+    def clusters(self) -> list[dict[str, Any]]:
+        return [dict(r) for r in self.conn.execute("SELECT * FROM claim_clusters ORDER BY id")]
+
+    def add_cluster(self, text: str, type_: str | None, checkable: bool, stance: str | None, entities: list[str], at: str) -> int:
+        cur = self.conn.execute(
+            "INSERT INTO claim_clusters (text, type, checkable, stance, entities, created_at) VALUES (?,?,?,?,?,?)",
+            (text, type_, int(bool(checkable)), stance, json.dumps(entities or [], ensure_ascii=False), at),
+        )
+        return int(cur.lastrowid)
+
+    def assign_clusters(self, assignments: dict[int, int]) -> None:
+        self.conn.executemany("UPDATE claims SET cluster_id=? WHERE id=?", [(cid, claim_id) for claim_id, cid in assignments.items()])
+        self.conn.commit()
+
+    def set_verdict(self, cluster_id: int, verdict: str, basis: str, sources: list[str], at: str) -> None:
+        self.conn.execute("UPDATE claim_clusters SET verdict=?, verdict_basis=?, verdict_sources=?, verified_at=? WHERE id=?",
+                          (verdict, basis, json.dumps(sources), at, cluster_id))
+        self.conn.commit()
 
     def count(self, where: str = "1=1") -> int:
         return self.conn.execute(f"SELECT COUNT(*) FROM posts WHERE {where}").fetchone()[0]

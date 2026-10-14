@@ -138,6 +138,7 @@ def test_chart_template_has_data_marker_and_escapes():
 def _incident(tmp_path, start="2026-10-06", end="2026-10-13", queries=("x",), lanes_literal="lanes: []", header="") -> Incident:
     from tracker import config
     config.DATA_DIR = tmp_path
+    config.OUT_DIR = tmp_path / "out"
     y = tmp_path / "t-test.yaml"
     q = "\n".join(f"  - '{x}'" for x in queries)
     y.write_text(f"""{header}slug: t-test
@@ -155,3 +156,60 @@ pushback: {{label: Pushback, description: d}}
 """, encoding="utf-8")
     inc = load_incident(y)
     return inc
+
+
+# ------------------------------------------------------------------ claims
+class _FakeClient:
+    """Stands in for the Anthropic client: extraction returns one claim per post, clustering groups by first word."""
+    class messages:  # noqa: N801
+        @staticmethod
+        def create(model, max_tokens, system, messages):
+            import types
+            user = messages[0]["content"]
+            if "Posts (id | handle | text):" in user:
+                ids = [l.split(" | ")[0] for l in user.split("Posts (id | handle | text):\n")[1].split("\n\nReturn JSON")[0].splitlines()]
+                claims = {pid: [{"text": f"Paxton skipped debate {pid}", "type": "fact", "checkable": True, "stance": "against", "entities": ["Ken Paxton"]}]
+                          for pid in ids}
+                claims[ids[-1]] = []  # last post makes no claim
+                return types.SimpleNamespace(content=[types.SimpleNamespace(text=json.dumps({"claims": claims}))])
+            new = [l.split(" | ")[0] for l in user.split("New claims (id | text):\n")[1].split("\n\nFor each")[0].splitlines()]
+            out = {"assign": {nid: "g1" for nid in new}, "groups": {"g1": {"text": "Ken Paxton has refused every debate.", "type": "fact", "checkable": True, "stance": "against", "entities": ["Ken Paxton"]}}}
+            return types.SimpleNamespace(content=[types.SimpleNamespace(text=json.dumps(out))])
+
+
+def test_claims_lexical_helpers_and_validation():
+    from tracker import claims
+    a, b = claims.tokens("Ken Paxton refused every debate invitation."), claims.tokens("Paxton has refused every debate")
+    assert claims.jaccard(a, b) >= 0.6 and claims.jaccard(a, set()) == 0.0
+    assert claims._valid_claim({"text": "  Paxton   lied ", "type": "FACT", "checkable": "yes", "stance": "Against", "entities": "x"}) == \
+        {"text": "Paxton lied", "type": "fact", "checkable": True, "stance": "against", "entities": []}
+    assert claims._valid_claim({"text": "ok"}) is None and claims._valid_claim("nope") is None
+
+
+def test_claims_extract_cluster_summarise_incrementally(tmp_path, monkeypatch):
+    from tracker import claims
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test")
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    rows = [flatten_tweet({"id": str(i), "text": f"post {i}", "createdAt": f"Mon Oct 12 {10 + i:02d}:00:00 +0000 2026", "viewCount": 5000 * (i + 1),
+                           "author": {"userName": f"u{i % 2}"}}) for i in range(4)]
+    st.upsert_posts(rows)
+    st.set_lanes({"0": "x", "1": "x", "2": "pushback", "3": "other"}, "claude")
+    assert claims.extract(inc, st, _FakeClient()) == 3                      # 'other' is skipped
+    assert st.conn.execute("select count(*) from claims").fetchone()[0] == 2   # the last post made no claim
+    assert claims.extract(inc, st, _FakeClient()) == 0                      # nothing pending the second time
+    stats = claims.cluster(inc, st, _FakeClient())
+    assert stats["new_clusters"] == 1 and stats["model"] == 2
+    # a later claim with nearly the same words joins lexically, without the model
+    st.add_claims("3", [{"text": "Ken Paxton has refused every debate", "type": "fact", "checkable": True, "stance": "against"}], "2026-10-13T00:00:00+00:00")
+    stats = claims.cluster(inc, st, None)
+    assert stats["lexical"] == 1 and stats["model"] == 0
+    data = claims.summarise(inc, st)
+    c = data["clusters"][0]
+    # extraction went biggest-first, so post 0 (smallest) was the one that made no claim; posts 1, 2, 3 remain
+    assert data["stats"]["clusters"] == 1 and c["posts"] == 3 and c["accounts"] == 2 and c["first_handle"] == "u1"
+    assert c["views"] == 10000 + 15000 + 20000 and c["pushback_posts"] == 1 and [l["key"] for l in c["lanes"]][0] == "x"
+    page = claims.render_html(inc, data)
+    text = page.read_text(encoding="utf-8")
+    assert "Ken Paxton has refused every debate." in text and "checkable" in text
+    st.close()

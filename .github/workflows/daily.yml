@@ -104,6 +104,7 @@ jobs:
             [ -f "$d/accounts.html" ] && cp "$d/accounts.html" "site/$slug/accounts.html"
             [ -f "$d/analysis.html" ] && cp "$d/analysis.html" "site/$slug/analysis.html"
             [ -f "$d/review.html" ] && cp "$d/review.html" "site/$slug/review.html"
+            [ -f "$d/claims.html" ] && cp "$d/claims.html" "site/$slug/claims.html"
           done
           python -m tracker.hub site
 

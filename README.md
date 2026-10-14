@@ -116,6 +116,7 @@ incidents (fixed window) wherever you like.
 | `accounts.html` | who moved it: roles (originator / bridge / copier / pushback), reach, lane mix, first movers |
 | `analysis.html` | lane timing, half-life, pushback lag and share, lane-velocity vs market price lead/lag |
 | `review.html` | lane spot-check: 20 posts per lane with a dropdown; builds the lines for `incidents/<slug>.overrides.csv` |
+| `claims.html` | what is being claimed: atomic claims extracted from every in-lane post, grouped into canonical claims with type, checkable flag, stance, first poster, spread |
 | `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
 | `<slug>.mp4` | `python run.py video` — 60-second play-through, 1920x1296 |
 
@@ -161,8 +162,23 @@ alerts: { window_hours: 24, min_posts: 8, min_views: 100000, surge_ratio: 3.0 }
 ```
 A new-story alert includes a ready-to-paste lane block; add it to the YAML and run `classify --relabel`.
 
+## Claims
+
+Lanes say what a post argues; claims say what it asserts is true. `python run.py claims incidents/x.yaml`
+(also part of `all`) sends every in-lane post with `claims.min_views`+ views to Claude once, gets back
+0–3 atomic claims (text, `fact`/`opinion`/`prediction`/`call_to_action`, checkable, stance, entities),
+and groups them into canonical claims: a new claim joins an existing canonical claim when the words
+nearly match, otherwise Claude decides whether it is the same assertion or a new one. Everything is
+incremental and lives in the `claims`, `claims_done` and `claim_clusters` tables of the tracker's sqlite.
+
+```yaml
+claims: { min_views: 2000, per_run: 300, batch_size: 25 }   # all optional; per_run bounds the model cost per run
+```
+A backlog clears over a few runs (300 posts per run per tracker, biggest first). `claims.json` carries
+every canonical claim with its spread series; the verdict columns are filled by the verification step
+(see ROADMAP.md).
+
 ## Next
 
-- Bluesky as a second source (free API) to see where stories originate vs. where they spread.
-- Coordination detection on same-words rings: account age, posting cadence, creation-date clustering.
-- Session mode in January: one tracker per priority bill.
+See `ROADMAP.md`: narrative-control score, human corrections as few-shot examples, an events calendar
+with event-to-lane correlation, verification of checkable claims, and a prediction feature table.
