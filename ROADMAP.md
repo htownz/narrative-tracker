@@ -64,7 +64,7 @@ and the trackers it bears on.
 Later: pull the calendar automatically from Texas Legislature Online and the campaigns' public
 schedules instead of by hand.
 
-## 5. Verification of checkable claims
+## 5. Verification of checkable claims (`tracker/verify.py`) — built Oct 14
 
 For canonical claims marked `checkable` with views above a threshold, Claude with web search
 produces a verdict (`supported` / `unsupported` / `misleading` / `unverifiable`), a one-paragraph

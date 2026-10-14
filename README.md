@@ -119,7 +119,7 @@ incidents (fixed window) wherever you like.
 | `review.html` | lane spot-check: 20 posts per lane with a dropdown; builds the lines for `incidents/<slug>.overrides.csv` |
 | `analysis.html` (events section) | how each lane moved in the 12h after each calendar event |
 | `analysis.html` (narrative control section) | per-lane and per-claim control score with its five features |
-| `claims.html` | what is being claimed: atomic claims extracted from every in-lane post, grouped into canonical claims with type, checkable flag, stance, first poster, spread |
+| `claims.html` | what is being claimed: atomic claims extracted from every in-lane post, grouped into canonical claims with type, checkable flag, stance, first poster, spread, verdict |
 | `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
 | `<slug>.mp4` | `python run.py video` — 60-second play-through, 1920x1296 |
 
@@ -182,6 +182,21 @@ claims: { min_views: 2000, per_run: 300, batch_size: 25 }   # all optional; per_
 A backlog clears over a few runs (300 posts per run per tracker, biggest first). `claims.json` carries
 every canonical claim with its spread series; the verdict columns are filled by the verification step
 (see ROADMAP.md).
+
+## Verification
+
+`python run.py verify incidents/x.yaml` (part of `all`, right after `claims`) takes the biggest canonical
+claims that are checkable facts without a verdict (`verify.min_views`, default 100K views; `verify.per_run`,
+default 5) and has Claude verify each with web search against primary records and established reporting:
+`supported`, `unsupported`, `misleading` or `unverifiable`, with a short basis and the sources. Verdicts show
+on `claims.html` (filter "Unsupported"; "why" opens the basis and sources) and the hub lists unsupported or
+misleading claims as "Debunked but spreading", the ones still gaining views first. Verdicts are advisory —
+the sources are the point. Each verification is one model call with up to `verify.max_searches` searches,
+so the per-run cap is what bounds the cost.
+
+```yaml
+verify: { min_views: 100000, per_run: 5, max_searches: 5 }   # all optional
+```
 
 ## Narrative control
 

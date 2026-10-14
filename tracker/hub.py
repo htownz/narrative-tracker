@@ -111,6 +111,26 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                       f'{" · " + str(r["momentum_6h"]) + "× the prior 6h" if r["momentum_6h"] not in (None, 99.0) else " · new"} · {r["accounts"]} accounts{" · after a calendar event" if r["event_follow"] else ""}</span></li>'
                       for _, slug, r in gaining[:6])
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#8fb4ff">Gaining now</h2><p class="lead" style="margin:0 0 6px">Claims with the most momentum over the last six hours of data, from more than one account.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
+    # debunked but spreading: canonical claims verified unsupported/misleading, the ones still gaining first
+    bad = []
+    for d in sorted(OUT_DIR.iterdir()):
+        cp = d / "claims.json"
+        if not cp.exists():
+            continue
+        try:
+            cj = json.loads(cp.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        for r in cj.get("clusters", []):
+            if r.get("verdict") in ("unsupported", "misleading"):
+                bad.append((r.get("views_24h", 0), r["views"], d.name, r))
+    bad.sort(key=lambda b: (-b[0], -b[1]))
+    if bad:
+        lis = "".join(f'<li><b>{html.escape(r["text"])}</b> <span style="color:{"#ff8a80" if r["verdict"] == "unsupported" else "#f0b06a"}">{r["verdict"]}</span> '
+                      f'<span style="color:#7c7c78">in <a href="{html.escape(slug)}/claims.html" style="color:#8cf">{html.escape(slug)}</a> · {r["views"]:,} views · {r["posts"]} posts'
+                      f'{" · still spreading: " + format(v24, ",") + " views in the last day" if v24 else ""}</span><br><span style="color:#b9b9b3;font-size:12px">{html.escape((r.get("verdict_basis") or "")[:220])}…</span></li>'
+                      for v24, _, slug, r in bad[:6])
+        alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff8a80">Debunked but spreading</h2><p class="lead" style="margin:0 0 6px">Claims that checked out as unsupported or misleading against records and reporting (sources on each tracker\'s claims page), biggest still-moving first.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
     if pushes:
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff5252">Coordinated pushes</h2><p class="lead" style="margin:0 0 6px">Lanes and claims whose spread looks engineered: copies across accounts, new accounts, bursts, clockwork timing.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(pushes) + "</ul>"
     # run health strip from status.json (written by tracker.status just before the hub)
