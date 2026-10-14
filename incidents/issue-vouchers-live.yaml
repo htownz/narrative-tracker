@@ -33,8 +33,87 @@ discover_hint: >
   will recur over one-day events. Posts about other states with no Texas angle are off-topic.
   Expect frames about public school funding, rural schools, private school tuition, accountability, and who benefits.
 
-lanes: []
-
+lanes:
+- key: voucher_political_liability
+  label: Vouchers are a GOP electoral liability
+  description: Vouchers and school funding fights are costing Republicans suburban and rural voters and
+    could help Democrats win Texas races, including the governor's race.
+  keywords:
+  - liability
+  - gop
+  - suburban voters
+  - flipped
+  - democrats
+  - governor
+  - election
+  - abbott
+  - talarico
+- key: rural_district_financial_pain
+  label: Vouchers drain rural and public schools
+  description: Vouchers and school funding cuts are squeezing public school districts, especially rural
+    ones where the district is the biggest employer, and are hurting staff and budgets.
+  keywords:
+  - rural
+  - isd
+  - public school funding
+  - budget cuts
+  - layoffs
+  - employees
+  - district
+  - financial pressure
+- key: tefa_success_stories
+  label: TEFA is working for families
+  description: The Texas Education Freedom Accounts (TEFA) program is delivering on its promises, helping
+    over 100,000 kids including special-needs students, and mostly serving middle- and lower-income families.
+  keywords:
+  - tefa
+  - promises kept
+  - blessing
+  - dyslexia
+  - education freedom accounts
+  - 100,000 kids
+  - working as intended
+  - mother
+- key: choice_funding_separate
+  label: Choice funded separately, not from schools
+  description: Pro-voucher voices say school choice takes no money from public schools because TEFA is
+    funded by a separate General Revenue appropriation, and credit GOP leaders for parental rights and
+    school choice.
+  keywords:
+  - doesn't take a dollar
+  - general revenue
+  - separate appropriation
+  - parental rights
+  - sb2
+  - fear-mongering
+  - misinformation
+  - passed school choice
+- key: giveaway_to_wealthy_religious
+  label: Taxpayer giveaway to rich and religious
+  description: Vouchers redistribute taxpayer money to wealthy families and private religious schools
+    that can discriminate, rather than serving ordinary Texas students.
+  keywords:
+  - giveaway
+  - wealthy
+  - religious schools
+  - subsidize
+  - discriminate
+  - redistribute
+  - rich
+  - taxpayers
+- key: accountability_outcomes_first
+  label: Focus on learning outcomes and accountability
+  description: Voters care more about whether kids read and do math at grade level than about the school
+    choice fight, so accountability and proficiency should drive education policy.
+  keywords:
+  - grade level
+  - proficiency
+  - reading
+  - math
+  - accountability
+  - voters
+  - outcomes
+  - superintendent salary
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

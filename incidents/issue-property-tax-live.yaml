@@ -32,8 +32,86 @@ discover_hint: >
   will recur over one-day events. Posts about other states with no Texas angle are off-topic.
   Expect frames about affordability, whether the math works, what replaces the revenue, cities and counties, and renters vs owners.
 
-lanes: []
-
+lanes:
+- key: abbott_elimination_who_pays
+  label: Who pays if taxes eliminated?
+  description: Questions or warnings that eliminating school property taxes means the state must replace
+    the revenue, via other taxes, a state income tax, or a tax shift, with doubts about whether the savings
+    math works.
+  keywords:
+  - who would pay
+  - replace
+  - eliminate school property taxes
+  - tax shift
+  - income tax
+  - math
+  - revenue
+  - fully funding
+- key: local_governments_to_blame
+  label: Local governments erase the relief
+  description: Argues that cities, counties and school districts raise rates, budgets and bonds, wiping
+    out state tax cuts, so locals need to be reined in or voted out.
+  keywords:
+  - local governments
+  - harris county
+  - bonds
+  - raised your property taxes
+  - budget
+  - school district
+  - tax increase
+  - stopped cities
+- key: cuts_hurt_local_services
+  label: Caps and cuts hurt services
+  description: Warns that tighter appraisal and revenue caps and eliminating school taxes would starve
+    parks, public safety, health care and schools of funding.
+  keywords:
+  - property tax caps
+  - local services
+  - parks
+  - mayor
+  - public education
+  - funding
+  - cuts
+  - appraisal cap
+- key: abbott_failed_election_ploy
+  label: Abbott's promise is election-year spin
+  description: Argues Abbott has had 12 years and GOP majorities yet property taxes keep rising, so the
+    elimination plan and savings claims are misleading politics timed to the ballot.
+  keywords:
+  - abbott
+  - lying
+  - misleading
+  - 12 years
+  - on the ballot
+  - up 85%
+  - doubled
+  - republican majorities
+- key: gop_tax_relief_record
+  label: GOP delivers tax relief, Dems raise
+  description: Claims Republicans cut property taxes (largest cut in history, homeowner relief, ending
+    perpetual rent to the state) while Democrats like Hinojosa voted for higher taxes and an income tax.
+  keywords:
+  - largest property tax cut
+  - voted 40 times
+  - income tax
+  - relief
+  - own their own home
+  - surplus
+  - hinojosa
+  - vote red
+- key: affordability_housing_burden
+  label: Property taxes make Texas unaffordable
+  description: 'Everyday-cost frame: high property tax bills, insurance, appraisals and rents squeeze
+    owners and renters, undercutting the ''no income tax'' low-cost Texas story.'
+  keywords:
+  - affordability
+  - mortgage
+  - rent
+  - no state income tax
+  - appraisal
+  - insurance
+  - homeowners
+  - per month
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

@@ -33,8 +33,84 @@ discover_hint: >
   Cover both sides: narratives pushed against Patrick and narratives pushed for Patrick or against Goodwin.
   Posts about the Senate (U.S. Senate) or about other people named Patrick are off-topic.
 
-lanes: []
-
+lanes:
+- key: goodwin_tax_liberal
+  label: 'Goodwin: Austin liberal tax-lover'
+  description: Patrick and allies portray Vikki Goodwin as an Austin liberal who loves taxes (income,
+    gas, death), would defund the police, and backs rogue DAs.
+  keywords:
+  - austin liberal
+  - vikki goodwin
+  - never met a tax
+  - income tax
+  - defund the police
+  - rogue district attorneys
+  - gas tax
+- key: patrick_conservative_record
+  label: Patrick's conservative record and Trump alliance
+  description: Patrick promotes himself as a proven conservative who passed school choice, cut red tape
+    and backed tougher bail laws, standing with Trump, Paxton and Texas Republicans to keep Texas red.
+  keywords:
+  - keep texas red
+  - school choice
+  - trump rally
+  - san antonio
+  - bus tour
+  - early voting
+  - god, country, and family
+  - paxton
+- key: patrick_christian_nationalism
+  label: 'Patrick: church-state and culture-war extremism'
+  description: Critics say Patrick is a culture warrior pushing Christian nationalism and censorship,
+    citing his claim that separation of church and state is a lie, his push to ban books such as Night,
+    and his flag/socialism rhetoric.
+  keywords:
+  - separation of church and state
+  - ban
+  - night
+  - elie wiesel
+  - culture warrior
+  - bully
+  - christianity
+  - dan patrick's world
+- key: patrick_ethics_paxton
+  label: Patrick tied to Paxton scandals
+  description: Attacks tie Patrick to Ken Paxton's baggage, including the claim that he took a payoff
+    while presiding over Paxton's impeachment trial, and say Republicans are abandoning the ticket.
+  keywords:
+  - paxton trial
+  - payoff
+  - $3 million
+  - impeachment
+  - not voting for
+  - dade phelan
+  - bo french
+  - in line with paxton
+- key: patrick_vulnerable_polls
+  label: 'Patrick vulnerable: polls and odds'
+  description: Posts present polls and betting odds showing Goodwin leading or close and Patrick underperforming
+    Abbott, framing the Lt. Gov. race as a real Democratic pickup chance.
+  keywords:
+  - poll
+  - goodwin 49%
+  - patrick 46%
+  - kalshi
+  - odds
+  - underperformed abbott
+  - texas politics project
+  - in danger
+- key: goodwin_hemp_pragmatist
+  label: 'Goodwin: hemp voters and pragmatic alternative'
+  description: Goodwin is presented as a policy-minded, bipartisan legislator who can beat Patrick, including
+    by mobilizing hemp users angry about the THC ban.
+  keywords:
+  - hemp
+  - thc ban
+  - phone bank
+  - policy wonk
+  - works well with legislators
+  - goodwin campaign
+  - regulators
 markets:
   - label: "Patrick wins — Kalshi"
     series: KXLTGOVTX

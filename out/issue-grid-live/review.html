@@ -1,0 +1,938 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texas grid, 9 days of posts — lane review</title><style>
+  :root { color-scheme: dark; --bg:#0b0b0c; --surface:#141416; --surface-2:#1d1d21; --line:#2a2a30; --ink:#f2f2f0; --ink-2:#b9b9b3; --ink-3:#7c7c78; --accent:#e08a2e;
+          --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  * { box-sizing:border-box; } body { margin:0 auto; background:var(--bg); color:var(--ink); font-family:var(--sans); padding:16px 16px 48px; max-width:1100px; }
+  h1 { font-size:20px; margin:0 0 4px; } h2 { font-size:15px; margin:28px 0 8px; padding-top:10px; border-top:1px solid var(--line); }
+  .sub { color:var(--ink-3); font-size:11.5px; max-width:95ch; margin:0 0 12px; line-height:1.45; } a.back { color:var(--ink-2); font-size:12px; }
+  .box { position:sticky; top:0; z-index:5; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:10px 0 16px; }
+  .box .t { font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; display:flex; justify-content:space-between; align-items:center; }
+  .box textarea { width:100%; min-height:54px; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:6px; font-family:var(--mono); font-size:11.5px; padding:6px 8px; margin-top:6px; resize:vertical; }
+  .box button { background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:4px 10px; font-size:11.5px; cursor:pointer; }
+  .post { display:grid; grid-template-columns: 150px 1fr 150px; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); align-items:start; font-size:12.5px; }
+  .who { font-family:var(--mono); font-size:11px; color:var(--ink-2); word-break:break-all; } .who b { color:var(--ink); } .who a { color:inherit; text-decoration:none; }
+  .txt { white-space:pre-wrap; line-height:1.4; } .txt a { color:var(--ink-3); font-size:11px; text-decoration:none; margin-left:6px; }
+  select { width:100%; background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font-size:11.5px; }
+  select.changed { border-color:var(--accent); color:var(--accent); } .meta { color:var(--ink-3); font-size:10.5px; margin-top:3px; }
+  .lanehead { display:flex; align-items:baseline; gap:10px; } .lanehead .d { color:var(--ink-3); font-size:11.5px; font-weight:400; }
+  @media (max-width:640px) { .post { grid-template-columns: 1fr; } }
+</style></head><body>
+<a class="back" href="./">← chart</a> · <a class="back" href="accounts.html">who moved it</a> · <a class="back" href="analysis.html">timing</a>
+<h1>Lane review: Texas grid, 9 days of posts</h1>
+<p class="sub">Up to 20 posts per lane: the ten most viewed plus ten drawn at random from the rest. Change a dropdown where the lane is wrong; the lines below are what to paste into <code>incidents/issue-grid-live.overrides.csv</code> (one <code>post_id,lane</code> per line). The job applies that file after every classification, so corrections stick. 0 overrides currently on file.</p>
+<div class="box"><div class="t"><span>overrides to paste · <span id="cnt">0 changes</span></span><button id="copy">copy</button></div><textarea id="ov" spellcheck="false" placeholder="post_id,lane"></textarea></div>
+<h2 class="lanehead"><span style="color:#3987e5">Data center queue is speculative bubble</span><span class="d">Texas&#x27;s 474 GW large-load queue (vs ~91 GW record peak) is mostly duplicate, speculative requests, so the state paused permits and the demand hype is overstated.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/a16z" target="_blank" rel="noopener">@a16z</a></b><br>322,245 views<br>Oct 7, 11:40 AM</div><div class="txt">Texas just froze new data center permits:
+
+- Its queue went from 63 GW to 474 GW in 18 months, more than 5x record peak demand
+
+- Only 9.5 GW is approved and about 4.3 GW is actually running
+
+- The rest is duplicates, speculation, and developers who have never plugged in a GPU
+
+a16z&#x27;s @rmcentush on why the grid can&#x27;t build for that many maybes: https://t.co/TobsqsZJq9<a href="https://x.com/a16z/status/2107873596509208914" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107873596509208914" data-orig="queue_bubble_pause"><option value="queue_bubble_pause" selected>Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/realMeetKevin" target="_blank" rel="noopener">@realMeetKevin</a></b><br>23,154 views<br>Oct 10, 1:30 PM</div><div class="txt">Texas just hit PAUSE on data centers.
+
+474 gigawatts are waiting in line for power. The most Texas has ever used at once: 91. LOL.
+
+✅ BofA: Texas has a 474 GW line of requests to plug into the grid. About 90% is data centers.
+✅ That&#x27;s more than 5 times the grid&#x27;s all-time record.
+✅ The state paused its big grid study, stopped approving hookups of 75 MW or more, and ordered a halt to all data center permits.
+✅ Not just Texas. Pause or moratorium proposals show up in 20 of this year&#x27;s 36 governor races.
+➡️ Sounds like a disaster for AI, right? Nope.
+➡️ When it gets harder to build, whoever ALREADY has capacity gets to charge a premium. Think Microsoft, SpaceX, Meta, Amazon, Google.
+➡️ Who gets hosed: the smaller neoclouds that still need financing to build.
+✅ BofA&#x27;s read: the money sorts, it doesn&#x27;t stop.
+😇 Zero chance of a federal pause.
+🚨 The risk: this isn&#x27;t settled on election night. The Texas grid audit lands Dec 10 and the final answer is a 2027 story. If real projects get cut, the build slows.
+➡️ Bottom line: the pause squeezes the little guys and hands the giants pricing power.<a href="https://x.com/realMeetKevin/status/2108988433519743010" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108988433519743010" data-orig="queue_bubble_pause"><option value="queue_bubble_pause" selected>Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/a16z" target="_blank" rel="noopener">@a16z</a></b><br>22,510 views<br>Oct 7, 10:45 AM</div><div class="txt">&quot;At the end of 2024, Texas&#x27; grid operator had 63 GW of large new customers in its queue. By this June, that figure reached 474 GW, more than five times record peak demand.&quot;
+
+&quot;Then Texas hit pause.&quot;
+
+&quot;Developers routinely spam requests across several sites, and many are speculative builds with no customer yet.&quot;
+
+&quot;Planners can&#x27;t tell which are real, and they don&#x27;t want ratepayers covering upgrades built for projects that never show up.&quot;
+
+&quot;Fully connecting a large data center can take 5 to 10 years... Idle GPUs cost far more than the electricity to run them, so speed matters most... That&#x27;s why developers are planning to bring their own power on site.&quot;
+
+&quot;Full reliability for these power islands is very, very hard, but some labs and hyperscalers have shown that, forced to choose between reliability and speed, they&#x27;ll pick speed.&quot;
+
+&quot;Every site I&#x27;m aware of intends to connect to the grid as soon as it can, chiefly because on-site power almost always costs more.&quot;
+
+&quot;AI companies have pledged to pay their way, and most would rather connect to the grid than avoid it. It seems ideal for everyone that we let them do so instead of driving that spending into private islands.&quot;
+
+&quot;Texas created the energy fast lane first; now it has the opportunity to show us a better one, and I expect it will. Power is where America finds out whether it can still build.&quot;
+
+a16z&#x27;s @rmcentush on why Texas is making data centers wait: https://t.co/TobsqsZJq9<a href="https://x.com/a16z/status/2107859784594767982" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107859784594767982" data-orig="queue_bubble_pause"><option value="queue_bubble_pause" selected>Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/INArteCarloDoss" target="_blank" rel="noopener">@INArteCarloDoss</a></b><br>18,673 views<br>Oct 9, 6:05 PM</div><div class="txt">As it happens 15% is all that might end up getting built anyway. 
+
+There are increasing physical hurdles jeopardising the execution. I group them under 3 distinct categories. 
+
+1- Grid and interconnection queues. 
+2- Supply chain bottlenecks.
+3- Local opposition
+
+17/38<a href="https://x.com/INArteCarloDoss/status/2108695371530563608" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108695371530563608" data-orig="queue_bubble_pause"><option value="queue_bubble_pause" selected>Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">quoted post</div></div></div><h2 class="lanehead"><span style="color:#d95926">Data centers lower bills, drive growth</span><span class="d">AI and data center load is an opportunity that can lower residential rates, attract massive investment like Project Star and Terafab, and justify betting on power and compute companies.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/VanquishTrader" target="_blank" rel="noopener">@VanquishTrader</a></b><br>68,816 views<br>Oct 9, 11:04 AM</div><div class="txt">WHY $TE COULD BE THE NEXT AI POWER MULTIBAGGER
+
+The reason I think T1 could become one of the more asymmetric multi bagger opportunities inside the AI buildout is that the market is still valuing it like a loss making solar manufacturer today while the real thesis is what happens once G2_Austin comes online and turns the company into a much more vertically integrated U.S. power infrastructure supplier. 
+
+G1_Dallas is already showing that the operating model can scale, with Q2 revenue nearly doubling to roughly $250M and gross margin improving toward 20% but G2 is the step change because producing cells internally instead of buying them from outside suppliers should let T1 capture much more of the economics on every module it sells. 
+
+Management believes the initial 2.1 GW phase can eventually support roughly $375M to $450M of annualized adjusted EBITDA and a full 5 GW buildout could push that toward $650M to $700M which is a completely different earnings profile than the company investors are looking at today.
+
+What makes that opportunity much more interesting is that the demand side is increasingly being pulled by the same AI power problem driving the rest of my energy thesis. 
+
+Data centers need enormous amounts of new electricity and solar will not solve that problem alone, but it can become one of the fastest generation sources to deploy when paired with storage, gas and nuclear, especially in markets like ERCOT where interconnection requests are exploding and a huge percentage of the incremental load is tied to data centers. 
+
+T1 already has several gigawatts of contracted module demand through customers like Clearway and Treaty Oak, while its domestic content strategy becomes more valuable as utilities and developers increasingly want U.S. sourced equipment that qualifies for incentives and avoids dependence on Chinese supply chains. 
+
+If G2 works, T1 is not simply selling another commodity solar module because it can own more of the U.S. supply chain from polysilicon and wafers through cells and finished modules, which should create a better margin structure than the current business.
+
+The valuation is where the setup starts becoming interesting because at roughly $4 to $5 per share the market is effectively making investors pay very little for the possibility that G2 actually reaches the profitability management is targeting since consensus around $0.44 of EPS in 2028 puts the stock near roughly 10x those earnings today, which is not demanding if T1 is still growing strongly beyond 2028 and G2 proves that vertically integrated domestic solar can generate sustainable margins. 
+
+The additional optionality around Nordic data centers and battery storage makes the story even broader because T1 could eventually participate not only in supplying generation equipment to the AI buildout but also in owning pieces of the infrastructure around it which is why I think ceiling can be much higher than what a simple solar peer multiple suggests.
+
+The risk is that none of this value exists for shareholders unless the company can actually finance the bridge between today and that future because G2 Phase 1 is expected to cost roughly $510M while unrestricted cash was only around $79M at the end of Q2, so additional debt, equity or both will almost certainly be needed before the factory reaches scale. 
+
+That means dilution and balance sheet risk are very real, and if G2 runs over budget, ramps slowly or fails to reach the expected margin structure then the stock can stay cheap for a good reason.
+
+But if T1 can secure financing without overwhelming existing shareholders, keep G1 margins around or above 20%, bring G2 online in 2027 and convert strong domestic demand into real free cash flow then I think the market could eventually stop viewing T1 as a speculative solar manufacturer and start valuing it as a vertically integrated U.S. power infrastructure platform sitting directly in the path of the AI electricity buildout.<a href="https://x.com/VanquishTrader/status/2108589533218603149" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108589533218603149" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/MarcGravely" target="_blank" rel="noopener">@MarcGravely</a></b><br>39,127 views<br>Oct 6, 9:00 AM</div><div class="txt">South Korea and the US just announced a $22.3 billion power plant for a Texas town of 540 people.
+
+It will be bigger than both of Texas&#x27;s nuclear plants combined.
+
+It&#x27;s called Project Star: an energy campus near Encinal in La Salle County, announced on September 30.
+
+6.47 gigawatts of natural gas generation, built to power a 5 gigawatt data center campus next door. Excess power goes back to the ERCOT grid.
+
+The power campus will be jointly owned by the two countries, under last year&#x27;s trade deal.
+
+Nothing is built yet. First power is expected as early as 2029, and permits and approvals still have to come through.
+
+But the location makes sense, and it starts with what&#x27;s under the ground:
+
+In October 2008, Petrohawk announced a well in La Salle County called the STS 241 #1H. It was the discovery well that opened up the Eagle Ford Shale.
+
+Lewis Energy, which has worked in La Salle County for decades, is supplying the land, the natural gas and the water.
+
+The Governor has told data centers to bring their own generation to the grid. This one brings South Texas gas.
+
+At peak construction, an estimated 8,400 people will work on it. That&#x27;s more than 15 times the population of Encinal.
+
+The Eagle Ford was opened up in La Salle County in 2008. Eighteen years later, the same county could turn South Texas gas into computing power.<a href="https://x.com/MarcGravely/status/2107471067216527500" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107471067216527500" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/SoveyX" target="_blank" rel="noopener">@SoveyX</a></b><br>34,584 views<br>Oct 10, 10:11 AM</div><div class="txt">On December 1, Elon and SpaceX officially start building Terafab, the biggest building in human history.
+
+Without it, there&#x27;s no city on Mars.
+
+A 100 million square foot chip factory in Grimes County, Texas (near College Station), more than 5 times the size of the largest building on Earth today.
+
+- At least 2.5 miles long
+- Nearly 3 Central Parks under one roof
+- Brings its own power, off the Texas grid
+- Every chip factory on Earth combined makes about 2% of what Elon needs
+- Each year&#x27;s chips will need twice the power of the entire US
+- Chips for 1 billion Optimus robots, plus Cybercab, Grok and self-driving Teslas
+- About 80% of the chips go to space
+- The Moon: a city first, plus a magnetic rail that launches AI satellites into deep space
+- Mars: robots land first to build, then people, in roughly 5 to 7 years by Elon&#x27;s count
+
+No chips, no robots. No robots, no city on Mars.
+
+Most people would shrink the plan to fit the supply chain. Elon builds his own.
+
+The next step to Mars isn&#x27;t a rocket. It&#x27;s a factory in Texas.<a href="https://x.com/SoveyX/status/2108938563232436396" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108938563232436396" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/a16z" target="_blank" rel="noopener">@a16z</a></b><br>32,484 views<br>Oct 7, 5:00 PM</div><div class="txt">a16z&#x27;s Alex Immerman, David George, and Sarah Wang on why a data center can lower your electricity bill:
+
+&quot;It may seem counterintuitive, but a data center can help lower your electricity rate. A recent US study showed that for every 10% increase in data center capacity, residential rates went down by 40 bps.&quot;
+
+&quot;You should think about it as a power grid is a shared fixed cost base: poles, wires, substations. A large stable customer, like a data center, can help spread those costs across more units of electricity. Simply put, more demand across a shared system is a positive.&quot;
+
+&quot;Investment in shared infrastructure can also improve the economics for the households and businesses connected to it.&quot;
+
+&quot;There&#x27;s real examples of that today. It&#x27;s not just lip service.&quot;
+
+Still, 56% of Texas voters say more data centers would raise their power bills.
+
+The catch is it depends on who pays. When developers cover their own grid upgrades instead of pushing them onto everyone else&#x27;s bills, the savings are real.
+
+a16z&#x27;s @rmcentush on how to get that right: https://t.co/TobsqsZJq9
+
+@aleximm @DavidGeorge83 @sarahdingwang<a href="https://x.com/a16z/status/2107954263767081092" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107954263767081092" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/IREN_Bull" target="_blank" rel="noopener">@IREN_Bull</a></b><br>15,775 views<br>Oct 8, 2:08 AM</div><div class="txt">🚨 $IREN: THE MOST EXTRAORDINARY BARGAIN IN AI IS HIDING IN PLAIN SIGHT. 🚨
+
+Share price:
+
+September 15, 2025: $38.64
+October 7, 2026: $38.69
+
+SAME SHARE PRICE. A RADICALLY TRANSFORMED BUSINESS. AN EXPLOSIVE PIPELINE OF CATALYSTS AHEAD.
+
+Consider everything IREN has accomplished since September 15, 2025:
+
+• $9.7B MICROSOFT CONTRACT — Signed AFTER September 15, 2025. A massive validation of IREN’s AI infrastructure capabilities.
+
+• $3.4B NVIDIA CONTRACT — Plus strategic partnership and potential $2.1B equity investment at $70/share.
+
+• $2.8B ADDITIONAL AI CONTRACTS — Announced in July, followed by another frontier AI lab agreement.
+
+• CUSTOMER EXPLOSION — Microsoft, NVIDIA, Perplexity, Figure AI, Cohere, fal, Higgsfield and others.
+
+• $4B+ CONTRACTED ARR — Approximately $1B operational by August 2026.
+
+• AI CLOUD REVENUE UP ~8X — FY26 versus FY25.
+
+• HORIZON 1 DELIVERED — Completed and accepted by Microsoft.
+
+• NVIDIA EXEMPLAR CLOUD STATUS — Achieved on GB300 infrastructure.
+
+• MIRANTIS ACQUISITION — Adds enterprise software, orchestration, cloud management and customer relationships.
+
+• NOSTRUM ACQUISITION — Approximately 490MW of Spanish development capacity.
+
+• 5GW+ GLOBAL POWER PIPELINE — A massive competitive advantage in an increasingly power-constrained industry.
+
+• SWEETWATER 1 ENERGIZED — Plus conditional ERCOT Batch Zero inclusion for the 2GW Sweetwater hub.
+
+• ~$19B FINANCING SECURED — Only approximately $3B from equity.
+
+• KENT DRAPER’S FINANCING REVELATION — Even sub-investment-grade customers now support debt covering 90% of GPU capex PLUS 50% customer prepayments. That’s 140% of GPU hardware capex funded without equity for the hardware!
+
+• CONTRACT ECONOMICS ACCELERATING — Recent agreements exceeding $20M annual revenue per IT MW, with management estimating approximately TWO-YEAR GPU paybacks.
+
+• RUSSELL 1000 &amp; MSCI USA INCLUSION — Expanded institutional exposure.
+
+AND THE STOCK? STILL $38 AND CHANGE.
+
+🚀 REMAINING 2026 CATALYSTS:
+
+• Horizon 2, 3 and 4 targeted deliveries to Microsoft.
+
+• Microsoft contract revenue activation accelerates.
+
+• Targeted ramp toward $4B operational ARR by year-end.
+
+• Additional hyperscaler, enterprise and frontier AI lab contracts under discussion.
+
+• Further GPU financing and customer prepayment announcements.
+
+• More capacity commissioned, accepted and generating revenue.
+
+🚀 2027: THE NEXT EXPANSION WAVE
+
+• $3.4B NVIDIA CONTRACT begins its targeted revenue ramp.
+
+• Horizon 5 and 6 development and potential deliveries.
+
+• Additional Childress GPU deployments.
+
+• Sweetwater 1 AI infrastructure expansion.
+
+• New liquid-cooled deployments at Mackenzie, Canal Flats and Prince George.
+
+• 800MW CUMULATIVE DELIVERED IT CAPACITY TARGET by year-end, versus approximately 300MW targeted for EOY 2026.
+
+• Additional multibillion-dollar customer contract opportunities.
+
+• Mirantis software integration and expansion into higher-value cloud services.
+
+• Continued development of Kiowa, Sweetwater, Spain and Bundey.
+
+• Increasing operational revenue, expanding financing capabilities and greater potential cash generation.
+
+NOW THINK ABOUT THIS:
+
+In September 2025, IREN traded at $38.64 WITHOUT the Microsoft contract, WITHOUT the NVIDIA agreement, WITHOUT billions in additional customer commitments, and WITHOUT today’s financing capabilities or operational scale.
+
+Thirteen months later, all of that has changed.
+
+Yes, IREN has issued shares and debt, and its market capitalization has increased. But the magnitude of its operational transformation is undeniable.
+
+THE SHARE PRICE IS ESSENTIALLY UNCHANGED WHILE THE BUSINESS HAS BEEN REBUILT INTO AN AI INFRASTRUCTURE POWERHOUSE.
+
+And 2027 brings an entirely new wave of capacity deliveries, revenue activation and expansion opportunities.
+
+$IREN has become one of the most undervalued stocks in the entire market. A rare exponential opportunity there for the taking.<a href="https://x.com/IREN_Bull/status/2108092042643411055" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108092042643411055" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/SolunaHoldings" target="_blank" rel="noopener">@SolunaHoldings</a></b><br>7,203 views<br>Oct 13, 7:02 AM</div><div class="txt">In 2024, the West zone in #ERCOT experienced a total curtailment of 5.3 TWh of renewable energy 
+
+That&#x27;s power already generated, then thrown away because the grid couldn&#x27;t move it.
+
+Building compute at the source changes the math. Producers earn revenue on power they&#x27;d otherwise lose. AI workloads get power faster. Ratepayers carry less of the cost of new transmission.
+
+This isn&#x27;t a sustainability story. It&#x27;s grid economics.
+
+It&#x27;s the model behind Project Dorothy, our data center co-located with a 150 MW wind farm in West Texas.
+
+$SLNH<a href="https://x.com/SolunaHoldings/status/2109978034480566620" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109978034480566620" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/datacentrebull" target="_blank" rel="noopener">@datacentrebull</a></b><br>6,149 views<br>Oct 6, 2:35 PM</div><div class="txt">CFO takeaways, KBW AI Infrastructure Summit October 6th ($CIFR )
+
+-Demand is strong. Management has an ongoing dialogue with every partner they’d want as a tenant, and the bar for a “standard lease” has moved up.
+
+-Land optionality. There’s an opportunity to buy powered land and mature it through interconnection. The CFO also said they can originate greenfield sites and finance them.
+
+-Tenant quality is the edge. Two AWS sites plus Fluidstack backed by Google means the bonds price strongly relative to peers.
+
+-1 GW firm is the next step. Potential customers may sign ahead of the ERCOT audit, and management expects to be firm at 1 GW after it.
+
+-2.5 GW behind-the-meter. Tenant demand is very strong for data centers with behind-the-meter generation. The pitch is connecting all the dots so tenants can decide easily.
+
+-The bonds have held up. All three project bonds priced progressively tighter, and even with spreads wider across the sector they’re trading close to par.
+
+-Capital markets favor the prepared. A huge wave of supply is coming, with lots of debt and equity being raised, and Cipher already has a financing track record.
+
+-Discipline. Each deal is underwritten to protect returns. If financing or inflation costs rise, they’ll price it in.
+
+Cheers 🥂<a href="https://x.com/datacentrebull/status/2107555371540001168" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107555371540001168" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/NetMelc" target="_blank" rel="noopener">@NetMelc</a></b><br>3,737 views<br>Oct 8, 1:46 PM</div><div class="txt">$EOSE we should have no problems getting demand given all the generation that&#x27;s trying to be added to ERCOT grid.
+
++ all the BTM generation.
+
+the opportunity is massive.
+
+Sounds like a broken record but on days like this it feels like it&#x27;s important to remember.<a href="https://x.com/NetMelc/status/2108267872824750384" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108267872824750384" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/perspez" target="_blank" rel="noopener">@perspez</a></b><br>2,741 views<br>Oct 9, 4:40 PM</div><div class="txt">$SLNH | Dorothy 3 Takes Shape: A 300 MW AI Campus Built Around Flexibility and Available Power
+
+Soluna recently published photos on LinkedIn from its Open House in Silverton, Texas, where the company introduced Project Dorothy 3 to the local community.
+
+One of the presentation boards caught my attention. It shows a more detailed development plan for Dorothy 3 than what I&#x27;ve seen in the company&#x27;s earlier public materials.
+
+The proposed 300 MW AI campus is divided into three phases:
+
+- Phase 1: 75 MW
+- Phase 2: 75 MW
+- Phase 3: 150 MW
+
+The board also appears to contain information about expected completion, although the relevant details are obscured in the photograph.
+
+The significance here isn&#x27;t simply the 300 MW figure, which Soluna has discussed for some time. It&#x27;s how the company appears to be planning its development.
+
+An interesting shift in AI infrastructure demand
+
+Two reports from September make this particularly relevant.
+
+On September 18, CNBC reported that OpenAI and Anthropic were exploring smaller data center deployments of approximately 20–30 MW, alongside their existing commitments to much larger AI campuses.
+
+A day earlier, The Wall Street Journal reported that Crusoe, the developer behind OpenAI&#x27;s massive Abilene data center, was expanding into smaller, factory-built modular facilities that can be transported to locations with available electricity.
+
+Crusoe&#x27;s strategy reflects growing demand for faster capacity delivery, particularly as AI inference expands. Large training campuses remain essential, but not every computing workload requires a facility with hundreds of megawatts available from day one.
+
+That distinction matters for Dorothy 3.
+
+An initial 75 MW phase could allow Soluna to match construction and capital requirements more closely to contracted demand, bring capacity online in stages and expand as additional power becomes available.
+
+This isn&#x27;t confirmation that Dorothy 3 will use Crusoe-style prefabricated modules. However, its proposed phase structure is consistent with the industry&#x27;s increasing emphasis on flexible capacity deployment.
+
+Dorothy 3 already has an important foundation
+
+Unlike developers starting with undeveloped land and no nearby generating assets, Soluna has spent much of 2026 consolidating its position around Dorothy.
+
+The company now owns the adjacent 150 MW Briscoe Wind Farm, has consolidated ownership of Dorothy 1 and completed the purchase of 397 acres for Dorothy 3.
+
+The Briscoe substation sits directly across from the newly acquired property, providing an important starting point for the planned behind-the-meter development.
+
+Soluna also has approximately 98 MW of existing operating infrastructure at Dorothy 1 and 2.
+
+In September, ERCOT conditionally classified 100 MW at the existing Dorothy campus as Base Load under Batch Zero, while a separate 50 MW interconnection request remained under study. This does not constitute approval for Dorothy 3&#x27;s new phases, but it highlights the value of developing alongside an established, energized campus.
+
+There is also an important distinction between Soluna&#x27;s approach and a conventional wind-only data center.
+
+The company&#x27;s strategy involves combining renewable generation with grid access and additional power resources. Soluna has discussed evaluating onsite gas generation and clustering nearby energy assets to support larger AI campuses.
+
+That combination could be especially valuable for a phased project where power requirements increase as new data halls are developed.
+
+The Open House photographs reveal more than the capacity plan
+
+Another presentation board addresses the project&#x27;s expected noise and nearby residences.
+
+The material appears to reference approximately 55 dB at the facility fence, along with a map identifying one residence about 1.5 miles northeast and three residences at least 1.8 miles west of the site.<a href="https://x.com/perspez/status/2108674108573516114" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108674108573516114" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/Colosteve2000" target="_blank" rel="noopener">@Colosteve2000</a></b><br>2,680 views<br>Oct 10, 6:02 PM</div><div class="txt">$CIFR 𝗥𝗘𝗦𝗘𝗔𝗥𝗖𝗛
+𝗢𝗖𝗧𝗢𝗕𝗘𝗥 𝟭𝟬, 𝟮𝟬𝟮𝟲
+𝗠𝗬 𝗥𝗘𝗔𝗗
+
+Cipher has 700 gross MW under HPC leases, but management said 477 gross MW is available to lease today: Odessa 207 MW, Reveille 70 MW, and Ulysses 200 MW.
+
+That is the next demand test. Odessa is still mining Bitcoin and in conversion talks. Reveille and Ulysses have approved interconnections and are targeted for 2027. All figures here are gross MW, not critical IT load.
+
+𝗖𝗔𝗧𝗔𝗟𝗬𝗦𝗧𝗦 𝗜𝗡 𝗧𝗛𝗘 𝗟𝗔𝗦𝗧 𝟭𝟬 𝗗𝗔𝗬𝗦
+
+Cipher appeared at the KBW Virtual AI Summit on October 6. No announcements made.
+
+A Bitfury 13D/A filed October 7 disclosed a 1.84 million share transfer to a dealer on October 5 under a previously arranged forward contract. That could add share supply, but it was not an open market sale.
+
+Morgan Stanley lowered its target to $51.50 from $54 on October 9 and kept an Overweight rating.
+
+𝗣𝗥𝗜𝗖𝗘 𝗔𝗖𝗧𝗜𝗢𝗡
+
+CIFR closed at $13.50 on October 8, down 7.28% on 57.35 million shares. It closed at $13.52 on October 9, up 0.15%. From the October 1 close of $15.46, shares were down about 12.6% through October 9.
+
+Thursday’s decline came as other data center stocks fell and Treasury yields rose. Higher borrowing costs matter to companies that need large amounts of capital to build.
+
+𝗣𝗢𝗪𝗘𝗥 𝗔𝗡𝗗 𝗔𝗣𝗣𝗥𝗢𝗩𝗔𝗟𝗦
+
+Cipher’s 907 gross MW of operating and contracted capacity includes 207 MW of Bitcoin mining and 700 MW under HPC leases. The additional 477 MW management described as available to lease overlaps with capacity in that broader portfolio.
+
+Another 3.2 GW has conditional ERCOT classifications: 1.1 GW Base Load and 2.1 GW Studied Load. Of the studied load, 1.6 GW at Mikeska, Apollo, and Stingray Phase II has PCLR status, which may allow earlier operation subject to ERCOT requirements and curtailment.
+
+The eligibility verification report is due December 10, with final inclusion or exclusion expected in December. 
+
+Studied Load still needs system study and capacity allocation. Please keep in mind these are not guarentee&#x27;s of approval.
+
+𝗕𝗔𝗥𝗕𝗘𝗥 𝗟𝗔𝗞𝗘
+
+The September 25 agreement keeps the existing Fluidstack term at 10 years and adds a binding commitment from an unnamed AI lab to enter a separate 10-year lease afterward.
+
+Cipher says this takes expected contracted revenue from about $3.8 billion to more than $9 billion. It adds no MW. Data halls are scheduled for delivery from Q4 2026 through Q1 2027, with rent starting as each hall becomes operational.
+
+Sources: Cipher Q2 earnings call and business update, August 4; Cipher KBW Summit, October 6; Bitfury Schedule 13D/A, October 7; Cipher ERCOT update and ERCOT Batch Zero report; Barber Lake amendment, September 25; CIFR historical prices; Morgan Stanley target update, October 9.<a href="https://x.com/Colosteve2000/status/2109057033571893425" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109057033571893425" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/mathburn666" target="_blank" rel="noopener">@mathburn666</a></b><br>2,387 views<br>Oct 9, 3:39 PM</div><div class="txt">Here is a $GLXY breakdown for 2026 so far based on what I remember
+
+The good:
+
+- 830MW of approved power by ERCOT in Q1 for Helios II
+- Helios I Phase I was delivered on time, on budget to $CRWV during Q2
+- Acquired additional sites, bringing their total power pipeline to 5.7 GW (1.6GW approved)
+- operating business reached break-even on adjusted basis (digital assets gross profit rose 34% quarter over quarter even though industry trading volumes fell)
+- $3.5B senior note secured. Some say interest rate was high, but that is mostly because of $CRWV imo. Today that rate looks good
+- BNY partnership agreement (bottom line impact still unknown)
+- Good VC investments (etched in particular, should show up in Q3)
+
+The bad: 
+
+- no tenant for Helios II announced by end of summer (but power still exists)
+- ERCOT putting a hold on data centers in Texas
+- Caspian not getting base load as expected
+
+Please comment on anything significant I am missing<a href="https://x.com/mathburn666/status/2108658720209268940" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108658720209268940" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/BigDigital" target="_blank" rel="noopener">@BigDigital</a></b><br>2,204 views<br>Oct 8, 10:33 AM</div><div class="txt">Power is the constraint on new compute. Interconnect queues run years. Energized capacity is the part already on the grid.
+
+🔰 169 MW energized across four sites.
+
+🔰 Midland 120 MW, PJM.
+🔰 Corning 24 MW, PJM.
+🔰 Bellefonte 8 MW, PJM. Path to 48 MW.
+🔰 Texas Load House 17 MW live, ERCOT. Path to 74 MW.
+
+$BGDE<a href="https://x.com/BigDigital/status/2108219171142332465" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108219171142332465" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/thezenbear" target="_blank" rel="noopener">@thezenbear</a></b><br>1,759 views<br>Oct 6, 2:27 PM</div><div class="txt">I&#x27;m rooting for $GLXY to fall further. Cheaper shares for me.
+
+Still misunderstood: 830MW of ERCOT-approved power sitting unleased, a tenant deal could drop anytime!! 
+And the market calls it a crypto stock. 
+
+That misunderstanding is our EDGE.
+
+&quot;Be greedy when others are fearful.&quot; 
+Mr.Buffet<a href="https://x.com/thezenbear/status/2107553473894252703" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107553473894252703" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/innovationcncl" target="_blank" rel="noopener">@innovationcncl</a></b><br>1,271 views<br>Oct 12, 3:10 PM</div><div class="txt">🚨 $22 BILLION investment coming to South Texas!
+
+Project Star will create 8,400 construction jobs and 170 permanent power plant jobs.
+
+The 6.47 GW plant will power a massive super intelligence campus, with excess electricity sold to the Texas grid. 
+https://t.co/oGqW0G64rp https://t.co/mV55tb0BHg<a href="https://x.com/innovationcncl/status/2109738378438828523" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109738378438828523" data-orig="data_centers_good"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good" selected>Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><h2 class="lanehead"><span style="color:#c98500">Firm power: gas and nuclear</span><span class="d">Meeting Texas&#x27;s surging demand requires dispatchable gas, nuclear and SMRs, and the grid and generators with firm capacity (Vistra, Blue Energy) are the winners.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/CVResearch_" target="_blank" rel="noopener">@CVResearch_</a></b><br>32,583 views<br>Oct 9, 10:34 AM</div><div class="txt">$BE is worth about $85 billion. $INIO is worth $14.4 billion. This year they will book almost the same revenue.
+
+$INIO guides to $3.8 to $3.9 billion in 2026 revenue. $BE guides to $3.9 to $4.2 billion.
+INNIO shipped 3.4 gigawatts of engines last year. Bloom ended 2025 with about 1 gigawatt of annual factory capacity. INNIO is building toward 10 gigawatts a year by 2030.
+
+An AI campus needs power on a specific date and the grid cannot promise one. In the busiest regions, connecting a large new load takes five to seven years. 
+
+Sell-side estimates value getting power one year earlier at about $4.50 per watt. INNIO&#x27;s engines sell for $0.45 to $0.70 per watt. The buyer is paying for the date, not the hardware.
+
+The J624 is a 5 megawatt gas engine that gets trucked in on a trailer and takes load in about 15 seconds. Nothing larger takes load that fast.
+
+The demand is already on paper.
+
+Backlog went from $1.0 billion at the end of 2024 to $6.6 billion in June. Customers have prepaid $1.4 billion. 2026 and 2027 are sold out and reservations reach into 2030 and 2031.
+
+We traced about 8 gigawatts of Jenbacher engines to named sites. $AMZN specified 280 J620s in a Pennsylvania permit. $ORCL and OpenAI&#x27;s Frontier campus runs on Jenbachers through VoltaGrid. Liberty Energy filed the first real price in an 8-K: $493 million for 100 J624s.
+
+Then there is the part nobody prices. Services were 48% of 2025 revenue and about 65% of segment profit. A data center engine runs about 8,000 hours a year against 2,000 to 4,000 on the legacy fleet, and the parts wear by the hour. The first wave hits major overhauls from 2029.
+
+So why is it $19.20, 29% below the $27 IPO and 55% below the June high?
+
+Because of who is selling. The IPO was 100% secondary. The sponsors still own 86% and only about 14% of the company trades. One quarter of tariff hit margins did the rest. 
+
+The lockup expires November 30.
+Now run the math. At $19.20 the market is pricing capacity that stops at about 5.7 gigawatts, short of the Austrian expansion already under construction, with the new Wisconsin line adding nothing.
+
+Our base case is $27, about 40% above today. Bear is $14.40 and bull is $38.
+
+The risks are real. The Texas permit pause. A sponsor with 646 million shares to sell. VoltaGrid at 41% of 2025 orders. All of it is in the report, along with what would change our mind.
+
+The dates that decide it: October 19 TCEQ&#x27;s report, October 29 Enerflex earnings, mid November INNIO&#x27;s Q3, November 30 the lockup, and around December 10 when ERCOT finishes its review.
+
+The grid will get there eventually. The data center cannot wait for it. INNIO sells the time in between.<a href="https://x.com/CVResearch_/status/2108581832048496924" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108581832048496924" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/business" target="_blank" rel="noopener">@business</a></b><br>28,264 views<br>Oct 6, 5:10 PM</div><div class="txt">Blue Energy, a nuclear startup, has applied to connect to the Texas power grid, the first company to seek permission to deliver electricity from next-generation reactors in a push to meet surging demand from data centers https://t.co/nnDR1fWZTI<a href="https://x.com/business/status/2107594251622044112" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107594251622044112" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/cherryPayment" target="_blank" rel="noopener">@cherryPayment</a></b><br>6,329 views<br>Oct 10, 12:45 PM</div><div class="txt">写完核电龙头 Constellation之后，我们今天来看一下一直在list上但却没有聊过的 Vistra。
+
+它和 CEG 是天生一对镜像：CEG 是&quot;核电卖 AI 最领先、估值也最贵&quot;的那个；Vistra 则是&quot;比 CEG 落后一步、但也便宜一截&quot;的那个。 过去两年，整个电力板块都被 AI 数据中心&quot;缺电&quot;的叙事抬上了天，Vistra 2024 年是标普 500 全年涨幅第二名仅次于 Palantir，涨了 261%甚至还把英伟达都甩在后面。
+
+先简单说下它是谁：全美最大的独立发电商（IPP）之一 + 零售一体化，大本营在德州 ERCOT，总装机约 43.6 吉瓦，还有约 500 万零售客户，旗舰品牌 TXU Energy。这里有个特别关键、也特别容易被忽略的点：市场谈它的 AI 核电故事谈得很热，但它的核电只占装机的 15%，真正扛起大半收入的是那 62% 的天然气，外加 20% 的煤。 换句话说它不是一支干干净净的&quot;核电纯多&quot;，而是一个&quot;又脏又全&quot;的综合发电商。
+
+它的身世也挺传奇：前身是德州电力巨头 TXU，2007 年被 KKR、TPG、高盛用约 450 亿美元做了史上最大的杠杆收购，这里连巴菲特都掺了一脚、后来认错，结果页岩气来了、煤电算盘落空，2014 年破产，这应该是美国史上最大的非金融破产之一。Vistra 就是从这片废墟里重组、重生出来的，然后一路靠并购做大，2024 年收 Energy Harbor 拿到了四台核电。
+
+看它的财报别看 GAAP 净利润，要看&quot;调整后 EBITDA&quot;因为它用大量电价对冲，账面浮盈浮亏把净利润打得上蹿下跳，你去看2021/22 还亏二十多亿，2年之后2024 居然赚二十八亿。但如果你去看 EBITDA 就正常了，五年从约 20 亿涨到约 59 亿，稳稳向上，还刚升了投资级、疯狂回购把股本缩了 30%。
+
+那 AI 这波它吃到了多少？ 
+
+坦白说 2024 年它是落后 CEG 和 Talen 的。但 2026 年它一口气补了四张大牌：Meta（PJM 核电、逾 2,600 兆瓦、20 年）、AWS（德州 Comanche Peak、至多 1,200 兆瓦、20 年）、英伟达/KKR 的 Helix 合资、以及 DOE 至多 42 亿美元的有条件贷款。所以它从&quot;落后但便宜&quot;，正在变成&quot;追上了、但还便宜&quot;。
+
+但便宜也是有原因的：
+
+一是它不干净：核电只 15%、八成是又脏又周期的气和煤，商品价格敞口大、没有受监管公用事业那种&quot;保证回报率&quot;的保护伞；而且 CEO 自己都承认，德州电价最近在走软。
+
+二是 Moss Landing 那把火：2025 年初它在加州的储能项目起火，冲销了约 4 亿、还惹上一堆官司和清理。
+
+三是它脆：2025 年初 DeepSeek 一来，它单日暴跌约 28%，是所有 AI 电力股里跌得最惨的，同天 CEG 跌 21%、英伟达跌 17%。
+
+以前大家说&quot;VST 杠杆是 CEG 的好几倍&quot;，但这个已经过时了。CEG 收了 Calpine 之后自己也背上巨债，净债涨到约 240 亿，绝对值反而超过了 Vistra 的约 195 亿。现在两家杠杆率半斤八两，VST 甚至还略低。所以 Vistra 便宜不是因为它杠杆更高，而是因为它那套&quot;又脏又周期&quot;的组合天生就该比纯核电的 CEG 有着更低的估值。
+
+我认为Vistra 是一个&quot;确实便宜、叙事也在追上，但绝不是&#x27;干净&#x27;故事&quot;的标的。它前瞻 PE 约 16 倍，CEG 要 22 倍以上、自由现金流收益率约 7.2%，而这部分CEG 才 3.8%，便宜了一大截；但你买的不是纯核电，而是一个带着三倍 EBITDA 的债、八成化石燃料、外加一桩火灾官司的综合发电商。它更适合&quot;看好 AI 缺电、但嫌 CEG 太贵、愿意为便宜承担更多杠杆和周期波动&quot;的人，而不是想买一份&quot;干净确定性&quot;的人。
+
+拐点则需要关注那些数据中心大单的 EBITDA 能不能从 2027 年起稳稳爬坡、ERCOT 电价能不能止跌、Moss Landing 官司最终花多少、去杠杆守不守得住。
+
+下一个验证点是 Q3 2026 财报，大约 11 月初。
+
+立场：中立 · 无持仓 · DYODR。
+
+https://t.co/OTVn2a3W63<a href="https://x.com/cherryPayment/status/2108977129949962638" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108977129949962638" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/KyleAdamsStocks" target="_blank" rel="noopener">@KyleAdamsStocks</a></b><br>5,324 views<br>Oct 13, 6:34 PM</div><div class="txt">$VST remains one of my favorite ways to play rising U.S. power demand.
+
+Vistra is already benefiting from stronger pricing. Q2 adjusted EBITDA increased more than 30% YoY to $1.77B, driven primarily by higher realized energy and capacity prices along with contributions from acquired assets. Management continues to expect major load growth through 2030, which is roughly 4-6% annually in ERCOT and 2-3% in PJM driven by data centers, reshoring, electrification and population growth.
+
+The nuclear story is even more compelling. Vistra signed 20-year agreements with Meta covering 2,609 MW across its PJM nuclear fleet, including 433 MW of new uprates. It also has a 20-year agreement with AWS for up to 1,200 MW from Comanche Peak.
+
+The DOE has announced a conditional loan commitment of up to $4.2B to help finance nuclear uprates and modernization across Vistra&#x27;s Pennsylvania and Ohio fleet. If finalized, that financing would help preserve nearly 4 GW of existing nuclear generation while adding 433 MW of new capacity.
+
+And the financial setup remains strong. Vistra&#x27;s 2027 adjusted EBITDA midpoint opportunity is $7.4B-$7.8B and importantly, that figure excludes potential contributions from the pending Cogentrix acquisition AND the Meta PPAs. Vistra has also repurchased roughly $6.5B of stock since 2021, reducing its share count by ~30%.
+
+Management summed up the opportunity well on the latest earnings call: “the long-term expected improvement in power market fundamentals is underway.”
+
+TLDR; Higher realized power prices. Rapid electricity demand growth. 20-year nuclear contracts. Potentially billions in federal financing. Aggressive buybacks.
+
+I really like the long-term setup for $VST.<a href="https://x.com/KyleAdamsStocks/status/2110152180774875213" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110152180774875213" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/TheValueist" target="_blank" rel="noopener">@TheValueist</a></b><br>3,050 views<br>Oct 7, 4:22 PM</div><div class="txt">$VST Vistra: PJM/ERCOT Power Dynamics, Nuclear Contracting &amp; Capital Allocation. Investment Theis. New: 10/7/26.
+
+Vistra is positioned to benefit from rising demand for reliable electricity, the scarcity of existing generating assets with established grid connections, and the increasing willingness of large technology companies to enter long-term power contracts. Its investment proposition combines a substantial natural gas fleet, 6 nuclear reactors, a large competitive retail electricity business, and significant exposure to Texas and PJM. The strongest elements of the thesis are the earnings contribution from assets already operating, the monetization of existing nuclear generation through signed contracts, and the ability to acquire generation below prevailing construction costs. The principal uncertainties concern the timing of electricity demand, the economics of additional contracts, the capital required to capture growth, and the portion of operating cash flow ultimately available to common shareholders.<a href="https://x.com/TheValueist/status/2107944798405464559" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107944798405464559" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/joejo2038" target="_blank" rel="noopener">@joejo2038</a></b><br>2,267 views<br>Oct 10, 3:49 AM</div><div class="txt">한 사이트에 GEV에 의해 가스발전+SMR이 동시에 launching되는 프로젝트..
+
+[Blue Energy, ERCOT 첫 소형모듈원전 접속 신청]
+
+- Blue Energy의 텍사스 소형모듈원전 최대 1.5GW 계획이 ERCOT 최초의 해당 기술 접속 신청 단계에 진입, 데이터센터 전력 공급을 위한 계통 심사 개시
+
+1. 10월 6일 블룸버그 보도에 따르면 Blue Energy Global이 ERCOT에 소형모듈원전 프로젝트의 계통접속을 신청한 상태. ERCOT는 소형모듈원전의 첫 접속 신청이라고 확인.
+
+2. 계획 규모는 GE Vernova Hitachi Nuclear Energy 설계를 사용하는 300MW급 원전 최대 5기, 총 최대 1.5GW이며 공급 대상은 Crusoe 데이터센터. 첫 원전의 예상 가동 시점은 2033년.
+
+3. 같은 프로젝트의 초기 약 1GW 가스발전도 별도로 접속 신청된 상태이며, 원전·가스발전 모두 신청과 계획 단계로 접속 승인·건설·전력 공급 개시 여부는 미확정.<a href="https://x.com/joejo2038/status/2108842381814681775" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108842381814681775" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/OwenGregorian" target="_blank" rel="noopener">@OwenGregorian</a></b><br>1,993 views<br>Oct 6, 7:59 AM</div><div class="txt">Three US nuclear plants get $4.2B upgrade to add 433 MW of generating capacity | Neetika Walter, Interesting Engineering
+
+The U.S. Department of Energy (DOE) has offered up to $4.2 billion in conditional financing to upgrade existing nuclear plants and add 433 megawatts of generating capacity in Pennsylvania and Ohio.
+
+The financing would support uprates and modernization across Vistra’s Beaver Valley plant in Pennsylvania and its Davis-Besse and Perry plants in Ohio. Uprating involves modifying an existing reactor so it can safely generate more electricity without building an entirely new nuclear plant.
+
+The projects are also expected to preserve nearly 4 gigawatts of existing nuclear capacity, which the DOE says is enough to power more than 3 million homes. The additional 433 MW would help meet growing electricity demand across PJM Interconnection, the nation’s largest power grid, which serves more than 67 million people across 13 states, including Pennsylvania, Ohio, New Jersey, Virginia and Maryland, as well as Washington, D.C, and the District of Columbia.
+
+The DOE’s Office of Energy Dominance Financing announced the conditional loan commitment on Monday. Vistra must still meet technical, legal, environmental and financial requirements before the agency signs definitive financing agreements or provides any funds.
+
+Existing reactors gain capacity
+
+Vistra, a Texas-based power producer that operates the second-largest competitive nuclear fleet in the U.S., plans to increase electricity production at Beaver Valley, Davis-Besse and Perry without adding new transmission corridors or building equivalent new generating facilities, according to the DOE.
+
+The investments would also support operation of the plants for an additional 20 years beyond their existing licenses. The financing package includes an option for potential future uprates at Vistra’s Comanche Peak Nuclear Power Plant in Texas.
+
+“By getting more power out of the nuclear plants we already have, we can deliver more affordable, reliable, around-the-clock energy for American families and businesses,” U.S. Energy Secretary Chris Wright said.
+
+Nuclear uprates can increase the output of existing reactors through equipment upgrades and other changes to plant systems. In this case, the approach allows Vistra to add hundreds of megawatts while continuing to use existing nuclear sites and infrastructure.
+
+The proposed investment comes as U.S. electricity demand is rising and policymakers seek additional sources of round-the-clock generation.
+
+Thousands of jobs supported
+
+The DOE estimates the planned work will support about 3,000 project-related jobs across engineering, construction and planned reactor outage work. It is also expected to preserve thousands of permanent jobs associated with the plants.
+
+The financing advances an executive order signed by President Donald Trump in 2025 aimed at expanding U.S. nuclear generation and strengthening the domestic nuclear industry.
+
+“These investments will extend the life of existing reactors, increase nuclear generation, and deliver abundant, around-the-clock power to lower costs and power American prosperity for decades to come,” EDF Director Gregory A. Beard said.
+
+The $4.2 billion figure represents the maximum amount available under the conditional commitment, rather than money already awarded to Vistra. The company will receive financing only if it meets the DOE’s conditions and the two sides complete final loan documents.
+
+https://t.co/GwhrjdrqaM<a href="https://x.com/OwenGregorian/status/2107455708060942828" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107455708060942828" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/HopfJames" target="_blank" rel="noopener">@HopfJames</a></b><br>1,303 views<br>Oct 7, 11:06 AM</div><div class="txt">Blue Energy is applying to get access to the Texas power grid.  Its plan is to power a TX data center with a hybrid power plant that will consist of 1.0 GW of gas generation and 1.5 GW of nuclear generation.  Article link in reply.
+
+The 1.5 GW of nuclear will come from five BWR-300 SMRs.  The nuclear part isn&#x27;t licensed yet, but the gas generators will be ready sooner.  Hence, the need to apply for grid access now, given that grid access in the US is in short supply.
+
+The gas plants are expetced to start up in 2030 and 2031.  The first SMR is expected to start in 2033.<a href="https://x.com/HopfJames/status/2107865249412243961" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107865249412243961" data-orig="firm_power_nuclear_gas"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas" selected>Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><h2 class="lanehead"><span style="color:#d55181">Solar and batteries keep lights on</span><span class="d">Texas&#x27;s solar and battery buildout is why the grid handled summer easily, showing renewables plus storage deliver reliability and cheap power.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/cremieuxrecueil" target="_blank" rel="noopener">@cremieuxrecueil</a></b><br>90,727 views<br>Oct 6, 3:54 PM</div><div class="txt">Texas added a bunch of batteries to the grid and now it&#x27;s so reliable that it doesn&#x27;t have huge price swings like it used to just a few years ago.
+
+This is one of the ways to practically beat global warming in the sense that new technology is allowing us to weather the heat. https://t.co/HwHovCx8qc<a href="https://x.com/cremieuxrecueil/status/2107575316067627499" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107575316067627499" data-orig="solar_storage_success"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success" selected>Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/JessePeltan" target="_blank" rel="noopener">@JessePeltan</a></b><br>9,579 views<br>Oct 13, 9:57 AM</div><div class="txt">Texas receives over 1,000,000 TWh of energy from the Sun every year.
+
+Over the past 12 months, solar PV captured ~0.006% and provided 16% of all electricity.<a href="https://x.com/JessePeltan/status/2110022087108640837" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110022087108640837" data-orig="solar_storage_success"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success" selected>Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/JohnCornyn" target="_blank" rel="noopener">@JohnCornyn</a></b><br>4,482 views<br>Oct 11, 8:20 AM</div><div class="txt">Summer in Texas becomes &#x27;non-event&#x27; for grid amid storage and solar surge https://t.co/AtQaxwySIb via @statesman<a href="https://x.com/JohnCornyn/status/2109273039003357303" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109273039003357303" data-orig="solar_storage_success"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success" selected>Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/WeaponOutfitter" target="_blank" rel="noopener">@WeaponOutfitter</a></b><br>2,589 views<br>Oct 6, 4:22 PM</div><div class="txt">Texas doing green energy better than California because they don&#x27;t have insane regulations and government nitpicking is hilarious.
+
+Know a guy who makes a living trading energy in Chicago, says the Texas market is where it&#x27;s at<a href="https://x.com/WeaponOutfitter/status/2107582271180181520" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107582271180181520" data-orig="solar_storage_success"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success" selected>Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/EvaFox" target="_blank" rel="noopener">@EvaFox</a></b><br>1,566 views<br>Oct 14, 8:56 AM</div><div class="txt">NEWS: Tesla Megapacks just doubled a Texas battery site to 300 megawatts 🔋🔋🔋
+
+Nightpeak Energy says its Bocanova 2 project in Brazoria County is now in commercial operation: another 150 megawatts of two-hour storage built on Tesla Megapack 2 XL, bringing the whole site to 300 megawatts on the Texas grid.
+
+Texas demand keeps climbing, and fast-responding batteries help keep the grid stable when usage spikes. This is Tesla Energy doing the unglamorous work that makes room for that growth.<a href="https://x.com/EvaFox/status/2110369214875754956" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110369214875754956" data-orig="solar_storage_success"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success" selected>Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><h2 class="lanehead"><span style="color:#9085e9">Texas grid fails, blame politicians</span><span class="d">Texas&#x27;s grid is unreliable and prone to blackouts, mocked as a failure of Texas leadership (Cruz, Abbott) and deregulated governance, often contrasted with California.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/GovPressOffice" target="_blank" rel="noopener">@GovPressOffice</a></b><br>61,700 views<br>Oct 13, 10:31 AM</div><div class="txt">JUST IN: California’s power grid handled its highest electricity demand in four years — without emergency measures or calls for conservation.
+
+50,335 megawatts. Extreme heat. And the lights stayed on.
+
+While states like Texas face major grid failures, California’s clean energy investments are delivering a stronger, more resilient grid!<a href="https://x.com/GovPressOffice/status/2110030773726388346" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110030773726388346" data-orig="grid_failure_mockery"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery" selected>Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/BuckyNoseBest" target="_blank" rel="noopener">@BuckyNoseBest</a></b><br>3,754 views<br>Oct 7, 12:24 PM</div><div class="txt">@Acyn If political unlikability were a harvestable energy source, Ted Cruz could single-handedly power the entire Texas power grid—which, ironically, might keep him from fleeing to Cancún the next time it fails.<a href="https://x.com/BuckyNoseBest/status/2107884747179659492" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107884747179659492" data-orig="grid_failure_mockery"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery" selected>Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/JamadaLoL" target="_blank" rel="noopener">@JamadaLoL</a></b><br>3,165 views<br>Oct 8, 7:16 AM</div><div class="txt">Woke up ready to do PowerSpike 6:45am sharp and there’s a power cut. 
+
+God bless Texas power grid 🙏 🦅 🍺<a href="https://x.com/JamadaLoL/status/2108169726073643352" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108169726073643352" data-orig="grid_failure_mockery"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery" selected>Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><h2 class="lanehead"><span style="color:#199e70">Pushback</span><span class="d">Posts doubting, mocking, fact-checking or arguing against the dominant framings.</span></h2><div class="post"><div class="who"><b><a href="https://x.com/RustySuretteTV" target="_blank" rel="noopener">@RustySuretteTV</a></b><br>4,188 views<br>Oct 9, 6:00 AM</div><div class="txt">☀️⚡ A $1.7 BILLION solar project is going up just outside Aggieland, and some neighbors say they were blindsided!
+
+The massive project in Robertson County will cover nearly 10,000 acres with 2 MILLION solar panels!
+
+Developers say it will bring more energy to the Texas power grid and create hundreds of construction jobs.
+
+But some nearby homeowners are concerned about property values, transparency, and the impact on their rural community.
+
+There’s also controversy over a 10-year property tax deal that requires just FOUR permanent jobs.
+
+💬 Is this the kind of energy development Texas needs, or should neighboring landowners have more say?
+
+🔗 Nice work here from Ashley Bowerman who spent weeks on this story: https://t.co/XuOQdEDpaH
+
+ #SolarEnergy #Aggieland #RobertsonCounty<a href="https://x.com/RustySuretteTV/status/2108512817351385458" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108512817351385458" data-orig="pushback"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback" selected>Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/Semiconsight" target="_blank" rel="noopener">@Semiconsight</a></b><br>1,748 views<br>Oct 10, 1:48 AM</div><div class="txt">$VST: This Week&#x27;s Rally Was the Whole Sector, and on Sector Metrics VST Is About the Same as the Peer Average
+
+Figures in the attached infographic come from $VST &#x27;s 10-K, 10-Q and 8-K, the Q2 releases of $VST, $NRG and $TLN, the DOE press release (Oct 5, 2026), and Oct 9 closing prices. Some $NRG metrics are as of Oct 8.
+
+$VST&#x27;s 15% gain this week says little about $VST, because $CEG, $TLN and $NRG rose by similar amounts over the same days (chart 1).
+
+The trigger was $CEG&#x27;s 20-year nuclear PPA with $GOOGL on October 6. One hyperscaler contract for nuclear power was enough to re-price every independent power producer, and $VST moved within that range. The DOE&#x27;s conditional loan commitment on October 5 (up to $4.2B) was $VST-specific news, but the move was no different from peers&#x27;, so it is hard to call it the main driver of the week. The rate and tenor are undisclosed, conditions remain before a final agreement, and the 433MW it supports delivers between 2031 and 2034 (chart 8).
+
+The remaining question is whether $VST deserves a different multiple than its peers now that the sector has re-rated. On guidance-based forward EV/EBITDA, $VST is at 10.7x against a 10.65x peer average. Applying the peer-average multiple to VST&#x27;s earnings gives roughly today&#x27;s price (chart 2). P/E is below $CEG and above $NRG and $TLN, and trailing FCF yield is the highest in the group, though $VST&#x27;s separately guided pre-growth FCF is defined differently and cannot be compared directly (chart 3).
+
+The argument for a different multiple is credit and earnings visibility. Leverage is lower than $NRG&#x27;s and $TLN&#x27;s (chart 4), next year&#x27;s generation is mostly hedged with coverage dropping in 2028, and about half of the nuclear fleet is under long-term contract with $META and solana:5aQcoaSyy7fnhvpRHasBUAMH2nL5tTjVrmFw6BeGmoon (chart 5). Part of that is already in guidance and in the price.
+
+PJM is the counterweight. East, which includes PJM, is the largest segment at 44% of EBITDA, so price caps or market-rule discussions can hit $VST harder than the sector average (chart 6). EV per kW sits below new-build cost and well above the Cogentrix purchase price, so it reads as cheap or expensive depending on the benchmark and is a reference only (chart 7).
+
+Many accounts credit the Pelosi household&#x27;s trades for the attention on this stock. Disclosures show 50 call options in the spouse&#x27;s name exercised in January 2026 into 5,000 shares. The buying decision dates from early 2025, so it was not used in this analysis.
+
+Four points for investors to watch.
+
+This week&#x27;s move was a sector factor. $VST-specific and sector variables need to be separated.
+Forward EV/EBITDA is almost the same as the peer average. Whether a premium or discount is justified depends on how 2027 guidance (expected early next year) and Q3 results (expected early November, date unconfirmed) include Cogentrix and $META.
+Low leverage, a BBB− rating and high hedge ratios are strengths. The 2028 hedge ratio, the Cogentrix closing and uprate capex through 2034 are variables.
+East carries the largest weight, so PJM price caps, market rules and the 2027 ERCOT forward curve can move the stock ahead of the sector metrics.
+
+This is a personal investor&#x27;s write-up based on public filings and company releases, not professional research. Errors are possible, and corrections are welcome.
+
+This article is for informational purposes only and is not a recommendation to buy or sell any security. Investment decisions and their outcomes are the investor&#x27;s own responsibility.<a href="https://x.com/Semiconsight/status/2108811791124087048" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108811791124087048" data-orig="pushback"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback" selected>Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/IamtheGlitch_TX" target="_blank" rel="noopener">@IamtheGlitch_TX</a></b><br>1,726 views<br>Oct 11, 8:30 AM</div><div class="txt">I Speak About the Data Center Crisis
+
+&quot;It&#x27;s about economic growth!&quot;
+
+What value are they providing for the economy?
+
+Data Centers hold between $1.3-$1.6 trillion in debt for the US.
+
+But what recurring value do they put out the recoups that investment to avoid it being passed on to the American/Texan taxpayer?
+
+This is not sustainable and We The People do not have to stand for it.
+
+So stand for your rights, your Republic, and your free will.
+
+Vote for Jenn Mack via Write-In on November 3rd for Governor of Texas.
+
+A Constitutional Independent not beholden to either establishment who will break the Uniparty control of our Great Republic.
+
+#texas #democrat #republican #txlege #jennmack<a href="https://x.com/IamtheGlitch_TX/status/2109275324491964426" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109275324491964426" data-orig="pushback"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback" selected>Pushback</option><option value="other">other (not drawn)</option></select><div class="meta">quoted post</div></div></div><h2 class="lanehead"><span style="color:#7c7c78">other (not drawn)</span><span class="d"></span></h2><div class="post"><div class="who"><b><a href="https://x.com/LoneStar_PAC" target="_blank" rel="noopener">@LoneStar_PAC</a></b><br>265,906 views<br>Oct 12, 8:42 AM</div><div class="txt">James talarico says Texas oil and gas workers are &quot;destroying the planet&quot; and it&#x27;s &quot;time to transition&quot; the industry.  #TXsen https://t.co/jCO7wBCo9W<a href="https://x.com/LoneStar_PAC/status/2109640904395129167" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109640904395129167" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/rmcentush" target="_blank" rel="noopener">@rmcentush</a></b><br>210,948 views<br>Oct 7, 9:48 AM</div><div class="txt">https://t.co/vKGmmYZlXv<a href="https://x.com/rmcentush/status/2107845639199666615" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107845639199666615" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/Acyn" target="_blank" rel="noopener">@Acyn</a></b><br>187,407 views<br>Oct 7, 12:19 PM</div><div class="txt">Cruz: Your next birthday party, your Aunt Susie might get you an ugly sweater. And you might say to Aunt Susie, instead of the ugly sweater, how about put 50 bucks in my Trump account. https://t.co/1oGd9iUWk2<a href="https://x.com/Acyn/status/2107883494106137073" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107883494106137073" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/LoufactsIGB" target="_blank" rel="noopener">@LoufactsIGB</a></b><br>67,840 views<br>Oct 13, 4:46 AM</div><div class="txt">Power Grid emergency declared in Washington D.C and 13 other States, blackouts imminent. All before election time. Here we go 🤦‍♂️<a href="https://x.com/LoufactsIGB/status/2109943950014587144" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109943950014587144" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/YourAnonCentral" target="_blank" rel="noopener">@YourAnonCentral</a></b><br>32,613 views<br>Oct 14, 10:10 AM</div><div class="txt">SpaceX restricted Ukraine’s Starshield without warning, disrupting military. Ukraine also reported missing allied warnings of Russian missile launches, as Trump threatened to restrict intelligence sharing unless Ukraine stopped striking Russian refineries. https://t.co/Ya5ywzLgwL<a href="https://x.com/YourAnonCentral/status/2110387863271653398" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110387863271653398" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/cherryPayment" target="_blank" rel="noopener">@cherryPayment</a></b><br>25,676 views<br>Oct 8, 1:21 PM</div><div class="txt">所以我认为分批建仓和分批止盈是非常重要的，我也是反复提醒一定要到了价格卖出
+
+我们227美金的 $MRVL ，在280止盈了20%
+
+我273给的 $BE ，也在300提醒卖出
+
+ 我提醒的137买入的 $VST ，今天也来到了 161美金，我们在160卖了20%
+
+ $INTC 我们分别在110，128卖出了各20%
+
+ $COHR 我们在320卖了20%
+
+ $LITE 我们1070卖了20%
+
+ $SKHY 我们在200附近卖出了20%
+
+对于今天的下跌，我们有大把的资金可以去加仓，也丝毫不着急，设置好价格买入就好，这个20%是我说的，但我看到不少人卖的更多
+
+我在频道里提醒了不止一次
+
+Let’s work together 
+
+Let’s make more money together<a href="https://x.com/cherryPayment/status/2108261632786956631" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108261632786956631" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/SteveScalise" target="_blank" rel="noopener">@SteveScalise</a></b><br>19,469 views<br>Oct 13, 3:45 PM</div><div class="txt">The radical left wants to run America.
+
+Look at what they’ve done where they do have power:
+
+HIGHER energy bills. HIGHER gas prices. HIGHER housing costs.
+
+It’s the BLUE STATE TAX and Democrats want to make EVERY AMERICAN pay it. https://t.co/mV7Ghpht3S<a href="https://x.com/SteveScalise/status/2110109770682097810" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110109770682097810" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/INArteCarloDoss" target="_blank" rel="noopener">@INArteCarloDoss</a></b><br>18,110 views<br>Oct 9, 6:05 PM</div><div class="txt">Let’s review them one by one. 
+
+1- Utility interconnection wait times across major regional transmission organizations (such as PJM, ERCOT, MISO) now stretch 4 to 7 y. Policy interventions put roughly 20% of the entire U.S. pipeline at risk of multi-year stalls
+
+18/38<a href="https://x.com/INArteCarloDoss/status/2108695375410516359" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108695375410516359" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/PSInvestor" target="_blank" rel="noopener">@PSInvestor</a></b><br>8,137 views<br>Oct 7, 5:00 AM</div><div class="txt">$CIFR CFO Greg Mumford opened KBW&#x27;s AI Infrastructure Summit yesterday. Most of the questions were about the cost of money and the shape of the leases.
+
+𝗧𝗵𝗲 𝗻𝗲𝘅𝘁 $CIFR 𝗖𝗶𝗽𝗵𝗲𝗿 𝗯𝗼𝗻𝗱 𝘄𝗶𝗹𝗹 𝗽𝗿𝗶𝗰𝗲 𝗵𝗶𝗴𝗵𝗲𝗿
+
+Base rates are up. Data center spreads widened even more.
+
+Lenders now price the stretch between signing a lease and delivering the building. They ask about:
+1. Delivery track record at this scale
+2. Credible megawatts on a fixed date
+3. The tenant&#x27;s out clauses
+
+Greg Mumford, CFO: &quot;𝙄 𝙩𝙝𝙞𝙣𝙠 𝙩𝙝𝙚 𝙘𝙤𝙨𝙩 𝙢𝙖𝙮 𝙘𝙝𝙖𝙣𝙜𝙚, 𝙗𝙪𝙩 𝙄 𝙙𝙤𝙣&#x27;𝙩 𝙩𝙝𝙞𝙣𝙠 𝙤𝙪𝙧 𝙖𝙘𝙘𝙚𝙨𝙨 𝙩𝙤 𝙘𝙖𝙥𝙞𝙩𝙖𝙡 𝙞𝙨 𝙙𝙞𝙢𝙞𝙣𝙞𝙨𝙝𝙞𝙣𝙜.&quot;
+
+𝗛𝗶𝗴𝗵𝗲𝗿 𝗰𝗼𝘀𝘁𝘀 𝗴𝗲𝘁 𝗽𝘂𝘀𝗵𝗲𝗱 𝗶𝗻𝘁𝗼 𝘁𝗵𝗲 𝗹𝗲𝗮𝘀𝗲
+
+Yield on cost is one lever. He named three more:
+1. SLA penalties tied to phase dates
+2. Termination terms on delays, now moving toward developers
+3. Pre-agreed cost splits with the tenant
+
+Two of $CIFR CIPHER&#x27;s three signed leases already share overruns with the tenant past a set point.
+
+𝗘𝘅𝗲𝗰𝘂𝘁𝗶𝗼𝗻 𝗿𝗶𝘀𝗸 𝗱𝗿𝗼𝗽𝘀 𝗮𝘁 𝗱𝗲𝗹𝗶𝘃𝗲𝗿𝘆
+
+He expects cap rates to tighten once a hall is handed over, and said an AWS look-through limits how high they can go. No stabilized AI campus has traded yet to set the benchmark.
+
+Wells Fargo&#x27;s model moves $CIFR equity 30% to 50% per share for every 100 bp of cap rate.
+
+After stabilization, the options are a refinancing at higher leverage and lower cost, or selling part or all of an asset. He wants the recycling to be non-dilutive.
+
+$CIFR 𝗖𝗶𝗽𝗵𝗲𝗿&#x27;𝘀 𝗱𝗲𝘃𝗲𝗹𝗼𝗽𝗺𝗲𝗻𝘁 𝗳𝗲𝗲 𝘀𝗶𝘁𝘀 𝗶𝗻𝘀𝗶𝗱𝗲 𝘁𝗵𝗲 𝗯𝘂𝗶𝗹𝗱 𝗯𝘂𝗱𝗴𝗲𝘁
+
+The all-in budget runs from land through key handover: permitting, soft costs, engineering and the fee to $CIFR. Tenant spec sets the cost per MW, from backup generators to liquid versus evaporative cooling.
+
+𝗧𝗲𝘅𝗮𝘀 𝗽𝗲𝗿𝗺𝗶𝘁𝘀 𝗮𝗿𝗲 𝗽𝗮𝘂𝘀𝗲𝗱 𝘂𝗻𝘁𝗶𝗹 𝘁𝗵𝗲 𝗘𝗥𝗖𝗢𝗧 𝗮𝘂𝗱𝗶𝘁
+
+He called it a timing issue. Tenants can diligence a Texas site and hold terms with optionality until approvals land. $CIFR has sites outside the audit where talks continue.
+
+Behind-the-meter gas is the slower build. Lateral pipelines are underway, gas transport agreements are in progress, and generation equipment is the hard part to secure. $CIFR prices those deals above a grid deal for the extra risk.<a href="https://x.com/PSInvestor/status/2107772939366285669" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107772939366285669" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/ctindale" target="_blank" rel="noopener">@ctindale</a></b><br>7,677 views<br>Oct 12, 1:16 AM</div><div class="txt">https://t.co/xahd3HRSDm<a href="https://x.com/ctindale/status/2109528525762109557" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109528525762109557" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/ERCOT_ISO" target="_blank" rel="noopener">@ERCOT_ISO</a></b><br>4,643 views<br>Oct 12, 2:04 PM</div><div class="txt">Above-normal temperatures and added humidity can be expected for much of this week. Rain chances will gradually increase in the west and northwest regions before a cold front arrives in the Thursday-Friday time frame and cools temperatures down for the weekend. ERCOT expects high demand in the first part of the week followed by moderate demand later in the week, with peaks in the upper-50,000- to lower-80,000-megawatt range. Monitor current and extended grid conditions: https://t.co/NDw4viujDJ<a href="https://x.com/ERCOT_ISO/status/2109721956081598533" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109721956081598533" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/SlBrandin" target="_blank" rel="noopener">@SlBrandin</a></b><br>4,642 views<br>Oct 7, 11:15 AM</div><div class="txt">The core issue for ERCOT (or any bulk power system) is that the legacy transmission planning process becomes a fundamentally intractable/unverifiable problem for the modern scale of load growth 
+
+You cannot produce firm solutions for service to single point loads exceeding 1GW each if the total quantity of load evaluated would double the size of the system
+
+It’s not that we are arriving at the wrong solutions, it’s that we are asking the wrong questions<a href="https://x.com/SlBrandin/status/2107867337563288026" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107867337563288026" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/nodal_capital" target="_blank" rel="noopener">@nodal_capital</a></b><br>3,186 views<br>Oct 7, 12:15 PM</div><div class="txt">LS Power has closed Fund VI at its $6B hard cap
+
+LS Power Equity Partners VI launched in early this year in January 2026 with a $4B target and now closes 50% above their goal.
+
+The fund is more than double Fund V, which closed on $2.7B in 2024.
+
+About $1.7B is already committed to the pending purchase of Constellation gas assets, forming a massive 5 GW fleet across PJM and ERCOT. The platform is highly leverageable against growing AI datacenter demand. 
+
+The fund&#x27;s mandate spans renewables, conventional generation, storage, DERs and other energy infrastructure.
+
+LPs are paying up for equity in dispatchable power within the two tightest US markets. Firm gas in PJM and ERCOT is the core holding of any power fund this cycle, if they can get their hands on it.<a href="https://x.com/nodal_capital/status/2107882395261387028" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107882395261387028" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/vypehouston" target="_blank" rel="noopener">@vypehouston</a></b><br>3,150 views<br>Oct 12, 6:39 PM</div><div class="txt">POWER GRID ⚡: VYPE Houston Volleyball Rankings 🏐 | New 6A Top 20 🔀
+
+Agree or Disagree? Let us know your thoughts in the comments! 📲
+
+BREAKDOWN🔗 https://t.co/SDuftBpaie
+
+✍️ @MatthewOgle777 
+
+#lonestarcollege<a href="https://x.com/vypehouston/status/2109791003422966057" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109791003422966057" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/Pulpnonfictio" target="_blank" rel="noopener">@Pulpnonfictio</a></b><br>3,002 views<br>Oct 13, 11:34 AM</div><div class="txt">The Lure
+
+For more than seventy-five years, the surest place to find the phenomenon has been next to the most dangerous fire human beings own. The record keeps putting it near the bomb. The oldest story says why.
+
+At 8:45 in the morning on March 16, 1967, underground on the Montana prairie, the ten Minuteman I missiles of Echo Flight went dark.
+
+They did not explode, and they did not launch. Nearly simultaneously, each dropped from strategic alert to &quot;No-Go,&quot; with the fault showing on channels 9 and 12. The wing&#x27;s classified history, released decades later under the Freedom of Information Act, records it in the flat voice of a maintenance log: &quot;All LF&#x27;s in E Flight lost strategic alert nearly simultaneously.&quot; A secret Strategic Air Command message the next day carried the subject line &quot;Loss of Strategic Alert Echo Flight, Malmstrom AFB.&quot;
+
+The wing worked through the list. Weather was &quot;ruled out as a contributing factor.&quot; Communications maintenance found &quot;no unusual activity.&quot; The 801st Radar Squadron at Malmstrom &quot;gave a negative report on any radar or atmospheric interference problems.&quot; The commercial power grid was cleared too: other flights fed by the same Hilger substation, out on the Montana Power lines, &quot;were not affected.&quot; The investigation moved to the contractor, Boeing. There, according to the wing history, engineers managed to reproduce the No-Go only &quot;by the use of a 30 micro sec Pulse (-10 to 0 volt square wave)&quot; placed on a command line at the logic coupler, the circuit that turned out to be &quot;the receiver of the noise Pulse.&quot; Where would such a pulse come from, out on the prairie? The wing&#x27;s next quarterly history offered a candidate, and it was not a visitor. &quot;The best possible source of the noise Pulse, so far in the analysis,&quot; it says, &quot;was the transformer failure which occurred&quot; in the Echo Flight area (the scan is partly illegible at that point). A single-phase transformer shorting to ground &quot;may have unbalanced the three phase&quot; system enough to send ground currents along the cable shields, &quot;thus inducing voltage Pulses on the SIN lines to all LF&#x27;s,&quot; the launch facilities. That was a working theory, not a verdict. The same history says the probability of a shutdown from such a pulse &quot;can not be defined&quot; until further tests were done, and the teams at Malmstrom itself had been &quot;unable to determine a logical cause for the incident.&quot; The released record identifies the mechanism. It never confirms the source. It also notes something the legend usually leaves out: reviewing the maintenance history, investigators &quot;discovered a similar incident occurred at Alpha Flight&quot; the previous December, a partial shutdown with no UFO attached to it.
+
+The same unit history contains one more passage, and it is the reason anyone remembers Echo Flight at all: &quot;Rumors of Unidentified Flying Objects (UFO) around the area of Echo Flight during the time of fault were disproven. A Mobile Strike Team, which had checked all November Flight&#x27;s LFs on the morning of 16 March 67, were questioned and stated that no unusual activity or sightings were observed.&quot;
+
+Read it twice. The rumor was about Echo Flight. The men questioned to disprove it had spent the morning at November Flight.
+
+Nobody writes a denial of a rumor that nobody heard.
+
+The Fire at Los Alamos
+
+The pattern begins earlier, at the place where the fire was made.
+
+At one in the afternoon on February 16, 1949, in conference room P-162 of the Los Alamos Scientific Laboratory, on the mesa where the first atomic bombs were built, a meeting classified Secret came to order. The transcript, now declassified by the National Archives, lists who sat at the table: the laboratory director Norris Bradbury, the physicists Edward Teller and Frederick Reines, John Manley and Marshall Holloway, three Army officers, a commander from the Armed Forces Special Weapons Project, an FBI man named Maxwell, and Lincoln LaPaz of the University of New Mexico, the best meteor man in the Southwest. Outside the window a ditch digger kept drowning out the recording. The stenographer kept noting it.
+
+The subject was green fireballs. They had been crossing the sky over New Mexico&#x27;s atomic installations since December 1948. LaPaz had seen one himself, from a roadside near Starvation Peak on the night of December 12 at about 9:02 p.m. He had a stopwatch and a surveyor&#x27;s transit in the back of the car. The light, he told the room, &quot;appeared in full intensity instantly,&quot; a &quot;yellow green, such as I had never observed in meteor falls before,&quot; on a path &quot;as nearly horizontal as one could determine,&quot; lasting &quot;almost exactly two seconds.&quot;
+
+Then he listed what was wrong. Real meteors come in at random angles; these ran flat, eight to ten miles up. Real meteors scream, boom and leave trains; these made no sound and left nothing. When a big meteor falls, &quot;Chickens will fly around to try to get under cover. Dogs will howl... Horses will run away.&quot; After the great fireball of January 30, 1949, his teams covered Texas mud for ten days and interviewed hundreds of people. They found no fragments and &quot;not a single case in which the animals were disturbed.&quot; The color witnesses picked off his spectrum chart sat near 5218 angstroms, &quot;about the color you get when you have copper salts in the Bunsen burner.&quot;
+
+Asked for his explanation, LaPaz said he thought they might be &quot;defensive maneuvers of some higher U.S. Command... practising in the neighborhood of the regions they are going to defend, so naturally your localization of light near the atomic bomb installations.&quot; Major Godsoe of the Army summed up the military&#x27;s position: &quot;most of the military authorities think we are crackpots.&quot; He had already put the meeting&#x27;s purpose more bluntly: &quot;The basic purpose of this meeting is: we want you to find a meteor!&quot;
+
+Teller spent about twenty minutes at the blackboard working the light, speed and shock wave. His verdict, as the stenographer caught it: &quot;it ought to be a material body - might be an electron phenomenon.&quot; LaPaz answered: &quot;Nothing like this, to my knowledge, has ever been observed in the case of meteorite drops.&quot; Bradbury closed with the room&#x27;s frustration: &quot;The puzzling thing is the long horizontal path; also, absence of noise is puzzling.&quot;
+
+The Air Force then set up Project Twinkle to photograph and measure the lights with instruments. Its final report, in November 1951, called its findings &quot;essentially negative&quot; and saw &quot;no use in sinking any more funds into this.&quot; The file also holds an odder line, from an Air Force Cambridge letter of September 1950: &quot;It may be considered significant that fire balls have ceased abruptly as soon as a systematic watch was set up.&quot; A skeptic reads that as a fad fading. A believer reads it as something avoiding the cameras. Either way, Twinkle never got its picture. The Pentagon&#x27;s own 2024 history notes that &quot;no photographs of the fireballs were ever taken.&quot;
+
+Three years later the lights were still on the Air Force&#x27;s map. In a 1952 presentation the War Department released this September as file DOW-UAP-D154, Capt. Edward Ruppelt of Project Blue Book walked an audience through where the reports were piling up: the ports, then &quot;Around Los Alamos and the Albuquerque area, there&#x27;s concentrations. Around White Sands, there&#x27;s concentrations.&quot; On the fireballs, Ruppelt was blunt: &quot;we don&#x27;t know what they are. I mean, they actually exist. There&#x27;s no doubt about it.&quot; He passed along LaPaz&#x27;s theory that they were Russian missiles &quot;zeroing in on, uh, Los Alamos,&quot; and added, &quot;Now that&#x27;s a good story.&quot; The Department&#x27;s cover note sums up the geography as concentrations around &quot;Los Alamos, Albuquerque, and Oak Ridge,&quot; which were the bomb&#x27;s design lab, its proving country and its uranium works.
+
+So one of the first government-convened scientific meetings on the subject in the atomic age was held at the bomb&#x27;s birthplace, because the lights kept showing up over the bomb.
+
+Oscar-7
+
+Nineteen months after Echo Flight, something like it happened at another missile field, and this time part of it was recorded from the air.
+
+In the early hours of October 24, 1968, a B-52 crew near Minot Air Force Base, North Dakota, tracked an unidentified radar return. According to the case files assembled from the Project Blue Book record and later crew interviews, the return closed from about three miles to one mile, paced the bomber for about twenty miles (that distance is the researcher Thomas Tulien&#x27;s reconstruction), and coincided with the loss of both of the aircraft&#x27;s UHF transmitters. Ground personnel reported a bright object. Blue Book&#x27;s own answer, in its final report, was weather and the sky: the ground sightings &quot;appear to be of the star Sirius and the B-52,&quot; and the radar contact and radio loss &quot;could be attributed to a plasma similar to ball lightning.&quot;
+
+Oscar-7 sits on the flat wheat country twenty-four miles north of the base, south of North Dakota Highway 5. At 4:49 a.m., shortly after the B-52 landed, its outer-zone and inner-zone alarms sounded together in the Oscar launch control center. Outer alarms went off all the time, tripped by animals or drifting snow. The inner alarm was sealed away from the weather. Both at once was, in the words of the researcher Thomas Tulien&#x27;s case archive, &quot;an exceptional situation.&quot;
+
+The base&#x27;s own Blue Book reporting officer, Col. Werlich, filed it in capitals: &quot;A SECURITY ALERT TEAM WAS DISPATCHED AND FOUND THE PADLOCK TO THE CHAINLINK FENCE OPEN AND THE FENCE GATE STANDING OPEN... INSIDE THE COMPLEX, A HORIZONTAL DOOR HAD BEEN UNSECURED AND LEFT OPEN AND THE COMBINATION LOCK DIAL HAD BEEN TURNED OFF ITS SETTING THUS TRIGGERING THE INNER ALARM. NO TRACKS, PRINTS OR IMPRESSIONS WERE FOUND.&quot;
+
+A week later, in a memo of a conversation with Blue Book staff, Werlich leaned toward a human culprit, perhaps a disgruntled air policeman with a key: &quot;This is a sensitive subject. Anybody that could unlock the padlock wouldn&#x27;t be a prankster from the farm areas.&quot; The same memo records that a lieutenant who examined the area the next day &quot;could find no evidence of cars, tire tracks, footprints, etc.&quot; Decades later, the flight&#x27;s security controller told Tulien that the investigating lieutenant had reported &quot;a large circular pattern of radiation&quot; on the gravel inside the fence. No document confirms that recollection. Blue Book closed its report on November 13, 1968, with one flat sentence on the silo: &quot;The physical violation of the lock of OSCAR 7 does not seem to be related to UFOs in any way.&quot;
+
+The Northern Tier
+
+Seven years later the reports stopped coming from witnesses alone and started coming from the command log.
+
+In the autumn of 1975 the North American Air Defense Command Director&#x27;s log, released under FOIA in 1977, records a run of intrusions along the country&#x27;s northern bomber bases. At Loring Air Force Base in Maine, in the woods near the Canadian line, an entry describes &quot;an unknown helicopter landing in the munitions storage area,&quot; adding: &quot;Apparently this was second night in a row for this occurrence.&quot; Two nights later, at Wurtsmith in Michigan, a &quot;Helicopter hovered over SAC weapons storage area then departed area. Tanker flying at 2700 feet made both visual sighting and radar skin paint. Tracked object 35NM SE over Lake Huron where contact was lost.&quot;
+
+In November it was Montana again, at the Malmstrom missile field. Security teams had visual contact near &quot;Site C-1, 10 miles SE Stanford, Montana.&quot; Then came the line that reads like folklore set in a teletype: &quot;when F-106s were in area, targets would turn out lights, and when F106s left, targets would turn lights on. F-106s never gained visual or radar contact at anytime due to terrain clearance.&quot; The log adds that &quot;this same type of activity has been reported in the Malmstrom area for several days.&quot;
+
+The same records give the mundane reading its due. NORAD&#x27;s own summaries called the Maine and Michigan intruders helicopters, and nobody ever identified whose. Unknown helicopters over nuclear storage were a real security nightmare even if they carried nothing stranger than smugglers. What the log establishes is narrower. In 1975, for weeks, something no one could identify kept turning up over the places where the warheads slept.
+
+The Man Who Started With a Nuclear Site
+
+Fast-forward to the present, and the pattern is still the hinge of the story, this time told by the official who ran the hunt.
+
+Jay Stratton, the first director of the Pentagon&#x27;s UAP Task Force, whose memoir *Out of the Shadows* goes on sale October 13, 2026, traces his whole career on the subject to one thing. His publisher&#x27;s description says it began when he was &quot;presented with a video of a mysterious advanced aerospace vehicle over a sensitive nuclear weapon site.&quot;
+
+Then he turned the pattern into a method. According to excerpts he posted and a podcast review of them, Stratton describes a plan built on an &quot;educated opinion&quot; that the phenomenon is drawn to nuclear energy. A nuclear submarine would surface in waters with a history of sightings, its reactor deliberately &quot;running hot&quot; to throw off a conspicuous signature. On Fox News on October 12, according to summaries of the segment, he said the mission ran off the East Coast with a Navy P-3 overhead and that a UFO appeared on the first run.
+
+In November 2024, under oath before a House Oversight joint hearing, the former Pentagon official Luis Elizondo put the pattern in a single sentence of his written statement: &quot;Advanced technologies not made by our Government – or any other government – are monitoring sensitive military installations around the globe.&quot;
+
+Four days before Stratton&#x27;s Fox appearance, the Health Secretary, Robert F. Kennedy Jr., had told Representative Anna Paulina Luna that Navy SEALs and Green Berets from recovery teams told him they &quot;had figured out how to call some of the, uh, ships in.&quot;
+
+Seventy-seven years after the Los Alamos meeting, the government&#x27;s own UFO chief says he fished for the phenomenon using the bomb&#x27;s fire as bait, and, by the accounts of his interview so far, that it took the bait.
+
+The Honest Objection
+
+There is a plain explanation, and it deserves a full hearing.
+
+Nuclear sites are the most watched ground on Earth. They have radar, guards, alarms, cameras and officers trained to write everything down. If strange lights appear everywhere at the same rate, the places with the most eyes will produce the most reports. That is a selection effect, and it can manufacture a pattern out of nothing. The Pentagon&#x27;s 2024 history makes the point with Ruppelt&#x27;s own map: Blue Book found concentrations near Los Alamos, Oak Ridge and White Sands, but also near &quot;Strategic Air Command locations, ports, and industrial sites.&quot;
+
+The Echo Flight record has its own problem. The famous witness account, from the former launch officer Robert Salas, describes a red glowing object at a front gate and missiles shutting down. Salas, who was the deputy crew commander, has placed his own incident at Oscar Flight, a different flight from Echo, but his date (March 16 in one telling, March 24 in another) and his count of missiles lost (six to eight, or all ten) have shifted over the years. No released 1967 document records an Oscar Flight shutdown. Skeptics argue he merged his own night with the documented Echo fault. The unit history, again, says the UFO rumors were &quot;disproven.&quot; In June 2025 the Wall Street Journal, citing people familiar with the Pentagon&#x27;s inquiry, reported that investigators had traced Salas&#x27;s account to a classified test: an electromagnetic generator &quot;placed on a portable platform 60 feet above the facility&quot; that could glow &quot;with a blinding orange light.&quot; The story was about Pentagon officials feeding UFO myths to protect weapons secrets. It did not name Echo Flight, the Pentagon has published no such finding, and the 1967 Echo file mentions pulse testing only as part of the investigation that followed the shutdown. And the government&#x27;s broadest review points the same way. The Pentagon&#x27;s All-domain Anomaly Resolution Office, in its 2024 historical report, found &quot;no empirical evidence for claims that the USG and private companies have been reverse-engineering extraterrestrial technology,&quot; and concluded that most sightings were &quot;ordinary objects and phenomena and the result of misidentification.&quot; The most exotic thing it admitted to was a proposed program called Kona Blue, meant to protect research on extraterrestrial technology, which, it said, was never approved and never held any material.
+
+So the documents do not prove a visitor shut down the missiles. They prove something narrower and stranger: that the people responsible for the bombs kept finding it necessary to think about one. They convened Teller over green lights. They wrote a denial into a missile wing&#x27;s history. They pulled a B-52&#x27;s radarscope photographs. And, if Stratton is telling it straight, they eventually stopped waiting for it and went out with bait.
+
+Why the Fire
+
+From here, the essay is interpretation.
+
+The oldest story about fire is a story about theft. In the Greek telling, in Hesiod and later in Aeschylus, the Titan Prometheus steals fire from the gods and gives it to humans, and the gods respond. Their response is not indifference. It is attention, and punishment, and a watcher chained to a rock.
+
+The desk&#x27;s earlier work on Prometheus traced the stolen fire through the patent office. The atomic bomb is the far end of that line: fire taken not from a hearth but from the core of matter, the same reaction that lights the stars. If anything was ever the gods&#x27; fire, it is that.
+
+Read inside the frame, the record from 1949 to now has a simple shape. Humans took the fire. Within a few years, lights were circling the place it was made. Wherever it was stored in the ground, something came to look. And when a government finally wanted to bring the watchers close, it held the stolen fire up to the sky and waited, the way a sailor holds up a lantern at sea.
+
+The Book of Enoch, the oldest text about beings who come down to teach and to watch, credits them with teaching men &quot;the metals of the earth and the art of working them.&quot; In that reading the phenomenon at Malmstrom and Minot is not an invader. It is the original owner, checking on the property.
+
+*Speculation.* If the lure is real, it should be testable without trusting anyone&#x27;s memoir. Sightings should cluster in time around specific nuclear events, not just around nuclear places: reactor startups, tests, warhead movements, the days a submarine runs hot. A selection effect predicts reports spread evenly across a well-watched site&#x27;s calendar. A lure predicts spikes. The released PURSUE files, with dates and locations, are the first public dataset in which someone outside the government could look.
+
+The Lantern
+
+The Echo Flight history is still the best single exhibit, because it does not want to be one. It is a dry Air Force document about logic couplers and substations. Its best guess is a failed transformer, and it never gets past a guess. And in the middle of it, someone had to type that the rumors of UFOs had been looked into and were not true.
+
+On a cold March morning in 1967, somebody in Montana said something about the sky over the missiles. Nobody knows who. The Air Force wrote the rumor down in order to deny it, and the denial is how it survived.
+
+Fifty-nine years later, the man who ran the Pentagon&#x27;s hunt writes that his hunt baited its hook with a nuclear submarine. Humanity has been holding the lantern up for a long time. The documents do not say what comes. They say the people standing next to the fire keep looking up, and keep writing down what they see.<a href="https://x.com/Pulpnonfictio/status/2110046608419147843" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2110046608419147843" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/AuntieRobijr" target="_blank" rel="noopener">@AuntieRobijr</a></b><br>2,884 views<br>Oct 7, 9:10 PM</div><div class="txt">@america Has this world gone mad to think anyone would elect anyone like Talarico??? or that crazy woman who wants to be the next governor of Texas what’s her name Gina ? good God come and save us. This is just freaking nuts.<a href="https://x.com/AuntieRobijr/status/2108017102657335531" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108017102657335531" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">quoted post</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/WHPressPool" target="_blank" rel="noopener">@WHPressPool</a></b><br>2,448 views<br>Oct 7, 11:43 AM</div><div class="txt">Lower Taxes, Safer Streets, Stronger Border: President Trump’s Texas Record
+
+FOR IMMEDIATE RELEASE
+
+Today, President Donald J. Trump returns to Texas with a record of results: historic tax relief, the most secure border in a generation, safer streets, and a surge of new private investment creating jobs across the Lone Star State.
+
+Tax Relief for Texas Workers, Families, Seniors
+
+President Trump’s Working Families Tax Cuts is putting money back in Texans’ pockets.
+• No Tax on Overtime: Approximately one in four Texas workers no longer pay federal income taxes on qualifying overtime pay.
+• No Tax on Social Security: About four million Texas seniors benefit from the new senior deduction.
+• Bigger Refunds: Texas taxpayers saw average refunds of $4,344 the second-highest in the nation.
+• Rural Health Investments: Texas secured about $281 million in first-year Rural Health Transformation Program funding.
+• Protecting Jobs and Wages: The Working Families Tax Cuts safeguarded 547,000 Texas jobs, $107 billion in state GDP, and $51 billion in workers’ wages.
+
+Safer Streets Across Texas
+
+Violent crime is falling across the state as a result of President Trump’s law-and-order agenda.
+• Violent crime fell 13% last year, including a 13% drop in murder and 11% drop in rape.
+• The top 25 most populous jurisdictions in Texas all posted lower overall crime rates than the year before.
+• In the first half of 2026, Arlington homicides fell 60% from the first half of 2025.
+• America’s Safest Big Cities recently placed Plano, Laredo, and Arlington in the national Top 20 with Plano and Laredo in the Top 10.
+
+The Most Secure Border in a Generation
+
+President Trump ended the Biden-era border crisis and is reimbursing Texas for the costs it carried.
+• The Trump Administration has not released a single illegal alien at the border for 16 straight months.
+• Southern border apprehensions in August were 94% lower than the monthly average under Biden.
+• Refugee admissions in the first ten months of this fiscal year are down almost 90% from 2024.
+• The Working Families Tax Cuts $46.5 billion to finish the border wall.
+• Texas will soon receive $7.5 billion from the State Border Security Reinforcement Fund established in the Working Families Tax Cuts to recover costs from Biden’s border crisis.
+
+Protecting Texas Communities
+
+President Trump is delivering for Texas farmers, ranchers, and everyday families.
+• Water for the Valley: In January 2026, USDA and the State Department secured Mexico’s commitment to deliver 350,000 acre-feet per year from the Rio Grande meeting the 1944 treaty average and repaying prior-cycle debt.
+• Protecting Ratepayers: After President Trump’s landmark Ratepayer Protection Pledge, the Public Utility Commission of Texas and ERCOT have moved to shield Texas families from the cost of data center expansion.
+• Screwworm Response: The Trump Administration funded additional Texas Animal Health Commission inspectors and a new $750 million sterile-fly facility, which broke ground in April at Moore Air Base in Edinburg.
+• Support for Farmers: The Trump Administration has delivered $827 million to more than 33,000 Texas farmers through the Emergency Commodity Assistance Program for the 2024 crop year. Nearly 27,000 Texas producers have also received more than $832 million in Farmer Bridge Assistance payments as part of a $12 billion national bridge program for trade disruptions and higher input costs left by the Biden Administration.
+
+A Private Investment Boom in Texas
+
+President Trump’s agenda of tax cuts, energy dominance, secure borders, and pro-growth policies has drawn major capital to the Lone Star State.
+• Bristol Myers Squibb announced a $2.3 billion investment to build a new multi-modal manufacturing campus in Houston.
+• Toyo Co. announced a $357 million investment to build a solar cell manufacturing facility near Houston, creating 400 American jobs.
+• Toyota announced a $3.6 billion investment at its San Antonio campus to build the new Tacoma in the United States instead of Mexico, creating 2,000 American jobs.
+• Saronic announced it will build a new $3.2 billion shipyard in Brownsville.
+• Micron announced $500 million in strategic financing to advance development and manufacturing at its Sherman facility.
+• FormFactor announced a $140 million investment for a new probe card manufacturing facility in Farmers Branch, creating more than 600 American jobs.
+• In July, ZERLUMA broke ground on a $50 million aluminum recycling and advanced manufacturing facility in Mission.
+• SpaceX announced a $16.8 billion investment for the first phase of its new semiconductor fabrication plant in Grimes County.
+• USG Corporation announced a $1.18 billion investment to build a new production facility in Orange, creating 200 American jobs.
+• Grupo Bimbo announced a $1 billion investment affirming its commitment to the U.S. market.
+• XPEL announced a $60 million investment to expand manufacturing and operations in San Antonio.
+• Tesla announced a $3 billion investment in a research chip facility at its Giga Texas campus.
+• Avant Technology announced a $20 million investment to expand its manufacturing facility in Pharr, creating 250 American jobs.
+• America First Refining and Reliance announced a multi-billion-dollar energy partnership to open the first new U.S. oil refinery in nearly half a century in Brownsville.
+• MP Materials announced a more than $1.25 billion investment in a new large-scale rare-earth magnet manufacturing campus in Northlake, creating more than 1,500 direct manufacturing and engineering jobs.
+• Arm Inc. announced a $71 million investment to expand its Austin campus with a new semiconductor lab, creating more than 320 American jobs.
+• Vantage Data Centers announced a $25 billion investment to build a 1,200-acre data center campus in Shackelford County.
+• Inventec announced an $85 million investment to build a manufacturing base in Texas to support AI server shipments.
+• Wistron announced a $500 million investment to acquire land and facilities in Dallas for high-performance computing devices.
+• LGM Pharma announced a $6 million investment to expand its Rosenberg manufacturing facility.
+• Paris Baguette announced a $160 million investment to build the company’s first North American production site, creating 450 American jobs.
+
+President Trump and Republicans are proving once again that America First means Texas First lower taxes, a sealed border, safer communities, and jobs that stay in the United States. Texans have a choice: continue that progress, or let Democrats tear it all down.
+
+Distributed on October 7th, 2026.<a href="https://x.com/WHPressPool/status/2107874370211221977" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2107874370211221977" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/vypehouston" target="_blank" rel="noopener">@vypehouston</a></b><br>1,610 views<br>Oct 12, 6:03 PM</div><div class="txt">POWER GRID ⚡️: VYPE Houston Volleyball Rankings 🏐| New 5A/4A Top 10 🔀
+
+Agree or Disagree? Let us know your thoughts in the comments! 📲
+
+BREAKDOWN🔗https://t.co/SDuftBpaie
+
+✍️ @MatthewOgle777 
+
+#lonestarcollege<a href="https://x.com/vypehouston/status/2109782023321612505" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109782023321612505" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/WorldClimateSvc" target="_blank" rel="noopener">@WorldClimateSvc</a></b><br>1,245 views<br>Oct 12, 9:33 AM</div><div class="txt">How do the latest ERCOT population-weighted maximum temperature forecasts compare with historical model forecasts?
+
+The ECMWF, GEFS, and GFS forecasts show above-normal temperatures in Days 1-5, greater model differences in Days 6-10, and a return to above-normal temperatures in Days 11-14.
+
+Using more than 8 years of archived forecasts from the World Climate Service Point-in-Time Weather Forecast API, we compared the current ERCOT population-weighted maximum temperature anomalies with historical forecasts initialized within ±15 calendar days of October 12 for the same forecast lead times.
+
+Days 1-5: Above-normal temperatures
+ECMWF: +6.9°F | Hottest 12%
+GEFS: +6.0°F | Hottest 25%
+GFS: +5.7°F | Hottest 28%
+
+Days 6-10: Greater differences between models
+ECMWF: +1.1°F | Hottest 50%
+GEFS: −2.2°F | Coldest 27%
+GFS: −0.4°F | Coldest 35%
+
+Days 11-14: Above-normal temperatures
+ECMWF: +3.9°F | Hottest 22%
+GEFS: +1.5°F | Hottest 44%
+GFS: +6.8°F | Hottest 20%
+
+The largest differences between models occur in Days 6-10, when the ECMWF forecasts slightly above-normal maximum temperatures while the GEFS and GFS forecast below-normal temperatures.
+
+By Days 11-14, all three models forecast above-normal temperatures again, with the GFS showing the largest positive anomaly.
+
+For power and natural gas trading desks, the historical rankings provide additional context for evaluating how unusual the current ERCOT temperature forecasts are relative to each model&#x27;s historical forecast distribution.
+
+#ERCOT #ECMWF #GEFS #EnergyTrading #NatGas #PowerMarkets<a href="https://x.com/WorldClimateSvc/status/2109653674406392158" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2109653674406392158" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div><div class="post"><div class="who"><b><a href="https://x.com/realTuckFrumper" target="_blank" rel="noopener">@realTuckFrumper</a></b><br>1,201 views<br>Oct 10, 1:10 PM</div><div class="txt">DAILY TOP 10 | October 9, 2026
+
+1. NEW DEVELOPMENT: Trump raged over losing the Nobel Peace Prize and attacked the committee. Apparently ending wars is optional, but accepting a rejection is impossible. #NobelPeacePrize
+
+2. Trump picked Katie Zacharia, a commentator for his own media company, as White House press secretary. The briefing room just got a customer-loyalty upgrade. #WhiteHouse
+
+3. Senate hopefuls in Michigan, Georgia and Maine battled over tariffs, war, abortion and soaring costs. The campaign slogan practically writes itself: “Can you afford this mess?” #Midterms
+
+4. SpaceX&#x27;s $8 billion wireless-spectrum deal sent major phone-company stocks plunging. Elon wants to disrupt your signal, your bill and apparently everyone&#x27;s portfolio. #Tech
+
+5. Auto union leader Shawn Fain declared reelection victory, beating five challengers. Workers voted for the guy who treats corporate boardrooms like bargaining tables, not temples. #Labor
+
+6. Democrats are debating a third Trump impeachment if they win the House. Washington&#x27;s longest-running courtroom drama is eyeing another season. #Accountability
+
+7. Texas ranchers, including Trump supporters, are fighting his Big Bend border wall. Property rights suddenly look less sacred when the bulldozer flies your team&#x27;s flag. #BorderWall
+
+8. A bipartisan energy-permitting bill risks collapsing amid election politics and competing interests. Washington found a way to put gridlock into the power grid. #Energy
+
+9. Wall Street rebounded Friday, with the Dow up 0.8% even as Treasury yields stayed punishingly high. Stocks celebrate; anyone shopping for a mortgage gets the bar tab. #Economy
+
+10. NEW DEVELOPMENT: Vance said he won&#x27;t watch the Pentagon&#x27;s planned execution livestream. When even the vice president skips the spectacle, perhaps rethink the damn spectacle. #HumanRights<a href="https://x.com/realTuckFrumper/status/2108983595603755050" target="_blank" rel="noopener">open ↗</a></div><div><select data-id="2108983595603755050" data-orig="other"><option value="queue_bubble_pause">Data center queue is speculative bubble</option><option value="data_centers_good">Data centers lower bills, drive growth</option><option value="firm_power_nuclear_gas">Firm power: gas and nuclear</option><option value="solar_storage_success">Solar and batteries keep lights on</option><option value="grid_failure_mockery">Texas grid fails, blame politicians</option><option value="pushback">Pushback</option><option value="other" selected>other (not drawn)</option></select><div class="meta">in dataset</div></div></div>
+<p class="sub" style="margin-top:20px">Generated Oct 14, 2026 1:37 PM CDT.</p>
+
+<script>
+  const box = document.getElementById('ov'); const sels = document.querySelectorAll('select[data-id]'); const count = document.getElementById('cnt');
+  const lines = new Map();
+  function refresh() { box.value = [...lines.entries()].map(([id, l]) => id + ',' + l).join('\n'); count.textContent = lines.size + ' change' + (lines.size === 1 ? '' : 's'); }
+  sels.forEach(s => s.addEventListener('change', () => { const same = s.value === s.dataset.orig; s.classList.toggle('changed', !same);
+    if (same) lines.delete(s.dataset.id); else lines.set(s.dataset.id, s.value); refresh(); }));
+  document.getElementById('copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(box.value); document.getElementById('copy').textContent = 'copied'; } catch (e) { box.select(); } });
+</script></body></html>

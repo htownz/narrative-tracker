@@ -32,8 +32,96 @@ discover_hint: >
   or defense that will recur) over one-day events. Fold single-day stories into the durable narrative they serve.
   Cover both sides: narratives pushed against Paxton and narratives pushed for Paxton or against Talarico.
 
-lanes: []
-
+lanes:
+- key: talarico_missing_hiding
+  label: Talarico missing, flu cover story
+  description: Pro-Paxton posts claim Talarico vanished from the trail for about two weeks, that the 'flu'
+    explanation is a lie covering a mental-health breakdown or hospitalization, and that this makes him
+    unfit or ought to force him out.
+  keywords:
+  - missing
+  - proof of life
+  - flu
+  - mental hospital
+  - drop out
+  - unfit
+  - last seen
+  - tala-freak-out
+- key: talarico_radical_extremist
+  label: Talarico as radical, weird, socialist
+  description: Attacks portray Talarico as a far-left, weird or socialist figure with extreme positions
+    on trans issues, race, border security, religion and 'six sexes', so Texans must vote Paxton to stop
+    him.
+  keywords:
+  - talafreako
+  - socialist
+  - weirdo
+  - transgender
+  - mutilate
+  - border security
+  - apostate
+  - drag queens
+  - 6 sexes
+- key: paxton_cowardice_debate
+  label: Paxton ducking debates, coward
+  description: Anti-Paxton posts say he has refused every debate invitation, is hiding behind attack ads
+    and surrogates, and is a coward, with Talarico's 'clinical cowardice' jab as the signature line.
+  keywords:
+  - debate
+  - cowardice
+  - skipped
+  - declined
+  - proof of spine
+  - hiding
+  - 85 days
+  - ready willing and able
+- key: paxton_corrupt_self_serving
+  label: Paxton corruption and personal scandals
+  description: 'Attacks say Paxton is corrupt and self-serving: he enriched himself, took luxury and out-of-state
+    trips on the taxpayer''s dime, partied in Dubai with a fugitive donor, travelled with his mistress
+    and sold Texas out to data centers.'
+  keywords:
+  - corruption
+  - mistress
+  - dubai
+  - fugitive
+  - 15 homes
+  - net worth
+  - data centers
+  - trips
+  - skipped workdays
+  - fraud
+- key: paxton_cuts_and_campaign_woes
+  label: 'Paxton leaked audio: cuts, campaign troubles'
+  description: Posts amplify leaked private Paxton recordings showing him backing cuts to Social Security
+    and Medicare ('suck it up'), blaming the war and gas prices, feuding with Cornyn and admitting that
+    Abbott and his own campaign are struggling.
+  keywords:
+  - leaked audio
+  - suck it up
+  - social security
+  - medicare
+  - cornyn
+  - gas prices
+  - iran war
+  - fundraiser
+  - mandatory spending
+- key: race_polls_momentum
+  label: Polls, odds and who's winning
+  description: Posts frame the race through polls, prediction-market odds and demographic crosstabs, arguing
+    either that Talarico is surging toward an upset or that Paxton is holding or catching up, including
+    GOP alarm over losing Texas.
+  keywords:
+  - poll
+  - leads
+  - tied
+  - kalshi
+  - odds
+  - crosstabs
+  - hispanic
+  - yougov
+  - quantus
+  - trafalgar
 markets:
   - label: "Paxton wins — Kalshi"
     series: SENATETX

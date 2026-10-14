@@ -38,8 +38,96 @@ discover_hint: >
   or defense that will recur) over one-day events. Fold single-day stories into the durable narrative they serve.
   Cover both sides: narratives pushed against Abbott and narratives pushed against Hinojosa or for Abbott.
 
-lanes: []
-
+lanes:
+- key: abbott_vulnerable_momentum
+  label: Abbott in trouble, Hinojosa surging
+  description: Abbott is struggling and out of touch, with Hinojosa surging in polls, markets, money and
+    endorsements, so Texas is genuinely flippable.
+  keywords:
+  - surging
+  - poll
+  - struggling
+  - toss-up
+  - kalshi
+  - pritzker
+  - dga
+  - endorsed
+  - flip texas
+  - hiding
+- key: abbott_failing_texans
+  label: Abbott fails schools, costs, donors
+  description: Abbott has failed ordinary Texans by underfunding public schools, pushing vouchers, favoring
+    megadonors and data centers, and leaving costs and healthcare unaffordable.
+  keywords:
+  - public schools
+  - vouchers
+  - megadonors
+  - data centers
+  - affordable
+  - american dream
+  - teachers
+  - property taxes
+  - pto
+  - billionaires
+- key: abbott_priorities_hypocrisy
+  label: Abbott's skewed priorities and extremism
+  description: Abbott's actions show misplaced priorities and hypocrisy, such as honoring Israel over
+    Uvalde victims, Muslim-bashing, and corruption alongside Paxton.
+  keywords:
+  - uvalde
+  - half-staff
+  - flags
+  - corrupt
+  - paxton
+  - muslims
+  - mini me
+  - ice
+  - no-bid contracts
+  - trump
+- key: hinojosa_radical_liberal
+  label: Hinojosa is a radical liberal
+  description: Hinojosa is the most liberal member of the Texas House who would turn Texas into California,
+    backed by out-of-state elites, and is soft on police, border, trans issues and Islam.
+  keywords:
+  - most liberal
+  - defund
+  - california
+  - sanctuary
+  - radical
+  - trans
+  - woke
+  - islam
+  - sharia
+  - far-left
+- key: hinojosa_income_tax_lie
+  label: Hinojosa's income tax record
+  description: Hinojosa voted against the constitutional ban on a state income tax and lies about it,
+    versus her claim that she opposes an income tax and Abbott is the one who is performative.
+  keywords:
+  - income tax
+  - high tax
+  - voted no
+  - constitution
+  - lying
+  - ban
+  - performative
+  - property taxes
+  - fool the voters
+- key: abbott_safe_gop_defense
+  label: Abbott is solid and will win
+  description: Abbott is a strong, pro-business, pro-law-enforcement governor and the polls are noise
+    or shifting back, so he will win reelection.
+  keywords:
+  - abbott will win
+  - not losing
+  - polls shifting
+  - marist
+  - law enforcement
+  - jobs
+  - business
+  - incorporate
+  - texas strong
+  - vote red
 markets:
   - label: "Abbott wins — Kalshi"
     series: GOVPARTYTX

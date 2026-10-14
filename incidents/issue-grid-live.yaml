@@ -32,8 +32,67 @@ discover_hint: >
   will recur over one-day events. Posts about other states with no Texas angle are off-topic.
   Expect frames about reliability and blackouts, prices, renewables vs gas, data center demand, and who is to blame.
 
-lanes: []
-
+lanes:
+- key: queue_bubble_pause
+  label: Data center queue is speculative bubble
+  description: Texas's 474 GW large-load queue (vs ~91 GW record peak) is mostly duplicate, speculative
+    requests, so the state paused permits and the demand hype is overstated.
+  keywords:
+  - 474 gw
+  - queue
+  - paused
+  - speculative
+  - duplicates
+  - permits
+  - record peak
+- key: data_centers_good
+  label: Data centers lower bills, drive growth
+  description: AI and data center load is an opportunity that can lower residential rates, attract massive
+    investment like Project Star and Terafab, and justify betting on power and compute companies.
+  keywords:
+  - data center
+  - lower your electricity bill
+  - ai buildout
+  - project star
+  - investment
+  - multibagger
+  - powered land
+- key: firm_power_nuclear_gas
+  label: 'Firm power: gas and nuclear'
+  description: Meeting Texas's surging demand requires dispatchable gas, nuclear and SMRs, and the grid
+    and generators with firm capacity (Vistra, Blue Energy) are the winners.
+  keywords:
+  - nuclear
+  - smr
+  - gas generation
+  - gigawatts
+  - dispatchable
+  - vistra
+  - interconnection
+- key: solar_storage_success
+  label: Solar and batteries keep lights on
+  description: Texas's solar and battery buildout is why the grid handled summer easily, showing renewables
+    plus storage deliver reliability and cheap power.
+  keywords:
+  - solar
+  - batteries
+  - megapack
+  - storage
+  - non-event
+  - curtailment
+  - clean energy
+- key: grid_failure_mockery
+  label: Texas grid fails, blame politicians
+  description: Texas's grid is unreliable and prone to blackouts, mocked as a failure of Texas leadership
+    (Cruz, Abbott) and deregulated governance, often contrasted with California.
+  keywords:
+  - power cut
+  - grid failure
+  - blackout
+  - ted cruz
+  - god bless texas
+  - california
+  - lights stayed on
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

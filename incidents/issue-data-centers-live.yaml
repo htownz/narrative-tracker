@@ -33,8 +33,93 @@ discover_hint: >
   will recur over one-day events. Posts about other states with no Texas angle are off-topic.
   Expect frames about rural communities, water, electricity prices and the grid, tax abatements and campaign money, AI and jobs.
 
-lanes: []
-
+lanes:
+- key: abbott_donor_sellout
+  label: Abbott sold Texas to donors
+  description: Abbott and Texas Republicans took data center campaign money and gave away tax breaks (about
+    $1B+ a year), so Texans pay with higher taxes, bills and a pushed-aside rural population; the freeze
+    is election-year cover.
+  keywords:
+  - abbott
+  - tax breaks
+  - tax giveaways
+  - donors
+  - campaign cash
+  - hinojosa
+  - billionaire buddies
+  - flip flop
+- key: paxton_vs_talarico_money
+  label: Paxton vs Talarico data center money
+  description: 'Senate race attack lines over who is the data center sellout: Democrats say Paxton traded
+    land, water and tax breaks for contributions, while Republicans counter that Talarico and Hinojosa
+    are funded by or voted for data centers.'
+  keywords:
+  - paxton
+  - talarico
+  - selling off texas
+  - data center billionaires
+  - contributions
+  - senate race
+  - hb 3104
+  - made by humans
+- key: grid_queue_speculation
+  label: Grid queue, speculation and pause
+  description: The freeze is a rational response to an ERCOT large-load queue that ballooned from 63 GW
+    to 474 GW, mostly duplicate or speculative requests, which threatens grid reliability and electricity
+    prices.
+  keywords:
+  - 474 gw
+  - 63 gw
+  - ercot
+  - queue
+  - speculative
+  - permits
+  - peak demand
+  - pause
+  - interconnection
+- key: rural_water_land_costs
+  label: Rural land, water and nuisance
+  description: Data centers drain West Texas water, hurt farmers, ranchers, wildlife and dark skies, and
+    push transmission lines onto private land, so rural communities bear the costs.
+  keywords:
+  - rural
+  - water
+  - ranchers
+  - farmers
+  - west texas
+  - 765-kv
+  - dark skies
+  - drain
+  - aquifer
+- key: secrecy_oversight_failure
+  label: Secrecy and weak oversight
+  description: Abbott's audit and the PUC are shielding data center locations and resource use from the
+    public (citing terrorism risk) and impose token penalties, so promised accountability is hollow.
+  keywords:
+  - puc
+  - audit
+  - records
+  - secret
+  - terrorists
+  - water consumption
+  - $500
+  - transparency
+  - lawsuit
+- key: ai_power_boom_opportunity
+  label: AI power boom is an opportunity
+  description: Texas data center demand is a growth and investment story, with new power plants, behind-the-meter
+    gas, nuclear and jobs, and even a claim that data centers can lower power bills, so the pause is a
+    bottleneck that favors already-powered projects.
+  keywords:
+  - ai buildout
+  - behind the meter
+  - power
+  - gigawatts
+  - jobs
+  - lower your electricity
+  - bottleneck
+  - $vst
+  - gas
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
