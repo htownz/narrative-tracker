@@ -83,10 +83,12 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p site
+          python run.py accounts --all || true
           for d in out/*/; do
             slug=$(basename "$d")
             [ -f "$d/index.html" ] || continue
             mkdir -p "site/$slug" && cp "$d/index.html" "site/$slug/index.html"
+            [ -f "$d/accounts.html" ] && cp "$d/accounts.html" "site/$slug/accounts.html"
           done
           python -m tracker.hub site
 

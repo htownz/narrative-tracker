@@ -9,6 +9,8 @@
   python run.py render    incidents/x.yaml                # write out/<slug>/index.html
   python run.py report    incidents/x.yaml                # top posts that fit no lane (add a lane if a story is emerging)
   python run.py video     incidents/x.yaml [--seconds 60] # MP4 play-through of the rendered chart (Playwright + ffmpeg)
+  python run.py accounts  incidents/x.yaml                # amplifier map for one incident -> out/<slug>/accounts.html
+  python run.py accounts  --all                           # amplifier map across every incident -> out/accounts/index.html
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
 """
@@ -30,8 +32,9 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "all", "synth"])
-    ap.add_argument("incident")
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "all", "synth"])
+    ap.add_argument("incident", nargs="?", default=None)
+    ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
     ap.add_argument("--accept", action="store_true", help="discover: write the proposed lanes into the YAML")
     ap.add_argument("--relabel", action="store_true", help="classify: re-label posts that already have a lane")
@@ -42,6 +45,12 @@ def main() -> None:
     ap.add_argument("--pause", type=float, default=None, help="pull: seconds between API calls (free tier needs 5.2)")
     args = ap.parse_args()
 
+    if args.command == "accounts" and args.all:
+        from tracker import accounts
+        accounts.accounts_all()
+        return
+    if not args.incident:
+        ap.error("incident YAML is required")
     inc = load_incident(args.incident)
     synthetic = False
 
@@ -70,6 +79,9 @@ def main() -> None:
     elif args.command == "video":
         from tracker import video
         video.video(inc, seconds=args.seconds, fps=args.fps)
+    elif args.command == "accounts":
+        from tracker import accounts
+        accounts.accounts(inc)
     elif args.command == "synth":
         from tracker import synth
         synth.load(inc)
@@ -89,6 +101,8 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
+        from tracker import accounts
+        accounts.accounts(inc)
         lanes_mod.other_report(inc)
 
 

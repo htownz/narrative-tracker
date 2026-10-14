@@ -26,6 +26,7 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <h1>Texas Narrative Trackers</h1>
 <p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update each morning.</p>
 <div class="grid">@@CARDS@@</div>
+<p class="lead" style="margin-top:18px"><a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
 <footer>Built @@BUILT@@. Data via twitterapi.io; lanes assigned by Claude.</footer>
 </body></html>"""
 
@@ -36,6 +37,8 @@ CARD = """<a class="card" href="{slug}/"><h2>{title}{live}</h2><div class="w">{w
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     cards = []
     for d in sorted(OUT_DIR.iterdir()):
+        if d.name == "accounts":
+            continue
         data_path = d / "data.json"
         if not (d / "index.html").exists() or not data_path.exists():
             continue

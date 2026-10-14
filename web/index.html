@@ -262,7 +262,7 @@
 
   const foot = app.append('footer');
   foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.`);
-  foot.append('span').text(meta.credit || '');
+  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a>');
 
   // tooltip
   const tip = d3.select('#tip');
