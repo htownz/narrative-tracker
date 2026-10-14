@@ -64,7 +64,8 @@ Delete `data/<slug>.sqlite` before running a real `pull` for the same incident.
 
 - Lane rows = narratives; `pushback` is always the last lane. `other` posts are stored but not drawn (`export --include-other` to draw them).
 - Dot x = time, dot size = views, dot height within the lane = views (log scale).
-- White dot = 90%+ the same words as an earlier post (3-word shingles, Jaccard ≥ 0.90); white line back to the origin; "same words ×N" pill on origins with 3+ repeats.
+- White dot = 90%+ the same words as an earlier post (word containment ≥ 0.90 of the shorter post, 3-word shingles to find candidates); white line back to the origin; "same words ×N" pill on origins with 3+ repeats, "from N accounts" or "all from 1 account".
+- A post that repeats a drawn post is drawn whatever its own views (it sits at the floor of the lane and inherits the ring's lane); a ring of small posts only is not drawn.
 - Coloured curve = this post quoted or replied to that one (colour of the quoting post's lane).
 - Counters: posts pushing the story (all non-pushback lanes), repeated posts, posts pushing back — all as of the scrub time.
 - Avatars appear on the 40 most-viewed posts; `render` fetches them and embeds them as data URIs so the page
@@ -116,6 +117,7 @@ incidents (fixed window) wherever you like.
 | `accounts.html` | who moved it: roles (originator / bridge / copier / pushback), reach, lane mix, first movers |
 | `analysis.html` | lane timing, half-life, pushback lag and share, lane-velocity vs market price lead/lag |
 | `review.html` | lane spot-check: 20 posts per lane with a dropdown; builds the lines for `incidents/<slug>.overrides.csv` |
+| `analysis.html` (narrative control section) | per-lane and per-claim control score with its five features |
 | `claims.html` | what is being claimed: atomic claims extracted from every in-lane post, grouped into canonical claims with type, checkable flag, stance, first poster, spread |
 | `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
 | `<slug>.mp4` | `python run.py video` — 60-second play-through, 1920x1296 |
@@ -177,6 +179,16 @@ claims: { min_views: 2000, per_run: 300, batch_size: 25 }   # all optional; per_
 A backlog clears over a few runs (300 posts per run per tracker, biggest first). `claims.json` carries
 every canonical claim with its spread series; the verdict columns are filled by the verification step
 (see ROADMAP.md).
+
+## Narrative control
+
+`python run.py control incidents/x.yaml` (part of `all`, before `analysis`) scores every lane and every
+canonical claim with five or more posts for how much it looks like a push rather than organic spread, 0–100:
+copies across accounts (30), new accounts under 90 days old (25), burst — share of posts in the busiest
+hour (15), regularity — copies spaced on a clock (15), top-5 account share of views (15; ignored under ten
+accounts). The features are shown next to the score on `analysis.html`; anything at 70+ is listed on the
+hub as a coordinated push. A poll release bursts and gets copied on its own, so read the score with the
+events behind it (ROADMAP: events calendar).
 
 ## Next
 

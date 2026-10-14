@@ -213,3 +213,45 @@ def test_claims_extract_cluster_summarise_incrementally(tmp_path, monkeypatch):
     text = page.read_text(encoding="utf-8")
     assert "Ken Paxton has refused every debate." in text and "checkable" in text
     st.close()
+
+
+# ------------------------------------------------------------------ control score + sub-threshold copies
+def _post(i, handle, views, created, origin=None, account_created="Mon Jan 01 00:00:00 +0000 2018", lane="x"):
+    raw = json.dumps({"author": {"createdAt": account_created}})
+    return {"id": str(i), "author_handle": handle, "view_count": views, "created_at": created, "copy_origin": origin, "raw": raw, "lane": lane, "in_dataset": 1}
+
+
+def test_control_flags_a_clockwork_ring_and_not_organic_spread():
+    from tracker import control
+    # ring: one origin, nine copies from nine new accounts, every ten minutes inside one hour
+    ring = [_post(0, "origin", 50_000, "2026-10-10T12:00:00+00:00")]
+    ring += [_post(i, f"new{i}", 800, f"2026-10-10T12:{i*6:02d}:00+00:00", origin="0", account_created="Tue Sep 01 00:00:00 +0000 2026") for i in range(1, 10)]
+    s_ring, why = control.score(control.features(ring, {"0": "origin"}))
+    assert s_ring >= control.FLAG and any("copies" in w for w in why) and any("days old" in w for w in why)
+    # organic: twelve accounts over two days, no copies, old accounts
+    organic = [_post(i, f"acc{i}", 3_000 + i * 500, f"2026-10-{10 + i // 6:02d}T{8 + (i % 6) * 2:02d}:00:00+00:00") for i in range(12)]
+    s_org, _ = control.score(control.features(organic, {}))
+    assert s_org < 30
+    # an account repeating itself is not a ring
+    selfspam = [_post(0, "me", 5000, "2026-10-10T12:00:00+00:00")] + [_post(i, "me", 900, f"2026-10-10T12:{i*5:02d}:00+00:00", origin="0") for i in range(1, 8)]
+    f = control.features(selfspam, {"0": "me"})
+    assert f["copies_n"] == 0
+
+
+def test_dedup_draws_small_copies_with_the_rings_lane(tmp_path):
+    from tracker import dedup as dedup_mod
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    text = "Ken Paxton has asked for proof of life from me; I'm asking for proof of spine from him."
+    rows = [flatten_tweet({"id": "1", "text": text, "createdAt": "Mon Oct 12 10:00:00 +0000 2026", "viewCount": 40000, "author": {"userName": "big"}}),
+            flatten_tweet({"id": "2", "text": text, "createdAt": "Mon Oct 12 11:00:00 +0000 2026", "viewCount": 120, "author": {"userName": "small"}}),
+            flatten_tweet({"id": "3", "text": "totally different words about the weather in Austin today", "createdAt": "Mon Oct 12 11:00:00 +0000 2026", "viewCount": 90, "author": {"userName": "nobody"}}),
+            flatten_tweet({"id": "4", "text": "totally different words about the weather in Austin today", "createdAt": "Mon Oct 12 12:00:00 +0000 2026", "viewCount": 80, "author": {"userName": "nobody2"}})]
+    st.upsert_posts(rows); st.set_lanes({"1": "x"}, "claude"); st.close()
+    dedup_mod.dedup(inc)
+    st = Store(inc.db_path)
+    drawn = {p["id"]: p for p in st.drawable(inc.min_views)}
+    assert set(drawn) == {"1", "2"}                       # the small copy of a drawn post is drawn; the small-only ring is not
+    assert drawn["2"]["lane"] == "x" and drawn["2"]["lane_source"] == "copy" and drawn["2"]["copy_origin"] == "1"
+    assert st.conn.execute("select copy_origin from posts where id='4'").fetchone()[0] is None
+    st.close()

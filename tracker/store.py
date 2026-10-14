@@ -202,6 +202,15 @@ class Store:
         ).fetchall()
         return [dict(r) for r in rows]
 
+    def drawable(self, min_views: int = 0) -> list[dict[str, Any]]:
+        """What the chart shows: dataset posts at the threshold, plus every dataset post that repeats one (any views)."""
+        rows = self.conn.execute(
+            "SELECT * FROM posts WHERE in_dataset=1 AND created_at IS NOT NULL AND "
+            "(view_count >= ? OR (copy_origin IS NOT NULL AND lane IS NOT NULL)) ORDER BY created_at",
+            (min_views,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     def all_posts(self) -> list[dict[str, Any]]:
         return [dict(r) for r in self.conn.execute("SELECT * FROM posts ORDER BY created_at")]
 

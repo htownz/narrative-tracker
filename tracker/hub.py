@@ -79,6 +79,21 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                 items.append(f'<li><b>{html.escape(al["title"])}</b> surging <span style="color:#7c7c78">in {html.escape(d.name)} · {al["views_6h"]:,} views in 6h ({al["ratio"]}x normal)</span></li>')
     if items:
         alerts_html = '<h2 style="font-size:15px;margin:22px 0 6px;color:#e08a2e">Forming now</h2><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(items) + "</ul>"
+    # coordinated pushes: lanes or canonical claims whose control score crossed the flag line (tracker.control)
+    pushes = []
+    for d in sorted(OUT_DIR.iterdir()):
+        cp = d / "control.json"
+        if not cp.exists():
+            continue
+        try:
+            c = json.loads(cp.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        for r in c.get("flagged", [])[:3]:
+            page = "analysis.html" if r["kind"] == "lane" else "claims.html"
+            pushes.append(f'<li><b>{html.escape(r["label"])}</b> <span style="color:#7c7c78">{r["kind"]} in <a href="{html.escape(d.name)}/{page}" style="color:#8cf">{html.escape(d.name)}</a> · control {r["score"]} · {r["posts"]} posts · {r["accounts"]} accounts</span><br><span style="color:#b9b9b3;font-size:12px">{html.escape("; ".join(r["why"]))}</span></li>')
+    if pushes:
+        alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff5252">Coordinated pushes</h2><p class="lead" style="margin:0 0 6px">Lanes and claims whose spread looks engineered: copies across accounts, new accounts, bursts, clockwork timing.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(pushes) + "</ul>"
     # run health strip from status.json (written by tracker.status just before the hub)
     status_html = ""
     sp = site_dir / "status.json"

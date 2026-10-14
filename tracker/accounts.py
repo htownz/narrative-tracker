@@ -45,7 +45,8 @@ def account_table(inc: Incident) -> list[dict[str, Any]]:
     lane_keys = {l["key"] for l in inc.lane_table()}
     everything = [p for p in store.all_posts() if p["created_at"]]
     store.close()
-    posts = [p for p in everything if int(p["view_count"] or 0) >= inc.min_views and p["lane"] in lane_keys]
+    posts = [p for p in everything if p["lane"] in lane_keys
+             and (int(p["view_count"] or 0) >= inc.min_views or (p["copy_origin"] and int(p["in_dataset"] or 0)))]
     by_id = {p["id"]: p for p in posts}
     # lift is measured against the quoted post wherever it lives (any lane, 'other', or a reference row):
     # a bridge is an account that took a small post big, and small posts are mostly outside the lanes

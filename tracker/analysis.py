@@ -149,6 +149,22 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
         ll_html = f"""<h2>Lane velocity vs. {html.escape(out["market"])}</h2>
 <p class="sub">Correlation between each lane's hourly views (log) and the market's hourly price change, at the lag where it is strongest (±24h). A positive lag means the narrative moved before the price; |r| below about 0.2 is noise. Descriptive, not causal — one week of hourly data.</p>
 <div class="wrap"><table><thead><tr><th>Lane</th><th class="n">Views</th><th class="n">Best lag</th><th class="n">r</th><th>Reading</th></tr></thead><tbody>{lrows}</tbody></table></div>"""
+    ctrl_html = ""
+    ctrl_path = inc.out_dir / "control.json"
+    if ctrl_path.exists():
+        from .control import FLAG, NEW_ACCOUNT_DAYS, table_html
+        ctrl = json.loads(ctrl_path.read_text(encoding="utf-8"))
+        claims_part = ""
+        if ctrl.get("claims"):
+            claims_part = f"""<h2>Canonical claims that look pushed</h2>
+<p class="sub">Same features, per canonical claim with five or more posts (from <a href="claims.html" style="color:var(--ink-2)">what is claimed</a>). A poll release spreads in a burst with many copies on its own; a claim that scores high without an event behind it is the one to look at.</p>
+{table_html(ctrl["claims"][:15], with_color=False)}"""
+        ctrl_html = f"""<h2>Narrative control</h2>
+<p class="sub">How much each lane looks like a push rather than organic spread, 0-100: copies (share of posts repeating another account's words),
+new accounts (posters under {NEW_ACCOUNT_DAYS} days old), burst (share of posts in the single busiest hour), regularity (copies spaced on a clock, 0-1),
+and top-5 share (views carried by the five biggest accounts). {FLAG}+ is flagged on the hub as a coordinated push. The features matter more than the number.</p>
+{table_html(ctrl["lanes"])}
+{claims_part}"""
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(inc.title)} — analysis</title><style>{CSS}</style></head><body>
 <a class="back" href="./">← chart</a> · <a class="back" href="accounts.html">who moved it</a>
@@ -158,6 +174,7 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
 <h2>Lanes</h2>
 <div class="wrap"><table><thead><tr><th>Lane</th><th>First post</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Half-life h</th><th class="n">Peak hour</th><th class="n">Pushback lag h</th><th class="n">Pushback posts</th><th class="n">Pushback share</th><th>First pushback</th></tr></thead><tbody>{trs}</tbody></table></div>
 {ll_html}
+{ctrl_html}
 <footer>Generated {datetime.now(tz).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")}. Small-N: treat group means as description of this incident, not a law.</footer>
 </body></html>"""
     page = inc.out_dir / "analysis.html"

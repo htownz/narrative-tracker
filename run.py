@@ -15,6 +15,7 @@
   python run.py alerts    incidents/x.yaml                # early warning: stories forming outside the lanes, lanes surging
   python run.py review    incidents/x.yaml                # lane spot-check page + overrides builder -> out/<slug>/review.html
   python run.py claims    incidents/x.yaml                # what is being claimed: extract + group claims -> out/<slug>/claims.html
+  python run.py control   incidents/x.yaml                # narrative-control score per lane and claim -> out/<slug>/control.json (shown on analysis.html)
   python run.py refresh-views incidents/x.yaml            # re-look-up the top 500 posts so view counts stop being first-pull values
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
@@ -42,7 +43,7 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "control", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -104,6 +105,9 @@ def main() -> None:
     elif args.command == "claims":
         from tracker import claims
         claims.claims(inc)
+    elif args.command == "control":
+        from tracker import control
+        control.control(inc)
     elif args.command == "refresh-views":
         pull_mod.refresh_views(inc, pause=args.pause)
     elif args.command == "synth":
@@ -125,9 +129,10 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
-        from tracker import accounts, analysis, alerts, claims, review
-        for name, fn in (("accounts", accounts.accounts), ("analysis", analysis.analysis), ("claims", claims.claims),
-                         ("review", review.review), ("alerts", alerts.alerts_cmd), ("report", lanes_mod.other_report)):
+        from tracker import accounts, analysis, alerts, claims, control, review
+        for name, fn in (("accounts", accounts.accounts), ("claims", claims.claims), ("control", control.control),
+                         ("analysis", analysis.analysis), ("review", review.review), ("alerts", alerts.alerts_cmd),
+                         ("report", lanes_mod.other_report)):
             try:
                 fn(inc)
             except Exception as e:  # best-effort extras; the chart and data are already written

@@ -120,13 +120,40 @@ def find_copies(posts: list[dict[str, Any]], k: int = 3, threshold: float = 0.90
 
 
 def dedup(inc: Incident) -> None:
+    """Same-words rings over every dataset post, not only the ones above the view threshold: a post that
+    repeats a drawn post is drawn too (that is the chart's rule), whatever its own views. A ring counts
+    when at least one member clears the threshold; its sub-threshold members inherit the ring's lane."""
     store = Store(inc.db_path)
-    posts = store.dataset(inc.min_views)
+    posts = store.dataset(0)
     k = int(inc.dedup.get("shingle_size", 3))
     thr = float(inc.dedup.get("similarity", 0.90))
     origins = find_copies(posts, k=k, threshold=thr)
-    store.set_copy_origins(origins)
-    n_copies = sum(1 for v in origins.values() if v)
-    n_clusters = len({v for v in origins.values() if v})
-    print(f"same-words: {n_copies} repeated posts across {n_clusters} clusters (word containment >= {thr}, {k}-gram candidates)")
+    by_id = {p["id"]: p for p in posts}
+    members: dict[str, list[str]] = {}
+    for pid, o in origins.items():
+        if o:
+            members.setdefault(o, []).append(pid)
+    keep: dict[str, str | None] = {p["id"]: None for p in posts}
+    inherited: dict[str, str] = {}
+    for o, ms in members.items():
+        ring = [o] + ms
+        if max(int(by_id[x]["view_count"] or 0) for x in ring) < inc.min_views:
+            continue                                   # a ring of small posts only: not on the chart
+        for m in ms:
+            keep[m] = o
+        # lane for members under the threshold (never classified): the origin's lane, else the biggest labelled member's
+        labelled = [by_id[x] for x in ring if by_id[x]["lane"] and by_id[x]["lane_source"] != "copy"]
+        if labelled:
+            src = by_id[o] if by_id[o]["lane"] and by_id[o]["lane_source"] != "copy" else max(labelled, key=lambda q: int(q["view_count"] or 0))
+            for x in ring:
+                if int(by_id[x]["view_count"] or 0) < inc.min_views and by_id[x]["lane_source"] in (None, "copy"):
+                    inherited[x] = src["lane"]
+    store.set_copy_origins(keep)
+    store.conn.execute("UPDATE posts SET lane=NULL, lane_source=NULL WHERE lane_source='copy'")   # re-derived every run
+    if inherited:
+        store.set_lanes(inherited, "copy")
+    n_copies = sum(1 for v in keep.values() if v)
+    n_clusters = len({v for v in keep.values() if v})
+    print(f"same-words: {n_copies} repeated posts across {n_clusters} rings (word containment >= {thr}, {k}-gram candidates); "
+          f"{len(inherited)} under {inc.min_views} views drawn with the ring's lane")
     store.close()

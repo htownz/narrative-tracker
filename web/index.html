@@ -141,7 +141,7 @@
   const links = edges.filter(e => drawnIds.has(e.src) && drawnIds.has(e.dst));
   const tMin = d3.min(drawn, p => p.ts), tMax = d3.max(drawn, p => p.ts);
   const span = Math.max(1, tMax - tMin);
-  const vMin = Math.max(1, d3.min(drawn, p => p.views) || 1), vMax = d3.max(drawn, p => p.views) || 1;
+  const vMin = Math.max(1, Math.min(meta.min_views || 1, d3.max(drawn, p => p.views) || 1)), vMax = Math.max(vMin + 1, d3.max(drawn, p => p.views) || 1);   // copies under the threshold sit at the lane floor
 
   const fmtDate = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric' });
   const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
@@ -190,8 +190,8 @@
   const H = top + lanes.length * laneH + bottom;
   const svg = wrap.append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H);
   const x = d3.scaleLinear().domain([tMin - span * 0.015, tMax + span * 0.02]).range([6, W - 6]);
-  const vNorm = v => (Math.log10(Math.max(1, v)) - Math.log10(vMin)) / Math.max(1e-9, (Math.log10(vMax) - Math.log10(vMin)));
-  const r = d3.scaleSqrt().domain([vMin, vMax]).range([2.2, isMobile ? 10 : 13]);
+  const vNorm = v => Math.max(0, (Math.log10(Math.max(1, v)) - Math.log10(vMin)) / Math.max(1e-9, (Math.log10(vMax) - Math.log10(vMin))));
+  const r = d3.scaleSqrt().domain([vMin, vMax]).range([2.2, isMobile ? 10 : 13]).clamp(true);
   const laneTop = key => top + laneByKey[key].order * laneH;
   const plotTop = key => laneTop(key) + band + 4, plotH = laneH - band - 10;
   // views are log-scaled then eased (pow 0.6) so the 1–10K bulk uses the lane's height instead of hugging the floor
