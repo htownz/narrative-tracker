@@ -48,18 +48,28 @@ jobs:
           echo "incidents=$INC" >> "$GITHUB_OUTPUT"
           echo "running: $INC"
 
+      - name: Check secrets
+        env:
+          TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          [ -n "$TWITTERAPI_IO_KEY" ] || { echo "::error::TWITTERAPI_IO_KEY secret is not set (Settings > Secrets and variables > Actions)"; exit 1; }
+          [ -n "$ANTHROPIC_API_KEY" ] || { echo "::error::ANTHROPIC_API_KEY secret is not set (Settings > Secrets and variables > Actions)"; exit 1; }
+
       - name: Pull, classify, dedup, export, render (each incident)
         env:
           TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          set +e; FAILED=""
+          set +e; FAILED=""; OK=0
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
-            python run.py all "$inc" || FAILED="$FAILED $inc"
+            if python run.py all "$inc"; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
             echo "::endgroup::"
           done
           if [ -n "$FAILED" ]; then echo "::warning::failed:$FAILED"; fi
+          # one failing incident still publishes the others; every incident failing fails the run
+          [ "$OK" -gt 0 ] || { echo "::error::every incident failed"; exit 1; }
 
       - name: Commit data and output
         run: |
