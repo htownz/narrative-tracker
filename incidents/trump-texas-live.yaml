@@ -40,8 +40,89 @@ discover_hint: >
   hurts it or that Texas is slipping from him, and narratives about Trump's own actions affecting Texas.
   Posts about Trump with no Texas angle are off-topic.
 
-lanes: []
-
+lanes:
+- key: rally_triumph
+  label: Trump rally shows Texas loyalty
+  description: Trump's San Antonio rally and surrogate appearances (Vance, Cruz) prove huge crowds, enthusiasm
+    and a firm Trump-Paxton-Abbott ticket, with the media forced to concede Texas is still red.
+  keywords:
+  - full rally
+  - sold out
+  - massive line
+  - keep texas red
+  - paxton will win
+  - cnn forced
+  - air force one
+  - crowd
+- key: talarico_smear
+  label: Talarico freak, vegan, missing
+  description: Trump and allies attack James Talarico as weak, fake, a 'vegan' or 'Talafreako', claim
+    he went missing for nearly two weeks, hint at a mental health stay, and demand medical records and
+    a debate with Paxton.
+  keywords:
+  - talafreako
+  - vegan
+  - missing in action
+  - medical records
+  - mental hospital
+  - 14-day flu
+  - transgender-promoting
+  - debate
+- key: trump_drag_on_gop
+  label: Trump dragging down Texas GOP
+  description: Trump's war, gas prices and chaotic events are hurting Paxton and Republicans, shown by
+    Paxton's leaked audio, protesters repeatedly disrupting the rally, and rally flubs read as a sign
+    of decline.
+  keywords:
+  - gas prices
+  - iran war
+  - leaked audio
+  - protesters
+  - heckled
+  - drag
+  - cognitive decline
+  - so much for that paxton boost
+- key: texas_slipping_polls
+  label: 'Texas slipping: polls show tight race'
+  description: Polls and forecasts showing Paxton and Abbott tied or trailing Talarico and Hinojosa, with
+    flip predictions and below-2024 Trump margins, are cited as evidence Texas is turning purple or blue,
+    or alternatively as a race still within Paxton's reach.
+  keywords:
+  - poll
+  - talarico leads
+  - flip
+  - tied
+  - yougov
+  - trump +
+  - hinojosa
+  - projected
+- key: paxton_baggage
+  label: Paxton scandals and Trump's choice
+  description: Paxton's scandals, the Trump endorsement over Cornyn, and his refusal to debate Talarico
+    are framed as a weak, compromised candidate Trump chose despite warnings.
+  keywords:
+  - paxton
+  - wsj
+  - dubai
+  - cornyn
+  - indicted
+  - no regrets
+  - refuses to debate
+  - endorsed
+- key: federal_actions_texas
+  label: Trump administration actions in Texas
+  description: Federal actions affecting Texas are cast either as affordability and security wins (Defense
+    Production Act refinery in Tyler, Trump Accounts, border enforcement) or as controversy (Fort Hood
+    firing-squad execution livestream, Trump's wealth).
+  keywords:
+  - defense production act
+  - refinery
+  - trump accounts
+  - firing squad
+  - fort hood
+  - nidal hasan
+  - affordability
+  - border
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.

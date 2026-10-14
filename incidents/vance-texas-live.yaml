@@ -37,8 +37,91 @@ discover_hint: >
   hurts it or signals GOP alarm about Texas, and narratives about his own statements made in Texas.
   Posts about Vance with no Texas angle are off-topic.
 
-lanes: []
-
+lanes:
+- key: talarico_freak_smear
+  label: Vance mocks Talarico as freak
+  description: Posts celebrating or amplifying Vance's rally attacks on Talarico as a 'freak' or 'weirdo'
+    obsessed with trans kids and drag queens, with the 'search history' jab, the 'freaky paws' line, and
+    the race and sex-ed quotes, as a winning case against the Democrat.
+  keywords:
+  - freak
+  - search history
+  - talarico
+  - trans children
+  - drag queens
+  - freaky paws
+  - talafreako
+  - racism is a virus
+- key: vance_homophobic_smear
+  label: Vance's insinuations called smears
+  description: Posts condemning Vance's 'platonic, I'm not James Talarico' joke and search-history remarks
+    as gay-baiting, pedophile insinuation, or a desperate smear, evidence that Republicans would rather
+    attack a person than defend their policies.
+  keywords:
+  - implies gay
+  - pedophile
+  - smear
+  - insinuating
+  - baselessly
+  - platonic
+  - sexuality
+  - no limits
+- key: paxton_scandal_contrast
+  label: Vance backs scandal-hit Paxton
+  description: Posts arguing that Vance is campaigning for a compromised Paxton, citing the Dubai trip,
+    the donor accused of fraud, the mistress, and the refusal to debate or answer questions, and mocking
+    Vance's 'direct answer' line.
+  keywords:
+  - paxton
+  - dubai
+  - mistress
+  - fraud
+  - won't debate
+  - direct answer
+  - caught partying
+  - hypocrisy
+- key: rally_strength_paxton_boost
+  label: Vance rally energizes Texas GOP
+  description: Posts presenting Vance's Tyler rally as a huge, enthusiastic show of force that boosts
+    Ken Paxton and the Texas GOP ticket, with crowd videos, 'don't mess with Texas' lines, endorsements
+    from Texas Republicans, and Paxton-record praise.
+  keywords:
+  - tyler
+  - massive crowd
+  - standing room only
+  - don't mess with texas
+  - keep texas red
+  - air force two
+  - elect ken paxton
+  - paxton
+- key: texas_deliverables_affordability
+  label: Vance touts Texas administration wins
+  description: Posts presenting Vance's Texas appearance as delivering concrete administration wins, such
+    as the Defense Production Act refinery expansion in Tyler, jobs, tax cuts and investment, to lower
+    prices and argue Republicans deliver for Texans.
+  keywords:
+  - defense production act
+  - refinery
+  - delek
+  - lower prices
+  - fuel
+  - affordability
+  - jobs
+  - tax cuts
+- key: gop_alarm_tight_race
+  label: Vance visit signals GOP Texas worry
+  description: Posts arguing that Vance's repeated Texas trips and his admission that Paxton is in a 'tight
+    race' show Republican alarm about losing Texas, with thin-crowd mockery, protesters, and Democratic
+    spending as signs of a competitive Senate race.
+  keywords:
+  - tight race
+  - third visit
+  - only 257
+  - protesters
+  - competitive
+  - democrats spending
+  - alarm
+  - talarico campaign statement
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.

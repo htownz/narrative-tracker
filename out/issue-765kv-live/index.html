@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>765-kV transmission lines, 9 days of posts</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0b0c;
+    --surface: #141416;
+    --surface-2: #1d1d21;
+    --line: #2a2a30;
+    --ink: #f2f2f0;
+    --ink-2: #b9b9b3;
+    --ink-3: #7c7c78;
+    --copy: #ffffff;
+    --accent: #e08a2e;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  body { padding: 16px 16px 48px; max-width: 1200px; margin: 0 auto; -webkit-text-size-adjust: 100%; }
+  /* video mode (?video=1): fixed 1600x1000 frame captured by tracker/video.py */
+  body.video { max-width: 1600px; width: 1600px; height: 1080px; padding: 18px 24px; overflow: hidden; box-sizing: border-box; }
+  body.video .sub { max-width: 120ch; }
+  body.video .row .bar { height: 10px; }
+  body.video .controls, body.video .banner { display: none; }
+  body.video header { margin-bottom: 4px; }
+  body.video .stats { margin: 4px 0 8px; }
+  body.video .ticker { margin-top: 6px; }
+  body.video .bars { margin-top: 10px; gap: 30px; }
+  body.video .row { margin: 2px 0; }
+  body.video footer { margin-top: 8px; }
+  a { color: inherit; }
+
+  .banner { background: #3b2a06; color: #ffd98a; border: 1px solid #7a5a15; border-radius: 8px;
+            padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+  header { display: grid; grid-template-columns: 1fr auto; gap: 12px 20px; align-items: start; margin-bottom: 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 11.5px; line-height: 1.35; max-width: 70ch; margin: 0; }
+  .clock { text-align: right; white-space: nowrap; }
+  .clock .date { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+  .clock .time { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .clock .speed { font-size: 11px; color: var(--ink-3); }
+
+  .stats { display: flex; gap: 22px; margin: 10px 0 8px; flex-wrap: wrap; }
+  .stat .n { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat .l { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+  .stat.push .n { color: var(--accent); }
+  .stat.rep .n { color: var(--ink); }
+  .stat.back .n { color: #2fbf8c; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+  .controls button { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line);
+                     border-radius: 999px; width: 40px; height: 40px; font-size: 16px; cursor: pointer; }
+  .controls input[type=range] { flex: 1; accent-color: var(--accent); height: 28px; }
+  .controls .spd { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+  .controls .spd button { width: auto; height: 26px; padding: 0 9px; font-size: 11px; margin-left: 4px; }
+
+  .chartwrap { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+               overflow: hidden; }
+  svg { display: block; width: 100%; height: auto; }
+  .axis text { fill: var(--ink-3); font-size: 10px; font-family: var(--mono); }
+  .axis line { stroke: var(--line); }
+  .axis .major line { stroke: #3a3a42; }
+  .lane-rule { stroke: var(--line); stroke-width: 1; }
+  .lane-label .t { font-size: 11.5px; font-weight: 700; }
+  .lane-label .c { font-size: 10px; fill: var(--ink-2); font-family: var(--mono); }
+  .lane-label .d { font-size: 9px; fill: var(--ink-3); }
+  .lane-label rect { fill: rgba(11,11,12,.72); }
+  .link { fill: none; stroke-width: .9; opacity: .32; }
+  .link.copy { stroke: var(--copy); stroke-width: 1.1; opacity: .55; }
+  .dot { stroke: var(--bg); stroke-width: .8; cursor: pointer; }
+  .dot.copy { stroke: var(--copy); stroke-width: 1.2; }
+  .dot.ref { opacity: .55; }
+  .pill rect { fill: rgba(20,20,22,.92); stroke: #4a4a52; stroke-width: .6; }
+  .pill text { fill: var(--ink); font-size: 9.5px; font-weight: 600; }
+  .pill text.s { fill: var(--ink-3); font-weight: 400; font-size: 8.5px; }
+  .playhead { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
+  .hidden { display: none; }
+
+  .ticker { font-size: 12.5px; color: var(--ink-2); min-height: 18px; margin: 10px 2px 0; font-variant-numeric: tabular-nums; }
+  .ticker b { color: var(--ink); }
+
+  .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 560px) { .bars { grid-template-columns: 1fr; } header { grid-template-columns: 1fr; } .clock { text-align: left; } }
+  .bars h3 { font-size: 12px; margin: 0 0 8px; color: var(--ink-2); font-weight: 600; }
+  .bars h3 span { color: var(--ink-3); font-weight: 400; font-size: 10.5px; margin-left: 6px; }
+  .row { display: grid; grid-template-columns: 118px 1fr 56px; align-items: center; gap: 8px; margin: 4px 0; font-size: 11px; }
+  .row .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+  .row .bar { height: 12px; border-radius: 3px; transition: width .25s ease; min-width: 2px; }
+  .row .val { color: var(--ink-2); font-family: var(--mono); }
+
+  .tip { position: fixed; z-index: 10; max-width: min(360px, calc(100vw - 32px)); background: var(--surface-2);
+         border: 1px solid #3a3a42; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; line-height: 1.4;
+         box-shadow: 0 8px 30px rgba(0,0,0,.6); display: none; }
+  .tip .h { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 11px; margin-bottom: 4px; }
+  .tip .lane { font-weight: 700; }
+  .tip .x { position: absolute; top: 6px; right: 8px; color: var(--ink-3); cursor: pointer; }
+  .tip .txt { white-space: pre-wrap; word-break: break-word; }
+  .tip a { color: var(--ink-2); font-size: 11px; }
+  footer { margin-top: 18px; font-size: 10.5px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<script>window.__DATA__ = {"markets": [], "events": [{"label": "Early voting begins", "type": "calendar", "at": "2026-10-19T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State"}, {"label": "Early voting ends", "type": "calendar", "at": "2026-10-30T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State"}, {"label": "Election day", "type": "calendar", "at": "2026-11-03T06:00:00+00:00", "all_day": true, "source": "Texas Secretary of State"}], "meta": {"slug": "issue-765kv-live", "title": "765-kV transmission lines, 9 days of posts", "subject": "the 765-kilovolt transmission line build-out in Texas — the PUC and ERCOT extra-high-voltage backbone (Permian Basin reliability plan and statewide 765-kV network), line routing, landowner and eminent-domain objections, cost to ratepayers, and whether the lines serve data centers and industry or everyday reliability", "subtitle": "Oct 6 to Oct 14, 2026. Each dot is one post with 1K+ views about Texas's 765-kV transmission lines, plus every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line back to it. Coloured lines link a post to the post it quoted or replied to. Updated daily.", "window": {"start": "2026-10-06", "end": "2026-10-14", "tz": "America/Chicago"}, "min_views": 1000, "generated_at": "2026-10-14T21:35:44.805038+00:00", "pulled_at": "2026-10-14T21:35:29.499605+00:00", "source": "Data via twitterapi.io", "synthetic": false, "partial": false, "credit": ""}, "lanes": [{"key": "data_centers_beneficiary", "label": "Lines built for data centers", "description": "The 765-kV lines are being driven through private land mainly to serve data centers and big industrial load, not everyday Texans.", "keywords": ["data centers", "765-kv", "private property", "big tech", "nanny state", "who benefits", "ratepayers pay"], "color": "#3987e5", "order": 0}, {"key": "large_load_planning_strain", "label": "ERCOT large-load queue overwhelms planning", "description": "Gigawatt-scale load requests are swamping ERCOT's transmission planning, so the grid is the real bottleneck for AI and growth.", "keywords": ["large load queue", "ercot", "gw", "interconnection", "planning process", "bottleneck", "load growth", "powered data centers"], "color": "#d95926", "order": 1}, {"key": "build_it_power_growth", "label": "Build grid to power growth", "description": "Expanding transmission and power capacity is needed to power American industry, AI and jobs, and the buildout should move quickly.", "keywords": ["build it here", "power it here", "jobs", "american industry", "grid buildout", "ai race", "energy dominance"], "color": "#c98500", "order": 2}, {"key": "political_opposition_campaign", "label": "Candidates campaign against 765-kV", "description": "Texas candidates and officials use opposition to the 765-kV lines as a campaign and legislative issue to win rural and landowner votes.", "keywords": ["txlege", "campaign ad", "opposes 765", "state house", "vote them out", "legislature", "hd54", "candidate"], "color": "#d55181", "order": 3}, {"key": "permian_reliability_oil_gas", "label": "Permian plan and oil-gas load", "description": "The Permian Basin reliability plan and the West Texas grid are framed around oil-and-gas electrification, congestion and curtailed power, with industry seeking exemptions or benefits.", "keywords": ["permian", "west texas", "oil and gas", "curtailment", "pipeline companies", "reliability plan", "congestion", "puc"], "color": "#9085e9", "order": 4}, {"key": "eminent_domain_landowners", "label": "Landowners vs eminent domain", "description": "Residents and landowners are fighting the lines, and the government taking their land by eminent domain, on property-rights grounds.", "keywords": ["eminent domain", "landowners", "property rights", "taking land", "route", "counties", "hill country", "residents fighting"], "color": "#e66767", "order": 5}, {"key": "pushback", "label": "Pushback", "description": "Posts doubting, mocking, fact-checking or arguing against the dominant framings.", "keywords": [], "color": "#199e70", "order": 6}], "posts": [{"id": "2107580038665122047", "t": "2026-10-06T21:13:32+00:00", "views": 3140, "likes": 152, "reposts": 41, "handle": "AmeliaForTexas", "name": "Amelia For Texas for HD 55", "avatar": "data:image/jpeg;base64,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", "followers": 1193, "text": "Most invasive nanny state in the country. \n\nFlock cameras everywhere.\n\nData centers everywhere. \n\n765-kV power line expansions through private properties throughout Texas to go to these data centers. \n\nNever ending. Nanny state. \n\nVote. Them. Out.", "url": "https://x.com/AmeliaForTexas/status/2107580038665122047", "lane": "data_centers_beneficiary", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2107867337563288026", "t": "2026-10-07T16:15:10+00:00", "views": 4642, "likes": 47, "reposts": 3, "handle": "SlBrandin", "name": "Sam", "avatar": "data:image/jpeg;base64,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", "followers": 2281, "text": "The core issue for ERCOT (or any bulk power system) is that the legacy transmission planning process becomes a fundamentally intractable/unverifiable problem for the modern scale of load growth \n\nYou cannot produce firm solutions for service to single point loads exceeding 1GW each if the total quantity of load evaluated would double the size of the system\n\nIt’s not that we are arriving at the wrong solutions, it’s that we are asking the wrong questions", "url": "https://x.com/SlBrandin/status/2107867337563288026", "lane": "large_load_planning_strain", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2107912202116325702", "t": "2026-10-07T19:13:26+00:00", "views": 3981, "likes": 21, "reposts": 8, "handle": "MilkRoadAI", "name": "Milk Road AI", "avatar": "data:image/jpeg;base64,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", "followers": 49615, "text": "Texas just exposed the real AI bottleneck and it will  make already powered data centers dramatically more valuable.\n\nERCOT’s large load queue exploded from 63 GW to 474 GW in only 18 months, more than five times Texas’ record peak demand and around 90% of the requests involve data centers. But most of that capacity is not close to operating. Only 9.5 GW has been approved and roughly 4.3 GW is running. The rest includes duplicates, speculative applications and developers requesting power at multiple sites.\n\nTexas has paused new data center approvals while ERCOT audits the queue. The state wants to identify credible, financed projects before forcing customers to fund billions of dollars in grid upgrades for campuses that may never exist. This makes secured power more valuable than available land or announced capacity. A developer can own GPUs and property but still wait five to ten years for transmission lines, substations and grid approval.\n\nGalaxy Digital is one of the clearest beneficiaries. Its Helios campus already has more than 1.6 GW of ERCOT approved and utility-contracted power, placing it far ahead of speculative projects still waiting in the queue. $GLXY has already delivered 133 MW of critical IT capacity to CoreWeave under a 15 year lease. CoreWeave has committed to 526 MW across the first three phases, which Galaxy expects to produce more than $1 billion in average annual revenue.The company also has an additional 830 MW of approved Helios capacity available for future tenants and a Texas development pipeline exceeding 5.7 GW.\n\nApplied Digital, TeraWulf and Cipher Mining could benefit for similar reasons. Their former crypto infrastructure provides land, grid relationships and high-power facilities that can be converted into AI campuses faster than completely new developments. The second group of winners sells the equipment needed to solve the shortage. GE Vernova and Siemens Energy supply generation equipment, while Eaton, Schneider Electric, Hubbell and Quanta Services benefit from spending on switchgear, transformers, substations and transmission. Tesla and other storage providers benefit as batteries help stabilize volatile AI workloads.\n\nBullish on already powered data centers. If you want to see which names I’m investing in around the AI power bottleneck, check out my full Milk Road Pro portfolio below:  https://t.co/thIhK9ZH4E", "url": "https://x.com/MilkRoadAI/status/2107912202116325702", "lane": "large_load_planning_strain", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2108283352444792844", "t": "2026-10-08T19:48:15+00:00", "views": 2494, "likes": 23, "reposts": 7, "handle": "WHPressPool", "name": "White House Press Pool Reports", "avatar": "data:image/jpeg;base64,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", "followers": 23099, "text": "President Trump Is Putting American Industry, Jobs, and Paychecks Back on the Map\n\nFOR IMMEDIATE RELEASE\n\nPresident Donald J. Trump is delivering on his promise to the American worker: build it here, power it here, and put paychecks back in the communities Washington left behind. In a matter of weeks, President Trump has locked in a run of steel, nuclear, gas, shipbuilding, and medical manufacturing commitments that will hire American workers and strengthen American security.\n• President Trump announced that Mesabi Metallics will build a $15 billion steel complex in Iowa the largest steel plant ever built in the United States. Fed by American iron ore and driven by the Trump Administration’s steel tariffs, the fully integrated mine-to-mill complex will create 1,750 new, permanent jobs, support up to 6,000 construction jobs, and generate an estimated $95 billion in economic output.\n\n• President Trump and Anduril announced Arsenal-2, the biggest new American shipyard push since World War II, now moving forward in Maryland. The yard will produce critical Virginia-class components and large assemblies, create about 3,100 direct jobs, and support more than 11,000 indirect jobs. Anduril is investing $3.7 billion in private capital; the Navy is putting up to $2.9 billion behind it as part of the Trump Administration’s push to reshore America’s defense industrial base.\n\n• President Trump unveiled a South Korean energy investment package of up to $200 billion in the United States. The package includes as much as $120 billion to build eight large-scale nuclear plants, $54 billion tied to the Alaska LNG pipeline, and $22.3 billion for a six-gigawatt natural gas power facility in Texas.\n\n• Vice President Vance announced that the Department of Energy will invest $150 million to advance a major new transmission line in Alaska. The project includes 223 miles linking the Beluga power station on the southern coast with Healy in the Interior, a corridor serving ports and nearly three-quarters of the state’s population.\n\n• Becton Dickinson announced a $19 billion U.S. investment under a landmark partnership with the Trump Administration, including $3 billion to expand American manufacturing. BD will produce 100% of the needles it sells in America with American-made steel and expand domestic output of essential products.\n\n• AstraZeneca announced a $1 billion investment in Massachusetts under the $50 billion investment commitment it made in its Most Favored Nation agreement with the Trump Administration. The company is expanding its domestic research and manufacturing operation and growing its domestic workforce.\n\nOctober 8th, 2026.", "url": "https://x.com/WHPressPool/status/2108283352444792844", "lane": "build_it_power_growth", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2108973925602398247", "t": "2026-10-10T17:32:21+00:00", "views": 5039, "likes": 17, "reposts": 3, "handle": "bradj_TX", "name": "Brad Johnson", "avatar": "data:image/jpeg;base64,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", "followers": 17092, "text": ".@BradBuckleyDVM is up with this new broadcast ad in #HD54 and it includes mention of his opposition to the 765 kV transmission lines. #txlege https://t.co/vycqTg5RBI", "url": "https://x.com/bradj_TX/status/2108973925602398247", "lane": "political_opposition_campaign", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2109978034480566620", "t": "2026-10-13T12:02:19+00:00", "views": 7338, "likes": 71, "reposts": 12, "handle": "SolunaHoldings", "name": "Soluna", "avatar": "data:image/jpeg;base64,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", "followers": 7902, "text": "In 2024, the West zone in #ERCOT experienced a total curtailment of 5.3 TWh of renewable energy \n\nThat's power already generated, then thrown away because the grid couldn't move it.\n\nBuilding compute at the source changes the math. Producers earn revenue on power they'd otherwise lose. AI workloads get power faster. Ratepayers carry less of the cost of new transmission.\n\nThis isn't a sustainability story. It's grid economics.\n\nIt's the model behind Project Dorothy, our data center co-located with a 150 MW wind farm in West Texas.\n\n$SLNH", "url": "https://x.com/SolunaHoldings/status/2109978034480566620", "lane": "permian_reliability_oil_gas", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2110050882754658750", "t": "2026-10-13T16:51:47+00:00", "views": 2232, "likes": 27, "reposts": 6, "handle": "TrevorFitzgibb1", "name": "Trevor Fitzgibbon", "avatar": "data:image/jpeg;base64,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", "followers": 8115, "text": "Across America, local residents are fighting back against the construction of massive high-voltage power lines and against the government's taking of their land by eminent domain without their consent. https://t.co/Yti8Yo4sMH", "url": "https://x.com/TrevorFitzgibb1/status/2110050882754658750", "lane": "eminent_domain_landowners", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2110309645680046168", "t": "2026-10-14T10:00:01+00:00", "views": 1127, "likes": 27, "reposts": 15, "handle": "TexasScorecard", "name": "Texas Scorecard", "avatar": "data:image/jpeg;base64,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", "followers": 80289, "text": "10.14.2026: ‘Don’t Mess With Texas.’\n\n(00:39) Vance Rallies East Texas Republicans…\n(02:15) Texas Congressmen Want Islamic Groups Investigated for Grant Abuse…\n(03:21) City Officials Sue To Stop Recall Election…\n(04:07) Pipeline Companies Seek Protection From Controversial Transmission Line…", "url": "https://x.com/TexasScorecard/status/2110309645680046168", "lane": "permian_reliability_oil_gas", "copy_origin": null, "in_dataset": 1, "copies": 0}], "edges": [], "stats": {"pushing": 8, "repeated": 0, "pushback": 0, "total": 8}};</script>
+<div id="app"></div>
+<div class="tip" id="tip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(async function () {
+  let DATA = window.__DATA__;
+  if (!DATA) {
+    try { DATA = await (await fetch('data.json')).json(); }
+    catch (e) { document.getElementById('app').textContent = 'No data.json found next to this page.'; return; }
+  }
+  const { meta, lanes, posts, edges, stats } = DATA;
+  const markets = (DATA.markets || []).filter(m => (m.points || []).length > 1);
+  const TZ = (meta.window && meta.window.tz) || 'UTC';
+  const laneByKey = Object.fromEntries(lanes.map(l => [l.key, l]));
+  const PUSHBACK = 'pushback', OTHER = 'other';
+  const isMobile = window.innerWidth < 560;
+  const isVideo = /[?&]video=1/.test(location.search) || document.body.classList.contains('video');
+  if (isVideo) document.body.classList.add('video');
+
+  // ---- derived ------------------------------------------------------------
+  posts.forEach(p => { p.ts = +new Date(p.t); p.isCopy = !!p.copy_origin; });
+  const byId = Object.fromEntries(posts.map(p => [p.id, p]));
+  const drawn = posts.filter(p => laneByKey[p.lane]);           // 'other' lane is not drawn
+  if (!drawn.length) {
+    const a = d3.select('#app');
+    a.append('h1').text(meta.title);
+    a.append('p').attr('class', 'sub').text(lanes.length > 1 ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
+    return;
+  }
+  const drawnIds = new Set(drawn.map(p => p.id));
+  const links = edges.filter(e => drawnIds.has(e.src) && drawnIds.has(e.dst));
+  const tMin = d3.min(drawn, p => p.ts), tMax = d3.max(drawn, p => p.ts);
+  const span = Math.max(1, tMax - tMin);
+  const vMin = Math.max(1, Math.min(meta.min_views || 1, d3.max(drawn, p => p.views) || 1)), vMax = Math.max(vMin + 1, d3.max(drawn, p => p.views) || 1);   // copies under the threshold sit at the lane floor
+
+  const fmtDate = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric' });
+  const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+  const fmtAxis = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', month: 'short', day: 'numeric' });
+  const fmtFull = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const fmtN = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'K' : String(n);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; };
+
+  // ---- layout -------------------------------------------------------------
+  const app = d3.select('#app');
+  if (meta.synthetic) app.append('div').attr('class', 'banner').text('SYNTHETIC SAMPLE — every account here is sample_acct_NNN and no post is real. This page exists to develop the chart; run the pull to replace it with live data.');
+
+  const head = app.append('header');
+  const hl = head.append('div');
+  hl.append('h1').text(meta.title);
+  hl.append('p').attr('class', 'sub').text(meta.subtitle);
+  const clock = head.append('div').attr('class', 'clock');
+  const clockDate = clock.append('div').attr('class', 'date');
+  const clockTime = clock.append('div').attr('class', 'time');
+  const clockSpeed = clock.append('div').attr('class', 'speed');
+
+  const statsEl = app.append('div').attr('class', 'stats');
+  const stat = (cls, label) => { const s = statsEl.append('div').attr('class', 'stat ' + cls); const n = s.append('div').attr('class', 'n'); s.append('div').attr('class', 'l').text(label); return n; };
+  const sPush = stat('push', 'posts pushing the story');
+  const sRep = stat('rep', 'repeated posts');
+  const sBack = stat('back', 'posts pushing back');
+
+  const ctl = app.append('div').attr('class', 'controls');
+  const playBtn = ctl.append('button').attr('aria-label', 'Play').text('▶');
+  const slider = ctl.append('input').attr('type', 'range').attr('min', 0).attr('max', 1000).attr('value', 1000);
+  const spd = ctl.append('div').attr('class', 'spd');
+  spd.append('span').text(isMobile ? '' : 'speed');
+  const speeds = [20, 40, 80];      // seconds for the whole window
+  let speedIdx = 1;
+  const spdBtn = spd.append('button').text('1×');
+
+  const wrap = app.append('div').attr('class', 'chartwrap');
+  const W = Math.max(360, wrap.node().getBoundingClientRect().width);
+  // Each lane = a label band (title, counts, description) on top of a plot band for the dots.
+  const band = isMobile ? 30 : isVideo ? 28 : 42;
+  // video: lanes share a fixed plot height so the whole frame fits 1600x1000 with bars below
+  const laneH = isMobile ? 100 : isVideo ? Math.max(70, Math.floor((1080 - 215 - 205 - (markets.length ? 62 : 0)) / Math.max(1, lanes.length))) : 122;
+  const stripH = markets.length ? (isMobile ? 54 : isVideo ? 62 : 72) : 0;
+  // events (incidents/events.yaml) inside the drawn span, grouped when they share a moment; they get a band under the axis
+  const evMap = new Map();
+  (DATA.events || []).forEach(e => { const t = Date.parse(e.at); if (!(t >= tMin - span * 0.015 && t <= tMax + span * 0.02)) return; const g = evMap.get(t) || { t, labels: [], types: [] }; g.labels.push(e.label + (e.all_day ? ' (all day)' : '')); g.types.push(e.type); evMap.set(t, g); });
+  const events = [...evMap.values()].sort((a, b) => a.t - b.t);
+  const evBand = events.length && !isMobile ? 26 : events.length ? 10 : 0;
+  const top = 22 + stripH + evBand, bottom = 8;
+  const H = top + lanes.length * laneH + bottom;
+  const svg = wrap.append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H);
+  const x = d3.scaleLinear().domain([tMin - span * 0.015, tMax + span * 0.02]).range([6, W - 6]);
+  const vNorm = v => Math.max(0, (Math.log10(Math.max(1, v)) - Math.log10(vMin)) / Math.max(1e-9, (Math.log10(vMax) - Math.log10(vMin))));
+  const r = d3.scaleSqrt().domain([vMin, vMax]).range([2.2, isMobile ? 10 : 13]).clamp(true);
+  const laneTop = key => top + laneByKey[key].order * laneH;
+  const plotTop = key => laneTop(key) + band + 4, plotH = laneH - band - 10;
+  // views are log-scaled then eased (pow 0.6) so the 1–10K bulk uses the lane's height instead of hugging the floor
+  const cy = p => plotTop(p.lane) + 10 + (1 - Math.pow(vNorm(p.views), 0.6)) * (plotH - 16) * 0.88 + (hash(p.id) - 0.5) * (plotH - 16) * 0.22;
+  const cx = p => x(p.ts);
+  drawn.forEach(p => { p.x = cx(p); p.y = cy(p); });
+
+  // axis: every 6 local hours, majors at local midnight (walk the domain hour by hour in the incident's tz)
+  const hourOf = t => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false }).formatToParts(new Date(t)); return +parts.find(p => p.type === 'hour').value % 24; };
+  const ticks = [];
+  { const t0 = Math.floor(x.domain()[0] / 36e5) * 36e5; for (let t = t0; t <= x.domain()[1]; t += 36e5) { const hr = hourOf(t); const every = span > 12 * 864e5 ? 24 : span > 4 * 864e5 ? 12 : 6; if (hr % every === 0 && t >= x.domain()[0]) ticks.push({ t, major: hr === 0 }); } }
+  const axis = svg.append('g').attr('class', 'axis');
+  const tick = axis.selectAll('g').data(ticks).join('g').attr('class', d => d.major ? 'major' : 'minor').attr('transform', d => `translate(${x(d.t)},0)`);
+  tick.append('line').attr('y1', 14).attr('y2', H - bottom);
+  const fmtAxisShort = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', day: 'numeric' });
+  const pxPerDay = x(tMin + 864e5) - x(tMin); const fmtDayNum = new Intl.DateTimeFormat('en-US', { timeZone: TZ, day: 'numeric' });
+  tick.filter(d => d.major).append('text').attr('y', 11).attr('x', 3).text(d => (pxPerDay < 46 ? fmtDayNum : isMobile || pxPerDay < 90 ? fmtAxisShort : fmtAxis).format(new Date(d.t)));
+  const pxPer12h = x(tMin + 12 * 36e5) - x(tMin);
+  tick.filter(d => !d.major && !isMobile && hourOf(d.t) === 12 && pxPer12h > 120).append('text').attr('y', 11).attr('x', 2).text('noon');
+
+  // event markers: a dashed rule through the lanes, a dot and a label in the events band (two rows, greedy placement)
+  const evG = svg.append('g').attr('class', 'events');
+  const evColor = t => t === 'poll' ? '#8fb4ff' : t === 'calendar' ? '#e08a2e' : t === 'rally' || t === 'campaign' ? '#f0b06a' : '#f2f2f0';
+  const bandY = 22 + stripH, rowEnd = [-1e9, -1e9];
+  events.forEach(e => {
+    const px = x(e.t), label = e.labels.length > 1 ? e.labels.length + ' events: ' + e.labels.join(' · ') : e.labels[0];
+    const g = evG.append('g').attr('transform', `translate(${px},0)`);
+    g.append('line').attr('y1', bandY + 4).attr('y2', H - bottom).attr('stroke', evColor(e.types[0])).attr('stroke-opacity', .3).attr('stroke-dasharray', '2,4');
+    g.append('circle').attr('cy', bandY + 4).attr('r', 3).attr('fill', evColor(e.types[0]));
+    g.append('title').text(label);
+    if (isMobile) return;
+    const short = label.length > 38 ? label.slice(0, 37) + '…' : label, w = short.length * 5.4 + 8;
+    const row = px - rowEnd[0] > 8 ? 0 : px - rowEnd[1] > 8 ? 1 : -1;
+    if (row < 0) return;
+    rowEnd[row] = px + w;
+    g.append('text').attr('x', 5).attr('y', bandY + 9 + row * 11).attr('fill', '#b9b9b3').attr('font-size', 9).attr('font-family', 'var(--mono)').text(short);
+  });
+
+  // lanes
+  const laneG = svg.append('g');
+  lanes.forEach(l => {
+    const g = laneG.append('g').attr('class', 'lane-label').attr('transform', `translate(0,${laneTop(l.key)})`);
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', band).attr('fill', 'rgba(11,11,12,.55)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', laneH).attr('y2', laneH);
+    g.append('rect').attr('x', 6).attr('y', 5).attr('width', 3).attr('height', band - 10).attr('fill', l.color).attr('rx', 1.5);
+    g.append('text').attr('class', 't').attr('x', 14).attr('y', 15).attr('fill', l.color).text(l.label);
+    g.append('text').attr('class', 'c').attr('x', 14).attr('y', 27).attr('data-lane', l.key).text('');
+    if (!isMobile && !isVideo) g.append('text').attr('class', 'd').attr('x', 14).attr('y', 38).text((l.description || '').slice(0, 110) + ((l.description || '').length > 110 ? '…' : ''));
+  });
+
+  // prediction-market strip: price (¢) of the first market over the same time axis
+  let priceAt = null;
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    if (pts.length < 2) markets.length = 0;   // nothing in range: no strip (layout already reserved it; harmless)
+  }
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    const pmin = Math.min(...pts.map(q => q.p)), pmax = Math.max(...pts.map(q => q.p));
+    const pad = Math.max(2, (pmax - pmin) * 0.25);
+    const y = d3.scaleLinear().domain([pmin - pad, pmax + pad]).range([sy1, sy0]);
+    const g = svg.append('g').attr('class', 'strip');
+    g.append('rect').attr('x', 0).attr('y', 22).attr('width', W).attr('height', stripH - 4).attr('fill', 'rgba(255,255,255,0.025)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', 22 + stripH - 4).attr('y2', 22 + stripH - 4);
+    const area = d3.area().x(q => x(q.t)).y0(sy1).y1(q => y(q.p)).curve(d3.curveStepAfter);
+    const line = d3.line().x(q => x(q.t)).y(q => y(q.p)).curve(d3.curveStepAfter);
+    g.append('path').attr('d', area(pts)).attr('fill', 'rgba(224,138,46,0.12)');
+    g.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', '#e08a2e').attr('stroke-width', 1.4);
+    g.append('text').attr('x', 10).attr('y', 22 + 12).attr('fill', '#e08a2e').attr('font-size', 11).attr('font-weight', 700).text(m.label);
+    g.append('text').attr('x', 10).attr('y', 22 + 24).attr('fill', 'var(--ink-3)').attr('font-size', 9.5).attr('font-family', 'var(--mono)').text(`${m.source} · hourly · ${pmin}¢ – ${pmax}¢`);
+    const dot = g.append('circle').attr('r', 3.5).attr('fill', '#e08a2e').attr('stroke', 'var(--bg)');
+    const lbl = g.append('text').attr('fill', 'var(--ink)').attr('font-size', 11).attr('font-weight', 700).attr('font-family', 'var(--mono)');
+    priceAt = t => { let q = pts[0]; for (const r of pts) { if (r.t <= t) q = r; else break; } return q; };
+    window.__priceCursor = t => { const q = priceAt(t); const px = Math.min(x(q.t), x(t)); dot.attr('cx', px).attr('cy', y(q.p)); lbl.attr('x', Math.min(W - 44, px + 6)).attr('y', y(q.p) - 6).text(q.p + '¢'); };
+  }
+
+  // links (drawn before dots)
+  const linkPath = e => { const a = byId[e.dst], b = byId[e.src]; const dx = b.x - a.x; return `M${a.x},${a.y} C${a.x + dx * 0.55},${a.y} ${b.x - dx * 0.55},${b.y} ${b.x},${b.y}`; };
+  const linkSel = svg.append('g').selectAll('path').data(links).join('path')
+    .attr('class', e => 'link ' + e.type).attr('d', linkPath)
+    .attr('stroke', e => e.type === 'copy' ? null : (laneByKey[byId[e.src].lane] || {}).color || '#888');
+
+  // dots + avatars
+  const defs = svg.append('defs');
+  const dotSel = svg.append('g').selectAll('g.p').data(drawn, p => p.id).join('g').attr('class', 'p').attr('transform', p => `translate(${p.x},${p.y})`);
+  dotSel.append('circle').attr('class', p => 'dot' + (p.isCopy ? ' copy' : '') + (p.in_dataset ? '' : ' ref'))
+    .attr('r', p => r(p.views)).attr('fill', p => p.isCopy ? '#ffffff' : laneByKey[p.lane].color);
+  const topAvatars = new Set(drawn.filter(p => p.avatar).sort((a, b) => b.views - a.views).slice(0, 40).map(p => p.id));
+  dotSel.filter(p => topAvatars.has(p.id)).each(function (p) {
+    const rr = r(p.views);
+    if (rr < 5) return;
+    defs.append('clipPath').attr('id', 'c' + p.id).append('circle').attr('r', rr - 1);
+    d3.select(this).append('image').attr('href', p.avatar.replace('_normal', '_bigger')).attr('x', -rr + 1).attr('y', -rr + 1)
+      .attr('width', 2 * rr - 2).attr('height', 2 * rr - 2).attr('clip-path', `url(#c${p.id})`).attr('preserveAspectRatio', 'xMidYMid slice')
+      .on('error', function () { this.remove(); });
+  });
+
+  // "same words ×N" pills on cluster origins
+  const originCounts = {};
+  drawn.forEach(p => { if (p.copy_origin && drawnIds.has(p.copy_origin)) originCounts[p.copy_origin] = (originCounts[p.copy_origin] || 0) + 1; });
+  const pillData = Object.entries(originCounts).filter(([, n]) => n >= 3).map(([id, n]) => { const accts = new Set(drawn.filter(q => q.copy_origin === id).map(q => q.handle)); return { p: byId[id], n, accts: accts.size }; });
+  const pillSel = svg.append('g').selectAll('g').data(pillData).join('g').attr('class', 'pill')
+    .attr('transform', d => {
+      const px = Math.min(W - 96, Math.max(2, d.p.x + r(d.p.views) + 4));
+      const lo = plotTop(d.p.lane), hi = plotTop(d.p.lane) + plotH - 26;
+      const py = Math.max(lo, Math.min(hi, d.p.y - 12));
+      return `translate(${px},${py})`;
+    });
+  pillSel.append('rect').attr('width', 92).attr('height', 24).attr('rx', 4);
+  pillSel.append('text').attr('x', 6).attr('y', 10.5).text(d => `same words ×${d.n}`);
+  pillSel.append('text').attr('class', 's').attr('x', 6).attr('y', 20).text(d => d.accts === 1 ? 'all from 1 account' : `from ${d.accts} accounts`);
+
+  const playhead = svg.append('line').attr('class', 'playhead').attr('y1', top - 6).attr('y2', H - bottom);
+
+  // ticker + bars
+  const ticker = app.append('div').attr('class', 'ticker');
+  const bars = app.append('div').attr('class', 'bars');
+  const barBlock = (title, note) => { const b = bars.append('div'); b.append('h3').text(title).append('span').text(note); return b.append('div'); };
+  const bPosts = barBlock('Posts so far', '');
+  const bViews = barBlock('Views so far', 'each post’s views at pull time, counted when it went up');
+
+  const foot = app.append('footer');
+  foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.${meta.partial ? ' Pull still in progress — counts will grow on the next run.' : ''}`);
+  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a> · <a href="claims.html" style="color:var(--ink-2)">What is claimed →</a> · <a href="review.html" style="color:var(--ink-2)">Review lanes →</a>');
+
+  // tooltip
+  const tip = d3.select('#tip');
+  const showTip = (ev, p) => {
+    const lane = laneByKey[p.lane] || {};
+    tip.style('display', 'block').html(
+      `<span class="x">✕</span><div class="h"><span>@${esc(p.handle)}${p.name ? ' · ' + esc(p.name) : ''}</span><span>${fmtFull.format(new Date(p.ts))}</span></div>` +
+      `<div class="h"><span class="lane" style="color:${lane.color}">${esc(lane.label || p.lane)}</span><span>${fmtN(p.views)} views · ${fmtN(p.likes)} likes</span></div>` +
+      `<div class="txt">${esc(p.text)}</div>` +
+      (p.copy_origin ? `<div class="h"><span>same words as an earlier post</span></div>` : '') +
+      (p.url && !meta.synthetic && /^https:\/\//.test(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">open on X ↗</a>` : ''));
+    const bw = tip.node().getBoundingClientRect();
+    const px = Math.min(window.innerWidth - bw.width - 12, Math.max(12, ev.clientX - bw.width / 2));
+    const py = ev.clientY + 18 + bw.height > window.innerHeight ? ev.clientY - bw.height - 14 : ev.clientY + 18;
+    tip.style('left', px + 'px').style('top', py + 'px');
+    tip.select('.x').on('click', () => tip.style('display', 'none'));
+  };
+  dotSel.on('click', (ev, p) => { ev.stopPropagation(); showTip(ev, p); });
+  document.addEventListener('click', e => { if (!tip.node().contains(e.target)) tip.style('display', 'none'); });
+
+  // ---- time scrub ---------------------------------------------------------
+  let cur = tMax, playing = false, raf = null, lastTick = 0;
+  const visible = () => drawn.filter(p => p.ts <= cur);
+  function update() {
+    dotSel.classed('hidden', p => p.ts > cur);
+    linkSel.classed('hidden', e => byId[e.src].ts > cur);
+    pillSel.classed('hidden', d => d.p.ts > cur || drawn.filter(q => q.copy_origin === d.p.id && q.ts <= cur).length < 3);
+    playhead.attr('x1', x(cur)).attr('x2', x(cur)).classed('hidden', cur >= tMax);
+    if (window.__priceCursor) window.__priceCursor(cur);
+    const vis = visible();
+    sPush.text(vis.filter(p => p.lane !== PUSHBACK && p.in_dataset).length);
+    sRep.text(vis.filter(p => p.isCopy && p.in_dataset).length);
+    sBack.text(vis.filter(p => p.lane === PUSHBACK && p.in_dataset).length);
+    const d = new Date(cur);
+    clockDate.text(fmtDate.format(d) + '  ·  T+' + (() => { const h = (cur - tMin) / 36e5; return h >= 24 ? Math.floor(h / 24) + 'd ' + Math.floor(h % 24) + 'h' : Math.floor(h) + 'h ' + Math.floor((h % 1) * 60) + 'm'; })());
+    clockTime.text(fmtTime.format(d));
+    clockSpeed.text(playing ? Math.round(span / 6e4 / speeds[speedIdx]) + ' minutes per second' : (cur >= tMax ? 'end of window' : 'paused'));
+    const byLane = {}; lanes.forEach(l => byLane[l.key] = { n: 0, v: 0 });
+    vis.forEach(p => { byLane[p.lane].n++; byLane[p.lane].v += p.views; });
+    laneG.selectAll('text.c').text(function () { const s = byLane[this.dataset.lane]; return `${s.n} posts, ${fmtN(s.v)} views`; });
+    const row = (host, key) => {
+      const data = lanes.map(l => ({ l, v: byLane[l.key][key] })).sort((a, b) => b.v - a.v);
+      const max = Math.max(1, d3.max(data, d => d.v));
+      host.selectAll('div.row').data(data, d => d.l.key).join(enter => { const g = enter.append('div').attr('class', 'row'); g.append('div').attr('class', 'lbl'); g.append('div').attr('class', 'bar'); g.append('div').attr('class', 'val'); return g; })
+        .style('order', (d, i) => i)
+        .each(function (d) { const g = d3.select(this); g.select('.lbl').text(d.l.label).style('color', d.l.color); g.select('.bar').style('width', (100 * d.v / max) + '%').style('background', d.l.color); g.select('.val').text(key === 'v' ? fmtN(d.v) : d.v); });
+    };
+    bPosts.style('display', 'flex').style('flex-direction', 'column'); bViews.style('display', 'flex').style('flex-direction', 'column');
+    row(bPosts, 'n'); row(bViews, 'v');
+    const last = vis[vis.length - 1];
+    ticker.html(last ? `<b>@${esc(last.handle)}</b> · <span style="color:${laneByKey[last.lane].color}">${esc(laneByKey[last.lane].label)}</span> · ${fmtN(last.views)} views${last.isCopy ? ' · <b>same words</b> as an earlier post' : ''}` : '');
+  }
+  function setCur(t, fromSlider) { cur = Math.max(tMin, Math.min(tMax, t)); if (!fromSlider) slider.property('value', Math.round(1000 * (cur - tMin) / span)); update(); }
+  slider.on('input', function () { stop(); setCur(tMin + span * (+this.value / 1000), true); });
+  function step(now) {
+    if (!playing) return;
+    if (now - lastTick > 50) { const dt = (now - lastTick) / 1000; lastTick = now; setCur(cur + span * dt / speeds[speedIdx]); if (cur >= tMax) { stop(); return; } }
+    raf = requestAnimationFrame(step);
+  }
+  function play() { if (cur >= tMax) setCur(tMin); playing = true; playBtn.text('❚❚'); lastTick = performance.now(); raf = requestAnimationFrame(step); update(); }
+  function stop() { playing = false; playBtn.text('▶'); if (raf) cancelAnimationFrame(raf); update(); }
+  playBtn.on('click', () => playing ? stop() : play());
+  spdBtn.on('click', () => { speedIdx = (speedIdx + 1) % speeds.length; spdBtn.text(['2×', '1×', '½×'][speedIdx]); update(); });
+  document.addEventListener('keydown', e => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); playing ? stop() : play(); } });
+  setCur(tMax);
+  window.__tracker = {
+    tMin, tMax, span,
+    setTime: t => setCur(t),
+    setProgress: f => setCur(tMin + span * Math.max(0, Math.min(1, f))),
+    setPlaying: v => { playing = !!v; clockSpeed.text(v ? '' : (cur >= tMax ? 'end of window' : 'paused')); },
+    setSpeedLabel: txt => clockSpeed.text(txt),
+  };
+})();
+</script>
+</body>
+</html>

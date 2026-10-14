@@ -42,8 +42,83 @@ discover_hint: >
   through specific counties, cost to ratepayers, data centers and oil-and-gas load as the beneficiaries,
   reliability and the Permian plan, and the PUC's and ERCOT's handling of it.
 
-lanes: []
-
+lanes:
+- key: data_centers_beneficiary
+  label: Lines built for data centers
+  description: The 765-kV lines are being driven through private land mainly to serve data centers and
+    big industrial load, not everyday Texans.
+  keywords:
+  - data centers
+  - 765-kv
+  - private property
+  - big tech
+  - nanny state
+  - who benefits
+  - ratepayers pay
+- key: large_load_planning_strain
+  label: ERCOT large-load queue overwhelms planning
+  description: Gigawatt-scale load requests are swamping ERCOT's transmission planning, so the grid is
+    the real bottleneck for AI and growth.
+  keywords:
+  - large load queue
+  - ercot
+  - gw
+  - interconnection
+  - planning process
+  - bottleneck
+  - load growth
+  - powered data centers
+- key: build_it_power_growth
+  label: Build grid to power growth
+  description: Expanding transmission and power capacity is needed to power American industry, AI and
+    jobs, and the buildout should move quickly.
+  keywords:
+  - build it here
+  - power it here
+  - jobs
+  - american industry
+  - grid buildout
+  - ai race
+  - energy dominance
+- key: political_opposition_campaign
+  label: Candidates campaign against 765-kV
+  description: Texas candidates and officials use opposition to the 765-kV lines as a campaign and legislative
+    issue to win rural and landowner votes.
+  keywords:
+  - txlege
+  - campaign ad
+  - opposes 765
+  - state house
+  - vote them out
+  - legislature
+  - hd54
+  - candidate
+- key: permian_reliability_oil_gas
+  label: Permian plan and oil-gas load
+  description: The Permian Basin reliability plan and the West Texas grid are framed around oil-and-gas
+    electrification, congestion and curtailed power, with industry seeking exemptions or benefits.
+  keywords:
+  - permian
+  - west texas
+  - oil and gas
+  - curtailment
+  - pipeline companies
+  - reliability plan
+  - congestion
+  - puc
+- key: eminent_domain_landowners
+  label: Landowners vs eminent domain
+  description: Residents and landowners are fighting the lines, and the government taking their land by
+    eminent domain, on property-rights grounds.
+  keywords:
+  - eminent domain
+  - landowners
+  - property rights
+  - taking land
+  - route
+  - counties
+  - hill country
+  - residents fighting
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
