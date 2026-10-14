@@ -89,8 +89,49 @@ Abbott hiding / dodging debates, Flags for Israel not Uvalde, Abbott serves dono
 Abbott strong / Hinojosa too left, Abbott vs Sharia courts. 365 posts drawn, 80 links, 41 pushback.
 Only 4 near-verbatim repeats — this week's Abbott discourse was quote-driven, not copy-paste-driven.
 
+## Live trackers and the scheduled job
+
+`incidents/*-live.yaml` use `window.end: today` (the window grows each run; the last `refresh_days` days are
+re-pulled for new posts and fresher view counts). `.github/workflows/daily.yml` runs every six hours:
+pull → classify new posts → dedup → export → render → accounts → analysis → alerts, for every live incident
+(candidates first, then `issue-*`), commits `data/` and `out/`, and publishes `site/` to GitHub Pages
+(hub at the root, each tracker under `/<slug>/`, the cross-tracker amplifier map under `/accounts/`).
+Lanes are discovered on the first run and then frozen so days stay comparable; `python run.py report`
+shows what is landing outside them.
+
+Repo secrets needed: `TWITTERAPI_IO_KEY`, `ANTHROPIC_API_KEY`. Optional: `TELEGRAM_BOT_TOKEN` and
+`TELEGRAM_CHAT_ID` to receive alerts. Trigger a run by hand from the Actions tab, or commit a change to `.run`.
+
+## Pages each tracker produces
+
+| File | What it is |
+|---|---|
+| `index.html` | the chart — lanes, links, scrubber, Kalshi price strip when `markets:` is set |
+| `accounts.html` | who moved it: roles (originator / bridge / copier / pushback), reach, lane mix, first movers |
+| `analysis.html` | lane timing, half-life, pushback lag and share, lane-velocity vs market price lead/lag |
+| `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
+| `<slug>.mp4` | `python run.py video` — 60-second play-through, 1920x1296 |
+
+## Markets
+
+```yaml
+markets:
+  - label: "Abbott wins — Kalshi"
+    series: GOVPARTYTX
+    ticker: GOVPARTYTX-26-R
+```
+Kalshi's election API is public. Tickers in use: `GOVPARTYTX-26-R/D` (governor), `SENATETX-26-R/D` (Senate),
+`KXLTGOVTX-26-GOP/DEM` (lieutenant governor).
+
+## Alerts
+
+```yaml
+alerts: { window_hours: 24, min_posts: 8, min_views: 100000, surge_ratio: 3.0 }
+```
+A new-story alert includes a ready-to-paste lane block; add it to the YAML and run `classify --relabel`.
+
 ## Next
 
-- MP4 export: Playwright frame capture of the play-through, ffmpeg to stitch.
-- Scheduled re-pulls so a live incident page keeps growing (the daily briefing task is the pattern).
-- Account-level view: who originates, who amplifies, who copies.
+- Bluesky as a second source (free API) to see where stories originate vs. where they spread.
+- Coordination detection on same-words rings: account age, posting cadence, creation-date clustering.
+- Session mode in January: one tracker per priority bill.

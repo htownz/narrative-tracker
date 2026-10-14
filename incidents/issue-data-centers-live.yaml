@@ -1,0 +1,49 @@
+# Live issue tracker: the data center fight in Texas (Abbott's moratorium, water, power, tax breaks). Runs daily with the other *-live incidents.
+
+slug: issue-data-centers-live
+title: "Texas data centers, {days} days of posts"
+subject: "data centers in Texas — Gov. Abbott's freeze on new data center projects, grid and water demand, tax incentives, rural opposition"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas data centers, plus every post
+  repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-06"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+
+queries:
+  - '"data center" Texas'
+  - '"data centers" Texas'
+  - 'Abbott "data center"'
+  - 'ERCOT "data center"'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Posts about other states with no Texas angle are off-topic.
+  Expect frames about rural communities, water, electricity prices and the grid, tax abatements and campaign money, AI and jobs.
+
+lanes: []
+
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

@@ -102,6 +102,11 @@ lanes:
   - dallas
   - halakha
   - infiltrate
+markets:
+  - label: "Abbott wins — Kalshi"
+    series: GOVPARTYTX
+    ticker: GOVPARTYTX-26-R
+
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.

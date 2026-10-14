@@ -1,8 +1,8 @@
-name: Daily pull and publish
+name: Pull and publish
 
 on:
   schedule:
-    - cron: "17 11 * * *"      # 06:17 CT (11:17 UTC) every day; shifted off the hour to avoid the queue
+    - cron: "17 5,11,17,23 * * *"   # 12:17a, 6:17a, 12:17p, 6:17p CT — early warning needs more than one look a day
   workflow_dispatch:            # run it by hand from the Actions tab
     inputs:
       incidents:
@@ -37,7 +37,7 @@ jobs:
       - name: Pick the incidents
         id: pick
         run: |
-          LIVE=$(ls incidents/*-live.yaml | tr '\n' ' ')
+          LIVE="$(ls incidents/*-live.yaml | grep -v '/issue-' | tr '\n' ' ') $(ls incidents/issue-*-live.yaml 2>/dev/null | tr '\n' ' ')"   # candidates first, issues after
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
@@ -89,6 +89,7 @@ jobs:
             [ -f "$d/index.html" ] || continue
             mkdir -p "site/$slug" && cp "$d/index.html" "site/$slug/index.html"
             [ -f "$d/accounts.html" ] && cp "$d/accounts.html" "site/$slug/accounts.html"
+            [ -f "$d/analysis.html" ] && cp "$d/analysis.html" "site/$slug/analysis.html"
           done
           python -m tracker.hub site
 

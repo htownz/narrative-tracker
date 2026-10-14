@@ -35,6 +35,11 @@ discover_hint: >
 
 lanes: []
 
+markets:
+  - label: "Patrick wins — Kalshi"
+    series: KXLTGOVTX
+    ticker: KXLTGOVTX-26-GOP
+
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.

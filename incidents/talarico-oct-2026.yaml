@@ -47,6 +47,11 @@ lanes:
     description: Posts saying Talarico lied, hid it, covered it up, or should drop out of the race.
     keywords: ["lied", "cover up", "covered it up", "drop out", "hiding it", "withdraw"]
 
+markets:
+  - label: "Talarico wins — Kalshi"
+    series: SENATETX
+    ticker: SENATETX-26-D
+
 pushback:
   label: Pushback
   description: Posts doubting or mocking the story, fact-checking it, or defending Talarico against it.

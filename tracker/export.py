@@ -73,7 +73,11 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
     n_repeat = sum(1 for p in posts_out if p["copy_origin"] and p["in_dataset"])
     n_back = sum(1 for p in posts_out if p["lane"] == PUSHBACK_KEY and p["in_dataset"])
 
+    from .markets import fetch_markets
+    markets = fetch_markets(inc) if inc.raw.get("markets") else []
+
     data = {
+        "markets": markets,
         "meta": {
             "slug": inc.slug,
             "title": inc.title,

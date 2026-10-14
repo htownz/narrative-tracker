@@ -11,6 +11,8 @@
   python run.py video     incidents/x.yaml [--seconds 60] # MP4 play-through of the rendered chart (Playwright + ffmpeg)
   python run.py accounts  incidents/x.yaml                # amplifier map for one incident -> out/<slug>/accounts.html
   python run.py accounts  --all                           # amplifier map across every incident -> out/accounts/index.html
+  python run.py analysis  incidents/x.yaml                # lane timing, pushback lag, market lead/lag -> out/<slug>/analysis.html
+  python run.py alerts    incidents/x.yaml                # early warning: stories forming outside the lanes, lanes surging
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
 """
@@ -32,7 +34,7 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -82,6 +84,12 @@ def main() -> None:
     elif args.command == "accounts":
         from tracker import accounts
         accounts.accounts(inc)
+    elif args.command == "analysis":
+        from tracker import analysis
+        analysis.analysis(inc)
+    elif args.command == "alerts":
+        from tracker import alerts
+        alerts.alerts_cmd(inc)
     elif args.command == "synth":
         from tracker import synth
         synth.load(inc)
@@ -101,8 +109,10 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
-        from tracker import accounts
+        from tracker import accounts, analysis, alerts
         accounts.accounts(inc)
+        analysis.analysis(inc)
+        alerts.alerts_cmd(inc)
         lanes_mod.other_report(inc)
 
 

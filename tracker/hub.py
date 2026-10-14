@@ -25,6 +25,7 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 </style></head><body>
 <h1>Texas Narrative Trackers</h1>
 <p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update each morning.</p>
+@@ALERTS@@
 <div class="grid">@@CARDS@@</div>
 <p class="lead" style="margin-top:18px"><a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
 <footer>Built @@BUILT@@. Data via twitterapi.io; lanes assigned by Claude.</footer>
@@ -61,10 +62,27 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                                  pushing=stats.get("pushing", 0), repeated=stats.get("repeated", 0), pushback=stats.get("pushback", 0)))
     # live trackers first
     cards.sort(key=lambda c: ('class="live"' not in c, c))
+    alerts_html = ""
+    items = []
+    for d in sorted(OUT_DIR.iterdir()):
+        ap = d / "alerts.json"
+        if not ap.exists():
+            continue
+        try:
+            a = json.loads(ap.read_text())
+        except ValueError:
+            continue
+        for al in a.get("alerts", []):
+            if al["type"] == "new_cluster":
+                items.append(f'<li><b>{html.escape(al["title"])}</b> <span style="color:#7c7c78">in {html.escape(d.name)} · {al["posts"]} posts · {al["views"]:,} views · {al["accounts"]} accounts</span><br><span style="color:#b9b9b3;font-size:12px">@{html.escape(al["samples"][0]["handle"])}: {html.escape(al["samples"][0]["text"][:160])}</span></li>')
+            else:
+                items.append(f'<li><b>{html.escape(al["title"])}</b> surging <span style="color:#7c7c78">in {html.escape(d.name)} · {al["views_6h"]:,} views in 6h ({al["ratio"]}x normal)</span></li>')
+    if items:
+        alerts_html = '<h2 style="font-size:15px;margin:22px 0 6px;color:#e08a2e">Forming now</h2><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(items) + "</ul>"
     site_dir.mkdir(parents=True, exist_ok=True)
     out = site_dir / "index.html"
     built = datetime.now(ZoneInfo(tz)).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")
-    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built))
+    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", alerts_html))
     print(f"wrote {out} ({len(cards)} trackers)")
     return out
 

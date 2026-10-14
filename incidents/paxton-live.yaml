@@ -34,6 +34,11 @@ discover_hint: >
 
 lanes: []
 
+markets:
+  - label: "Paxton wins — Kalshi"
+    series: SENATETX
+    ticker: SENATETX-26-R
+
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.
