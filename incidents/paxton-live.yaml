@@ -1,0 +1,49 @@
+# Live tracker: Ken Paxton on X, Oct 6 through election day (U.S. Senate race vs. James Talarico).
+# Runs daily from .github/workflows/daily.yml alongside the other *-live incidents.
+
+slug: paxton-live
+title: "Paxton, {days} days of posts"
+subject: "Ken Paxton (R, Texas Attorney General), running for U.S. Senate against James Talarico (D), election Nov 3, 2026"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views mentioning Paxton, plus every post
+  repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-06"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+
+queries:
+  - '"Ken Paxton"'
+  - '@KenPaxtonTX'
+  - 'Paxton Talarico'
+  - 'Paxton Senate Texas'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  These lanes will be used unchanged for the rest of the race, so prefer durable narratives (a line of attack
+  or defense that will recur) over one-day events. Fold single-day stories into the durable narrative they serve.
+  Cover both sides: narratives pushed against Paxton and narratives pushed for Paxton or against Talarico.
+
+lanes: []
+
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

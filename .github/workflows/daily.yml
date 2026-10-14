@@ -5,11 +5,11 @@ on:
     - cron: "17 11 * * *"      # 06:17 CT (11:17 UTC) every day; shifted off the hour to avoid the queue
   workflow_dispatch:            # run it by hand from the Actions tab
     inputs:
-      incident:
-        description: "Incident YAML to run"
-        default: incidents/governor-race-live.yaml
+      incidents:
+        description: "Space-separated incident YAMLs (default: every incidents/*-live.yaml)"
+        default: ""
   push:
-    paths: [".run"]             # committing a change to .run (its first line = incident path) also triggers a run
+    paths: [".run"]             # committing a change to .run (its lines = incident paths, or 'live') also triggers a run
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ concurrency:
 jobs:
   pull:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -34,27 +34,39 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Pick the incident
+      - name: Pick the incidents
         id: pick
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then INC="${{ github.event.inputs.incident }}";
-          elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then INC="$(head -1 .run | tr -d '[:space:]')";
-          else INC="incidents/governor-race-live.yaml"; fi
-          echo "incident=${INC:-incidents/governor-race-live.yaml}" >> "$GITHUB_OUTPUT"
-          echo "running $INC"
+          LIVE=$(ls incidents/*-live.yaml | tr '\n' ' ')
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
+            INC="${{ github.event.inputs.incidents }}"
+          elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | tr '\n' ' ')
+            case " $INC " in *" live "*) INC="$LIVE ${INC/live/}";; esac
+          fi
+          INC="${INC:-$LIVE}"
+          echo "incidents=$INC" >> "$GITHUB_OUTPUT"
+          echo "running: $INC"
 
-      - name: Pull, classify, dedup, export, render
+      - name: Pull, classify, dedup, export, render (each incident)
         env:
           TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python run.py all "${{ steps.pick.outputs.incident }}"
+        run: |
+          set +e; FAILED=""
+          for inc in ${{ steps.pick.outputs.incidents }}; do
+            echo "::group::$inc"
+            python run.py all "$inc" || FAILED="$FAILED $inc"
+            echo "::endgroup::"
+          done
+          if [ -n "$FAILED" ]; then echo "::warning::failed:$FAILED"; fi
 
       - name: Commit data and output
         run: |
           git config user.name "narrative-tracker bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/ out/ incidents/
-          git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%d): ${{ steps.pick.outputs.incident }}"
+          git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%d)"
           git pull --rebase --autostash origin main
           git push
 
@@ -66,13 +78,7 @@ jobs:
             [ -f "$d/index.html" ] || continue
             mkdir -p "site/$slug" && cp "$d/index.html" "site/$slug/index.html"
           done
-          if [ -f out/governor-race-live/index.html ]; then
-            cp out/governor-race-live/index.html site/index.html
-          else
-            { echo '<!doctype html><meta charset="utf-8"><title>Narrative Tracker</title><body style="font-family:sans-serif;background:#0b0b0c;color:#eee;padding:24px"><h1>Narrative Tracker</h1><ul>';
-              for d in site/*/; do s=$(basename "$d"); echo "<li><a style=\"color:#8cf\" href=\"$s/\">$s</a></li>"; done;
-              echo '</ul></body>'; } > site/index.html
-          fi
+          python -m tracker.hub site
 
       - uses: actions/configure-pages@v5
         with:
