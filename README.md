@@ -115,8 +115,21 @@ incidents (fixed window) wherever you like.
 | `index.html` | the chart — lanes, links, scrubber, Kalshi price strip when `markets:` is set |
 | `accounts.html` | who moved it: roles (originator / bridge / copier / pushback), reach, lane mix, first movers |
 | `analysis.html` | lane timing, half-life, pushback lag and share, lane-velocity vs market price lead/lag |
+| `review.html` | lane spot-check: 20 posts per lane with a dropdown; builds the lines for `incidents/<slug>.overrides.csv` |
 | `alerts.json` | early warning: stories forming outside the lanes, lanes surging (also in the run summary / Telegram) |
 | `<slug>.mp4` | `python run.py video` — 60-second play-through, 1920x1296 |
+
+## Correcting lanes
+
+Open `<slug>/review.html`, change the dropdown on any mislabelled post, copy the box, paste into
+`incidents/<slug>.overrides.csv` (`post_id,lane`, one per line) and commit. `classify` applies the file last on
+every run, so corrections survive re-labelling and live refreshes. If a whole lane is wrong, edit its label or
+description in the YAML and run `classify --relabel`.
+
+## Run health
+
+The hub shows the twitterapi.io balance (red under $1), the last run time, and any live tracker with no lanes,
+unlabelled posts, a partial pull or query errors. `site/status.json` carries the same data for scripts.
 
 ## Markets
 

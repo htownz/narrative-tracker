@@ -24,7 +24,7 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
   footer { margin-top:24px; color:var(--ink-3); font-size:11px; }
 </style></head><body>
 <h1>Texas Narrative Trackers</h1>
-<p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update each morning.</p>
+<p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update every six hours.</p>
 @@ALERTS@@
 <div class="grid">@@CARDS@@</div>
 <p class="lead" style="margin-top:18px"><a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
@@ -79,10 +79,47 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                 items.append(f'<li><b>{html.escape(al["title"])}</b> surging <span style="color:#7c7c78">in {html.escape(d.name)} · {al["views_6h"]:,} views in 6h ({al["ratio"]}x normal)</span></li>')
     if items:
         alerts_html = '<h2 style="font-size:15px;margin:22px 0 6px;color:#e08a2e">Forming now</h2><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(items) + "</ul>"
+    # run health strip from status.json (written by tracker.status just before the hub)
+    status_html = ""
+    sp = site_dir / "status.json"
+    if sp.exists():
+        try:
+            stt = json.loads(sp.read_text(encoding="utf-8"))
+        except ValueError:
+            stt = {}
+        b = stt.get("balance") or {}
+        pills = []
+        if "usd" in b:
+            col = "#e66767" if b.get("low") else "#2fbf8c"
+            pills.append(f'<span style="color:{col}">● twitterapi.io ${b["usd"]:.2f}{" — recharge" if b.get("low") else ""}{" · free tier (5s pacing)" if b.get("free_tier") else ""}</span>')
+        elif b.get("error"):
+            pills.append(f'<span style="color:#7c7c78">● balance unavailable ({html.escape(str(b["error"]))})</span>')
+        try:
+            g = datetime.fromisoformat(stt["generated_at"]).astimezone(ZoneInfo(tz))
+            pills.append(f'<span>last run {g.strftime("%b %d, %I:%M %p").replace(" 0", " ")}</span>')
+        except (KeyError, ValueError):
+            pass
+        bad = []
+        for t in stt.get("trackers", []):
+            if not t.get("exists") or not t.get("live"):
+                continue
+            flags = []
+            if t.get("lanes", 0) == 0: flags.append("no lanes yet")
+            if t.get("pull_partial"): flags.append("pull in progress")
+            if t.get("unlabelled_1k", 0) > 0: flags.append(f'{t["unlabelled_1k"]} unlabelled')
+            if t.get("errors"): flags.append(f'{t["errors"]} query errors')
+            if flags:
+                bad.append(f'{html.escape(t["slug"])}: {", ".join(flags)}')
+        if bad:
+            pills.append('<span style="color:#c98500">' + " · ".join(bad) + "</span>")
+        if stt.get("run_url"):
+            pills.append(f'<a href="{html.escape(stt["run_url"])}" style="color:#8cf">run log</a>')
+        if pills:
+            status_html = '<p style="font-size:11.5px;color:#b9b9b3;margin:-8px 0 16px;display:flex;gap:14px;flex-wrap:wrap">' + "".join(f"<span>{x}</span>" for x in pills) + "</p>"
     site_dir.mkdir(parents=True, exist_ok=True)
     out = site_dir / "index.html"
     built = datetime.now(ZoneInfo(tz)).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")
-    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", alerts_html))
+    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", status_html + alerts_html))
     print(f"wrote {out} ({len(cards)} trackers)")
     return out
 

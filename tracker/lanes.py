@@ -180,6 +180,8 @@ def classify(inc: Incident, relabel: bool = False) -> None:
     posts += store.unlabeled_refs(inc.min_views, window_start, include_labeled=relabel)
     if not posts:
         print("nothing to classify")
+        from .review import apply_overrides
+        apply_overrides(inc, store)
         store.close()
         return
     provider = inc.classifier.get("provider", "claude")
@@ -196,6 +198,8 @@ def classify(inc: Incident, relabel: bool = False) -> None:
     for lane in assignments.values():
         counts[lane] = counts.get(lane, 0) + 1
     print(f"labelled {len(assignments)} posts via {source}: " + ", ".join(f"{k}={v}" for k, v in sorted(counts.items())))
+    from .review import apply_overrides
+    apply_overrides(inc, store)
     store.close()
 
 
