@@ -1,0 +1,114 @@
+slug: abbott-oct-2026
+title: Abbott, seven days of posts
+subject: Gov. Greg Abbott
+subtitle: 'Oct 6 to 13, 2026. Each dot is one post with 1K+ views mentioning Abbott, plus every post repeating
+  an earlier one, in the lane for what it argues. Higher and bigger means more views. White means 90%
+  or more the same words as an earlier post, with a white line back to it. Coloured lines link a post
+  to the post it quoted or replied to.
+
+  '
+window:
+  start: '2026-10-06'
+  end: '2026-10-13'
+timezone: America/Chicago
+queries:
+- '"Greg Abbott"'
+- '"Gov. Abbott"'
+- '@GregAbbott_TX'
+- Abbott Hinojosa
+- Abbott Texas governor
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+lanes:
+- key: abbott_in_trouble_polls
+  label: Hinojosa surging, Abbott slipping
+  description: Polls, betting odds, and Democratic money show Gina Hinojosa tied with or leading Abbott,
+    making Texas governor a genuinely competitive race for the first time in decades.
+  keywords:
+  - poll
+  - hinojosa leads
+  - tightening
+  - surge
+  - pritzker
+  - $1 million
+  - toss-up
+  - within striking distance
+- key: abbott_hiding_dodging
+  label: Abbott hiding, dodging debates
+  description: Abbott is avoiding Trump's San Antonio rally, public events and debates, and has burned
+    through $140M+ without improving his position, which signals weakness and fear.
+  keywords:
+  - skip trump
+  - dodging debates
+  - debate
+  - man enough
+  - burned through
+  - war chest
+  - scheduling conflict
+  - hiding
+- key: october_7_flags_uvalde
+  label: Flags for Israel, not Uvalde
+  description: Abbott's half-staff order for the October 7 anniversary is cast either as proper solidarity
+    with Israel or as hypocrisy, since he did not lower flags for Uvalde, with critics also saying he
+    puts Israel before Texas.
+  keywords:
+  - half-staff
+  - october 7
+  - israel
+  - uvalde
+  - flags lowered
+  - hamas
+  - foreign masters
+- key: abbott_fails_texans
+  label: Abbott serves donors, fails Texans
+  description: Abbott is portrayed as beholden to billionaires and megadonors, hurting schools through
+    vouchers and data centers, raising costs, and losing even former Republican and conservative supporters,
+    who are now backing Hinojosa.
+  keywords:
+  - billionaires
+  - megadonors
+  - vouchers
+  - public schools
+  - data centers
+  - endorses hinojosa
+  - voted for abbott
+  - property taxes
+- key: abbott_strong_hinojosa_radical
+  label: Abbott strong, Hinojosa too left
+  description: Pro-Abbott voices say he is holding his lead, backed by police groups and parents, and
+    attack Hinojosa as far-left and as having voted for a state income tax.
+  keywords:
+  - further left
+  - income tax
+  - police
+  - moms for liberty
+  - parents
+  - abbott leads
+  - not losing
+  - fool the voters
+- key: sharia_islam_crackdown
+  label: Abbott vs Sharia courts
+  description: Viral posts claim Abbott is deploying state police to root out Sharia courts in Texas,
+    framed as heroic defense against Islamic infiltration, or as hypocrisy given his pro-Israel and Halakha
+    stances.
+  keywords:
+  - sharia
+  - dps
+  - root out
+  - islamic
+  - dallas
+  - halakha
+  - infiltrate
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant narratives.
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+dedup:
+  shingle_size: 3
+  similarity: 0.9

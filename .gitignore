@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+_to_delete/
+site/
+# per-incident stores and output are committed only for live incidents (the daily job needs the history)
+data/*
+!data/governor-race-live.sqlite
+out/*
+!out/governor-race-live/
