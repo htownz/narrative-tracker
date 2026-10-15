@@ -1,2 +1,2 @@
-# deploy-only: refresh the status strip after the twitterapi top-up
+# deploy-only: seed the Railway bucket with the stores (bucket push runs in the commit step)
 none
