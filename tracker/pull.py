@@ -48,7 +48,16 @@ class TwitterAPI:
             wait = self.pause - (time.time() - self._last)
             if wait > 0:
                 time.sleep(wait)
-            r = self.session.get(url, params=params, timeout=60)
+            try:
+                r = self.session.get(url, params=params, timeout=60)
+            except requests.exceptions.RequestException as e:   # dropped connection, truncated body, timeout: back off and retry
+                self._last = time.time()
+                self.calls += 1
+                if attempt >= 5:
+                    raise
+                log(f"  network error ({type(e).__name__}); retrying in {min(30, 2 ** attempt)}s")
+                time.sleep(min(30, 2 ** attempt))
+                continue
             self._last = time.time()
             self.calls += 1
             if r.status_code == 429:

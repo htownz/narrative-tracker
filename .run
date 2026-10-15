@@ -1,5 +1,4 @@
-# backfill the three races to Sept 1 (pull up to an hour per incident); classification and claims catch up over later runs
+# resume the Sept 1 backfill for Paxton and the governor's race after a dropped connection; then classify
 budget=3600
 incidents/paxton-live.yaml
 incidents/governor-race-live.yaml
-incidents/patrick-live.yaml
