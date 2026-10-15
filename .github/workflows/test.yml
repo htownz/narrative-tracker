@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-      - run: pip install -r requirements.txt pytest
+      - run: pip install -r requirements.txt pytest moto
       - run: python -m pytest -q tests/
       - name: Synthetic end-to-end (no keys, no network)
         env:

@@ -109,6 +109,19 @@ the next run and the chart notes "pull still in progress". Live incidents should
 SQLite stores are committed, and a local run pushed from your PC would conflict with the job's commits. Run one-off
 incidents (fixed window) wherever you like.
 
+## Where the data lives
+
+The per-tracker SQLite stores (`data/<slug>.sqlite`) live in an S3-compatible bucket, not in git: committing
+100 MB of binaries four times a day bloated the repo and one store crossed GitHub's 100 MB file limit. The job
+runs `python -m tracker.bucket pull` after checkout and `push` before it commits, writes a dated snapshot every
+Sunday (`snapshots/<date>/`, eight kept), and falls back to committing the stores to git if the bucket is
+unreachable so no run's work is dropped. Git keeps the text outputs (`out/`, `data/features/*.csv`, the YAMLs).
+
+Any S3-compatible provider works (Cloudflare R2's free tier, Railway Buckets, AWS S3, Backblaze B2) through
+five GitHub secrets / `.env` variables: `BUCKET_ENDPOINT`, `BUCKET_NAME`, `BUCKET_ACCESS_KEY`,
+`BUCKET_SECRET_KEY`, `BUCKET_REGION` (default `auto`). Without them the job behaves as before (stores in git).
+On a laptop, `python -m tracker.bucket pull` fetches the current stores; `list` shows what the bucket holds.
+
 ## Backfilling and long windows
 
 Move a live tracker's `window.start` earlier and the next runs pull the missing days (resumable; nothing already

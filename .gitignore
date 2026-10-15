@@ -7,3 +7,6 @@ site/
 *.mp4
 *.log
 # sqlite stores and rendered output are committed: the daily job needs the history and Pages serves out/
+# the stores live in the bucket (tracker/bucket.py); git keeps only the text outputs
+data/*.sqlite
+data/*.sqlite-journal

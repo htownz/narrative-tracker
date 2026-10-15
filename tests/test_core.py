@@ -350,3 +350,35 @@ def test_slim_raw_keeps_what_analysis_reads_and_compact_is_idempotent(tmp_path):
     from tracker import control
     assert control.account_age_days(dict(st.conn.execute("select * from posts where id='1'").fetchone())) > 40
     st.close()
+
+
+# ------------------------------------------------------------------ bucket
+def test_bucket_push_pull_snapshot_round_trip(tmp_path, monkeypatch):
+    moto = pytest.importorskip("moto")
+    import boto3, sqlite3 as sq
+    for k, v in {"BUCKET_NAME": "nt-test", "BUCKET_ACCESS_KEY": "testing", "BUCKET_SECRET_KEY": "testing", "BUCKET_REGION": "us-east-1", "BUCKET_ENDPOINT": ""}.items():
+        monkeypatch.setenv(k, v)
+    from tracker import bucket
+    monkeypatch.setattr(bucket, "DATA_DIR", tmp_path)
+    (tmp_path / "features").mkdir()
+    with moto.mock_aws():
+        boto3.client("s3", region_name="us-east-1").create_bucket(Bucket="nt-test")
+        for n in ("a-live", "b-live"):
+            c = sq.connect(tmp_path / f"{n}.sqlite"); c.execute("create table t(x)"); c.execute("insert into t values (1)"); c.commit(); c.close()
+        (tmp_path / "features" / "a-live.csv").write_text("run_at,x\n1,2\n")
+        assert bucket.pull() == 0 and bucket.push() == 3 and bucket.push() == 0        # empty bucket; seed; unchanged
+        c = sq.connect(tmp_path / "a-live.sqlite"); c.execute("insert into t values (2)"); c.commit(); c.close()
+        assert bucket.push() == 1                                                     # only the changed store
+        (tmp_path / "b-live.sqlite").unlink()
+        assert bucket.pull() == 1 and (tmp_path / "b-live.sqlite").exists()           # a missing store comes back
+        assert bucket.snapshot(keep=2) == 2
+        keys = {o["Key"] for o in boto3.client("s3", region_name="us-east-1").list_objects_v2(Bucket="nt-test")["Contents"]}
+        assert any(k.startswith("snapshots/") and k.endswith("a-live.sqlite") for k in keys) and "features/a-live.csv" in keys
+
+
+def test_bucket_is_a_noop_without_config(monkeypatch):
+    from tracker import bucket
+    for k in ("BUCKET_NAME", "BUCKET_ACCESS_KEY", "BUCKET_SECRET_KEY"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr(bucket, "env", lambda *a, **k: "")
+    assert not bucket.configured() and bucket.pull() == 0 and bucket.push() == 0 and bucket.snapshot() == 0

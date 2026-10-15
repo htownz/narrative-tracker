@@ -34,6 +34,15 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Fetch the stores from the bucket
+        env:
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
+          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
+        run: python -m tracker.bucket pull     # no-op without the BUCKET_* secrets (stores then come from git)
+
       - name: Pick the incidents
         id: pick
         run: |
@@ -80,12 +89,30 @@ jobs:
           # one failing incident still publishes the others; every incident failing fails the run
           [ "$OK" -gt 0 ] || { echo "::error::every incident failed"; exit 1; }
 
-      - name: Commit data and output
+      - name: Save the stores to the bucket, commit the outputs
         if: ${{ always() && steps.pick.outcome == 'success' }}   # save pull progress even on failure or timeout
+        env:
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
+          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
         run: |
           git config user.name "narrative-tracker bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/ out/ incidents/
+          STORES=""
+          if [ -n "$BUCKET_NAME" ]; then
+            if python -m tracker.bucket push; then
+              [ "$(date -u +%u%H)" = "711" ] && python -m tracker.bucket snapshot || true     # Sunday: dated snapshot
+            else
+              echo "::warning::bucket push failed — committing the stores to git so this run's work is not lost"
+              STORES="$(ls data/*.sqlite 2>/dev/null | tr '\n' ' ')"
+            fi
+          else
+            STORES="$(ls data/*.sqlite 2>/dev/null | tr '\n' ' ')"     # no bucket configured: stores stay in git
+          fi
+          git add out/ incidents/ data/features/ 2>/dev/null || true
+          [ -n "$STORES" ] && git add -f $STORES
           git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%dT%H:%MZ)"
           # binary stores can't merge: on conflict keep this run's version (the newest pull)
           git pull --rebase -X theirs --autostash origin "${{ github.ref_name }}" || { git rebase --abort 2>/dev/null; git reset --hard "origin/${{ github.ref_name }}"; echo "::warning::could not rebase; this run's data was not pushed"; exit 0; }
