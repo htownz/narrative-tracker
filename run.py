@@ -16,6 +16,7 @@
   python run.py review    incidents/x.yaml                # lane spot-check page + overrides builder -> out/<slug>/review.html
   python run.py claims    incidents/x.yaml                # what is being claimed: extract + group claims -> out/<slug>/claims.html
   python run.py verify    incidents/x.yaml                # verdicts for big checkable claims (Claude + web search) -> stored, shown on claims.html
+  python run.py rings     incidents/x.yaml                # link rings: one URL pushed by 5+ accounts within 2h -> out/<slug>/rings.json (shown on analysis.html)
   python run.py control   incidents/x.yaml                # narrative-control score per lane and claim -> out/<slug>/control.json (shown on analysis.html)
   python run.py features  incidents/x.yaml                # prediction feature rows -> data/features/<slug>.csv; "likely to grow" -> out/<slug>/features.json
   python run.py compact   incidents/x.yaml                # slim the stored API objects and reclaim space (runs automatically at the start of `all`)
@@ -47,7 +48,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "control", "features", "compact", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "rings", "control", "features", "compact", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -112,6 +113,9 @@ def main() -> None:
         from tracker import verify, claims
         verify.verify(inc)
         claims.claims(inc, skip_model=True)
+    elif args.command == "rings":
+        from tracker import rings
+        rings.rings(inc)
     elif args.command == "control":
         from tracker import control
         control.control(inc)
@@ -146,12 +150,12 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
-        from tracker import accounts, analysis, alerts, claims, control, features, review, verify
+        from tracker import accounts, analysis, alerts, claims, control, features, review, rings, verify
         def claims_and_verify(inc):
             claims.claims(inc)                       # extract + cluster + page
             if verify.verify(inc):
                 claims.claims(inc, skip_model=True)  # page again with the new verdicts
-        for name, fn in (("accounts", accounts.accounts), ("claims", claims_and_verify), ("control", control.control),
+        for name, fn in (("accounts", accounts.accounts), ("claims", claims_and_verify), ("rings", rings.rings), ("control", control.control),
                          ("features", features.features), ("analysis", analysis.analysis), ("review", review.review),
                          ("alerts", alerts.alerts_cmd), ("report", lanes_mod.other_report)):
             try:

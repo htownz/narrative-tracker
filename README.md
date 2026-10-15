@@ -227,13 +227,22 @@ so the per-run cap is what bounds the cost.
 verify: { min_views: 100000, per_run: 5, max_searches: 5 }   # all optional
 ```
 
+## Link rings
+
+`python run.py rings incidents/x.yaml` (part of `all`, before `control`) groups every stored post by the links it
+carries (tracking parameters stripped, X status links reduced to the post id) and flags a ring when five or more
+distinct accounts shared the same link inside two hours. Reporters and poll accounts do that within the hour of a
+story and that is news; a ring where a fifth of the accounts are under 90 days old or most have under 5K followers
+is marked suspicious, shown red on `analysis.html`, and counts toward the control score ("link rings" feature).
+Re-uploaded video clips can't be matched this way (no shared URL); same-words copies cover the caption side.
+
 ## Narrative control
 
 `python run.py control incidents/x.yaml` (part of `all`, before `analysis`) scores every lane and every
 canonical claim with five or more posts for how much it looks like a push rather than organic spread, 0–100:
-copies across accounts (30), new accounts under 90 days old (25), burst — share of posts in the busiest
-hour (15), regularity — copies spaced on a clock (15), top-5 account share of views (15; ignored under ten
-accounts). The features are shown next to the score on `analysis.html`; anything at 70+ is listed on the
+copies across accounts (25), new accounts under 90 days old (20), burst — share of posts in the busiest
+hour (15), regularity — copies spaced on a clock (15), top-5 account share of views (10; ignored under ten
+accounts), and link rings of new or small accounts (15). The features are shown next to the score on `analysis.html`; anything at 70+ is listed on the
 hub as a coordinated push. A poll release bursts and gets copied on its own, so read the score with the
 events behind it (ROADMAP: events calendar).
 

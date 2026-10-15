@@ -183,6 +183,27 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
 (an all-day event compares its day with the day before). "new" means the lane had nothing in the hours before. Times taken from the first post on X are a lower bound for the moment itself.
 Red: three times the views or more, at 50K+ views after.</p>
 <div class="wrap"><table><thead><tr><th style="min-width:230px">Event</th><th class="n">All lanes</th>{head}<th>Biggest lane after</th></tr></thead><tbody>{"".join(etrs)}</tbody></table></div>"""
+    rings_html = ""
+    rings_path = inc.out_dir / "rings.json"
+    if rings_path.exists():
+        rj = json.loads(rings_path.read_text(encoding="utf-8"))
+        rr = rj.get("rings") or []
+        if rr:
+            lane_label = {l["key"]: l["label"] for l in data["lanes"]}
+            rtrs = []
+            for r in rr[:25]:
+                tone = "#ff8a80" if r.get("suspicious") else "var(--ink-2)"
+                lanes_txt = ", ".join(f"{html.escape(lane_label.get(k, k))} {n}" for k, n in list(r["lanes"].items())[:2]) or "—"
+                rtrs.append(f'<tr><td><a href="https://{html.escape(r["url"])}" style="color:var(--ink)">{html.escape(r["url"][:70])}</a>'
+                            f'<div class="muted">{html.escape(r["sample"][:140])}</div></td>'
+                            f'<td class="n"><b style="color:{tone}">{r["burst_accounts"]}</b> / {r["accounts"]}</td><td>{fmt(r["burst_start"])}</td>'
+                            f'<td class="n">{r["posts"]}</td><td class="n">{_fmt(r["views"])}</td><td class="n">{r["new_accounts"]:.0%}</td><td class="n">{r.get("small_accounts", 0):.0%}</td>'
+                            f'<td class="muted">{lanes_txt}</td><td class="muted">{html.escape(", ".join("@" + h for h in r["handles"][:5]))}</td></tr>')
+            rings_html = f"""<h2>Link rings</h2>
+<p class="sub">The same link shared by {rj["min_accounts"]}+ distinct accounts inside {rj["window_hours"]:g} hours. Reporters and poll accounts do this within the hour of a story
+and that is news; a ring where a fifth or more of the accounts are under 90 days old, or most have under 5K followers, is marked red and counts toward the control score.
+"Burst / all" is accounts inside the tightest window over all accounts that ever shared it.</p>
+<div class="wrap"><table><thead><tr><th>Link</th><th class="n">Burst / all</th><th>Window start</th><th class="n">Posts</th><th class="n">Views</th><th class="n">New accts</th><th class="n">Small accts</th><th>Lanes</th><th>In the burst</th></tr></thead><tbody>{"".join(rtrs)}</tbody></table></div>"""
     ctrl_html = ""
     ctrl_path = inc.out_dir / "control.json"
     if ctrl_path.exists():
@@ -196,7 +217,8 @@ Red: three times the views or more, at 50K+ views after.</p>
         ctrl_html = f"""<h2>Narrative control</h2>
 <p class="sub">How much each lane looks like a push rather than organic spread, 0-100: copies (share of posts repeating another account's words),
 new accounts (posters under {NEW_ACCOUNT_DAYS} days old), burst (share of posts in the single busiest hour), regularity (copies spaced on a clock, 0-1),
-and top-5 share (views carried by the five biggest accounts). {FLAG}+ is flagged on the hub as a coordinated push. The features matter more than the number.</p>
+top-5 share (views carried by the five biggest accounts) and link rings (share of posts pushing one link alongside new or small accounts).
+{FLAG}+ is flagged on the hub as a coordinated push. The features matter more than the number.</p>
 {table_html(ctrl["lanes"])}
 {claims_part}"""
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -209,6 +231,7 @@ and top-5 share (views carried by the five biggest accounts). {FLAG}+ is flagged
 <div class="wrap"><table><thead><tr><th>Lane</th><th>First post</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Half-life h</th><th class="n">Peak hour</th><th class="n">Pushback lag h</th><th class="n">Pushback posts</th><th class="n">Pushback share</th><th>First pushback</th></tr></thead><tbody>{trs}</tbody></table></div>
 {ev_html}
 {ll_html}
+{rings_html}
 {ctrl_html}
 <footer>Generated {datetime.now(tz).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")}. Small-N: treat group means as description of this incident, not a law.</footer>
 </body></html>"""

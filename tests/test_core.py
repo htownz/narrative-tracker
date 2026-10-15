@@ -382,3 +382,22 @@ def test_bucket_is_a_noop_without_config(monkeypatch):
         monkeypatch.delenv(k, raising=False)
     monkeypatch.setattr(bucket, "env", lambda *a, **k: "")
     assert not bucket.configured() and bucket.pull() == 0 and bucket.push() == 0 and bucket.snapshot() == 0
+
+
+# ------------------------------------------------------------------ link rings
+def test_link_rings_normalize_and_detect():
+    from tracker import rings
+    assert rings.normalize("https://www.nytimes.com/2026/09/30/us/politics/x.html?utm_source=tw&smid=tw-share#top") == "nytimes.com/2026/09/30/us/politics/x.html"
+    assert rings.normalize("https://twitter.com/foo/status/123?s=20") == "x.com/status/123" and rings.normalize("https://t.co/abc") is None
+    assert rings.normalize("https://www.youtube.com/watch?v=abc&feature=share") == "youtube.com/watch?v=abc"
+    def post(i, handle, minute, url, followers=100, created="Mon Jan 01 00:00:00 +0000 2018"):
+        return {"id": str(i), "author_handle": handle, "author_followers": followers, "view_count": 1000, "lane": "x", "in_dataset": 1,
+                "created_at": f"2026-10-10T12:{minute:02d}:00+00:00", "text": "look", "url": "u",
+                "raw": json.dumps({"entities": {"urls": [url]}, "author": {"createdAt": created}})}
+    link = "https://example.com/story"
+    burst = [post(i, f"small{i}", i * 5, link) for i in range(6)]                                     # six small accounts in 30 minutes
+    slow = [post(10 + i, f"reporter{i}", 0, "https://news.com/a", followers=50_000) for i in range(2)] + \
+           [{**post(20 + i, f"reporter{2 + i}", 0, "https://news.com/a", followers=50_000), "created_at": f"2026-10-1{1 + i}T12:00:00+00:00"} for i in range(4)]  # six accounts over four days
+    found = rings.find_rings(burst + slow)
+    assert len(found) == 1 and found[0]["url"] == "example.com/story" and found[0]["burst_accounts"] == 6 and found[0]["suspicious"]
+    assert found[0]["small_accounts"] == 1.0 and found[0]["lanes"] == {"x": 6}

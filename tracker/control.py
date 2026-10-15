@@ -27,10 +27,12 @@ from .store import Store, parse_created_at
 
 NEW_ACCOUNT_DAYS = 90
 FLAG = 70
-WEIGHTS = {"copies": 30, "new_accounts": 25, "burst": 15, "regularity": 15, "top5": 15}
+WEIGHTS = {"copies": 25, "new_accounts": 20, "burst": 15, "regularity": 15, "top5": 10, "link_rings": 15}
 # raw value -> 0..1: (floor, ceiling); below the floor is organic, above the ceiling is as bad as it gets
-SCALE = {"copies": (0.02, 0.40), "new_accounts": (0.03, 0.25), "burst": (0.10, 0.60), "regularity": (0.0, 1.0), "top5": (0.45, 0.95)}
-LABELS = {"copies": "copies", "new_accounts": "new accounts", "burst": "burst", "regularity": "regular copy timing", "top5": "top-5 share"}
+SCALE = {"copies": (0.02, 0.40), "new_accounts": (0.03, 0.25), "burst": (0.10, 0.60), "regularity": (0.0, 1.0), "top5": (0.45, 0.95),
+         "link_rings": (0.02, 0.30)}
+LABELS = {"copies": "copies", "new_accounts": "new accounts", "burst": "burst", "regularity": "regular copy timing", "top5": "top-5 share",
+          "link_rings": "link rings"}
 
 
 def _norm(key: str, value: float) -> float:
@@ -50,12 +52,14 @@ def account_age_days(post: dict[str, Any]) -> float | None:
     return (datetime.fromisoformat(post["created_at"]) - datetime.fromisoformat(created)).total_seconds() / 86400
 
 
-def features(posts: list[dict[str, Any]], origin_handle: dict[str, str] | None = None) -> dict[str, Any]:
+def features(posts: list[dict[str, Any]], origin_handle: dict[str, str] | None = None, ring_ids: set[str] | None = None) -> dict[str, Any]:
     """Raw feature values for a set of posts (one lane, one claim, one ring). With origin_handle (post id ->
-    author of the post it copies), an account repeating itself does not count as a copy: that is spam, not a ring."""
+    author of the post it copies), an account repeating itself does not count as a copy: that is spam, not a ring.
+    ring_ids: posts that sit in a link ring of new or small accounts (tracker/rings.py)."""
     n = len(posts)
     if n == 0:
         return {"posts": 0}
+    in_ring = sum(1 for p in posts if ring_ids and p["id"] in ring_ids)
     views = sum(int(p["view_count"] or 0) for p in posts)
     copies = [p for p in posts if p.get("copy_origin")
               and (origin_handle is None or origin_handle.get(p["copy_origin"], "") != p["author_handle"])]
@@ -88,6 +92,7 @@ def features(posts: list[dict[str, Any]], origin_handle: dict[str, str] | None =
         "burst": max(hours.values()) / n, "busiest_hour": max(hours, key=hours.get),
         "regularity": regularity, "ring_size": ring_size,
         "top5": top5,
+        "link_rings": in_ring / n, "link_rings_n": in_ring,
     }
 
 
@@ -121,14 +126,16 @@ def score(f: dict[str, Any], events: list[dict[str, Any]] | None = None) -> tupl
             why.append(f"copies spaced on a clock (ring of {f['ring_size']})")
         elif k == "top5":
             why.append(f"top five accounts carry {raw:.0%} of views")
+        elif k == "link_rings":
+            why.append(f"{raw:.0%} of posts push one link with new or small accounts ({f['link_rings_n']})")
     if follows and f.get("burst", 0) >= SCALE["burst"][0]:
         why.append(f"burst follows: {follows['label']}")
     return total, why
 
 
 def _row(key: str, label: str, color: str | None, posts: list[dict[str, Any]], kind: str, origin_handle: dict[str, str] | None = None,
-         events: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-    f = features(posts, origin_handle)
+         events: list[dict[str, Any]] | None = None, ring_ids: set[str] | None = None) -> dict[str, Any]:
+    f = features(posts, origin_handle, ring_ids)
     s, why = score(f, events)
     return {"kind": kind, "key": key, "label": label, "color": color, "score": s, "why": why, **f}
 
@@ -138,14 +145,16 @@ def control(inc: Incident) -> Path:
     lanes = inc.lane_table()
     lane_keys = {l["key"] for l in lanes}
     from .events import load_events
+    from .rings import ring_post_ids
     events = load_events(inc)
+    ring_ids = ring_post_ids(inc)
     drawn = store.drawable(inc.min_views)
     origin_handle = {p["id"]: p["author_handle"] for p in drawn}
     posts = [p for p in drawn if p["lane"] in lane_keys]
     by_lane: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for p in posts:
         by_lane[p["lane"]].append(p)
-    rows = [_row(l["key"], l["label"], l["color"], by_lane.get(l["key"], []), "lane", origin_handle, events) for l in lanes if l["key"] != PUSHBACK_KEY]
+    rows = [_row(l["key"], l["label"], l["color"], by_lane.get(l["key"], []), "lane", origin_handle, events, ring_ids) for l in lanes if l["key"] != PUSHBACK_KEY]
     # canonical claims with enough posts to judge
     by_id = {p["id"]: p for p in posts}
     cl_posts: dict[int, dict[str, dict[str, Any]]] = defaultdict(dict)
@@ -153,7 +162,7 @@ def control(inc: Incident) -> Path:
         if r["post_id"] in by_id:
             cl_posts[int(r["cluster_id"])][r["post_id"]] = by_id[r["post_id"]]
     cl_text = {int(c["id"]): c["text"] for c in store.clusters()}
-    claim_rows = [_row(str(cid), cl_text.get(cid, f"claim {cid}"), None, list(ps.values()), "claim", origin_handle, events)
+    claim_rows = [_row(str(cid), cl_text.get(cid, f"claim {cid}"), None, list(ps.values()), "claim", origin_handle, events, ring_ids)
                   for cid, ps in cl_posts.items() if len(ps) >= 5]
     claim_rows.sort(key=lambda r: (-r["score"], -r["views"]))
     store.close()
@@ -180,7 +189,7 @@ def table_html(rows: list[dict[str, Any]], with_color: bool = True) -> str:
             f'<tr><td>{name}<div class="muted">{html.escape("; ".join(r["why"])) or "nothing stands out"}</div></td>'
             f'<td class="n"><b style="color:{tone}">{r["score"]}</b></td><td class="n">{r["posts"]}</td>'
             f'<td class="n">{r["copies"]:.0%}</td><td class="n">{r["new_accounts"]:.0%}</td><td class="n">{r["burst"]:.0%}</td>'
-            f'<td class="n">{r["regularity"]:.2f}</td><td class="n">{r["top5"]:.0%}</td></tr>'
+            f'<td class="n">{r["regularity"]:.2f}</td><td class="n">{r["top5"]:.0%}</td><td class="n">{r.get("link_rings", 0):.0%}</td></tr>'
         )
     return ('<div class="wrap"><table><thead><tr><th>Narrative</th><th class="n">Control</th><th class="n">Posts</th><th class="n">Copies</th>'
-            f'<th class="n">New accts</th><th class="n">Burst</th><th class="n">Regularity</th><th class="n">Top-5 share</th></tr></thead><tbody>{"".join(trs)}</tbody></table></div>')
+            f'<th class="n">New accts</th><th class="n">Burst</th><th class="n">Regularity</th><th class="n">Top-5 share</th><th class="n">Link rings</th></tr></thead><tbody>{"".join(trs)}</tbody></table></div>')
