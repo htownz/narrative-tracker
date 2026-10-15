@@ -1,2 +1,2 @@
-# deploy-only: seed the Railway bucket with the stores (bucket push runs in the commit step)
-none
+# full live run: first one that reads the stores from the bucket
+live
