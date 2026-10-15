@@ -42,6 +42,7 @@ from tracker import lanes as lanes_mod  # noqa: E402
 from tracker import pull as pull_mod  # noqa: E402
 from tracker import render as render_mod  # noqa: E402
 from tracker.config import load_incident, save_lanes  # noqa: E402
+from tracker.store import Store  # noqa: E402
 
 
 def main() -> None:
@@ -83,7 +84,6 @@ def main() -> None:
     elif args.command == "dedup":
         dedup_mod.dedup(inc)
     elif args.command == "export":
-        from tracker.store import Store
         synthetic = bool(Store(inc.db_path).get_meta("synthetic", False))
         export_mod.export(inc, include_other=args.include_other, synthetic=synthetic)
     elif args.command == "render":
