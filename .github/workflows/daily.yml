@@ -23,7 +23,7 @@ concurrency:
 jobs:
   pull:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300     # a backfill run pulls and classifies weeks of posts; progress is committed even if this is hit
     steps:
       - uses: actions/checkout@v4
 
@@ -41,12 +41,14 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
-            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | tr '\n' ' ' || true)
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | tr '\n' ' ' || true)
+            BUDGET=$(grep -o '^budget=[0-9]*' .run | head -1 | cut -d= -f2 || true)     # a backfill run can ask for a longer pull per incident
             case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
           fi
           case " $INC " in *" none "*) INC="";; *) INC="${INC:-$LIVE}";; esac
           echo "incidents=$INC" >> "$GITHUB_OUTPUT"
-          echo "running: ${INC:-<deploy only>}"
+          echo "budget=${BUDGET:-780}" >> "$GITHUB_OUTPUT"
+          echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
 
       - name: Check secrets
         if: ${{ steps.pick.outputs.incidents != '' }}
@@ -64,7 +66,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PULL_BUDGET: "780"     # seconds of pulling per incident per run; a paused pull resumes next run
+          PULL_BUDGET: ${{ steps.pick.outputs.budget }}     # seconds of pulling per incident per run (780 unless .run says budget=N); a paused pull resumes next run
         run: |
           set +e; FAILED=""; OK=0
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts

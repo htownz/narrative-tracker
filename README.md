@@ -109,6 +109,14 @@ the next run and the chart notes "pull still in progress". Live incidents should
 SQLite stores are committed, and a local run pushed from your PC would conflict with the job's commits. Run one-off
 incidents (fixed window) wherever you like.
 
+## Backfilling and long windows
+
+Move a live tracker's `window.start` earlier and the next runs pull the missing days (resumable; nothing already
+stored is re-pulled). For a big backfill put `budget=3600` on its own line in `.run` next to the incident paths
+so the run pulls for up to an hour per incident instead of the usual 13 minutes; classification and claims
+catch up over the following runs. Charts whose window is longer than three weeks open on the last 14 days,
+with a "Showing: last 7 / 14 / 30 days / the whole window" toggle under the subtitle (`?days=N` or `?days=all`).
+
 ## Site navigation
 
 `python -m tracker.site site` assembles the published site: every tracker's pages are copied into

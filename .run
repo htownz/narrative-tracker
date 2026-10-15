@@ -1,2 +1,5 @@
-# deploy-only: publish the navigation bar on every page
-none
+# backfill the three races to Sept 1 (pull up to an hour per incident); classification and claims catch up over later runs
+budget=3600
+incidents/paxton-live.yaml
+incidents/governor-race-live.yaml
+incidents/patrick-live.yaml

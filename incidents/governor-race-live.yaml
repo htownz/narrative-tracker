@@ -13,7 +13,7 @@ subtitle: >
   Coloured lines link a post to the post it quoted or replied to. Updated daily.
 
 window:
-  start: "2026-10-06"
+  start: "2026-09-01"   # backfilled to Labor Day on Oct 14; days before Oct 6 were pulled after the fact
   end: today
 timezone: America/Chicago
 refresh_days: 2
