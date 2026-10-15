@@ -98,6 +98,47 @@ def parse_created_at(value: Any) -> str | None:
         return None
 
 
+# What of the API object is worth keeping in `raw`. The full object averages 4-5 KB per post (nested quoted
+# tweets, cards, media entities, the author's bio and banner), which put the Paxton store past GitHub's 100 MB
+# file limit; this subset is about 0.5 KB and holds everything the analysis reads (account age, follower
+# counts, verification, language, reply/quote structure, links).
+RAW_TWEET_KEYS = ("id", "createdAt", "lang", "source", "type", "isReply", "inReplyToId", "inReplyToUserId", "inReplyToUsername",
+                  "conversationId", "bookmarkCount", "viewCount", "likeCount", "retweetCount", "replyCount", "quoteCount", "twitterUrl")
+RAW_AUTHOR_KEYS = ("id", "userName", "name", "createdAt", "followers", "following", "statusesCount", "favouritesCount", "mediaCount",
+                   "isBlueVerified", "isVerified", "verifiedType", "isAutomated", "automatedBy", "location", "description", "profilePicture")
+
+
+def slim_raw(t: dict[str, Any]) -> dict[str, Any]:
+    """The part of a twitterapi.io tweet object we keep. Idempotent (a slimmed object slims to itself)."""
+    out: dict[str, Any] = {k: t[k] for k in RAW_TWEET_KEYS if k in t}
+    a = t.get("author") or {}
+    out["author"] = {k: a[k] for k in RAW_AUTHOR_KEYS if k in a}
+    if isinstance(out["author"].get("description"), str):
+        out["author"]["description"] = out["author"]["description"][:200]
+    ents = t.get("entities") or {}
+    urls = [u.get("expanded_url") or u.get("url") for u in (ents.get("urls") or []) if isinstance(u, dict)]
+    tags = [h.get("text") for h in (ents.get("hashtags") or []) if isinstance(h, dict)]
+    if urls or tags:
+        out["entities"] = {"urls": [u for u in urls if u][:5], "hashtags": [h for h in tags if h][:10]}
+    media = t.get("extendedEntities") or {}
+    kinds = [m.get("type") for m in (media.get("media") or []) if isinstance(m, dict)]
+    if kinds:
+        out["media"] = kinds[:4]
+    for key in ("quoted_tweet", "retweeted_tweet"):
+        q = t.get(key)
+        if isinstance(q, dict) and q.get("id"):
+            qa = q.get("author")
+            out[key] = {"id": str(q["id"]), "author": qa.get("userName") if isinstance(qa, dict) else qa}
+    if t.get("synthetic"):
+        out["synthetic"] = True
+    if t.get("media") and "media" not in out:        # already-slim object
+        out["media"] = t["media"]
+    if t.get("entities") and "entities" not in out and "urls" in t["entities"] and isinstance(t["entities"]["urls"], list) and all(isinstance(u, str) for u in t["entities"]["urls"]):
+        out["entities"] = t["entities"]
+    out["_slim"] = 1
+    return out
+
+
 def flatten_tweet(t: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
     """Map a twitterapi.io tweet object onto the posts table columns. Everything is .get() — the shape drifts."""
     author = t.get("author") or {}
@@ -121,7 +162,7 @@ def flatten_tweet(t: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
         "quoted_id": str(quoted["id"]) if quoted.get("id") else None,
         "retweeted_id": str(retweeted["id"]) if retweeted.get("id") else None,
         "in_dataset": in_dataset,
-        "raw": json.dumps(t, ensure_ascii=False),
+        "raw": json.dumps(slim_raw(t), ensure_ascii=False),
     }
 
 
@@ -284,6 +325,23 @@ class Store:
         self.conn.execute("UPDATE claim_clusters SET verdict=?, verdict_basis=?, verdict_sources=?, verified_at=? WHERE id=?",
                           (verdict, basis, json.dumps(sources), at, cluster_id))
         self.conn.commit()
+
+    def compact(self) -> int:
+        """Slim every full-size raw object still in the store (rows written before slim_raw existed) and
+        reclaim the space. Returns the number of rows rewritten. Safe to run every time; a no-op once done."""
+        rows = self.conn.execute("SELECT id, raw FROM posts WHERE raw IS NOT NULL AND raw NOT LIKE '%\"_slim\": 1%'").fetchall()
+        n = 0
+        for r in rows:
+            try:
+                t = json.loads(r["raw"])
+            except (TypeError, ValueError):
+                continue
+            self.conn.execute("UPDATE posts SET raw=? WHERE id=?", (json.dumps(slim_raw(t), ensure_ascii=False), r["id"]))
+            n += 1
+        if n:
+            self.conn.commit()
+            self.conn.execute("VACUUM")
+        return n
 
     def count(self, where: str = "1=1") -> int:
         return self.conn.execute(f"SELECT COUNT(*) FROM posts WHERE {where}").fetchone()[0]

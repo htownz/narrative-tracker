@@ -1,4 +1,4 @@
-# resume the Sept 1 backfill for Paxton and the governor's race after a dropped connection; then classify
+# resume the Sept 1 backfill for Paxton and the governor's race (stores are slimmed first so the commit fits GitHub's file limit)
 budget=3600
 incidents/paxton-live.yaml
 incidents/governor-race-live.yaml

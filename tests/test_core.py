@@ -330,3 +330,23 @@ def test_site_nav_keeps_tab_and_marks_current():
     hub_nav = site.nav_html(trackers, None, None, depth=0)
     assert 'href="a-live/claims.html"' not in hub_nav and 'value="a-live/"' in hub_nav
     assert site.inject("<html><body class='x'><p>hi</p></body></html>", "<nav>n</nav>").startswith("<html><body class='x'>\n<nav>n</nav>")
+
+
+def test_slim_raw_keeps_what_analysis_reads_and_compact_is_idempotent(tmp_path):
+    from tracker.store import slim_raw
+    t = {"id": "1", "createdAt": "Mon Oct 12 23:32:30 +0000 2026", "viewCount": 5, "text": "hi", "card": {"big": "x" * 5000},
+         "extendedEntities": {"media": [{"type": "photo", "url": "u"}]}, "entities": {"urls": [{"expanded_url": "https://a.b/c"}], "hashtags": [{"text": "txlege"}]},
+         "quoted_tweet": {"id": 99, "author": {"userName": "q"}, "text": "y" * 3000},
+         "author": {"userName": "h", "createdAt": "Tue Sep 01 00:00:00 +0000 2026", "followers": 10, "profile_bio": {"x": "y" * 2000}, "description": "d" * 500}}
+    s = slim_raw(t)
+    assert s["author"]["createdAt"] == t["author"]["createdAt"] and s["quoted_tweet"] == {"id": "99", "author": "q"} and s["media"] == ["photo"]
+    assert s["entities"] == {"urls": ["https://a.b/c"], "hashtags": ["txlege"]} and len(s["author"]["description"]) == 200 and "card" not in s
+    assert slim_raw(s) == s and len(json.dumps(s)) < 600
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    st.upsert_posts([flatten_tweet(t)])
+    st.conn.execute("UPDATE posts SET raw=? WHERE id='1'", (json.dumps(t),)); st.conn.commit()   # a pre-slim row
+    assert st.compact() == 1 and st.compact() == 0
+    from tracker import control
+    assert control.account_age_days(dict(st.conn.execute("select * from posts where id='1'").fetchone())) > 40
+    st.close()

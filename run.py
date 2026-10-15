@@ -18,6 +18,7 @@
   python run.py verify    incidents/x.yaml                # verdicts for big checkable claims (Claude + web search) -> stored, shown on claims.html
   python run.py control   incidents/x.yaml                # narrative-control score per lane and claim -> out/<slug>/control.json (shown on analysis.html)
   python run.py features  incidents/x.yaml                # prediction feature rows -> data/features/<slug>.csv; "likely to grow" -> out/<slug>/features.json
+  python run.py compact   incidents/x.yaml                # slim the stored API objects and reclaim space (runs automatically at the start of `all`)
   python run.py refresh-views incidents/x.yaml            # re-look-up the top 500 posts so view counts stop being first-pull values
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
@@ -45,7 +46,7 @@ from tracker.config import load_incident, save_lanes  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "control", "features", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "control", "features", "compact", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
@@ -117,6 +118,9 @@ def main() -> None:
     elif args.command == "features":
         from tracker import features
         features.features(inc)
+    elif args.command == "compact":
+        st = Store(inc.db_path); n = st.compact(); st.close()
+        print(f"compact: {n} rows slimmed; {inc.db_path.stat().st_size / 1e6:.1f} MB")
     elif args.command == "refresh-views":
         pull_mod.refresh_views(inc, pause=args.pause)
     elif args.command == "synth":
@@ -126,6 +130,10 @@ def main() -> None:
         export_mod.export(inc, synthetic=True)
         render_mod.render(inc)
     elif args.command == "all":
+        if inc.db_path.exists():
+            st = Store(inc.db_path); n = st.compact(); st.close()
+            if n:
+                print(f"compact: {n} rows slimmed; store is {inc.db_path.stat().st_size / 1e6:.1f} MB")
         if not pull_mod.pull(inc, budget=args.budget, pause=args.pause):
             print("pull paused on the time budget — continuing with what is stored; the next run resumes the pull", file=sys.stderr)
         if not inc.lanes:
