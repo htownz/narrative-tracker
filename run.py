@@ -20,6 +20,7 @@
   python run.py control   incidents/x.yaml                # narrative-control score per lane and claim -> out/<slug>/control.json (shown on analysis.html)
   python run.py features  incidents/x.yaml                # prediction feature rows -> data/features/<slug>.csv; "likely to grow" -> out/<slug>/features.json
   python run.py compact   incidents/x.yaml                # slim the stored API objects and reclaim space (runs automatically at the start of `all`)
+  python run.py brief [--days 7]                          # the weekly brief across every live tracker -> out/brief/<date>.html (+ Telegram)
   python run.py refresh-views incidents/x.yaml            # re-look-up the top 500 posts so view counts stop being first-pull values
   python run.py all       incidents/x.yaml                # pull -> (discover --accept if no lanes) -> classify -> dedup -> export -> render
   python run.py synth     incidents/x.yaml                # load a labelled synthetic sample so the chart can be developed without a key
@@ -48,9 +49,10 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "rings", "control", "features", "compact", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "rings", "control", "features", "compact", "brief", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
+    ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
     ap.add_argument("--accept", action="store_true", help="discover: write the proposed lanes into the YAML")
     ap.add_argument("--relabel", action="store_true", help="classify: re-label posts that already have a lane")
@@ -61,6 +63,10 @@ def main() -> None:
     ap.add_argument("--pause", type=float, default=None, help="pull: seconds between API calls (free tier needs 5.2)")
     args = ap.parse_args()
 
+    if args.command == "brief":
+        from tracker import brief
+        brief.brief(days=args.days)
+        return
     if args.command == "accounts" and args.all:
         from tracker import accounts
         accounts.accounts_all()

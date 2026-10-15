@@ -34,6 +34,12 @@ SCALE = {"copies": (0.02, 0.40), "new_accounts": (0.03, 0.25), "burst": (0.10, 0
 LABELS = {"copies": "copies", "new_accounts": "new accounts", "burst": "burst", "regularity": "regular copy timing", "top5": "top-5 share",
           "link_rings": "link rings"}
 
+def _window_start_utc(inc) -> str:
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+    return datetime.fromisoformat(inc.start).replace(tzinfo=ZoneInfo(inc.timezone)).astimezone(timezone.utc).isoformat()
+
+
 
 def _norm(key: str, value: float) -> float:
     lo, hi = SCALE[key]
@@ -148,7 +154,7 @@ def control(inc: Incident) -> Path:
     from .rings import ring_post_ids
     events = load_events(inc)
     ring_ids = ring_post_ids(inc)
-    drawn = store.drawable(inc.min_views)
+    drawn = store.chart_posts(inc.min_views, _window_start_utc(inc))
     origin_handle = {p["id"]: p["author_handle"] for p in drawn}
     posts = [p for p in drawn if p["lane"] in lane_keys]
     by_lane: dict[str, list[dict[str, Any]]] = defaultdict(list)

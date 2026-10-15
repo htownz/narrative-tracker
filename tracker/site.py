@@ -76,7 +76,8 @@ def nav_html(all_trackers: list[dict[str, Any]], slug: str | None, page: str | N
         tabs = '<span class="sep">|</span><span class="tabs">' + "".join(
             f'<a href="{root}{slug}/{"" if p == "index.html" else p}" class="{"on" if p == page else ""}">{label}</a>'
             for p, label in PAGES if p in cur["pages"]) + "</span>"
-    right = f'<span class="right"><a href="{root}accounts/" class="{"on" if slug == "accounts" else ""}">Amplifier map</a></span>'
+    right = (f'<span class="right"><a href="{root}brief/" class="{"on" if slug == "brief" else ""}">Weekly brief</a>'
+             f'<a href="{root}accounts/" class="{"on" if slug == "accounts" else ""}">Amplifier map</a></span>')
     return (f'{NAV_CSS}<nav id="nt-nav"><a class="home" href="{root}">Texas Narrative Trackers</a>'
             f'<select onchange="if(this.value)location.href=this.value">{"".join(options)}</select>{tabs}{right}</nav>{NAV_JS}')
 
@@ -107,6 +108,14 @@ def assemble(site_dir: Path) -> int:
         (site_dir / "accounts").mkdir(parents=True, exist_ok=True)
         (site_dir / "accounts" / "index.html").write_text(inject(amp.read_text(encoding="utf-8"), nav_html(all_t, "accounts", None)), encoding="utf-8")
         n += 1
+    briefs = sorted((OUT_DIR / "brief").glob("*.html")) if (OUT_DIR / "brief").exists() else []
+    if briefs:
+        (site_dir / "brief").mkdir(parents=True, exist_ok=True)
+        for b in briefs:
+            (site_dir / "brief" / b.name).write_text(inject(b.read_text(encoding="utf-8"), nav_html(all_t, "brief", None)), encoding="utf-8")
+            n += 1
+        if (OUT_DIR / "brief" / "latest.json").exists():
+            shutil.copy(OUT_DIR / "brief" / "latest.json", site_dir / "brief" / "latest.json")
     from .hub import build
     hub = build(site_dir)
     hub.write_text(inject(hub.read_text(encoding="utf-8"), nav_html(all_t, None, None, depth=0)), encoding="utf-8")

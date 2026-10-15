@@ -94,6 +94,17 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                 items.append(f'<li><b>{html.escape(al["title"])}</b> surging <span style="color:#7c7c78">in {html.escape(d.name)} · {al["views_6h"]:,} views in 6h ({al["ratio"]}x normal)</span></li>')
     if items:
         alerts_html = '<h2 style="font-size:15px;margin:22px 0 6px;color:#e08a2e">Forming now</h2><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(items) + "</ul>"
+    # this week's brief (tracker.brief), first thing on the page
+    bp = OUT_DIR / "brief" / "latest.json"
+    if bp.exists():
+        try:
+            bj = json.loads(bp.read_text(encoding="utf-8"))
+            alerts_html = (f'<a href="brief/" style="display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 18px;color:inherit;text-decoration:none">'
+                           f'<div style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Weekly brief · {html.escape(bj.get("date", ""))}</div>'
+                           f'<div style="font-size:16px;font-weight:600;margin:4px 0 6px">{html.escape(bj.get("headline", ""))}</div>'
+                           f'<div style="font-size:13px;color:var(--ink-2)">{html.escape((bj.get("summary") or "")[:360])}</div></a>') + alerts_html
+        except ValueError:
+            pass
     # coordinated pushes: lanes or canonical claims whose control score crossed the flag line (tracker.control)
     pushes = []
     for d in sorted(OUT_DIR.iterdir()):

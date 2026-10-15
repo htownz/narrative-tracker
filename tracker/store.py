@@ -252,6 +252,17 @@ class Store:
         ).fetchall()
         return [dict(r) for r in rows]
 
+    def chart_posts(self, min_views: int, window_start_utc: str) -> list[dict[str, Any]]:
+        """Everything the chart draws: drawable dataset posts plus labelled reference posts (quoted / replied-to)
+        inside the window at the threshold — the same rule export.py uses."""
+        rows = self.conn.execute(
+            "SELECT * FROM posts WHERE created_at IS NOT NULL AND ("
+            "(in_dataset=1 AND (view_count >= ? OR (copy_origin IS NOT NULL AND lane IS NOT NULL))) OR "
+            "(in_dataset=0 AND view_count >= ? AND created_at >= ? AND lane IS NOT NULL)) ORDER BY created_at",
+            (min_views, min_views, window_start_utc),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     def all_posts(self) -> list[dict[str, Any]]:
         return [dict(r) for r in self.conn.execute("SELECT * FROM posts ORDER BY created_at")]
 

@@ -227,6 +227,17 @@ so the per-run cap is what bounds the cost.
 verify: { min_views: 100000, per_run: 5, max_searches: 5 }   # all optional
 ```
 
+## Weekly brief
+
+`python run.py brief` (the job runs it on the Monday 6:17 AM CT run, or any run whose `.run` has a line saying
+`brief`) computes one week of facts per live tracker — views and posts against the prior week, lanes gaining
+or fading, the week's biggest canonical claims and their verdicts, claims that failed verification, who
+originated and who carried, link rings and coordinated pushes, the market move, the calendar events and the
+lanes that answered them — and has Claude write a plain-language brief from those facts and nothing else:
+headline, a summary that doubles as the Telegram message, a section per race (issues grouped), and what to
+watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
+by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
+
 ## Link rings
 
 `python run.py rings incidents/x.yaml` (part of `all`, before `control`) groups every stored post by the links it

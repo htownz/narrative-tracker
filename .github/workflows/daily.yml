@@ -50,13 +50,16 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
-            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | tr '\n' ' ' || true)
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | grep -vx 'brief' | tr '\n' ' ' || true)
             BUDGET=$(grep -o '^budget=[0-9]*' .run | head -1 | cut -d= -f2 || true)     # a backfill run can ask for a longer pull per incident
+            grep -qx 'brief' .run && BRIEF=true || true                                  # a line saying `brief` writes the weekly brief this run
             case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
           fi
           case " $INC " in *" none "*) INC="";; *) INC="${INC:-$LIVE}";; esac
           echo "incidents=$INC" >> "$GITHUB_OUTPUT"
           echo "budget=${BUDGET:-780}" >> "$GITHUB_OUTPUT"
+          [ "$(date -u +%u%H)" = "111" ] && BRIEF=true || true                          # Monday 11:17 UTC (6:17 AM CT): the weekly brief
+          echo "brief=${BRIEF:-false}" >> "$GITHUB_OUTPUT"
           echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
 
       - name: Check secrets
@@ -88,6 +91,14 @@ jobs:
           if [ -n "$FAILED" ]; then echo "::warning::failed:$FAILED"; fi
           # one failing incident still publishes the others; every incident failing fails the run
           [ "$OK" -gt 0 ] || { echo "::error::every incident failed"; exit 1; }
+
+      - name: Weekly brief
+        if: ${{ !cancelled() && steps.pick.outcome == 'success' && steps.pick.outputs.brief == 'true' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python run.py brief || echo "::warning::brief failed"
 
       - name: Save the stores to the bucket, commit the outputs
         if: ${{ always() && steps.pick.outcome == 'success' }}   # save pull progress even on failure or timeout

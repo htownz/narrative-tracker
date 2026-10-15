@@ -32,6 +32,12 @@ COLUMNS = ["run_at", "asof", "slug", "kind", "key", "label", "age_h", "posts", "
            "first_followers", "views_1h", "views_6h", "views_24h", "momentum_6h", "control", "new_accounts", "burst",
            "event_follow", "event_type", "market_price", "market_change_24h", "gain_24h", "gain_72h", "top5_24h"]
 
+def _window_start_utc(inc) -> str:
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+    return datetime.fromisoformat(inc.start).replace(tzinfo=ZoneInfo(inc.timezone)).astimezone(timezone.utc).isoformat()
+
+
 
 def _dir() -> Path:
     d = DATA_DIR / "features"
@@ -135,7 +141,7 @@ def features(inc: Incident) -> Path:
     store = Store(inc.db_path)
     lanes = inc.lane_table()
     lane_keys = {l["key"] for l in lanes}
-    drawn = store.drawable(inc.min_views)
+    drawn = store.chart_posts(inc.min_views, _window_start_utc(inc))
     posts = [p for p in drawn if p["lane"] in lane_keys]
     if not posts:
         store.close()
