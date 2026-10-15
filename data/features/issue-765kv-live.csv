@@ -1,7 +1,7 @@
 run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,first_followers,views_1h,views_6h,views_24h,momentum_6h,control,new_accounts,burst,event_follow,event_type,market_price,market_change_24h,gain_24h,gain_72h,top5_24h
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,180.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,161.7,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,134.2,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,88.5,1,5039,1,0,5039,17092,0,0,0,,15,0.0,1.0,0,,,,,,
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,22.0,2,8544,2,0,7383,7902,1161,1161,8544,99.0,12,0.0,0.5,0,,,,,,
-2026-10-14T23:56+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,17.1,1,2236,1,0,2236,8115,0,0,2236,,15,0.0,1.0,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,180.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,161.7,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,134.2,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,88.5,1,5039,1,0,5039,17092,0,0,0,,15,0.0,1.0,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,22.0,2,8598,2,0,7383,7902,1215,1215,8598,99.0,12,0.0,0.5,0,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,17.1,1,2236,1,0,2236,8115,0,0,2236,,15,0.0,1.0,0,,,,,,
