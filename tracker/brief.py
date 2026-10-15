@@ -32,7 +32,9 @@ SYSTEM = """You write a weekly brief for a Texas government-affairs firm about h
 Plain, professional language: short declarative sentences, concrete numbers, named accounts and claims, no
 rhetoric, no adjectives that do work a number could do. Every figure, name, claim and verdict you use must come
 from the facts you are given — never add a fact, and never soften or sharpen a verdict. Write for a reader who
-has five minutes and knows Texas politics. Do not describe the tool or its methods."""
+has five minutes and knows Texas politics. Round views to millions or thousands (171.7 million, 59K), write
+account names as @handle, and call each tracker by its subject (the Senate race, the governor's race, Trump's
+Texas footprint) rather than "the tracker". Do not describe the tool or its methods."""
 
 USER = """Week: {start} to {end} (America/Chicago). Facts, as JSON, one object per tracker:
 
@@ -178,7 +180,7 @@ def write(fx: dict[str, Any], model: str = "claude-sonnet-5-5") -> dict[str, Any
     from .lanes import _ask
     client = _client()
     slim = json.dumps(fx["trackers"], ensure_ascii=False)
-    res = _ask(client, model, SYSTEM, USER.format(start=fx["start"], end=fx["end"], facts=slim), max_tokens=6000)
+    res = _ask(client, model, SYSTEM, USER.format(start=fx["start"], end=fx["end"], facts=slim), max_tokens=16000)   # ~8K tokens of prose
     if not res.get("sections"):
         raise SystemExit("brief: the model returned no sections")
     return {"headline": str(res.get("headline") or ""), "summary": str(res.get("summary") or ""),
@@ -211,7 +213,12 @@ def render(fx: dict[str, Any], text: dict[str, Any], archive: list[str]) -> str:
     tables = []
     for t in fx["trackers"]:
         lanes = "".join(f'<tr><td>{html.escape(l["lane"])}</td><td class="n">{_fmt(l["views"])}</td><td class="n">{l["share"]:.0%}</td><td class="n">{("%+.0f%%" % (l["change_vs_prior_week"]*100)) if l["change_vs_prior_week"] is not None else "new"}</td></tr>' for l in t["lanes"])
-        claims = "".join(f'<tr><td>{html.escape(c["claim"])} {("<span class=\"pill bad\">" + c["verdict"] + "</span>") if c["verdict"] in ("unsupported","misleading") else ("<span class=\"pill\">" + c["verdict"] + "</span>") if c["verdict"] else ""}</td><td class="n">{_fmt(c["views_this_week"])}</td><td>@{html.escape(c["first_by"])}</td></tr>' for c in t["biggest_claims"][:5])
+        def pill(c):
+            if not c["verdict"]:
+                return ""
+            cls = "pill bad" if c["verdict"] in ("unsupported", "misleading") else "pill"
+            return f' <span class="{cls}">{html.escape(c["verdict"])}</span>'
+        claims = "".join(f'<tr><td>{html.escape(c["claim"])}{pill(c)}</td><td class="n">{_fmt(c["views_this_week"])}</td><td>@{html.escape(c["first_by"])}</td></tr>' for c in t["biggest_claims"][:5])
         accts = ", ".join(f'@{html.escape(a["handle"])} ({_fmt(a["own_views"] + a["downstream_views"])})' for a in t["top_accounts"][:6])
         mk = f' · {html.escape(t["market"]["label"])} {t["market"]["start_cents"]:.0f}¢ → {t["market"]["end_cents"]:.0f}¢' if t.get("market") else ""
         tables.append(f"""<h3 style="font-size:13px;margin:16px 0 4px">{html.escape(t["tracker"])} <span style="color:var(--ink-3);font-weight:400">— {t["posts_this_week"]:,} posts, {_fmt(t["views_this_week"])} views ({("%+.0f%%" % (t["views_change"]*100)) if t["views_change"] is not None else "new"} vs prior week), pushback {t["pushback_share"]:.0%}{mk}</span></h3>
