@@ -9,7 +9,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-16T05:30+00:00,2026-10-15T23:41:56+00:00,governor-race-live,379,Greg Abbott debated each of his previous three Democratic opponents.,8,28.93,28017,2,0
 2026-10-16T05:30+00:00,2026-10-15T23:41:56+00:00,governor-race-live,1736,Polls showing Gina Hinojosa ahead of Greg Abbott are not credible.,9,27.0,4528,3,0
 2026-10-16T05:30+00:00,2026-10-15T23:41:56+00:00,governor-race-live,2037,Gina Hinojosa held a debate event outside the Governor's Mansion after Greg Abbott refused to debate her.,10,26.81,13200,2,0
-2026-10-16T05:31+00:00,2026-10-15T23:30:00+00:00,patrick-live,180,Texans should vote to keep Texas red.,1,22.96,3388,2,0
 2026-10-16T05:43+00:00,2026-10-16T05:15:55+00:00,paxton-live,1613,Ken Paxton has been the best attorney general in the nation.,1,38.15,57908,4,1
 2026-10-16T05:43+00:00,2026-10-16T05:15:55+00:00,paxton-live,1807,"Donald Trump says that if Ken Paxton loses, it will be because of Karl Rove and John Cornyn.",2,9.31,57908,9,1
 2026-10-16T05:43+00:00,2026-10-16T05:15:55+00:00,paxton-live,324,Ken Paxton beat John Cornyn by a large margin in the Republican primary runoff with Donald Trump's endorsement.,3,8.42,57908,5,1
@@ -18,7 +17,16 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-16T05:47+00:00,2026-10-16T05:40:56+00:00,trump-texas-live,263,Ken Paxton is the best attorney general in the country and will be a great senator.,3,9.07,58259,8,1
 2026-10-16T05:47+00:00,2026-10-16T05:40:56+00:00,trump-texas-live,1390,James Talarico is a radical leftist who opposes Texas values.,4,7.04,58259,3,0
 2026-10-16T05:47+00:00,2026-10-16T05:40:56+00:00,trump-texas-live,331,Texans should keep Texas red.,5,5.36,2207,4,0
-2026-10-16T05:50+00:00,2026-10-15T19:48:23+00:00,issue-data-centers-live,111,Ken Paxton sent letters to Texas data center developments directing them to report water use and comply with state law.,1,36.33,34293,4,1
-2026-10-16T05:50+00:00,2026-10-15T19:48:23+00:00,issue-data-centers-live,117,"The Cipher Mining Black Pearl bond, backed by an Amazon lease in West Texas, trades tighter than Meta's A+ rated SPV bon",2,27.1,14667,2,0
-2026-10-16T05:52+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,11,Ken Paxton as Attorney General blocked cities from raising property taxes.,1,31.48,68958,2,0
-2026-10-16T05:52+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,77,Don Huffines is working in the Texas Comptroller's Office to root out government waste.,2,31.21,62819,2,0
+2026-10-16T11:29+00:00,2026-10-16T06:10:30+00:00,governor-race-live,2034,Ken Paxton will run slightly behind Greg Abbott in vote share.,1,4.5,2881,2,0
+2026-10-16T11:30+00:00,2026-10-15T23:30:00+00:00,patrick-live,180,Texans should vote to keep Texas red.,1,23.28,3789,2,0
+2026-10-16T11:41+00:00,2026-10-16T09:58:14+00:00,paxton-live,39,Ken Paxton has declined the debate invitations that James Talarico accepted.,1,58.56,47341,32,1
+2026-10-16T11:41+00:00,2026-10-16T09:58:14+00:00,paxton-live,158,Texans should vote for Ken Paxton.,2,56.32,13630,53,0
+2026-10-16T11:41+00:00,2026-10-16T09:58:14+00:00,paxton-live,30,"In Dubai, Ken Paxton and his girlfriend watched fireworks at a party with two fugitives who had failed to return to face",3,50.87,47341,15,1
+2026-10-16T11:41+00:00,2026-10-16T09:58:14+00:00,paxton-live,437,Ken Paxton was in the UK on July 4th.,4,37.45,47341,4,0
+2026-10-16T11:41+00:00,2026-10-16T09:58:14+00:00,paxton-live,578,James Talarico wants to turn Texas into California.,5,33.12,13630,4,0
+2026-10-16T11:43+00:00,2026-10-16T11:18:34+00:00,trump-texas-live,331,Texans should keep Texas red.,1,35.4,26235,4,1
+2026-10-16T11:43+00:00,2026-10-16T11:18:34+00:00,trump-texas-live,584,Texas is tilting blue for the first time because Trump and MAGA are running the country into the ground.,2,26.33,3667,3,0
+2026-10-16T11:45+00:00,2026-10-15T19:48:23+00:00,issue-data-centers-live,111,Ken Paxton sent letters to Texas data center developments directing them to report water use and comply with state law.,1,36.42,35187,4,1
+2026-10-16T11:45+00:00,2026-10-15T19:48:23+00:00,issue-data-centers-live,117,"The Cipher Mining Black Pearl bond, backed by an Amazon lease in West Texas, trades tighter than Meta's A+ rated SPV bon",2,27.41,16339,2,0
+2026-10-16T11:46+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,11,Ken Paxton as Attorney General blocked cities from raising property taxes.,1,31.75,76012,2,0
+2026-10-16T11:46+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,77,Don Huffines is working in the Texas Comptroller's Office to root out government waste.,2,31.29,64574,2,0
