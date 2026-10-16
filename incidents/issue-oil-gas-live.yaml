@@ -38,7 +38,90 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about the industry as the state's backbone versus its polluter, the Railroad Commission's capture, offshore leasing under federal policy, the rainy day fund, water and seismicity, and pipeline eminent domain. Posts about oil and gas in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: radical_opponent_culture_attacks
+  label: Radical Rosenthal culture-war attacks
+  description: Casts the Democratic Railroad Commission candidate as a woke, radical or morally unfit
+    figure, using social media follows, Satanic Temple prayer remarks, Pride comments, and 'communist'
+    or 'creepy' labels, and urges voters to keep him off the Commission.
+  keywords:
+  - radical
+  - woke
+  - satanic
+  - transgender
+  - creepy
+  - unhinged
+  - communism
+  - keep radicals off
+- key: industry_money_and_capture
+  label: Industry money, capture, conflicts of interest
+  description: Argues that oil and gas money, donors, and insider loyalties shape who runs the Railroad
+    Commission and Texas politics, or points to conflicts of interest and spending on the Commission and
+    its contracts.
+  keywords:
+  - donor
+  - campaign cash
+  - conflict of interest
+  - captured
+  - money
+  - contracts
+  - landman
+  - pac
+- key: expertise_and_competence
+  label: Engineer versus insider qualifications
+  description: Argues over who is qualified to regulate the industry, with one side saying an engineer
+    with hands-on experience is needed and the other saying he lacks petroleum or Commission experience
+    or is an environmental puppet.
+  keywords:
+  - engineer
+  - qualified
+  - experience
+  - petroleum engineer
+  - political insider
+  - competence
+  - permian local
+  - environmental extremist
+- key: produced_water_flaring_environment
+  label: Produced water, flaring, environmental harm
+  description: Treats produced water, flaring and wastewater as the industry's biggest environmental and
+    resource question, whether as a polluter problem to regulate or as a reuse opportunity for data centers
+    and water supply.
+  keywords:
+  - produced water
+  - flaring
+  - wastewater
+  - methane
+  - data centers
+  - freshwater
+  - reuse
+  - seismicity
+- key: energy_security_and_prices
+  label: Texas oil as security and affordability
+  description: Presents Texas oil and gas as the backbone of the state and national economy, tied to energy
+    independence, geopolitical threats, fuel prices, jobs and school funding, and opposes any 'transition'
+    or new costs.
+  keywords:
+  - national security
+  - energy independence
+  - diesel
+  - gas prices
+  - houthi
+  - hormuz
+  - record production
+  - paychecks
+- key: permits_pipelines_buildout
+  label: Say yes to permits, pipelines, LNG
+  description: Argues the Railroad Commission should keep drilling permits, pipelines, LNG and refinery
+    projects moving and avoid red tape, fees and mandates, citing new Texas investment and takeaway capacity.
+  keywords:
+  - permits
+  - pipeline
+  - lng
+  - takeaway
+  - eagle ford
+  - refinery
+  - red tape
+  - say yes
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

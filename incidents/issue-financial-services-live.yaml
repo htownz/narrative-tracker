@@ -37,7 +37,86 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about woke capital versus free markets, the boycott laws as protecting Texas industries or as costing taxpayers, Texas as the new Wall Street, bank fees and consumers, and the Comptroller's enforcement. Posts about financial regulation with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: hq_relocation_exodus
+  label: Companies fleeing NY for Texas
+  description: Corporate headquarters, capital and financial talent are relocating from New York and California
+    to Dallas, Austin and Houston, so Texas is pulling the financial center of gravity away from Wall
+    Street.
+  keywords:
+  - headquarters relocations
+  - dallas-fort worth
+  - wall street
+  - new york
+  - cbre
+  - financial hub
+  - moving to texas
+  - lone star state
+- key: tse_wall_street_rival
+  label: Texas Stock Exchange as rival
+  description: The Dallas-based Texas Stock Exchange is a credible challenger to the NYSE and Nasdaq,
+    built to give companies a business-friendly listing venue and cement Texas as a financial center.
+  keywords:
+  - texas stock exchange
+  - tse
+  - nyse
+  - nasdaq
+  - dallas
+  - listings
+  - exchange
+  - rival
+- key: anti_esg_woke_capital
+  label: Woke capital vs free markets
+  description: Anti-ESG and anti-boycott laws stop woke banks and asset managers from using ESG, climate
+    and gun-control agendas to punish Texas oil, gas and firearms industries.
+  keywords:
+  - woke
+  - esg
+  - boycott
+  - energy
+  - firearms
+  - oil and gas
+  - blackrock
+  - free market
+- key: comptroller_enforcement_lists
+  label: Comptroller's boycott blacklist enforcement
+  description: The Comptroller's lists of boycotting financial firms are an accountability tool that bars
+    named firms from state contracts, and critics say they are arbitrary or politically motivated.
+  keywords:
+  - comptroller
+  - boycott list
+  - blacklist
+  - divest
+  - state contracts
+  - hegar
+  - kelly hancock
+  - enforcement
+- key: boycott_laws_taxpayer_cost
+  label: Boycott laws raise costs
+  description: Critics argue that excluding banks under the boycott laws raises borrowing costs for Texas
+    cities and taxpayers, shrinks competition for municipal bonds and hurts the state's financial standing.
+  keywords:
+  - taxpayers
+  - municipal bonds
+  - borrowing costs
+  - cost
+  - cities
+  - bond underwriters
+  - sb 13
+  - sb 19
+- key: bank_fees_consumer_finance
+  label: Bank fees and consumer protections
+  description: Posts about bank fees, lending rules and Department of Banking oversight argue over whether
+    Texas law protects or fails consumers, including debanking, overdraft and junk fees.
+  keywords:
+  - bank fees
+  - overdraft
+  - department of banking
+  - consumers
+  - debanking
+  - lending
+  - payday
+  - fair access
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

@@ -37,7 +37,68 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about greedy trial lawyers versus corporations escaping accountability, verdicts driving up insurance, the business courts as fairness or favoritism, and specific verdicts that become stories. Posts about lawsuits in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: lawsuit_abuse_hidden_tax
+  label: Lawsuit abuse as hidden tax
+  description: Frivolous suits and billboard-lawyer litigation add thousands of dollars in hidden costs
+    to every Texas family, so lawmakers should rein in lawsuit abuse.
+  keywords:
+  - lawsuit abuse
+  - hidden tax
+  - billboard lawyers
+  - frivolous lawsuits
+  - cost to families
+  - litigation costs
+  - legal system abuse
+- key: nuclear_verdicts_insurance
+  label: Nuclear verdicts drive up premiums
+  description: Outsized jury awards against trucking and commercial defendants inflate insurance rates
+    and consumer prices, justifying damages caps and tighter litigation rules.
+  keywords:
+  - nuclear verdicts
+  - insurance rates
+  - premiums
+  - damages caps
+  - trucking
+  - jury awards
+  - commercial litigation
+- key: tlr_political_power
+  label: TLR as a political power broker
+  description: Texans for Lawsuit Reform is a donor-funded machine that buys influence in Texas politics,
+    and is attacked as insincere, insider-driven, or hostile to particular candidates, sometimes from
+    within the right.
+  keywords:
+  - texans for lawsuit reform
+  - tlr
+  - donors
+  - paxton
+  - fake conservative
+  - dunn
+  - political money
+- key: corporate_accountability
+  label: Tort reform shields corporations
+  description: Caps and litigation limits let corporations and insurers escape accountability and leave
+    injured Texans, workers, and families without remedy while trial lawyers defend access to the courts.
+  keywords:
+  - accountability
+  - injured victims
+  - trial lawyers
+  - right to sue
+  - jury trial
+  - corporate greed
+  - caps hurt victims
+- key: specialty_courts_fairness
+  label: Business courts and Fifteenth Court
+  description: The Texas business courts and Fifteenth Court of Appeals are argued over as either efficient,
+    expert forums or tilted venues that favor corporations and the state's political leadership.
+  keywords:
+  - business court
+  - fifteenth court of appeals
+  - 15th court
+  - specialized courts
+  - appointed judges
+  - favoritism
+  - venue
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

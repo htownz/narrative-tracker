@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cities, counties and state preemption, 16 days of posts</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0b0c;
+    --surface: #141416;
+    --surface-2: #1d1d21;
+    --line: #2a2a30;
+    --ink: #f2f2f0;
+    --ink-2: #b9b9b3;
+    --ink-3: #7c7c78;
+    --copy: #ffffff;
+    --accent: #e08a2e;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  body { padding: 16px 16px 48px; max-width: 1200px; margin: 0 auto; -webkit-text-size-adjust: 100%; }
+  /* video mode (?video=1): fixed 1600x1000 frame captured by tracker/video.py */
+  body.video { max-width: 1600px; width: 1600px; height: 1080px; padding: 18px 24px; overflow: hidden; box-sizing: border-box; }
+  body.video .sub { max-width: 120ch; }
+  body.video .row .bar { height: 10px; }
+  body.video .controls, body.video .banner { display: none; }
+  body.video header { margin-bottom: 4px; }
+  body.video .stats { margin: 4px 0 8px; }
+  body.video .ticker { margin-top: 6px; }
+  body.video .bars { margin-top: 10px; gap: 30px; }
+  body.video .row { margin: 2px 0; }
+  body.video footer { margin-top: 8px; }
+  a { color: inherit; }
+
+  .banner { background: #3b2a06; color: #ffd98a; border: 1px solid #7a5a15; border-radius: 8px;
+            padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+  header { display: grid; grid-template-columns: 1fr auto; gap: 12px 20px; align-items: start; margin-bottom: 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 11.5px; line-height: 1.35; max-width: 70ch; margin: 0; }
+  .range { font-size: 11.5px; color: var(--ink-3); margin: 4px 0 0; } .range a { color: var(--ink-2); text-decoration: none; } .range a.on { color: var(--accent); font-weight: 600; } .range a:hover { color: var(--ink); }
+  .clock { text-align: right; white-space: nowrap; }
+  .clock .date { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+  .clock .time { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .clock .speed { font-size: 11px; color: var(--ink-3); }
+
+  .stats { display: flex; gap: 22px; margin: 10px 0 8px; flex-wrap: wrap; }
+  .stat .n { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat .l { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+  .stat.push .n { color: var(--accent); }
+  .stat.rep .n { color: var(--ink); }
+  .stat.back .n { color: #2fbf8c; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+  .controls button { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line);
+                     border-radius: 999px; width: 40px; height: 40px; font-size: 16px; cursor: pointer; }
+  .controls input[type=range] { flex: 1; accent-color: var(--accent); height: 28px; }
+  .controls .spd { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+  .controls .spd button { width: auto; height: 26px; padding: 0 9px; font-size: 11px; margin-left: 4px; }
+
+  .chartwrap { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+               overflow: hidden; }
+  svg { display: block; width: 100%; height: auto; }
+  .axis text { fill: var(--ink-3); font-size: 10px; font-family: var(--mono); }
+  .axis line { stroke: var(--line); }
+  .axis .major line { stroke: #3a3a42; }
+  .lane-rule { stroke: var(--line); stroke-width: 1; }
+  .lane-label .t { font-size: 11.5px; font-weight: 700; }
+  .lane-label .c { font-size: 10px; fill: var(--ink-2); font-family: var(--mono); }
+  .lane-label .d { font-size: 9px; fill: var(--ink-3); }
+  .lane-label rect { fill: rgba(11,11,12,.72); }
+  .link { fill: none; stroke-width: .9; opacity: .32; }
+  .link.copy { stroke: var(--copy); stroke-width: 1.1; opacity: .55; }
+  .dot { stroke: var(--bg); stroke-width: .8; cursor: pointer; }
+  .dot.copy { stroke: var(--copy); stroke-width: 1.2; }
+  .dot.ref { opacity: .55; }
+  .pill rect { fill: rgba(20,20,22,.92); stroke: #4a4a52; stroke-width: .6; }
+  .pill text { fill: var(--ink); font-size: 9.5px; font-weight: 600; }
+  .pill text.s { fill: var(--ink-3); font-weight: 400; font-size: 8.5px; }
+  .playhead { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
+  .hidden { display: none; }
+
+  .ticker { font-size: 12.5px; color: var(--ink-2); min-height: 18px; margin: 10px 2px 0; font-variant-numeric: tabular-nums; }
+  .ticker b { color: var(--ink); }
+
+  .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 560px) { .bars { grid-template-columns: 1fr; } header { grid-template-columns: 1fr; } .clock { text-align: left; } }
+  .bars h3 { font-size: 12px; margin: 0 0 8px; color: var(--ink-2); font-weight: 600; }
+  .bars h3 span { color: var(--ink-3); font-weight: 400; font-size: 10.5px; margin-left: 6px; }
+  .row { display: grid; grid-template-columns: 118px 1fr 56px; align-items: center; gap: 8px; margin: 4px 0; font-size: 11px; }
+  .row .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+  .row .bar { height: 12px; border-radius: 3px; transition: width .25s ease; min-width: 2px; }
+  .row .val { color: var(--ink-2); font-family: var(--mono); }
+
+  .tip { position: fixed; z-index: 10; max-width: min(360px, calc(100vw - 32px)); background: var(--surface-2);
+         border: 1px solid #3a3a42; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; line-height: 1.4;
+         box-shadow: 0 8px 30px rgba(0,0,0,.6); display: none; }
+  .tip .h { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 11px; margin-bottom: 4px; }
+  .tip .lane { font-weight: 700; }
+  .tip .x { position: absolute; top: 6px; right: 8px; color: var(--ink-3); cursor: pointer; }
+  .tip .txt { white-space: pre-wrap; word-break: break-word; }
+  .tip a { color: var(--ink-2); font-size: 11px; }
+  footer { margin-top: 18px; font-size: 10.5px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<script>window.__DATA__ = {"markets": [], "events": [{"label": "Early voting begins", "type": "calendar", "at": "2026-10-19T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}, {"label": "Early voting ends", "type": "calendar", "at": "2026-10-30T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}, {"label": "Election day", "type": "calendar", "at": "2026-11-03T06:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}], "meta": {"slug": "issue-local-control-live", "title": "Cities, counties and state preemption, 16 days of posts", "subject": "the relationship between the Texas Legislature and cities and counties — state preemption of local ordinances, property tax revenue caps and the 3.5% limit, unfunded mandates on counties, jail and indigent defense costs, annexation and ETJ rules, and municipal and county associations' fights with the state", "subtitle": "Oct 1 to Oct 16, 2026. Each dot is one post with 1K+ views about Texas cities, counties and state preemption, plus every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line back to it. Coloured lines link a post to the post it quoted or replied to. Updated daily.", "window": {"start": "2026-10-01", "end": "2026-10-16", "tz": "America/Chicago"}, "min_views": 1000, "generated_at": "2026-10-16T20:56:50.092186+00:00", "pulled_at": "2026-10-16T20:55:27.796609+00:00", "source": "Data via twitterapi.io", "synthetic": false, "partial": false, "credit": ""}, "lanes": [{"key": "local_control_campaign", "label": "Local control as campaign attack", "description": "Candidates and activists attack Abbott, the Legislature or state agencies for taking decisions away from local school boards, cities and communities, and promise to restore local control.", "keywords": ["local control", "abbott", "morath", "school board", "overreach", "power grab", "hinojosa", "centralized"], "color": "#3987e5", "order": 0}, {"key": "rein_in_liberal_cities", "label": "State must rein in liberal cities", "description": "Preemption is defended as necessary to stop Austin, Houston, Dallas and San Antonio from passing woke, anti-business or anti-police ordinances that conflict with state law.", "keywords": ["preemption", "liberal cities", "woke", "austin", "houston", "dallas", "ordinance", "one patchwork", "defund"], "color": "#d95926", "order": 1}, {"key": "tax_caps_starve_cities", "label": "Revenue caps starve local services", "description": "The 3.5% property tax revenue cap and other state limits are blamed for squeezing police, fire, EMS and infrastructure budgets and forcing cities and counties into cuts or service reductions.", "keywords": ["3.5% cap", "revenue cap", "budget cuts", "police", "fire", "public safety", "voter-approval rate", "city budget"], "color": "#c98500", "order": 2}, {"key": "local_overspending_tax_relief", "label": "Local overspending demands tax relief", "description": "Cities and counties are portrayed as wasteful spenders whose property tax hikes justify state caps, appraisal limits and tougher limits on local debt and spending.", "keywords": ["property taxes", "overspending", "tax hike", "taxpayers", "relief", "appraisal", "wasteful", "abolish property tax"], "color": "#d55181", "order": 3}, {"key": "unfunded_mandates_counties", "label": "State pushes costs onto counties", "description": "The state is accused of dumping jail, indigent defense, bail, courts and border-related costs on counties without paying for them, while counties and their associations push back.", "keywords": ["unfunded mandate", "county jail", "indigent defense", "sheriff", "commissioners court", "bail", "county judge", "cost shift"], "color": "#9085e9", "order": 4}, {"key": "annexation_etj_property_rights", "label": "Annexation and ETJ fights", "description": "Debate over whether limits on annexation and extraterritorial jurisdiction protect landowners from city control or hamper orderly growth, services and development rules.", "keywords": ["annexation", "etj", "extraterritorial", "landowners", "property rights", "growth", "development", "subdivision"], "color": "#e66767", "order": 5}, {"key": "pushback", "label": "Pushback", "description": "Posts doubting, mocking, fact-checking or arguing against the dominant framings.", "keywords": [], "color": "#199e70", "order": 6}], "posts": [{"id": "2106045151739036138", "t": "2026-10-02T15:34:27+00:00", "views": 1123, "likes": 62, "reposts": 21, "handle": "Davy1836", "name": "Davy Crockett", "avatar": "data:image/jpeg;base64,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", "followers": 6538, "text": "Cheerleading for globalist Abbott is cheerleading for the current liberty stomping trajectory…\n\n- a flood of H1Bs destroying Texas culture/opportunity, \n- a build out of the surveillance state, \n- less local control and \n- socialist takeovers of private industry. \n\nYuck!\n\nAbbott will bait and switch you and then tell the world that YOU gave him a mandate for his socialist plans. This is pattern recognition 101. \n\nSupporting your own demise in whatever color red or blue is for slaves. If both candidates are so strongly counter to your principles… then don’t give them a stage to stand on.\n\nA politicians with no support is better than a fake mandate for more ploys against Texans.\n\nBottom line: Abbott will win… he’s too valuable to the globalist agenda to lose… the only question is how armed he’ll be in perceived support for his next round of attacks against Texans.", "url": "https://x.com/Davy1836/status/2106045151739036138", "lane": "local_control_campaign", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2107150332690092360", "t": "2026-10-05T16:46:02+00:00", "views": 24591, "likes": 230, "reposts": 100, "handle": "GovHotWheels_TX", "name": "Governor Hot Wheels", "avatar": "data:image/jpeg;base64,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", "followers": 68783, "text": "Gina Hinojosa’s campaign is spiraling – they're trying to censor our TV ad uncovering Gina’s 40 votes to RAISE your property taxes by sending cease and desist letters to Texas TV stations.\n\nGina can try to censor her record, but she can’t erase it.\n\nThis is the ad Gina doesn’t want you to see ⬇️", "url": "https://x.com/GovHotWheels_TX/status/2107150332690092360", "lane": "local_overspending_tax_relief", "copy_origin": null, "in_dataset": 0, "copies": 0}, {"id": "2110756142125097018", "t": "2026-10-15T15:34:14+00:00", "views": 12022, "likes": 1527, "reposts": 301, "handle": "texasforgina", "name": "Gina For Texas", "avatar": "data:image/jpeg;base64,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", "followers": 146, "text": "“On Day One, I will fire Texas Education Commissioner Mike Morath I will appoint a commissioner who respects local control. I will bring certified teachers back into Texas. That is my priority as Governor.” — Gina Hinojosa at the Debate https://t.co/0vpFnpqnZa", "url": "https://x.com/texasforgina/status/2110756142125097018", "lane": "local_control_campaign", "copy_origin": null, "in_dataset": 1, "copies": 0}], "edges": [], "stats": {"pushing": 2, "repeated": 0, "pushback": 0, "total": 3}};</script>
+<div id="app"></div>
+<div class="tip" id="tip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(async function () {
+  let DATA = window.__DATA__;
+  if (!DATA) {
+    try { DATA = await (await fetch('data.json')).json(); }
+    catch (e) { document.getElementById('app').textContent = 'No data.json found next to this page.'; return; }
+  }
+  const { meta, lanes, posts, edges, stats } = DATA;
+  const markets = (DATA.markets || []).filter(m => (m.points || []).length > 1);
+  const TZ = (meta.window && meta.window.tz) || 'UTC';
+  const laneByKey = Object.fromEntries(lanes.map(l => [l.key, l]));
+  const PUSHBACK = 'pushback', OTHER = 'other';
+  const isMobile = window.innerWidth < 560;
+  const isVideo = /[?&]video=1/.test(location.search) || document.body.classList.contains('video');
+  if (isVideo) document.body.classList.add('video');
+
+  // ---- derived ------------------------------------------------------------
+  posts.forEach(p => { p.ts = +new Date(p.t); p.isCopy = !!p.copy_origin; });
+  const byId = Object.fromEntries(posts.map(p => [p.id, p]));
+  // range: ?days=N shows the last N days of the window; long windows default to 14 so the dots stay readable
+  const allMax = d3.max(posts, p => p.ts) || Date.now(), allMin = d3.min(posts, p => p.ts) || allMax;
+  const windowDays = (allMax - allMin) / 864e5;
+  const daysParam = (location.search.match(/[?&]days=(\d+|all)/) || [])[1];
+  const rangeDays = daysParam === 'all' ? 0 : daysParam ? +daysParam : windowDays > 21 ? 14 : 0;
+  const rangeStart = rangeDays ? allMax - rangeDays * 864e5 : -Infinity;
+  const drawn = posts.filter(p => laneByKey[p.lane] && p.ts >= rangeStart);           // 'other' lane is not drawn
+  if (!drawn.length) {
+    const a = d3.select('#app');
+    a.append('h1').text(meta.title);
+    a.append('p').attr('class', 'sub').text(lanes.length > 1 ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
+    return;
+  }
+  const drawnIds = new Set(drawn.map(p => p.id));
+  const links = edges.filter(e => drawnIds.has(e.src) && drawnIds.has(e.dst));
+  const tMin = d3.min(drawn, p => p.ts), tMax = d3.max(drawn, p => p.ts);
+  const span = Math.max(1, tMax - tMin);
+  const vMin = Math.max(1, Math.min(meta.min_views || 1, d3.max(drawn, p => p.views) || 1)), vMax = Math.max(vMin + 1, d3.max(drawn, p => p.views) || 1);   // copies under the threshold sit at the lane floor
+
+  const fmtDate = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric' });
+  const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+  const fmtAxis = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', month: 'short', day: 'numeric' });
+  const fmtFull = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const fmtN = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'K' : String(n);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; };
+
+  // ---- layout -------------------------------------------------------------
+  const app = d3.select('#app');
+  if (meta.synthetic) app.append('div').attr('class', 'banner').text('SYNTHETIC SAMPLE — every account here is sample_acct_NNN and no post is real. This page exists to develop the chart; run the pull to replace it with live data.');
+
+  const head = app.append('header');
+  const hl = head.append('div');
+  hl.append('h1').text(meta.title);
+  hl.append('p').attr('class', 'sub').text(meta.subtitle);
+  if (windowDays > 10 && !isVideo) {
+    const r = hl.append('p').attr('class', 'range');
+    r.append('span').text('Showing ');
+    [[7, 'last 7 days'], [14, 'last 14 days'], [30, 'last 30 days'], [0, 'the whole window']].filter(([d]) => !d || d < windowDays + 1).forEach(([d, label], i, arr) => {
+      const on = rangeDays === d;
+      r.append('a').attr('href', '?days=' + (d || 'all')).attr('class', on ? 'on' : '').text(label);
+      if (i < arr.length - 1) r.append('span').text(' · ');
+    });
+  }
+  const clock = head.append('div').attr('class', 'clock');
+  const clockDate = clock.append('div').attr('class', 'date');
+  const clockTime = clock.append('div').attr('class', 'time');
+  const clockSpeed = clock.append('div').attr('class', 'speed');
+
+  const statsEl = app.append('div').attr('class', 'stats');
+  const stat = (cls, label) => { const s = statsEl.append('div').attr('class', 'stat ' + cls); const n = s.append('div').attr('class', 'n'); s.append('div').attr('class', 'l').text(label); return n; };
+  const sPush = stat('push', 'posts pushing the story');
+  const sRep = stat('rep', 'repeated posts');
+  const sBack = stat('back', 'posts pushing back');
+
+  const ctl = app.append('div').attr('class', 'controls');
+  const playBtn = ctl.append('button').attr('aria-label', 'Play').text('▶');
+  const slider = ctl.append('input').attr('type', 'range').attr('min', 0).attr('max', 1000).attr('value', 1000);
+  const spd = ctl.append('div').attr('class', 'spd');
+  spd.append('span').text(isMobile ? '' : 'speed');
+  const speeds = [20, 40, 80];      // seconds for the whole window
+  let speedIdx = 1;
+  const spdBtn = spd.append('button').text('1×');
+
+  const wrap = app.append('div').attr('class', 'chartwrap');
+  const W = Math.max(360, wrap.node().getBoundingClientRect().width);
+  // Each lane = a label band (title, counts, description) on top of a plot band for the dots.
+  const band = isMobile ? 30 : isVideo ? 28 : 42;
+  // video: lanes share a fixed plot height so the whole frame fits 1600x1000 with bars below
+  const laneH = isMobile ? 100 : isVideo ? Math.max(70, Math.floor((1080 - 215 - 205 - (markets.length ? 62 : 0)) / Math.max(1, lanes.length))) : 122;
+  const stripH = markets.length ? (isMobile ? 54 : isVideo ? 62 : 72) : 0;
+  // events (incidents/events.yaml) inside the drawn span, grouped when they share a moment; they get a band under the axis
+  const evMap = new Map();
+  (DATA.events || []).forEach(e => { const t = Date.parse(e.at); if (!(t >= tMin - span * 0.015 && t <= tMax + span * 0.02)) return; const g = evMap.get(t) || { t, labels: [], types: [] }; g.labels.push(e.label + (e.all_day ? ' (all day)' : '')); g.types.push(e.type); evMap.set(t, g); });
+  const events = [...evMap.values()].sort((a, b) => a.t - b.t);
+  const evBand = events.length && !isMobile ? 26 : events.length ? 10 : 0;
+  const top = 22 + stripH + evBand, bottom = 8;
+  const H = top + lanes.length * laneH + bottom;
+  const svg = wrap.append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H);
+  const x = d3.scaleLinear().domain([tMin - span * 0.015, tMax + span * 0.02]).range([6, W - 6]);
+  const vNorm = v => Math.max(0, (Math.log10(Math.max(1, v)) - Math.log10(vMin)) / Math.max(1e-9, (Math.log10(vMax) - Math.log10(vMin))));
+  const r = d3.scaleSqrt().domain([vMin, vMax]).range([2.2, isMobile ? 10 : 13]).clamp(true);
+  const laneTop = key => top + laneByKey[key].order * laneH;
+  const plotTop = key => laneTop(key) + band + 4, plotH = laneH - band - 10;
+  // views are log-scaled then eased (pow 0.6) so the 1–10K bulk uses the lane's height instead of hugging the floor
+  const cy = p => plotTop(p.lane) + 10 + (1 - Math.pow(vNorm(p.views), 0.6)) * (plotH - 16) * 0.88 + (hash(p.id) - 0.5) * (plotH - 16) * 0.22;
+  const cx = p => x(p.ts);
+  drawn.forEach(p => { p.x = cx(p); p.y = cy(p); });
+
+  // axis: every 6 local hours, majors at local midnight (walk the domain hour by hour in the incident's tz)
+  const hourOf = t => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false }).formatToParts(new Date(t)); return +parts.find(p => p.type === 'hour').value % 24; };
+  const ticks = [];
+  { const t0 = Math.floor(x.domain()[0] / 36e5) * 36e5; for (let t = t0; t <= x.domain()[1]; t += 36e5) { const hr = hourOf(t); const every = span > 12 * 864e5 ? 24 : span > 4 * 864e5 ? 12 : 6; if (hr % every === 0 && t >= x.domain()[0]) ticks.push({ t, major: hr === 0 }); } }
+  const axis = svg.append('g').attr('class', 'axis');
+  const tick = axis.selectAll('g').data(ticks).join('g').attr('class', d => d.major ? 'major' : 'minor').attr('transform', d => `translate(${x(d.t)},0)`);
+  tick.append('line').attr('y1', 14).attr('y2', H - bottom);
+  const fmtAxisShort = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', day: 'numeric' });
+  const pxPerDay = x(tMin + 864e5) - x(tMin); const fmtDayNum = new Intl.DateTimeFormat('en-US', { timeZone: TZ, day: 'numeric' });
+  tick.filter(d => d.major).append('text').attr('y', 11).attr('x', 3).text(d => (pxPerDay < 46 ? fmtDayNum : isMobile || pxPerDay < 90 ? fmtAxisShort : fmtAxis).format(new Date(d.t)));
+  const pxPer12h = x(tMin + 12 * 36e5) - x(tMin);
+  tick.filter(d => !d.major && !isMobile && hourOf(d.t) === 12 && pxPer12h > 120).append('text').attr('y', 11).attr('x', 2).text('noon');
+
+  // event markers: a dashed rule through the lanes, a dot and a label in the events band (two rows, greedy placement)
+  const evG = svg.append('g').attr('class', 'events');
+  const evColor = t => t === 'poll' ? '#8fb4ff' : t === 'calendar' ? '#e08a2e' : t === 'rally' || t === 'campaign' ? '#f0b06a' : t === 'trump' ? '#ff6b6b' : '#f2f2f0';
+  const bandY = 22 + stripH, rowEnd = [-1e9, -1e9];
+  events.forEach(e => {
+    const px = x(e.t), label = e.labels.length > 1 ? e.labels.length + ' events: ' + e.labels.join(' · ') : e.labels[0];
+    const g = evG.append('g').attr('transform', `translate(${px},0)`);
+    g.append('line').attr('y1', bandY + 4).attr('y2', H - bottom).attr('stroke', evColor(e.types[0])).attr('stroke-opacity', .3).attr('stroke-dasharray', '2,4');
+    g.append('circle').attr('cy', bandY + 4).attr('r', 3).attr('fill', evColor(e.types[0]));
+    g.append('title').text(label);
+    if (isMobile) return;
+    const short = label.length > 38 ? label.slice(0, 37) + '…' : label, w = short.length * 5.4 + 8;
+    const row = px - rowEnd[0] > 8 ? 0 : px - rowEnd[1] > 8 ? 1 : -1;
+    if (row < 0) return;
+    rowEnd[row] = px + w;
+    g.append('text').attr('x', 5).attr('y', bandY + 9 + row * 11).attr('fill', '#b9b9b3').attr('font-size', 9).attr('font-family', 'var(--mono)').text(short);
+  });
+
+  // lanes
+  const laneG = svg.append('g');
+  lanes.forEach(l => {
+    const g = laneG.append('g').attr('class', 'lane-label').attr('transform', `translate(0,${laneTop(l.key)})`);
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', band).attr('fill', 'rgba(11,11,12,.55)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', laneH).attr('y2', laneH);
+    g.append('rect').attr('x', 6).attr('y', 5).attr('width', 3).attr('height', band - 10).attr('fill', l.color).attr('rx', 1.5);
+    g.append('text').attr('class', 't').attr('x', 14).attr('y', 15).attr('fill', l.color).text(l.label);
+    g.append('text').attr('class', 'c').attr('x', 14).attr('y', 27).attr('data-lane', l.key).text('');
+    if (!isMobile && !isVideo) g.append('text').attr('class', 'd').attr('x', 14).attr('y', 38).text((l.description || '').slice(0, 110) + ((l.description || '').length > 110 ? '…' : ''));
+  });
+
+  // prediction-market strip: price (¢) of the first market over the same time axis
+  let priceAt = null;
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    if (pts.length < 2) markets.length = 0;   // nothing in range: no strip (layout already reserved it; harmless)
+  }
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    const pmin = Math.min(...pts.map(q => q.p)), pmax = Math.max(...pts.map(q => q.p));
+    const pad = Math.max(2, (pmax - pmin) * 0.25);
+    const y = d3.scaleLinear().domain([pmin - pad, pmax + pad]).range([sy1, sy0]);
+    const g = svg.append('g').attr('class', 'strip');
+    g.append('rect').attr('x', 0).attr('y', 22).attr('width', W).attr('height', stripH - 4).attr('fill', 'rgba(255,255,255,0.025)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', 22 + stripH - 4).attr('y2', 22 + stripH - 4);
+    const area = d3.area().x(q => x(q.t)).y0(sy1).y1(q => y(q.p)).curve(d3.curveStepAfter);
+    const line = d3.line().x(q => x(q.t)).y(q => y(q.p)).curve(d3.curveStepAfter);
+    g.append('path').attr('d', area(pts)).attr('fill', 'rgba(224,138,46,0.12)');
+    g.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', '#e08a2e').attr('stroke-width', 1.4);
+    g.append('text').attr('x', 10).attr('y', 22 + 12).attr('fill', '#e08a2e').attr('font-size', 11).attr('font-weight', 700).text(m.label);
+    g.append('text').attr('x', 10).attr('y', 22 + 24).attr('fill', 'var(--ink-3)').attr('font-size', 9.5).attr('font-family', 'var(--mono)').text(`${m.source} · hourly · ${pmin}¢ – ${pmax}¢`);
+    const dot = g.append('circle').attr('r', 3.5).attr('fill', '#e08a2e').attr('stroke', 'var(--bg)');
+    const lbl = g.append('text').attr('fill', 'var(--ink)').attr('font-size', 11).attr('font-weight', 700).attr('font-family', 'var(--mono)');
+    priceAt = t => { let q = pts[0]; for (const r of pts) { if (r.t <= t) q = r; else break; } return q; };
+    window.__priceCursor = t => { const q = priceAt(t); const px = Math.min(x(q.t), x(t)); dot.attr('cx', px).attr('cy', y(q.p)); lbl.attr('x', Math.min(W - 44, px + 6)).attr('y', y(q.p) - 6).text(q.p + '¢'); };
+  }
+
+  // links (drawn before dots)
+  const linkPath = e => { const a = byId[e.dst], b = byId[e.src]; const dx = b.x - a.x; return `M${a.x},${a.y} C${a.x + dx * 0.55},${a.y} ${b.x - dx * 0.55},${b.y} ${b.x},${b.y}`; };
+  const linkSel = svg.append('g').selectAll('path').data(links).join('path')
+    .attr('class', e => 'link ' + e.type).attr('d', linkPath)
+    .attr('stroke', e => e.type === 'copy' ? null : (laneByKey[byId[e.src].lane] || {}).color || '#888');
+
+  // dots + avatars
+  const defs = svg.append('defs');
+  const dotSel = svg.append('g').selectAll('g.p').data(drawn, p => p.id).join('g').attr('class', 'p').attr('transform', p => `translate(${p.x},${p.y})`);
+  dotSel.append('circle').attr('class', p => 'dot' + (p.isCopy ? ' copy' : '') + (p.in_dataset ? '' : ' ref'))
+    .attr('r', p => r(p.views)).attr('fill', p => p.isCopy ? '#ffffff' : laneByKey[p.lane].color);
+  const topAvatars = new Set(drawn.filter(p => p.avatar).sort((a, b) => b.views - a.views).slice(0, 40).map(p => p.id));
+  dotSel.filter(p => topAvatars.has(p.id)).each(function (p) {
+    const rr = r(p.views);
+    if (rr < 5) return;
+    defs.append('clipPath').attr('id', 'c' + p.id).append('circle').attr('r', rr - 1);
+    d3.select(this).append('image').attr('href', p.avatar.replace('_normal', '_bigger')).attr('x', -rr + 1).attr('y', -rr + 1)
+      .attr('width', 2 * rr - 2).attr('height', 2 * rr - 2).attr('clip-path', `url(#c${p.id})`).attr('preserveAspectRatio', 'xMidYMid slice')
+      .on('error', function () { this.remove(); });
+  });
+
+  // "same words ×N" pills on cluster origins
+  const originCounts = {};
+  drawn.forEach(p => { if (p.copy_origin && drawnIds.has(p.copy_origin)) originCounts[p.copy_origin] = (originCounts[p.copy_origin] || 0) + 1; });
+  const pillData = Object.entries(originCounts).filter(([, n]) => n >= 3).map(([id, n]) => { const accts = new Set(drawn.filter(q => q.copy_origin === id).map(q => q.handle)); return { p: byId[id], n, accts: accts.size }; });
+  const pillSel = svg.append('g').selectAll('g').data(pillData).join('g').attr('class', 'pill')
+    .attr('transform', d => {
+      const px = Math.min(W - 96, Math.max(2, d.p.x + r(d.p.views) + 4));
+      const lo = plotTop(d.p.lane), hi = plotTop(d.p.lane) + plotH - 26;
+      const py = Math.max(lo, Math.min(hi, d.p.y - 12));
+      return `translate(${px},${py})`;
+    });
+  pillSel.append('rect').attr('width', 92).attr('height', 24).attr('rx', 4);
+  pillSel.append('text').attr('x', 6).attr('y', 10.5).text(d => `same words ×${d.n}`);
+  pillSel.append('text').attr('class', 's').attr('x', 6).attr('y', 20).text(d => d.accts === 1 ? 'all from 1 account' : `from ${d.accts} accounts`);
+
+  const playhead = svg.append('line').attr('class', 'playhead').attr('y1', top - 6).attr('y2', H - bottom);
+
+  // ticker + bars
+  const ticker = app.append('div').attr('class', 'ticker');
+  const bars = app.append('div').attr('class', 'bars');
+  const barBlock = (title, note) => { const b = bars.append('div'); b.append('h3').text(title).append('span').text(note); return b.append('div'); };
+  const bPosts = barBlock('Posts so far', '');
+  const bViews = barBlock('Views so far', 'each post’s views at pull time, counted when it went up');
+
+  const foot = app.append('footer');
+  foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.${meta.partial ? ' Pull still in progress — counts will grow on the next run.' : ''}`);
+  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a> · <a href="claims.html" style="color:var(--ink-2)">What is claimed →</a> · <a href="review.html" style="color:var(--ink-2)">Review lanes →</a>');
+
+  // tooltip
+  const tip = d3.select('#tip');
+  const showTip = (ev, p) => {
+    const lane = laneByKey[p.lane] || {};
+    tip.style('display', 'block').html(
+      `<span class="x">✕</span><div class="h"><span>@${esc(p.handle)}${p.name ? ' · ' + esc(p.name) : ''}</span><span>${fmtFull.format(new Date(p.ts))}</span></div>` +
+      `<div class="h"><span class="lane" style="color:${lane.color}">${esc(lane.label || p.lane)}</span><span>${fmtN(p.views)} views · ${fmtN(p.likes)} likes</span></div>` +
+      `<div class="txt">${esc(p.text)}</div>` +
+      (p.copy_origin ? `<div class="h"><span>same words as an earlier post</span></div>` : '') +
+      (p.url && !meta.synthetic && /^https:\/\//.test(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">open on X ↗</a>` : ''));
+    const bw = tip.node().getBoundingClientRect();
+    const px = Math.min(window.innerWidth - bw.width - 12, Math.max(12, ev.clientX - bw.width / 2));
+    const py = ev.clientY + 18 + bw.height > window.innerHeight ? ev.clientY - bw.height - 14 : ev.clientY + 18;
+    tip.style('left', px + 'px').style('top', py + 'px');
+    tip.select('.x').on('click', () => tip.style('display', 'none'));
+  };
+  dotSel.on('click', (ev, p) => { ev.stopPropagation(); showTip(ev, p); });
+  document.addEventListener('click', e => { if (!tip.node().contains(e.target)) tip.style('display', 'none'); });
+
+  // ---- time scrub ---------------------------------------------------------
+  let cur = tMax, playing = false, raf = null, lastTick = 0;
+  const visible = () => drawn.filter(p => p.ts <= cur);
+  function update() {
+    dotSel.classed('hidden', p => p.ts > cur);
+    linkSel.classed('hidden', e => byId[e.src].ts > cur);
+    pillSel.classed('hidden', d => d.p.ts > cur || drawn.filter(q => q.copy_origin === d.p.id && q.ts <= cur).length < 3);
+    playhead.attr('x1', x(cur)).attr('x2', x(cur)).classed('hidden', cur >= tMax);
+    if (window.__priceCursor) window.__priceCursor(cur);
+    const vis = visible();
+    sPush.text(vis.filter(p => p.lane !== PUSHBACK && p.in_dataset).length);
+    sRep.text(vis.filter(p => p.isCopy && p.in_dataset).length);
+    sBack.text(vis.filter(p => p.lane === PUSHBACK && p.in_dataset).length);
+    const d = new Date(cur);
+    clockDate.text(fmtDate.format(d) + '  ·  T+' + (() => { const h = (cur - tMin) / 36e5; return h >= 24 ? Math.floor(h / 24) + 'd ' + Math.floor(h % 24) + 'h' : Math.floor(h) + 'h ' + Math.floor((h % 1) * 60) + 'm'; })());
+    clockTime.text(fmtTime.format(d));
+    clockSpeed.text(playing ? Math.round(span / 6e4 / speeds[speedIdx]) + ' minutes per second' : (cur >= tMax ? 'end of window' : 'paused'));
+    const byLane = {}; lanes.forEach(l => byLane[l.key] = { n: 0, v: 0 });
+    vis.forEach(p => { byLane[p.lane].n++; byLane[p.lane].v += p.views; });
+    laneG.selectAll('text.c').text(function () { const s = byLane[this.dataset.lane]; return `${s.n} posts, ${fmtN(s.v)} views`; });
+    const row = (host, key) => {
+      const data = lanes.map(l => ({ l, v: byLane[l.key][key] })).sort((a, b) => b.v - a.v);
+      const max = Math.max(1, d3.max(data, d => d.v));
+      host.selectAll('div.row').data(data, d => d.l.key).join(enter => { const g = enter.append('div').attr('class', 'row'); g.append('div').attr('class', 'lbl'); g.append('div').attr('class', 'bar'); g.append('div').attr('class', 'val'); return g; })
+        .style('order', (d, i) => i)
+        .each(function (d) { const g = d3.select(this); g.select('.lbl').text(d.l.label).style('color', d.l.color); g.select('.bar').style('width', (100 * d.v / max) + '%').style('background', d.l.color); g.select('.val').text(key === 'v' ? fmtN(d.v) : d.v); });
+    };
+    bPosts.style('display', 'flex').style('flex-direction', 'column'); bViews.style('display', 'flex').style('flex-direction', 'column');
+    row(bPosts, 'n'); row(bViews, 'v');
+    const last = vis[vis.length - 1];
+    ticker.html(last ? `<b>@${esc(last.handle)}</b> · <span style="color:${laneByKey[last.lane].color}">${esc(laneByKey[last.lane].label)}</span> · ${fmtN(last.views)} views${last.isCopy ? ' · <b>same words</b> as an earlier post' : ''}` : '');
+  }
+  function setCur(t, fromSlider) { cur = Math.max(tMin, Math.min(tMax, t)); if (!fromSlider) slider.property('value', Math.round(1000 * (cur - tMin) / span)); update(); }
+  slider.on('input', function () { stop(); setCur(tMin + span * (+this.value / 1000), true); });
+  function step(now) {
+    if (!playing) return;
+    if (now - lastTick > 50) { const dt = (now - lastTick) / 1000; lastTick = now; setCur(cur + span * dt / speeds[speedIdx]); if (cur >= tMax) { stop(); return; } }
+    raf = requestAnimationFrame(step);
+  }
+  function play() { if (cur >= tMax) setCur(tMin); playing = true; playBtn.text('❚❚'); lastTick = performance.now(); raf = requestAnimationFrame(step); update(); }
+  function stop() { playing = false; playBtn.text('▶'); if (raf) cancelAnimationFrame(raf); update(); }
+  playBtn.on('click', () => playing ? stop() : play());
+  spdBtn.on('click', () => { speedIdx = (speedIdx + 1) % speeds.length; spdBtn.text(['2×', '1×', '½×'][speedIdx]); update(); });
+  document.addEventListener('keydown', e => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); playing ? stop() : play(); } });
+  setCur(tMax);
+  window.__tracker = {
+    tMin, tMax, span,
+    setTime: t => setCur(t),
+    setProgress: f => setCur(tMin + span * Math.max(0, Math.min(1, f))),
+    setPlaying: v => { playing = !!v; clockSpeed.text(v ? '' : (cur >= tMax ? 'end of window' : 'paused')); },
+    setSpeedLabel: txt => clockSpeed.text(txt),
+  };
+})();
+</script>
+</body>
+</html>

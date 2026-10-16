@@ -37,7 +37,72 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about outages and who is to blame, rates and profits versus reliability spending, the Beryl aftermath and the resiliency plan, the Legislature and PUC holding the utility accountable, and the transmission build. Posts about other utilities with no Houston angle are off-topic.
 
-lanes: []
+lanes:
+- key: rates_and_profit_gouging
+  label: Rates, bills and utility profits
+  description: CenterPoint is overcharging customers through rate hikes, riders and inflated line items
+    like streetlights, putting shareholder profit ahead of ratepayers.
+  keywords:
+  - ripping off
+  - rate hike
+  - rate case
+  - bills
+  - overcharge
+  - profits
+  - streetlight
+  - ratepayers
+- key: regulators_must_hold_accountable
+  label: PUC and Legislature accountability
+  description: The PUC, lawmakers and investigators need to scrutinize CenterPoint's costs, demand invoices
+    and transparency, and impose penalties or reforms.
+  keywords:
+  - puc
+  - legislature
+  - investigation
+  - accountability
+  - invoices
+  - hearing
+  - penalty
+  - oversight
+- key: grid_buildout_and_load_growth
+  label: Transmission, generation and data centers
+  description: CenterPoint's transmission and generation build and large-load additions like data centers
+    are either needed growth or a cost shifted onto ordinary customers.
+  keywords:
+  - transmission
+  - generation
+  - data center
+  - load growth
+  - 765kv
+  - gas plant
+  - capacity
+  - build
+- key: outages_and_storm_response
+  label: Outages and storm response failures
+  description: CenterPoint leaves Houston-area customers without power after storms like Beryl, with slow
+    restoration and poor communication, and is to blame.
+  keywords:
+  - outage
+  - power out
+  - beryl
+  - restoration
+  - storm
+  - without power
+  - blackout
+  - hurricane
+- key: resiliency_and_vegetation_plan
+  label: Resiliency plan and tree trimming
+  description: Whether the resiliency plan, pole and line hardening and vegetation management actually
+    make the grid more reliable, or are a costly promise.
+  keywords:
+  - resiliency plan
+  - vegetation management
+  - tree trimming
+  - hardening
+  - poles
+  - undergrounding
+  - reliability
+  - investment
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

@@ -38,7 +38,86 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about underfunding versus accountability, teacher pay and the exodus, uncertified teachers, districts' deficits and closures, vouchers' effect on public schools, and TEA's role. Posts about school funding in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: teacher_pay_exodus
+  label: Texas teacher pay lags, exodus
+  description: Texas pays teachers too little (ranked around 31st-33rd nationally), driving burnout, attrition
+    and shortages, and teachers deserve better compensation and respect.
+  keywords:
+  - teacher pay
+  - ranks 33rd
+  - ranked 31st
+  - teacher retention
+  - teacher shortage
+  - teachers leaving
+  - raises
+  - underpaid
+- key: vouchers_drain_public_schools
+  label: Vouchers drain public school funds
+  description: Texas's voucher/ESA program pulls students and dollars from public schools, leaving districts
+    with lost funding, deficits and closures.
+  keywords:
+  - vouchers
+  - education savings accounts
+  - esa
+  - students left
+  - lose funding
+  - school closures
+  - enrollment decline
+  - privatization
+- key: vote_out_for_schools
+  label: Fix schools at the ballot box
+  description: Underfunded schools and poor teacher pay are blamed on Republican leaders like Abbott and
+    Paxton, and voters are urged to back Democrats such as Talarico and Hinojosa.
+  keywords:
+  - vote democrat
+  - gina hinojosa
+  - talarico
+  - abbott
+  - paxton
+  - texas deserves better
+  - ballot
+  - election
+- key: district_waste_audit
+  label: District deficits are mismanagement
+  description: District budget deficits stem from wasteful spending and poor management, not too little
+    state money, and call for audits and transparency such as the Comptroller's reviews.
+  keywords:
+  - austin isd
+  - deficit
+  - comptroller
+  - huffines
+  - taxpayer dollars
+  - review
+  - wasteful spending
+  - audit
+- key: uncertified_teachers_tea
+  label: Certification, TEA and accountability
+  description: Debates over alternative certification, uncertified hires, Teach for America, A-F ratings
+    and TEA's takeover and oversight powers, framed as either lowering standards or enabling accountability
+    and flexibility.
+  keywords:
+  - uncertified teachers
+  - alternative certification
+  - teach for america
+  - tea
+  - a-f ratings
+  - accountability
+  - takeover
+  - teacher certification
+- key: state_funding_shortfall
+  label: State underfunds schools, basic allotment
+  description: The Legislature's basic allotment and school finance choices fail to keep up with inflation,
+    forcing districts into cuts, so more state funding is needed.
+  keywords:
+  - basic allotment
+  - school finance
+  - hb 2
+  - inflation
+  - state funding
+  - tea budget
+  - per-student funding
+  - cuts
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

@@ -38,7 +38,86 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about dependency versus hunger, federal cuts and the state's bill, error rates and fraud, kids and school meals, food banks overwhelmed, and the Department of Agriculture's decisions. Posts about SNAP in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: food_bank_charity_drives
+  label: Food bank drives and partnerships
+  description: Posts promote community, sports and civic fundraisers and food drives for Texas food banks
+    as the local, charitable answer to hunger.
+  keywords:
+  - food bank
+  - food drive
+  - fight hunger
+  - central texas food bank
+  - partnered with
+  - fundraiser
+  - donate
+  - no hunger
+- key: fraud_noncitizens_ebt
+  label: SNAP fraud and noncitizen benefits
+  description: Posts claim SNAP and EBT money is lost to fraud, trafficking, or payments to non-citizens,
+    and use it to argue that taxpayers are being fleeced.
+  keywords:
+  - snap fraud
+  - ebt
+  - non-citizens
+  - illegal aliens
+  - fraud
+  - trafficking
+  - error rate
+  - taxpayers
+  - invaders
+- key: food_banks_overwhelmed
+  label: Strapped families flood food banks
+  description: Posts argue that rising need is pushing struggling Texas families to the Houston Food Bank
+    and similar groups because other help is out of reach.
+  keywords:
+  - houston food bank
+  - strapped families
+  - food banks
+  - demand
+  - housing assistance
+  - struggling
+  - hunger
+  - out of touch
+- key: kids_school_meals
+  label: Kids losing school and summer meals
+  description: Posts say Republicans are starving poor children by ending summer meal programs, cutting
+    free school meals and shrinking children's benefits.
+  keywords:
+  - summer ebt
+  - free school meals
+  - school lunch
+  - kids
+  - starving
+  - disadvantaged children
+  - medicaid
+  - gop
+- key: gop_cuts_federal_burden
+  label: GOP cuts and paperwork burden
+  description: Posts blame Republicans in Washington and Austin for cutting benefits, adding paperwork
+    and work requirements, and shifting costs onto Texans.
+  keywords:
+  - republicans cut
+  - work requirements
+  - paperwork
+  - cost shift
+  - medicaid
+  - snap cuts
+  - texans waiting
+  - big bill
+- key: school_meals_culture_war
+  label: School meals culture-war claims
+  description: Posts frame Texas school meal policy as a culture-war fight, for example claims that halal
+    or Sharia-linked rules are being pushed into school lunches.
+  keywords:
+  - school meals
+  - halal
+  - sharia
+  - muslim-certified
+  - public schools
+  - lawmakers
+  - rancher
+  - documentary
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

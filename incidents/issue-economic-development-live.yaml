@@ -38,7 +38,72 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about incentives as corporate welfare versus job creation, Texas winning relocations, tariffs helping or hurting manufacturers, the chips and space funds, defense spending and bases, and the Governor's deals. Posts about economic development in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: tariffs_reshoring_win
+  label: Tariffs are bringing jobs back
+  description: Tariffs and Trump's trade policy are reviving American manufacturing, with Texas plants
+    like Peterbilt in Denton adding jobs as proof that the 'gone for good' jobs are returning.
+  keywords:
+  - tariffs
+  - peterbilt
+  - denton
+  - manufacturing
+  - jobs
+  - bring manufacturing home
+  - america first
+  - paccar
+- key: texas_investment_boom
+  label: Texas wins investment and relocations
+  description: Texas is winning billions in new investment, corporate relocations and factories because
+    of a pro-business climate and Republican leadership, which voters should reward at the ballot box.
+  keywords:
+  - lone star state
+  - billions
+  - investment boom
+  - relocation
+  - business climate
+  - paxton
+  - texas jobs
+  - headquarters
+- key: defense_tech_buildout
+  label: Defense and chips industrial buildout
+  description: Defense, aerospace, semiconductor and space companies, along with military bases, are the
+    growth engine of Texas and the US, backed by large contracts, venture money and state or federal funds.
+  keywords:
+  - defense tech
+  - lockheed
+  - pentagon
+  - semiconductor
+  - space
+  - valuation
+  - military base
+  - factory automation
+- key: cronyism_corporate_welfare
+  label: Incentives as cronyism and corruption
+  description: Government money, whether defense awards, subsidies or federal funding, is flowing to politically
+    connected firms and institutions, which is corruption or taxpayer-funded welfare that needs oversight.
+  keywords:
+  - corruption
+  - taxpayers
+  - fleeced
+  - subsidies
+  - inspector general
+  - investigate
+  - connected
+  - federal funding
+- key: tariff_costs_economic_strain
+  label: Tariffs and war raise costs
+  description: Tariffs, the Iran war, inflation and Fed rate policy are raising prices and straining manufacturers
+    and households, so the claimed jobs gains are oversold.
+  keywords:
+  - inflation
+  - gasoline prices
+  - rate hikes
+  - fed
+  - war
+  - prices
+  - costs
+  - dallas fed
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

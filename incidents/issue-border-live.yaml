@@ -40,7 +40,87 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about invasion and state sovereignty versus federal authority and humanitarian concerns, the cost of Operation Lone Star, Eagle Pass as a stage, trade and the bridges, and border-county voters. Posts about the border in Arizona or California with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: activist_judges_block_wall
+  label: Activist judges are blocking the wall
+  description: The Big Bend injunction is framed as lawless judicial obstruction of Trump's border wall,
+    with judge Cardone and leftist groups accused of keeping the border open to invaders.
+  keywords:
+  - activist judge
+  - cardone
+  - blocked
+  - big bend
+  - border wall
+  - outrageous
+  - invaders
+  - injunction
+- key: big_bend_wall_win
+  label: Big Bend wall halt is a victory
+  description: The ruling is celebrated as a win for landowners, river guides, conservationists and border-county
+    locals who oppose the wall's cost, its environmental waivers and its seizure of land and park.
+  keywords:
+  - landowners
+  - conservationists
+  - national park
+  - dodged a bullet
+  - environmental laws
+  - waived
+  - win
+  - wildlife
+- key: abbott_emergency_overreach
+  label: Abbott's border emergency and spending
+  description: Abbott's repeated emergency declarations, no-bid contracts and billions in Operation Lone
+    Star spending are cast as unaccountable power, with the border called secure and the emergency unjustified.
+  keywords:
+  - 69 times
+  - emergency proclamation
+  - no-bid contracts
+  - legislature
+  - powers
+  - border is secure
+  - spent billions
+  - abbott
+- key: lone_star_vindicated_reimbursement
+  label: Lone Star vindicated by $7.5B reimbursement
+  description: The $7.5 billion federal reimbursement is presented as proof that Texas was right to act
+    when Biden failed, and Operation Lone Star as a model of state border security that is now paying
+    off.
+  keywords:
+  - $7.5 billion
+  - reimburse
+  - operation lone star
+  - property tax relief
+  - biden's border
+  - abbott stepped up
+  - check
+  - dps
+- key: eagle_pass_biden_invasion
+  label: Eagle Pass as Biden-era invasion
+  description: Eagle Pass footage and crime stories are used to argue that Democrats opened the border,
+    that migrants are criminals and cartels, and that voters must stay Republican to avoid a return.
+  keywords:
+  - eagle pass
+  - illegal alien
+  - cartel
+  - razor wire
+  - democrats opened the border
+  - invasion
+  - border patrol
+  - vote republican
+- key: border_counties_midterm_politics
+  label: Border counties and the Texas midterms
+  description: The border is treated as an electoral battleground, with border counties, the Rio Grande
+    Valley and Hispanic voters as swing blocs in the Abbott–Hinojosa and Cruz–Talarico races and in the
+    legislature.
+  keywords:
+  - maverick county
+  - rio grande valley
+  - talarico
+  - hinojosa
+  - hispanic
+  - hd-74
+  - border seat
+  - november
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

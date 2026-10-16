@@ -37,7 +37,85 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about funding cuts and who fills the gap, shelters turning people away, victims' rights versus defendants' rights, the state's responsibility, and specific cases that become stories. Posts about domestic violence policy in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: funding_cuts_gap
+  label: Funding cuts and who fills gap
+  description: Federal VOCA and other cuts are draining Texas victim services, and the state, donors or
+    counties must backfill or programs will close.
+  keywords:
+  - voca
+  - funding cuts
+  - backfill
+  - hhsc
+  - grant
+  - budget
+  - legislature
+  - nonprofit
+- key: shelters_strained
+  label: Shelters strained, survivors turned away
+  description: Shelters, hotlines and rape crisis centers are at capacity and cutting staff, so survivors
+    and children are left without beds, counseling or advocates.
+  keywords:
+  - shelter
+  - turned away
+  - waitlist
+  - hotline
+  - houston area women's center
+  - capacity
+  - survivors
+  - advocates
+- key: lenient_justice
+  label: Abusers get lenient deals
+  description: Prosecutors, judges and officials go easy on offenders through plea deals, light sentences
+    and dropped charges, failing victims and favoring the powerful.
+  keywords:
+  - plea deal
+  - misdemeanor
+  - reduced charges
+  - sentence
+  - paxton
+  - sex offender registry
+  - judge
+  - prosecutor
+- key: abuse_by_power
+  label: Abuse by police and agents
+  description: Officers, agents and others with state power commit abuse, stalking or assault and face
+    weak oversight, showing institutional failure to protect victims.
+  keywords:
+  - officer
+  - police
+  - ice
+  - cbp
+  - stalking
+  - oversight
+  - complaints
+  - misconduct
+- key: protective_order_cases
+  label: Protective orders and high-profile cases
+  description: Individual family-violence cases and protective orders become stories about whether courts
+    and law enforcement actually protect victims and enforce orders.
+  keywords:
+  - protective order
+  - stay away
+  - family violence case
+  - arrest
+  - court
+  - restraining order
+  - charged
+  - celebrity
+- key: grant_misuse_scrutiny
+  label: Grant misuse and waste scrutiny
+  description: Federal and state grants meant for victims or vulnerable groups are misspent or go to favored
+    organizations, which justifies audits and cuts.
+  keywords:
+  - misused grants
+  - audit
+  - fraud
+  - hhs review
+  - taxpayer
+  - accountability
+  - federal funds
+  - waste
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

@@ -38,7 +38,86 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about the state reining in liberal cities versus overreach into local decisions, property taxes and local spending, counties as the state's partners or its problem, and specific ordinances the Legislature targets. Posts about local control in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: local_control_campaign
+  label: Local control as campaign attack
+  description: Candidates and activists attack Abbott, the Legislature or state agencies for taking decisions
+    away from local school boards, cities and communities, and promise to restore local control.
+  keywords:
+  - local control
+  - abbott
+  - morath
+  - school board
+  - overreach
+  - power grab
+  - hinojosa
+  - centralized
+- key: rein_in_liberal_cities
+  label: State must rein in liberal cities
+  description: Preemption is defended as necessary to stop Austin, Houston, Dallas and San Antonio from
+    passing woke, anti-business or anti-police ordinances that conflict with state law.
+  keywords:
+  - preemption
+  - liberal cities
+  - woke
+  - austin
+  - houston
+  - dallas
+  - ordinance
+  - one patchwork
+  - defund
+- key: tax_caps_starve_cities
+  label: Revenue caps starve local services
+  description: The 3.5% property tax revenue cap and other state limits are blamed for squeezing police,
+    fire, EMS and infrastructure budgets and forcing cities and counties into cuts or service reductions.
+  keywords:
+  - 3.5% cap
+  - revenue cap
+  - budget cuts
+  - police
+  - fire
+  - public safety
+  - voter-approval rate
+  - city budget
+- key: local_overspending_tax_relief
+  label: Local overspending demands tax relief
+  description: Cities and counties are portrayed as wasteful spenders whose property tax hikes justify
+    state caps, appraisal limits and tougher limits on local debt and spending.
+  keywords:
+  - property taxes
+  - overspending
+  - tax hike
+  - taxpayers
+  - relief
+  - appraisal
+  - wasteful
+  - abolish property tax
+- key: unfunded_mandates_counties
+  label: State pushes costs onto counties
+  description: The state is accused of dumping jail, indigent defense, bail, courts and border-related
+    costs on counties without paying for them, while counties and their associations push back.
+  keywords:
+  - unfunded mandate
+  - county jail
+  - indigent defense
+  - sheriff
+  - commissioners court
+  - bail
+  - county judge
+  - cost shift
+- key: annexation_etj_property_rights
+  label: Annexation and ETJ fights
+  description: Debate over whether limits on annexation and extraterritorial jurisdiction protect landowners
+    from city control or hamper orderly growth, services and development rules.
+  keywords:
+  - annexation
+  - etj
+  - extraterritorial
+  - landowners
+  - property rights
+  - growth
+  - development
+  - subdivision
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
