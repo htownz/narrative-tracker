@@ -73,6 +73,12 @@ jobs:
           [ -n "$TWITTERAPI_IO_KEY" ] || { echo "::error::TWITTERAPI_IO_KEY secret is not set (Settings > Secrets and variables > Actions)"; exit 1; }
           [ -n "$ANTHROPIC_API_KEY" ] || { echo "::error::ANTHROPIC_API_KEY secret is not set (Settings > Secrets and variables > Actions)"; exit 1; }
 
+      - name: Look up posts named in .run (lookup=<id,id>)
+        if: ${{ steps.pick.outputs.lookup != '' }}
+        env:
+          TWITTERAPI_IO_KEY: ${{ secrets.TWITTERAPI_IO_KEY }}
+        run: python run.py lookup "${{ steps.pick.outputs.lookup }}"
+
       - name: Pull, classify, dedup, export, render (each incident)
         if: ${{ steps.pick.outputs.incidents != '' }}
         env:
@@ -87,7 +93,6 @@ jobs:
         run: |
           set +e; FAILED=""; OK=0
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
-          [ -n "${{ steps.pick.outputs.lookup }}" ] && python run.py lookup "${{ steps.pick.outputs.lookup }}" || true   # .run: lookup=<id,id>: print those posts
           python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
           python -m tracker.newsfeeds || true  # the Texas and national press into data/news.sqlite (bucket-synced), for claim coverage
           python -m tracker.truth || true      # Trump's Truth Social posts (archive feed) into the same store: events + posts
