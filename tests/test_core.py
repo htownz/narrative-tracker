@@ -641,7 +641,7 @@ def test_news_feeds_store_relevance_and_lean(tmp_path, monkeypatch):
     assert got == {"Good": 2, "Dead": 0}
     assert nf.pull_feeds(feeds, db, session=Sess()) == {"Good": 0, "Dead": 0}                  # idempotent
     st = nf.status(db)
-    assert st["articles"] == 2 and st["feeds_ok"] == 1 and st["since"].startswith("2026-10-09")
+    assert st["articles"] == 2 and st["feeds_ok"] == 1 and st["since"] == st["last"]                 # coverage starts at the first fetch, not the oldest item
     claim, ents, subj = "James Talarico was in a mental health facility, the Lindner Center, during his absence.", ["James Talarico", "Lindner Center"], {"talarico", "paxton"}
     from datetime import datetime, timezone
     hits = nf.search(claim, ents, datetime(2026, 10, 1, tzinfo=timezone.utc), db=db, subjects=subj)

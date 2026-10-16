@@ -3,11 +3,13 @@
 # every article it has ever seen, so unlike the 7-day Google News window, coverage of a claim can be measured
 # however long ago it first appeared on X. Leans come from incidents/outlets.yaml by domain.
 #
-# Fields: name, url, kind (press | wire | tv | radio | party | advocacy | newsletter), optional note.
+# Fields: name, url, kind (press | wire | tv | radio | party | advocacy | newsletter), optional domain, optional note.
+# A URL that answers with an HTML page is followed to its RSS autodiscovery link; an outlet that blocks the
+# fetch or has no feed falls back to Google News limited to its domain (site:<domain>, last 3 days).
 
 feeds:
-  - {name: Texas Tribune,              url: "https://www.texastribune.org/feeds/sections/politics/", kind: press}
-  - {name: Texas Tribune (all),        url: "https://www.texastribune.org/feeds/", kind: press}
+  - {name: Texas Tribune,              url: "https://feeds.texastribune.org/feeds/main/", kind: press, domain: texastribune.org}
+  - {name: Texas Tribune politics,     url: "https://www.texastribune.org/topics/politics/feed", kind: press, domain: texastribune.org}
   - {name: Houston Chronicle politics, url: "https://www.houstonchronicle.com/rss/feed/Politics-266.php", kind: press}
   - {name: Houston Chronicle news,     url: "https://www.houstonchronicle.com/rss/feed/News-270.php", kind: press}
   - {name: Dallas Morning News politics, url: "https://www.dallasnews.com/arc/outboundfeeds/rss/category/news/politics/", kind: press}

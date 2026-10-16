@@ -235,7 +235,7 @@
 
   // event markers: a dashed rule through the lanes, a dot and a label in the events band (two rows, greedy placement)
   const evG = svg.append('g').attr('class', 'events');
-  const evColor = t => t === 'poll' ? '#8fb4ff' : t === 'calendar' ? '#e08a2e' : t === 'rally' || t === 'campaign' ? '#f0b06a' : '#f2f2f0';
+  const evColor = t => t === 'poll' ? '#8fb4ff' : t === 'calendar' ? '#e08a2e' : t === 'rally' || t === 'campaign' ? '#f0b06a' : t === 'trump' ? '#ff6b6b' : '#f2f2f0';
   const bandY = 22 + stripH, rowEnd = [-1e9, -1e9];
   events.forEach(e => {
     const px = x(e.t), label = e.labels.length > 1 ? e.labels.length + ' events: ' + e.labels.join(' · ') : e.labels[0];

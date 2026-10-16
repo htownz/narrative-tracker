@@ -103,9 +103,11 @@ def parse_feed(content: bytes) -> list[dict[str, Any]]:
         link = (it.findtext("link") or "").strip()
         if not link:
             continue
+        src = it.find("source")
         out.append({"url": link, "title": _strip_html(it.findtext("title") or ""),
                     "summary": _strip_html(it.findtext("description") or it.findtext("content:encoded", namespaces=ns) or "")[:600],
-                    "published": it.findtext("pubDate") or it.findtext("dc:date", namespaces=ns) or ""})
+                    "published": it.findtext("pubDate") or it.findtext("dc:date", namespaces=ns) or "",
+                    "source_url": (src.get("url") or "") if src is not None else ""})
     for e in root.iter("{http://www.w3.org/2005/Atom}entry"):  # Atom
         link = ""
         for l in e.findall("atom:link", ns):
@@ -124,6 +126,22 @@ def domain_of(url: str) -> str:
     return urlsplit(url).netloc.lower().removeprefix("www.")
 
 
+def discover_feed(html_text: str, base_url: str) -> str | None:
+    """The RSS/Atom autodiscovery link in an HTML page, if any."""
+    from urllib.parse import urljoin
+    m = re.search(r'<link[^>]+type=["\']application/(?:rss|atom)\+xml["\'][^>]*>', html_text, re.I)
+    if not m:
+        return None
+    href = re.search(r'href=["\']([^"\']+)["\']', m.group(0), re.I)
+    return urljoin(base_url, href.group(1)) if href else None
+
+
+def gnews_url(domain: str) -> str:
+    """Google News search RSS limited to one outlet: the fallback when an outlet blocks fetches or has no feed."""
+    from urllib.parse import quote
+    return f"https://news.google.com/rss/search?q={quote(f'site:{domain} when:3d')}&hl=en-US&gl=US&ceid=US:en"
+
+
 def pull_feeds(path: Path = FEEDS_PATH, db: Path = DB_PATH, session: requests.Session | None = None) -> dict[str, int]:
     """Fetch every feed once; insert articles not seen before. Returns {feed name: new articles}."""
     if not path.exists():
@@ -135,22 +153,35 @@ def pull_feeds(path: Path = FEEDS_PATH, db: Path = DB_PATH, session: requests.Se
     now = datetime.now(timezone.utc).isoformat(timespec="minutes")
     result: dict[str, int] = {}
     failed = []
+    def fetch(url: str) -> tuple[str, list[dict[str, Any]], bytes]:
+        try:
+            r = sess.get(url, timeout=TIMEOUT)
+        except requests.exceptions.RequestException as e:
+            return type(e).__name__, [], b""
+        return str(r.status_code), (parse_feed(r.content) if r.status_code == 200 else []), (r.content if r.status_code == 200 else b"")
+
     for f in feeds:
         name, url = f.get("name") or f.get("url"), f.get("url")
         if not url:
             continue
-        try:
-            r = sess.get(url, timeout=TIMEOUT)
-            status = str(r.status_code)
-            items = parse_feed(r.content) if r.status_code == 200 else []
-        except requests.exceptions.RequestException as e:
-            status, items = type(e).__name__, []
+        status, items, body = fetch(url)
+        if status == "200" and not items and body:                 # an HTML page: follow its RSS autodiscovery link once
+            alt = discover_feed(body.decode("utf-8", "ignore")[:200_000], url)
+            if alt and alt != url:
+                status, items, _ = fetch(alt)
+                status = f"{status} via autodiscovery"
+        if not items:                                               # blocked or no feed: that outlet's stories via Google News
+            dom = f.get("domain") or domain_of(url)
+            g_status, g_items, _ = fetch(gnews_url(dom))
+            if g_items:
+                status, items = f"gnews ({status})", g_items
         new = 0
         for it in items:
             d = _parse_date(it["published"])
+            dom = domain_of(it.get("source_url") or "") if "news.google.com" in it["url"] else domain_of(it["url"])
             try:
                 cur = conn.execute("INSERT OR IGNORE INTO articles (url, domain, feed, title, summary, published, fetched_at) VALUES (?,?,?,?,?,?,?)",
-                                   (it["url"], domain_of(it["url"]), name, it["title"][:300], it["summary"], d.isoformat() if d else now, now))
+                                   (it["url"], dom or domain_of(it["url"]), name, it["title"][:300], it["summary"], d.isoformat() if d else now, now))
                 new += 1 if cur.rowcount > 0 else 0
             except sqlite3.Error:
                 continue
@@ -163,7 +194,7 @@ def pull_feeds(path: Path = FEEDS_PATH, db: Path = DB_PATH, session: requests.Se
     total = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
     conn.close()
     print(f"news feeds: {len(feeds) - len(failed)}/{len(feeds)} answered, {sum(result.values())} new articles, {total:,} stored"
-          + (f"; no items from: {', '.join(failed[:8])}{'…' if len(failed) > 8 else ''}" if failed else ""))
+          + (f"; no items from: {', '.join(failed)}" if failed else ""))
     return result
 
 
@@ -233,7 +264,7 @@ def status(db: Path = DB_PATH) -> dict[str, Any]:
         return {"articles": 0, "feeds_ok": 0, "since": None}
     conn = connect(db)
     n = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
-    since = conn.execute("SELECT MIN(published) FROM articles").fetchone()[0]
+    since = conn.execute("SELECT MIN(fetched_at) FROM articles").fetchone()[0]     # coverage starts when collection started, not at the oldest item a feed happened to carry
     last = conn.execute("SELECT MAX(at) FROM feed_log").fetchone()[0]
     ok = conn.execute("SELECT COUNT(DISTINCT feed) FROM feed_log WHERE at = ? AND items > 0", (last,)).fetchone()[0] if last else 0
     conn.close()
