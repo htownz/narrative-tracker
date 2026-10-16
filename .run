@@ -1,2 +1,2 @@
-# redeploy: insights page fix 2026-10-16T14:11Z
-none
+# end-to-end test of feeds / truth social / bluesky / news relevance on one small tracker
+incidents/patrick-live.yaml
