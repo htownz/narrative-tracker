@@ -456,13 +456,13 @@ def test_insights_counts_outcomes_only_on_competitive_days_and_reads_by_rule(tmp
     with (tmp_path / "data" / "features" / "big-live.csv").open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(base)); w.writeheader(); w.writerows(rows)
     page = insights.insights()
-    out = json.loads((tmp_path / "out" / "insights.json").read_text())
+    out = json.loads((tmp_path / "out" / "insights.json").read_text(encoding="utf-8"))
     assert out["first_poster"]["n"] == 30 and {t["bucket"]: t["p_top5"] for t in out["first_poster"]["table"]}["1M+"] == 1.0
     assert "million-plus" in out["first_poster"]["reading"]
     assert out["early_touch"]["table"][0]["handle"] == "big" and out["early_touch"]["table"][0]["p_top5"] == 1.0
     assert out["events"]["table"][0] == {"type": "poll", "n": 2, "median_lift": 2.0, "share_doubling": 0.5, "lane_most_often": "a"}
     assert out["verdicts"]["n"] == 30 and out["verdicts"]["table"][0]["share_false"] == 0.5 and "(Big)" in out["verdicts"]["table"][0]["lane"]
-    html_text = page.read_text()
+    html_text = page.read_text(encoding="utf-8")
     assert "Insights" in html_text and "Lane A (Big)" in html_text and "100%" in html_text
 
 
