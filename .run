@@ -1,2 +1,2 @@
-# test the GDELT news step on one tracker
+# test the GDELT news step on one tracker (slower pacing)
 incidents/governor-race-live.yaml
