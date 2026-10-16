@@ -1,2 +1,2 @@
-# deploy + feed pull check 2026-10-16T17:58Z
-none
+# feed autodiscovery / google-news fallback check on a small tracker
+incidents/issue-765kv-live.yaml
