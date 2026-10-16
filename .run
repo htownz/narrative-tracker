@@ -1,2 +1,3 @@
-# test the GDELT news step on one tracker (slower pacing)
+# news step on the two big races
+incidents/paxton-live.yaml
 incidents/governor-race-live.yaml

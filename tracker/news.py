@@ -1,5 +1,6 @@
-"""News coverage of canonical claims, from the GDELT 2.0 DOC API (free): did a claim cross from X into the
-press, when, and did the press have it first?
+"""News coverage of canonical claims — did a claim cross from X into the press, when, and did the press have
+it first? Google News search RSS is the source (free, no key, generous from GitHub's runners); the GDELT 2.0
+DOC API is the fallback (it rate-limits shared runner addresses hard).
 
 For each tracker's biggest recent claims (NEWS_TOP per run, at NEWS_MIN_VIEWS+ views, re-checked every
 NEWS_RECHECK_H hours) one query is built from the claim's entities plus its most distinctive word, and the
@@ -24,10 +25,11 @@ from .config import Incident
 from .store import Store
 
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
-NEWS_TOP = 10
+GNEWS = "https://news.google.com/rss/search"
+NEWS_TOP = 15
 NEWS_MIN_VIEWS = 50_000
 NEWS_RECHECK_H = 12
-PACE_S = 6.0            # GDELT throttles anything faster than about one request every five seconds
+PACE_S = 2.0
 STOP = set("""a an the and or but of to in on at for with by from as is are was were be been being this that these those it its he
 she they them his her their we you i our your not no do does did have has had will would can could should about into over
 than then so if just more most very who whom what which when where why how all any some such own same says said say up out off
@@ -52,8 +54,17 @@ CREATE INDEX IF NOT EXISTS idx_news_cluster ON news_checks(cluster_id, at);
 """
 
 
+def _terms(text: str, entities: list[str]) -> list[str]:
+    ents = [e.strip() for e in entities if isinstance(e, str) and 2 < len(e.strip()) <= 40][:2]
+    words = [w for w in re.findall(r"[A-Za-z][A-Za-z'-]{3,}", text) if w.lower() not in STOP
+             and not any(w.lower() in e.lower() for e in ents)]
+    words.sort(key=lambda w: (-len(w), w))
+    return ents + (words[:1] if ents else words[:2])
+
+
 def query_for(text: str, entities: list[str]) -> str:
-    """Two entities plus the claim's most distinctive word, each quoted. GDELT needs phrases, not sentences."""
+    """Two entities plus the claim's most distinctive word, each quoted (GDELT form; Google News uses the same
+    phrases without the language operator)."""
     ents = [e.strip() for e in entities if isinstance(e, str) and 2 < len(e.strip()) <= 40][:2]
     words = [w for w in re.findall(r"[A-Za-z][A-Za-z'-]{3,}", text) if w.lower() not in STOP
              and not any(w.lower() in e.lower() for e in ents)]
@@ -64,10 +75,51 @@ def query_for(text: str, entities: list[str]) -> str:
 
 
 def _parse_date(s: str) -> datetime | None:
+    if not s:
+        return None
     try:
         return datetime.strptime(s, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
     except (TypeError, ValueError):
+        pass
+    try:
+        from email.utils import parsedate_to_datetime
+        return parsedate_to_datetime(s).astimezone(timezone.utc)
+    except (TypeError, ValueError, IndexError):
         return None
+
+
+def fetch_google_news(text: str, entities: list[str], session: requests.Session | None = None) -> list[dict[str, Any]] | None:
+    """Articles from Google News search RSS for the last 7 days, as {seendate, domain, title}; None on failure."""
+    import xml.etree.ElementTree as ET
+    from urllib.parse import urlsplit
+    sess = session or requests.Session()
+    q = " ".join(f'"{t}"' for t in _terms(text, entities)) + " when:7d"
+    for attempt in range(2):
+        try:
+            r = sess.get(GNEWS, params={"q": q, "hl": "en-US", "gl": "US", "ceid": "US:en"}, timeout=40,
+                         headers={"User-Agent": "Mozilla/5.0 (compatible; narrative-tracker/1.0)"})
+        except requests.exceptions.RequestException as e:
+            print(f"  google news: {type(e).__name__}; retrying", file=sys.stderr)
+            time.sleep(5)
+            continue
+        if r.status_code == 429:
+            print("  google news: rate limited; waiting 30s", file=sys.stderr)
+            time.sleep(30)
+            continue
+        if r.status_code != 200:
+            print(f"  google news: HTTP {r.status_code}", file=sys.stderr)
+            return None
+        try:
+            root = ET.fromstring(r.content)
+        except ET.ParseError:
+            return None
+        out = []
+        for it in root.findall(".//item"):
+            src = it.find("source")
+            dom = urlsplit(src.get("url") or "").netloc.lower().removeprefix("www.") if src is not None else ""
+            out.append({"seendate": it.findtext("pubDate") or "", "domain": dom or (src.text if src is not None else "?"), "title": it.findtext("title") or ""})
+        return out
+    return None
 
 
 def fetch_articles(query: str, timespan: str = "7d", session: requests.Session | None = None) -> list[dict[str, Any]] | None:
@@ -138,10 +190,13 @@ def news(inc: Incident, top: int = NEWS_TOP, min_views: int = NEWS_MIN_VIEWS) ->
     sess = requests.Session()
     done = 0
     for c in todo:
-        q = query_for(c["text"], json.loads(c["entities"] or "[]"))
-        arts = fetch_articles(q, session=sess)
+        ents = json.loads(c["entities"] or "[]")
+        q = query_for(c["text"], ents)
+        arts = fetch_google_news(c["text"], ents, session=sess)
         if arts is None:
-            print("news: GDELT not answering; leaving the rest for next run", file=sys.stderr)
+            arts = fetch_articles(q, session=sess)
+        if arts is None:
+            print("news: neither Google News nor GDELT answered; leaving the rest for next run", file=sys.stderr)
             break
         first_x = datetime.fromisoformat(c["first_seen"]) if c["first_seen"] else datetime.now(timezone.utc)
         s = summarise(arts, first_x)
