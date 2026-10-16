@@ -417,3 +417,15 @@ def test_view_history_records_sightings_and_seeds_once(tmp_path):
     st.conn.execute("DELETE FROM view_history"); st.conn.commit()
     assert st.seed_history() == 1 and st.seed_history() == 0
     st.close()
+
+
+# ------------------------------------------------------------------ news (GDELT)
+def test_news_query_and_summary():
+    from datetime import datetime, timezone
+    from tracker import news
+    q = news.query_for("James Talarico was in a mental health facility, the Lindner Center, during his absence.", ["James Talarico", "Lindner Center"])
+    assert q.startswith('"James Talarico" "Lindner Center" "') and q.endswith(" sourcelang:english")
+    arts = [{"seendate": "20261011T200000Z", "domain": "texastribune.org"}, {"seendate": "20261012T010000Z", "domain": "cnn.com"},
+            {"seendate": "20261012T020000Z", "domain": "cnn.com"}, {"seendate": "20261009T000000Z", "domain": "foxnews.com"}, {"seendate": "bad"}]
+    s = news.summarise(arts, datetime(2026, 10, 11, 17, 0, tzinfo=timezone.utc))
+    assert s["articles"] == 4 and s["sources"] == 3 and s["sources_48h"] == 2 and s["news_before_x"] == 1 and s["top_domains"][0] == "cnn.com"

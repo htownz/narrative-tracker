@@ -250,6 +250,16 @@ story and that is news; a ring where a fifth of the accounts are under 90 days o
 is marked suspicious, shown red on `analysis.html`, and counts toward the control score ("link rings" feature).
 Re-uploaded video clips can't be matched this way (no shared URL); same-words copies cover the caption side.
 
+## News coverage (GDELT)
+
+`python run.py news incidents/x.yaml` (part of `all`, after verification) asks the free GDELT 2.0 DOC API about
+each tracker's biggest recent claims — 15 per run at 50K+ views, re-checked every 12 hours, one query built from
+the claim's entities and its most distinctive word — and records how many outlets and articles carried it in the
+24 and 48 hours after the claim first appeared on X, when the first article ran, and whether the press had it
+before X did. `claims.html` shows a News column and an "In the news" filter (3+ outlets within 48h is the
+crossover outcome the feature table records as `news_sources_48h`). GDELT is best-effort: when it rate-limits,
+the rest of the list waits for the next run.
+
 ## Narrative control
 
 `python run.py control incidents/x.yaml` (part of `all`, before `analysis`) scores every lane and every

@@ -30,7 +30,8 @@ from .store import Store
 
 COLUMNS = ["run_at", "asof", "slug", "kind", "key", "label", "age_h", "posts", "views", "accounts", "copies", "first_views",
            "first_followers", "views_1h", "views_6h", "views_24h", "momentum_6h", "control", "new_accounts", "burst",
-           "event_follow", "event_type", "market_price", "market_change_24h", "gain_24h", "gain_72h", "top5_24h", "measured"]
+           "event_follow", "event_type", "market_price", "market_change_24h", "news_sources_48h", "news_before_x",
+           "gain_24h", "gain_72h", "top5_24h", "measured"]
 
 def _window_start_utc(inc) -> str:
     from datetime import datetime, timezone
@@ -69,8 +70,9 @@ def _market(inc: Incident, asof: datetime) -> tuple[float | None, float | None]:
 
 def _group_rows(inc: Incident, kind: str, groups: dict[str, tuple[str, list[dict[str, Any]]]], asof: datetime,
                 origin_handle: dict[str, str], events: list[dict[str, Any]], market: tuple[float | None, float | None],
-                run_at: str) -> list[dict[str, Any]]:
+                run_at: str, news: dict[str, dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     rows = []
+    news = news or {}
     for key, (label, posts) in groups.items():
         if not posts:
             continue
@@ -92,6 +94,8 @@ def _group_rows(inc: Incident, kind: str, groups: dict[str, tuple[str, list[dict
             "control": ctrl, "new_accounts": round(f["new_accounts"], 3), "burst": round(f["burst"], 3),
             "event_follow": int(bool(ev)), "event_type": ev["type"] if ev else "",
             "market_price": market[0], "market_change_24h": market[1],
+            "news_sources_48h": (news.get(key) or {}).get("sources_48h") if kind == "claim" else None,
+            "news_before_x": (news.get(key) or {}).get("news_before_x") if kind == "claim" else None,
             "gain_24h": None, "gain_72h": None, "top5_24h": None, "measured": None,
         })
     return rows
@@ -201,10 +205,12 @@ def features(inc: Incident) -> Path:
             cl_posts[str(r["cluster_id"])][r["post_id"]] = by_id[r["post_id"]]
     cl_text = {str(c["id"]): c["text"] for c in store.clusters()}
     claim_groups = {cid: (cl_text.get(cid, cid), list(ps.values())) for cid, ps in cl_posts.items() if len(ps) >= 2}
+    from .news import latest_checks
+    news = {str(k): v for k, v in latest_checks(store).items()}
     store.close()
 
     new_rows = _group_rows(inc, "lane", lane_groups, asof, origin_handle, events, market, run_at) + \
-        _group_rows(inc, "claim", claim_groups, asof, origin_handle, events, market, run_at)
+        _group_rows(inc, "claim", claim_groups, asof, origin_handle, events, market, run_at, news)
 
     path = _dir() / f"{inc.slug}.csv"
     existing: list[dict[str, Any]] = []
