@@ -4,7 +4,10 @@ Why: it is where much of the Texas Democratic and press-adjacent conversation mo
 (no key, no scraping), and it lets a canonical claim be seen on two platforms with a timestamp on each.
 
 The public AppView (public.api.bsky.app) answers app.bsky.feed.searchPosts without authentication: q with
-quoted phrases, since/until as ISO datetimes, sort=latest, up to 100 per page with a cursor. The X query
+quoted phrases, since/until as ISO datetimes, sort=latest, up to 100 per page with a cursor. Datacenter
+addresses (GitHub's runners among them) can get a 403 from it, so when BSKY_HANDLE and BSKY_APP_PASSWORD
+are set the pull signs in (com.atproto.server.createSession with an app password — never the account
+password) and makes the same calls through bsky.social with a bearer token instead. The X query
 operators (since:/until:/min_faves:/-filter:) are not sent; the bare query is. No view counts exist on
 Bluesky, so view_count is 0 and the engagement column (likes + reposts + replies + quotes) carries the
 threshold (store.BSKY_MIN_ENGAGEMENT). Quoted and replied-to posts are fetched with getPosts (25 per call).
@@ -27,8 +30,10 @@ from .config import Incident
 from .store import Store, flatten_bsky
 
 APPVIEW = "https://public.api.bsky.app/xrpc"
-SEARCH = f"{APPVIEW}/app.bsky.feed.searchPosts"
-GET_POSTS = f"{APPVIEW}/app.bsky.getPosts"
+PDS = "https://bsky.social/xrpc"
+SEARCH = "app.bsky.feed.searchPosts"
+GET_POSTS = "app.bsky.feed.getPosts"
+CREATE_SESSION = "com.atproto.server.createSession"
 PAGE = 100
 PAUSE_S = 0.35               # the public AppView allows roughly 3,000 requests per 5 minutes per address; stay far under
 MAX_PAGES_PER_DAY = 30       # 3,000 posts for one query on one day is plenty
@@ -53,13 +58,27 @@ def day_bounds_iso(day: date, tz: str) -> tuple[str, str]:
 
 
 class Bluesky:
-    def __init__(self, pause: float = PAUSE_S):
+    def __init__(self, pause: float = PAUSE_S, handle: str | None = None, app_password: str | None = None):
+        import os
         self.sess = requests.Session()
-        self.sess.headers["User-Agent"] = "narrative-tracker/1.0 (+https://github.com/htownz/narrative-tracker)"
+        self.sess.headers["User-Agent"] = "Mozilla/5.0 (compatible; narrative-tracker/1.0; +https://github.com/htownz/narrative-tracker)"
         self.pause = pause
         self.calls = 0
+        self.base = APPVIEW
+        handle = handle or os.environ.get("BSKY_HANDLE")
+        app_password = app_password or os.environ.get("BSKY_APP_PASSWORD")
+        self.signed_in = False
+        if handle and app_password:
+            r = self.sess.post(f"{PDS}/{CREATE_SESSION}", json={"identifier": handle, "password": app_password}, timeout=40)
+            if r.status_code == 200 and r.json().get("accessJwt"):
+                self.sess.headers["Authorization"] = f"Bearer {r.json()['accessJwt']}"
+                self.base = PDS
+                self.signed_in = True
+            else:
+                log(f"bluesky: sign-in failed (HTTP {r.status_code}); using the public endpoint")
 
-    def _get(self, url: str, params: dict[str, Any]) -> dict[str, Any]:
+    def _get(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
+        url = f"{self.base}/{method}"
         last: Exception | None = None
         for attempt in range(5):
             try:
@@ -73,7 +92,8 @@ class Bluesky:
                 time.sleep(10 * (attempt + 1))
                 continue
             if r.status_code != 200:
-                raise RuntimeError(f"bluesky HTTP {r.status_code}: {r.text[:200]}")
+                body = r.text[:160].replace("\n", " ")
+                raise RuntimeError(f"bluesky HTTP {r.status_code} from {url.split('/xrpc')[0]}{' (signed in)' if self.signed_in else ' (public, no sign-in)'}: {body}")
             time.sleep(self.pause)
             return r.json()
         raise RuntimeError(f"bluesky: gave up ({last})")
@@ -130,6 +150,7 @@ def pull(inc: Incident, budget: float | None = None, dry_run: bool = False) -> b
         return True
     t0 = time.time()
     api = Bluesky()
+    log(f"bluesky: {'signed in as ' + __import__('os').environ.get('BSKY_HANDLE', '') if api.signed_in else 'public endpoint (set BSKY_HANDLE / BSKY_APP_PASSWORD to sign in)'}")
     store = Store(inc.db_path)
     progress: dict[str, Any] = store.get_meta("bsky_progress", {}) or {}
     if inc.live:
@@ -198,6 +219,7 @@ def probe(q: str = '"Ken Paxton"') -> None:
     """Print the raw shape of one search result (for checking the AppView's fields from a machine with network)."""
     import json
     api = Bluesky()
+    print("signed in" if api.signed_in else "public endpoint")
     data = api._get(SEARCH, {"q": q, "sort": "latest", "limit": 2})
     print(json.dumps(data, indent=1)[:6000])
     posts = data.get("posts") or []

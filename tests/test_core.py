@@ -621,3 +621,34 @@ def test_bluesky_posts_share_the_store_with_their_own_threshold(tmp_path):
     r = st2.conn.execute("SELECT source, engagement FROM posts WHERE id='9'").fetchone()
     assert r["source"] == "x" and r["engagement"] == 16
     st2.close()
+
+
+# ------------------------------------------------------------------ press: feeds, relevance, lean
+def test_news_feeds_store_relevance_and_lean(tmp_path, monkeypatch):
+    from tracker import newsfeeds as nf, outlets
+    db = tmp_path / "news.sqlite"
+    rss = (b'<rss><channel><item><title>Talarico campaign denies report he was treated at Lindner Center</title><link>https://www.texastribune.org/a</link>'
+           b'<description>The campaign called the claim false.</description><pubDate>Fri, 09 Oct 2026 20:00:00 GMT</pubDate></item>'
+           b'<item><title>Paxton raises $3 million</title><link>https://www.dailywire.com/b</link><pubDate>Fri, 09 Oct 2026 21:00:00 GMT</pubDate></item></channel></rss>')
+    class Resp:
+        def __init__(self, content, status=200): self.content, self.status_code = content, status
+    class Sess:
+        headers = {}
+        def get(self, url, timeout=0): return Resp(rss) if "ok" in url else Resp(b"", 503)
+    feeds = tmp_path / "feeds.yaml"
+    feeds.write_text('feeds:\n  - {name: Good, url: "https://ok.example/rss", kind: press}\n  - {name: Dead, url: "https://dead.example/rss", kind: press}\n')
+    got = nf.pull_feeds(feeds, db, session=Sess())
+    assert got == {"Good": 2, "Dead": 0}
+    assert nf.pull_feeds(feeds, db, session=Sess()) == {"Good": 0, "Dead": 0}                  # idempotent
+    st = nf.status(db)
+    assert st["articles"] == 2 and st["feeds_ok"] == 1 and st["since"].startswith("2026-10-09")
+    claim, ents, subj = "James Talarico was in a mental health facility, the Lindner Center, during his absence.", ["James Talarico", "Lindner Center"], {"talarico", "paxton"}
+    from datetime import datetime, timezone
+    hits = nf.search(claim, ents, datetime(2026, 10, 1, tzinfo=timezone.utc), db=db, subjects=subj)
+    assert [h["domain"] for h in hits] == ["texastribune.org"]                               # the fundraising story is about the race, not the claim
+    assert not nf.relevant({"title": "Talarico leads Paxton in new poll"}, claim, ents, subj)
+    assert nf.relevant({"title": "Paxton attacks Talarico over mental health facility story"}, claim, ents, subj)
+    assert outlets.lean("www.texastribune.org") == "center" and outlets.lean("amp.dailywire.com") == "right" and outlets.lean("nobody.example") == "unrated"
+    m = outlets.mix(["texastribune.org", "foxnews.com", "dailywire.com", "nobody.example"])
+    assert (m["L"], m["C"], m["R"], m["?"], m["rated"], m["texas"], m["one_sided"]) == (0, 1, 2, 1, 3, 1, "R")
+    assert outlets.mix(["nytimes.com", "foxnews.com"])["one_sided"] is None and outlets.mix(["nytimes.com"])["one_sided"] is None

@@ -1,0 +1,60 @@
+# RSS feeds pulled every run into data/news.sqlite (tracker/newsfeeds.py): the Texas political press plus the
+# national desks that cover Texas races. A feed that does not answer is skipped and logged; the store keeps
+# every article it has ever seen, so unlike the 7-day Google News window, coverage of a claim can be measured
+# however long ago it first appeared on X. Leans come from incidents/outlets.yaml by domain.
+#
+# Fields: name, url, kind (press | wire | tv | radio | party | advocacy | newsletter), optional note.
+
+feeds:
+  - {name: Texas Tribune,              url: "https://www.texastribune.org/feeds/sections/politics/", kind: press}
+  - {name: Texas Tribune (all),        url: "https://www.texastribune.org/feeds/", kind: press}
+  - {name: Houston Chronicle politics, url: "https://www.houstonchronicle.com/rss/feed/Politics-266.php", kind: press}
+  - {name: Houston Chronicle news,     url: "https://www.houstonchronicle.com/rss/feed/News-270.php", kind: press}
+  - {name: Dallas Morning News politics, url: "https://www.dallasnews.com/arc/outboundfeeds/rss/category/news/politics/", kind: press}
+  - {name: Austin American-Statesman,  url: "https://www.statesman.com/rss/", kind: press}
+  - {name: San Antonio Express-News politics, url: "https://www.expressnews.com/rss/feed/Politics-5218.php", kind: press}
+  - {name: Texas Monthly,              url: "https://www.texasmonthly.com/feed/", kind: press}
+  - {name: Texas Observer,             url: "https://www.texasobserver.org/feed/", kind: press}
+  - {name: Texas Scorecard,            url: "https://texasscorecard.com/feed/", kind: press}
+  - {name: The Texan,                  url: "https://thetexan.news/feed/", kind: press}
+  - {name: Reform Austin,              url: "https://www.reformaustin.org/feed/", kind: press}
+  - {name: KUT,                        url: "https://www.kut.org/politics.rss", kind: radio}
+  - {name: Texas Standard,             url: "https://www.texasstandard.org/feed/", kind: radio}
+  - {name: Houston Public Media,       url: "https://www.houstonpublicmedia.org/feed/", kind: radio}
+  - {name: KERA News,                  url: "https://www.keranews.org/politics.rss", kind: radio}
+  - {name: Texas Public Radio,         url: "https://www.tpr.org/politics.rss", kind: radio}
+  - {name: KXAN politics,              url: "https://www.kxan.com/news/texas-politics/feed/", kind: tv}
+  - {name: KHOU,                       url: "https://www.khou.com/feeds/syndication/rss/news/politics", kind: tv}
+  - {name: WFAA,                       url: "https://www.wfaa.com/feeds/syndication/rss/news/politics", kind: tv}
+  - {name: KVUE,                       url: "https://www.kvue.com/feeds/syndication/rss/news/politics", kind: tv}
+  - {name: KENS 5,                     url: "https://www.kens5.com/feeds/syndication/rss/news/politics", kind: tv}
+  - {name: KSAT,                       url: "https://www.ksat.com/arc/outboundfeeds/rss/category/news/politics/?outputType=xml", kind: tv}
+  - {name: KPRC,                       url: "https://www.click2houston.com/arc/outboundfeeds/rss/category/news/politics/?outputType=xml", kind: tv}
+  - {name: FOX 4 Dallas,               url: "https://www.fox4news.com/rss/category/politics", kind: tv}
+  - {name: FOX 26 Houston,             url: "https://www.fox26houston.com/rss/category/politics", kind: tv}
+  - {name: FOX 7 Austin,               url: "https://www.fox7austin.com/rss/category/politics", kind: tv}
+  - {name: Republican Party of Texas,  url: "https://texasgop.org/feed/", kind: party}
+  - {name: Texas Democratic Party,     url: "https://www.texasdemocrats.org/feed/", kind: party}
+  - {name: TPPF,                       url: "https://www.texaspolicy.com/feed/", kind: advocacy}
+  - {name: AP Politics,                url: "https://rsshub.app/apnews/topics/politics", kind: wire, note: "via rsshub; AP has no public RSS"}
+  - {name: The Hill,                   url: "https://thehill.com/feed/", kind: press}
+  - {name: Politico,                   url: "https://rss.politico.com/politics-news.xml", kind: press}
+  - {name: Axios,                      url: "https://api.axios.com/feed/", kind: press}
+  - {name: NYT Politics,               url: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml", kind: press}
+  - {name: Washington Post Politics,   url: "https://feeds.washingtonpost.com/rss/politics", kind: press}
+  - {name: CNN Politics,               url: "http://rss.cnn.com/rss/cnn_allpolitics.rss", kind: press}
+  - {name: Fox News Politics,          url: "https://moxie.foxnews.com/google-publisher/politics.xml", kind: press}
+  - {name: NBC News Politics,          url: "https://feeds.nbcnews.com/nbcnews/public/politics", kind: press}
+  - {name: Newsweek,                   url: "https://www.newsweek.com/rss", kind: press}
+  - {name: Washington Examiner,        url: "https://www.washingtonexaminer.com/feed", kind: press}
+  - {name: Daily Wire,                 url: "https://www.dailywire.com/feeds/rss.xml", kind: press}
+  - {name: Breitbart Politics,         url: "https://feeds.feedburner.com/breitbart", kind: press}
+  - {name: HuffPost Politics,          url: "https://www.huffpost.com/section/politics/feed", kind: press}
+  - {name: Daily Beast,                url: "https://feeds.thedailybeast.com/rss/articles", kind: press}
+  - {name: Raw Story,                  url: "https://www.rawstory.com/feeds/feed.rss", kind: press}
+  - {name: Newsmax,                    url: "https://www.newsmax.com/rss/Politics/1/", kind: press}
+  - {name: Washington Times Politics,  url: "https://www.washingtontimes.com/rss/headlines/news/politics/", kind: press}
+  - {name: NPR Politics,               url: "https://feeds.npr.org/1014/rss.xml", kind: radio}
+  - {name: Roll Call,                  url: "https://rollcall.com/feed/", kind: press}
+  - {name: Semafor,                    url: "https://www.semafor.com/rss.xml", kind: press}
+  - {name: MeidasTouch,                url: "https://www.meidasnews.com/feed", kind: press}

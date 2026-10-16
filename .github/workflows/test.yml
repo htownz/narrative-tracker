@@ -21,8 +21,11 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pytest moto
       - run: python -m pytest -q tests/
-      - name: Bluesky public API probe (shape check, informational)
+      - name: Bluesky API probe (shape check, informational)
         if: runner.os == 'Linux' && matrix.python == '3.12'
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
         run: python -m tracker.bsky '"Ken Paxton"' || true
       - name: Synthetic end-to-end (no keys, no network)
         env:

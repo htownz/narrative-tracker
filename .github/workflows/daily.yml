@@ -78,11 +78,14 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}               # optional: a Bluesky account + app password lets the pull sign in (public endpoint 403s datacenter IPs)
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
           PULL_BUDGET: ${{ steps.pick.outputs.budget }}     # seconds of pulling per incident per run (780 unless .run says budget=N); a paused pull resumes next run
         run: |
           set +e; FAILED=""; OK=0
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
           python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
+          python -m tracker.newsfeeds || true  # the Texas and national press into data/news.sqlite (bucket-synced), for claim coverage
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
             [ "$WEEKLY" = "1" ] && python run.py refresh-views "$inc"

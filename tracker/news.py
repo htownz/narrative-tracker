@@ -54,6 +54,16 @@ CREATE TABLE IF NOT EXISTS news_checks (
 );
 CREATE INDEX IF NOT EXISTS idx_news_cluster ON news_checks(cluster_id, at);
 """
+EXTRA_COLUMNS = {"lean_mix": "TEXT", "articles_raw": "INTEGER", "local_articles": "INTEGER"}   # added after the first schema
+
+
+def _migrate(store: Store) -> None:
+    store.conn.executescript(SCHEMA)
+    cols = {r["name"] for r in store.conn.execute("PRAGMA table_info(news_checks)")}
+    for c, t in EXTRA_COLUMNS.items():
+        if c not in cols:
+            store.conn.execute(f"ALTER TABLE news_checks ADD COLUMN {c} {t}")
+    store.conn.commit()
 
 
 def _terms(text: str, entities: list[str]) -> list[str]:
@@ -119,7 +129,8 @@ def fetch_google_news(text: str, entities: list[str], session: requests.Session 
         for it in root.findall(".//item"):
             src = it.find("source")
             dom = urlsplit(src.get("url") or "").netloc.lower().removeprefix("www.") if src is not None else ""
-            out.append({"seendate": it.findtext("pubDate") or "", "domain": dom or (src.text if src is not None else "?"), "title": it.findtext("title") or ""})
+            out.append({"seendate": it.findtext("pubDate") or "", "domain": dom or (src.text if src is not None else "?"), "title": it.findtext("title") or "",
+                        "url": it.findtext("link") or ""})
         return out
     return None
 
@@ -160,7 +171,9 @@ def summarise(articles: list[dict[str, Any]], first_x: datetime) -> dict[str, An
     for _, a in dated:
         domains[a.get("domain") or "?"] = domains.get(a.get("domain") or "?", 0) + 1
     before = [d for d, _ in dated if d < first_x - timedelta(hours=1)]
+    from .outlets import mix
     return {
+        "lean_mix": mix([a.get("domain") or "" for _, a in dated]),
         "articles": len(dated), "sources": len(domains),
         "articles_24h": len(a24), "sources_24h": len({a.get("domain") for a in a24}),
         "articles_48h": len(a48), "sources_48h": len({a.get("domain") for a in a48}),
@@ -171,8 +184,20 @@ def summarise(articles: list[dict[str, Any]], first_x: datetime) -> dict[str, An
 
 
 def covered_since(now: datetime | None = None) -> str:
-    """Earliest first-post time whose 48h window the feed still covers."""
-    return ((now or datetime.now(timezone.utc)) - timedelta(days=FEED_DAYS) + timedelta(hours=COVER_H)).isoformat()
+    """Earliest first-post time whose 48h window is measurable: Google News reaches back FEED_DAYS; the RSS
+    article store (tracker/newsfeeds.py) reaches back to its first article, so once it has run for a while it
+    is the one that decides."""
+    google = (now or datetime.now(timezone.utc)) - timedelta(days=FEED_DAYS) + timedelta(hours=COVER_H)
+    try:
+        from .newsfeeds import status
+        since = status().get("since")
+        if since:
+            local = datetime.fromisoformat(since)
+            local = local if local.tzinfo else local.replace(tzinfo=timezone.utc)
+            return min(google, local).isoformat()
+    except Exception:
+        pass
+    return google.isoformat()
 
 
 def candidates(store: Store, min_views: int, top: int, recheck_h: float) -> list[dict[str, Any]]:
@@ -190,13 +215,16 @@ def candidates(store: Store, min_views: int, top: int, recheck_h: float) -> list
 
 
 def news(inc: Incident, top: int = NEWS_TOP, min_views: int = NEWS_MIN_VIEWS) -> int:
+    from .newsfeeds import relevant, search as local_search
+    from .pollevents import subject_tokens
     store = Store(inc.db_path)
-    store.conn.executescript(SCHEMA)
+    _migrate(store)
     todo = candidates(store, min_views, top, NEWS_RECHECK_H)
     if not todo:
         print("news: nothing to check")
         store.close()
         return 0
+    subjects = subject_tokens(inc.queries)
     sess = requests.Session()
     done = 0
     for c in todo:
@@ -209,15 +237,23 @@ def news(inc: Incident, top: int = NEWS_TOP, min_views: int = NEWS_MIN_VIEWS) ->
             print("news: neither Google News nor GDELT answered; leaving the rest for next run", file=sys.stderr)
             break
         first_x = datetime.fromisoformat(c["first_seen"]) if c["first_seen"] else datetime.now(timezone.utc)
-        s = summarise(arts, first_x)
+        raw_n = len(arts)
+        arts = [a for a in arts if relevant(a, c["text"], ents, subjects)]          # about the claim, not just the race
+        local = local_search(c["text"], ents, first_x - timedelta(days=7), subjects=subjects)
+        seen_urls = {a.get("url") for a in arts if a.get("url")}
+        seen_titles = {(a.get("title") or "").strip().lower() for a in arts}
+        local = [a for a in local if a["url"] not in seen_urls and a["title"].strip().lower() not in seen_titles]
+        s = summarise(arts + local, first_x)
         store.conn.execute(
-            "INSERT INTO news_checks (cluster_id, at, query, articles, sources, articles_24h, sources_24h, articles_48h, sources_48h, first_news_at, news_before_x, top_domains) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO news_checks (cluster_id, at, query, articles, sources, articles_24h, sources_24h, articles_48h, sources_48h, first_news_at, news_before_x, top_domains, lean_mix, articles_raw, local_articles) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (int(c["id"]), datetime.now(timezone.utc).isoformat(timespec="minutes"), q, s["articles"], s["sources"], s["articles_24h"], s["sources_24h"],
-             s["articles_48h"], s["sources_48h"], s["first_news_at"], s["news_before_x"], json.dumps(s["top_domains"])))
+             s["articles_48h"], s["sources_48h"], s["first_news_at"], s["news_before_x"], json.dumps(s["top_domains"]), json.dumps(s["lean_mix"]), raw_n, len(local)))
         store.conn.commit()
         done += 1
-        print(f"  news {s['sources_48h']:>2} outlets/48h {s['articles']:>3} articles{' (press first)' if s['news_before_x'] else ''}  {c['text'][:80]}")
+        m = s["lean_mix"]
+        print(f"  news {s['sources_48h']:>2} outlets/48h {s['articles']:>3} about it (of {raw_n} found, {len(local)} from feeds) L{m['L']} C{m['C']} R{m['R']}"
+              f"{' (press first)' if s['news_before_x'] else ''}  {c['text'][:70]}")
         time.sleep(PACE_S)
     store.close()
     print(f"news: {done} claims checked ({len(todo) - done} left)")
@@ -235,6 +271,10 @@ def latest_checks(store: Store) -> dict[int, dict[str, Any]]:
     for r in store.conn.execute("SELECT * FROM news_checks ORDER BY at"):
         d = dict(r)
         d["top_domains"] = json.loads(d.get("top_domains") or "[]")
+        try:
+            d["lean_mix"] = json.loads(d.get("lean_mix") or "null")
+        except ValueError:
+            d["lean_mix"] = None
         cid = int(d["cluster_id"])
         fs = first_seen.get(cid)
         try:

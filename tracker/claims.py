@@ -333,7 +333,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
             "event": ev["label"] if ev else None, "event_type": ev["type"] if ev else None,
             "news": {"articles": nc["articles"], "sources": nc["sources"], "sources_48h": nc["sources_48h"], "articles_48h": nc["articles_48h"],
                      "first_news_at": nc["first_news_at"], "news_before_x": bool(nc["news_before_x"]), "top_domains": nc["top_domains"],
-                     "covered": nc["covered"], "checked_at": nc["at"]} if nc else None,
+                     "covered": nc["covered"], "lean_mix": nc.get("lean_mix"), "checked_at": nc["at"]} if nc else None,
             "id": cid, "text": cl["text"], "type": cl["type"], "checkable": bool(cl["checkable"]), "stance": cl["stance"],
             "entities": json.loads(cl["entities"] or "[]"),
             "verdict": cl["verdict"], "verdict_basis": cl["verdict_basis"],
@@ -408,8 +408,11 @@ def _news_cell(n: dict[str, Any] | None) -> str:
         return (f'<span class="muted" title="{doms}">48h window not covered</span>'
                 f'<div class="muted">{n["articles"]} articles, {n["sources"]} outlets in the last 7d{first}</div>')
     tone = "#9ff0c9" if n["sources_48h"] >= 3 else "var(--ink-2)"
+    m = n.get("lean_mix") or {}
+    sides = (f' · <span title="outlets by lean: left / center / right (incidents/outlets.yaml)">L{m.get("L", 0)} C{m.get("C", 0)} R{m.get("R", 0)}</span>'
+             + (f' <span style="color:#e08a2e" title="every rated outlet on one side">one-sided</span>' if m.get("one_sided") else "")) if m.get("rated") else ""
     return (f'<span style="color:{tone}" title="{doms}">{n["sources_48h"]} outlets/48h</span>'
-            f'<div class="muted">{n["articles"]} articles, {n["sources"]} outlets in 7d{first}</div>')
+            f'<div class="muted">{n["articles"]} articles about it, {n["sources"]} outlets{sides}{first}</div>')
 
 
 def _sources_cell(r: dict[str, Any]) -> str:

@@ -1,0 +1,139 @@
+# News outlets the trackers meet, with an approximate lean so a claim's press coverage can be read by side.
+# Leans follow the AllSides / Ad Fontes conventions as of 2026 (left, lean-left, center, lean-right, right) and
+# are a judgment, not a measurement — edit freely. Unknown domains are labelled "unrated" and never dropped.
+# `texas: true` marks state and local outlets; the insights page separates Texas press from national press.
+
+outlets:
+  # ---- Texas ----
+  - {domain: texastribune.org,      name: Texas Tribune,            lean: center,     texas: true}
+  - {domain: houstonchronicle.com,  name: Houston Chronicle,        lean: lean-left,  texas: true}
+  - {domain: chron.com,             name: Chron,                    lean: lean-left,  texas: true}
+  - {domain: dallasnews.com,        name: Dallas Morning News,      lean: center,     texas: true}
+  - {domain: statesman.com,         name: Austin American-Statesman, lean: lean-left, texas: true}
+  - {domain: expressnews.com,       name: San Antonio Express-News, lean: lean-left,  texas: true}
+  - {domain: mysanantonio.com,      name: MySA,                     lean: lean-left,  texas: true}
+  - {domain: star-telegram.com,     name: Fort Worth Star-Telegram, lean: center,     texas: true}
+  - {domain: texasmonthly.com,      name: Texas Monthly,            lean: lean-left,  texas: true}
+  - {domain: texasobserver.org,     name: Texas Observer,           lean: left,       texas: true}
+  - {domain: texasscorecard.com,    name: Texas Scorecard,          lean: right,      texas: true}
+  - {domain: thetexan.news,         name: The Texan,                lean: lean-right, texas: true}
+  - {domain: texaspolicy.com,       name: Texas Public Policy Foundation, lean: right, texas: true}
+  - {domain: reformaustin.org,      name: Reform Austin,            lean: left,       texas: true}
+  - {domain: quorumreport.com,      name: Quorum Report,            lean: center,     texas: true}
+  - {domain: kut.org,               name: KUT,                      lean: lean-left,  texas: true}
+  - {domain: texasstandard.org,     name: Texas Standard,           lean: center,     texas: true}
+  - {domain: houstonpublicmedia.org, name: Houston Public Media,    lean: lean-left,  texas: true}
+  - {domain: keranews.org,          name: KERA,                     lean: lean-left,  texas: true}
+  - {domain: tpr.org,               name: Texas Public Radio,       lean: lean-left,  texas: true}
+  - {domain: kxan.com,              name: KXAN,                     lean: center,     texas: true}
+  - {domain: kvue.com,              name: KVUE,                     lean: center,     texas: true}
+  - {domain: khou.com,              name: KHOU,                     lean: center,     texas: true}
+  - {domain: click2houston.com,     name: KPRC,                     lean: center,     texas: true}
+  - {domain: fox26houston.com,      name: FOX 26 Houston,           lean: center,     texas: true}
+  - {domain: abc13.com,             name: ABC13,                    lean: center,     texas: true}
+  - {domain: wfaa.com,              name: WFAA,                     lean: center,     texas: true}
+  - {domain: fox4news.com,          name: FOX 4 Dallas,             lean: center,     texas: true}
+  - {domain: nbcdfw.com,            name: NBC DFW,                  lean: center,     texas: true}
+  - {domain: cbsnews.com/texas,     name: CBS Texas,                lean: center,     texas: true}
+  - {domain: kens5.com,             name: KENS 5,                   lean: center,     texas: true}
+  - {domain: ksat.com,              name: KSAT,                     lean: center,     texas: true}
+  - {domain: fox7austin.com,        name: FOX 7 Austin,             lean: center,     texas: true}
+  - {domain: cbsaustin.com,         name: CBS Austin,               lean: center,     texas: true}
+  - {domain: kxxv.com,              name: KXXV,                     lean: center,     texas: true}
+  - {domain: kwtx.com,              name: KWTX,                     lean: center,     texas: true}
+  - {domain: elpasotimes.com,       name: El Paso Times,            lean: center,     texas: true}
+  - {domain: caller.com,            name: Corpus Christi Caller-Times, lean: center,  texas: true}
+  - {domain: lubbockonline.com,     name: Lubbock Avalanche-Journal, lean: center,    texas: true}
+  - {domain: themonitor.com,        name: The Monitor (McAllen),    lean: center,     texas: true}
+  - {domain: texastribune.org/series, name: Texas Tribune,          lean: center,     texas: true}
+  - {domain: thetexasnewsroom.org,  name: The Texas Newsroom,       lean: lean-left,  texas: true}
+  - {domain: texasinsider.org,      name: Texas Insider,            lean: right,      texas: true}
+  - {domain: currentrevolt.com,     name: Current Revolt,           lean: right,      texas: true}
+  - {domain: thetexasvoice.com,     name: The Texas Voice,          lean: right,      texas: true}
+  - {domain: texasgop.org,          name: Republican Party of Texas, lean: right,     texas: true}
+  - {domain: texasdemocrats.org,    name: Texas Democratic Party,   lean: left,       texas: true}
+  # ---- national ----
+  - {domain: apnews.com,            name: AP,                       lean: center}
+  - {domain: reuters.com,           name: Reuters,                  lean: center}
+  - {domain: nytimes.com,           name: New York Times,           lean: lean-left}
+  - {domain: washingtonpost.com,    name: Washington Post,          lean: lean-left}
+  - {domain: wsj.com,               name: Wall Street Journal,      lean: center}
+  - {domain: usatoday.com,          name: USA Today,                lean: lean-left}
+  - {domain: cnn.com,               name: CNN,                      lean: lean-left}
+  - {domain: nbcnews.com,           name: NBC News,                 lean: lean-left}
+  - {domain: abcnews.go.com,        name: ABC News,                 lean: lean-left}
+  - {domain: cbsnews.com,           name: CBS News,                 lean: lean-left}
+  - {domain: msnbc.com,             name: MSNBC,                    lean: left}
+  - {domain: foxnews.com,           name: Fox News,                 lean: right}
+  - {domain: foxbusiness.com,       name: Fox Business,             lean: lean-right}
+  - {domain: newsmax.com,           name: Newsmax,                  lean: right}
+  - {domain: oann.com,              name: OAN,                      lean: right}
+  - {domain: breitbart.com,         name: Breitbart,                lean: right}
+  - {domain: dailywire.com,         name: Daily Wire,               lean: right}
+  - {domain: dailycaller.com,       name: Daily Caller,             lean: right}
+  - {domain: thefederalist.com,     name: The Federalist,           lean: right}
+  - {domain: washingtonexaminer.com, name: Washington Examiner,     lean: lean-right}
+  - {domain: washingtontimes.com,   name: Washington Times,         lean: right}
+  - {domain: nypost.com,            name: New York Post,            lean: lean-right}
+  - {domain: thepostmillennial.com, name: Post Millennial,          lean: right}
+  - {domain: townhall.com,          name: Townhall,                 lean: right}
+  - {domain: redstate.com,          name: RedState,                 lean: right}
+  - {domain: theblaze.com,          name: The Blaze,                lean: right}
+  - {domain: thegatewaypundit.com,  name: Gateway Pundit,           lean: right}
+  - {domain: nationalreview.com,    name: National Review,          lean: right}
+  - {domain: thehill.com,           name: The Hill,                 lean: center}
+  - {domain: axios.com,             name: Axios,                    lean: center}
+  - {domain: politico.com,          name: Politico,                 lean: lean-left}
+  - {domain: punchbowl.news,        name: Punchbowl News,           lean: center}
+  - {domain: semafor.com,           name: Semafor,                  lean: center}
+  - {domain: newsweek.com,          name: Newsweek,                 lean: center}
+  - {domain: time.com,              name: TIME,                     lean: lean-left}
+  - {domain: theatlantic.com,       name: The Atlantic,             lean: lean-left}
+  - {domain: newyorker.com,         name: The New Yorker,           lean: left}
+  - {domain: huffpost.com,          name: HuffPost,                 lean: left}
+  - {domain: thedailybeast.com,     name: Daily Beast,              lean: left}
+  - {domain: salon.com,             name: Salon,                    lean: left}
+  - {domain: motherjones.com,       name: Mother Jones,             lean: left}
+  - {domain: vox.com,               name: Vox,                      lean: left}
+  - {domain: slate.com,             name: Slate,                    lean: left}
+  - {domain: rawstory.com,          name: Raw Story,                lean: left}
+  - {domain: theguardian.com,       name: The Guardian,             lean: lean-left}
+  - {domain: bloomberg.com,         name: Bloomberg,                lean: lean-left}
+  - {domain: npr.org,               name: NPR,                      lean: lean-left}
+  - {domain: pbs.org,               name: PBS,                      lean: lean-left}
+  - {domain: forbes.com,            name: Forbes,                   lean: center}
+  - {domain: businessinsider.com,   name: Business Insider,         lean: lean-left}
+  - {domain: yahoo.com,             name: Yahoo News,               lean: lean-left}
+  - {domain: msn.com,               name: MSN,                      lean: center}
+  - {domain: rollcall.com,          name: Roll Call,                lean: center}
+  - {domain: realclearpolitics.com, name: RealClearPolitics,        lean: lean-right}
+  - {domain: thebulwark.com,        name: The Bulwark,              lean: center}
+  - {domain: thedispatch.com,       name: The Dispatch,             lean: lean-right}
+  - {domain: mediaite.com,          name: Mediaite,                 lean: lean-left}
+  - {domain: thewrap.com,           name: TheWrap,                  lean: lean-left}
+  - {domain: people.com,            name: People,                   lean: lean-left}
+  - {domain: dailymail.co.uk,       name: Daily Mail,               lean: right}
+  - {domain: independent.co.uk,     name: The Independent,          lean: lean-left}
+  - {domain: bbc.com,               name: BBC,                      lean: center}
+  - {domain: bbc.co.uk,             name: BBC,                      lean: center}
+  - {domain: latimes.com,           name: Los Angeles Times,        lean: lean-left}
+  - {domain: chicagotribune.com,    name: Chicago Tribune,          lean: center}
+  - {domain: nydailynews.com,       name: New York Daily News,      lean: lean-left}
+  - {domain: thetruthaboutguns.com, name: The Truth About Guns,     lean: right}
+  - {domain: jewishinsider.com,     name: Jewish Insider,           lean: center}
+  - {domain: christianpost.com,     name: Christian Post,           lean: right}
+  - {domain: ncronline.org,         name: National Catholic Reporter, lean: lean-left}
+  - {domain: thecentersquare.com,   name: The Center Square,        lean: lean-right}
+  - {domain: justthenews.com,       name: Just the News,            lean: right}
+  - {domain: wnd.com,               name: WND,                      lean: right}
+  - {domain: bizpacreview.com,      name: BizPac Review,            lean: right}
+  - {domain: westernjournal.com,    name: Western Journal,          lean: right}
+  - {domain: lifenews.com,          name: LifeNews,                 lean: right}
+  - {domain: commondreams.org,      name: Common Dreams,            lean: left}
+  - {domain: democracynow.org,      name: Democracy Now,            lean: left}
+  - {domain: thenation.com,         name: The Nation,               lean: left}
+  - {domain: jacobin.com,           name: Jacobin,                  lean: left}
+  - {domain: newrepublic.com,       name: New Republic,             lean: left}
+  - {domain: meidasnews.com,        name: MeidasTouch,              lean: left}
+  - {domain: occupydemocrats.com,   name: Occupy Democrats,         lean: left}
+  - {domain: palmerreport.com,      name: Palmer Report,            lean: left}
