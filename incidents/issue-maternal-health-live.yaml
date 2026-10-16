@@ -37,7 +37,72 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about maternal mortality and the abortion ban, Medicaid expansion and postpartum coverage, doulas as a solution and who pays, rural hospital closures, Black maternal health, and the state's programs. Posts about maternal health in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: abortion_ban_killing_mothers
+  label: Abortion ban is killing mothers
+  description: Texas's abortion ban (SB 8, post-Dobbs near-total ban) is causally driving higher maternal
+    deaths, citing rising mortality figures and comparisons with ban versus non-ban states.
+  keywords:
+  - abortion ban
+  - sb 8
+  - dobbs
+  - roe
+  - maternal mortality rose
+  - ban states
+  - killing women
+  - sepsis
+- key: report_delay_coverup
+  label: Mortality report delay is cover-up
+  description: The state is delaying or withholding the maternal mortality review committee report and
+    2022-2023 data for political reasons, such as the midterms, to hide the ban's harms.
+  keywords:
+  - maternal mortality report
+  - review committee
+  - cover-up
+  - delay
+  - midterms
+  - withholding data
+  - 2022 and 2023
+  - dshs
+- key: black_maternal_health_crisis
+  label: Black maternal health disparity crisis
+  description: Black women in Texas, especially in Harris County, face far higher maternal death rates,
+    and candidates and advocates must fix this racial disparity.
+  keywords:
+  - black women
+  - three times
+  - harris county
+  - deadliest place
+  - black maternal health
+  - disparity
+  - talarico
+  - racial
+- key: ban_blame_is_misleading
+  label: Ban-blame claims are misleading
+  description: Claims linking Texas's abortion laws to rising maternal mortality are misleading or false,
+    with statistics misread and politicians accused of lying.
+  keywords:
+  - lying
+  - correct her
+  - misleading
+  - not due to abortion law
+  - statistics
+  - data shows
+  - fact check
+  - misinformation
+- key: coverage_doulas_funding_solutions
+  label: Medicaid, doulas and funding solutions
+  description: Texas should expand postpartum Medicaid, reimburse and certify doulas, and fund county
+    and rural maternal-health programs to improve outcomes.
+  keywords:
+  - medicaid
+  - postpartum coverage
+  - doula
+  - reimbursement
+  - medicaid expansion
+  - rural hospital
+  - hhsc
+  - county funding
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

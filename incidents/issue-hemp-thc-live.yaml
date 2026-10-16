@@ -38,7 +38,82 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about the THC ban as protecting kids versus killing small businesses and jobs, veterans and patients who use hemp, Patrick as the driver, regulation versus prohibition, the beer and spirits industry's interests, alcohol taxes and distribution rules. Posts about THC or alcohol in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: ban_feeds_black_market
+  label: Ban feeds cartels, black market
+  description: Prohibiting hemp THC won't end demand; it pushes Texans from licensed local shops to cartels
+    and unregulated dealers, so Texas should regulate rather than prohibit.
+  keywords:
+  - black market
+  - cartels
+  - prohibition
+  - regulate not ban
+  - demand doesn't go away
+  - unregulated
+  - nanny state
+- key: small_business_jobs
+  label: Ban kills small businesses, jobs
+  description: The THC ban and new licensing fees destroy Texas hemp shops, farmers and manufacturers,
+    costing jobs and tax revenue and leaving billions on the table.
+  keywords:
+  - small business
+  - jobs
+  - hemp shops
+  - licensing fees
+  - billions
+  - industry
+  - lose livelihoods
+- key: veterans_freedom_patients
+  label: Veterans, patients, and personal freedom
+  description: Adults, veterans and patients rely on hemp products for relief and have a right to choose,
+    so the ban is government overreach into personal liberty.
+  keywords:
+  - veterans
+  - freedom
+  - liberty
+  - patients
+  - adults
+  - adhd
+  - overreach
+- key: patrick_ballot_box
+  label: Patrick's ban as electoral liability
+  description: Dan Patrick and Republicans drove the ban (SB3, Abbott's order), and Democrats and hemp
+    advocates use it to mobilize voters against them in the 2026 elections.
+  keywords:
+  - dan patrick
+  - sb3
+  - vikki goodwin
+  - talarico
+  - vote
+  - voting bloc
+  - campaign
+  - midterms
+- key: courts_rules_enforcement
+  label: Lawsuits, TABC rules, and enforcement
+  description: The fight over THC rules is playing out in the courts and enforcement, including smokable/THCA
+    bans, TABC and DSHS rules, appeals, lab/COA disputes, smoke shop raids and the federal deadline.
+  keywords:
+  - lawsuit
+  - appeals court
+  - thca
+  - smokable
+  - raids
+  - tabc
+  - federal ban deadline
+  - coa
+- key: public_safety_kids
+  label: Protecting kids and public safety
+  description: Restricting hemp THC is needed to protect children and communities from unregulated, potent
+    or contaminated products, illicit shops and drug-linked crime.
+  keywords:
+  - kids
+  - children
+  - fentanyl
+  - illegal products
+  - thc-laced
+  - public safety
+  - seized
+  - crackdown
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

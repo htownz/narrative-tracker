@@ -38,7 +38,72 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about highways versus transit, displacement and neighborhoods, congestion and growth, tolls, funding and who pays, rail, and TxDOT's competence. Posts about transportation in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: transit_rail_underfunded
+  label: Transit and rail deserve more
+  description: Texas pours money into roads while METRO buses, passenger rail and high-speed rail between
+    the big cities are starved, which hurts people who can't or don't want to drive.
+  keywords:
+  - high speed rail
+  - metro
+  - transit equity
+  - bus
+  - amtrak
+  - tex rail
+  - dallas houston san antonio
+  - riders
+- key: highway_expansion_progress
+  label: Highway expansion is progress
+  description: Widening, flyovers, elevated lanes and new connectors are the way to ease congestion and
+    serve Texas's growth, and project milestones show the work is delivering.
+  keywords:
+  - i-35 nex
+  - expansion
+  - flyover
+  - elevated lanes
+  - widening
+  - interchange
+  - beam
+  - milestone
+- key: txdot_incompetence
+  label: TxDOT can't build or manage
+  description: 'TxDOT is slow, tone-deaf and stuck in a rut: it answers congestion by adding lanes, delays
+    projects like US 380, and gets mocked even for its own messaging.'
+  keywords:
+  - txdot
+  - us 380
+  - pavlovian
+  - lazy
+  - congestion
+  - more accurate version
+  - incompetent
+  - delays
+- key: megaproject_cost_who_pays
+  label: Megaprojects cost too much
+  description: The 10-year Unified Transportation Program puts huge sums into a few showpiece freeway
+    projects such as burying I-345 in Dallas, so taxpayers should question the price tag and the priorities.
+  keywords:
+  - $1.65 billion
+  - per mile
+  - i-345
+  - utp
+  - 10-year plan
+  - taxpayers
+  - funding
+  - cost
+- key: toll_roads_ripoff
+  label: Texas tolls are a ripoff
+  description: Texas toll roads are expensive and often unavoidable, so drivers pay twice and Texas shouldn't
+    be seen as the low-cost state.
+  keywords:
+  - toll
+  - toll road
+  - ripoff
+  - unavoidable
+  - 183a
+  - sh-130
+  - california
+  - expensive
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

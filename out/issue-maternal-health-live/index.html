@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maternal health and doulas, 16 days of posts</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0b0c;
+    --surface: #141416;
+    --surface-2: #1d1d21;
+    --line: #2a2a30;
+    --ink: #f2f2f0;
+    --ink-2: #b9b9b3;
+    --ink-3: #7c7c78;
+    --copy: #ffffff;
+    --accent: #e08a2e;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  body { padding: 16px 16px 48px; max-width: 1200px; margin: 0 auto; -webkit-text-size-adjust: 100%; }
+  /* video mode (?video=1): fixed 1600x1000 frame captured by tracker/video.py */
+  body.video { max-width: 1600px; width: 1600px; height: 1080px; padding: 18px 24px; overflow: hidden; box-sizing: border-box; }
+  body.video .sub { max-width: 120ch; }
+  body.video .row .bar { height: 10px; }
+  body.video .controls, body.video .banner { display: none; }
+  body.video header { margin-bottom: 4px; }
+  body.video .stats { margin: 4px 0 8px; }
+  body.video .ticker { margin-top: 6px; }
+  body.video .bars { margin-top: 10px; gap: 30px; }
+  body.video .row { margin: 2px 0; }
+  body.video footer { margin-top: 8px; }
+  a { color: inherit; }
+
+  .banner { background: #3b2a06; color: #ffd98a; border: 1px solid #7a5a15; border-radius: 8px;
+            padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+  header { display: grid; grid-template-columns: 1fr auto; gap: 12px 20px; align-items: start; margin-bottom: 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 11.5px; line-height: 1.35; max-width: 70ch; margin: 0; }
+  .range { font-size: 11.5px; color: var(--ink-3); margin: 4px 0 0; } .range a { color: var(--ink-2); text-decoration: none; } .range a.on { color: var(--accent); font-weight: 600; } .range a:hover { color: var(--ink); }
+  .clock { text-align: right; white-space: nowrap; }
+  .clock .date { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+  .clock .time { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .clock .speed { font-size: 11px; color: var(--ink-3); }
+
+  .stats { display: flex; gap: 22px; margin: 10px 0 8px; flex-wrap: wrap; }
+  .stat .n { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat .l { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+  .stat.push .n { color: var(--accent); }
+  .stat.rep .n { color: var(--ink); }
+  .stat.back .n { color: #2fbf8c; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+  .controls button { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line);
+                     border-radius: 999px; width: 40px; height: 40px; font-size: 16px; cursor: pointer; }
+  .controls input[type=range] { flex: 1; accent-color: var(--accent); height: 28px; }
+  .controls .spd { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+  .controls .spd button { width: auto; height: 26px; padding: 0 9px; font-size: 11px; margin-left: 4px; }
+
+  .chartwrap { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+               overflow: hidden; }
+  svg { display: block; width: 100%; height: auto; }
+  .axis text { fill: var(--ink-3); font-size: 10px; font-family: var(--mono); }
+  .axis line { stroke: var(--line); }
+  .axis .major line { stroke: #3a3a42; }
+  .lane-rule { stroke: var(--line); stroke-width: 1; }
+  .lane-label .t { font-size: 11.5px; font-weight: 700; }
+  .lane-label .c { font-size: 10px; fill: var(--ink-2); font-family: var(--mono); }
+  .lane-label .d { font-size: 9px; fill: var(--ink-3); }
+  .lane-label rect { fill: rgba(11,11,12,.72); }
+  .link { fill: none; stroke-width: .9; opacity: .32; }
+  .link.copy { stroke: var(--copy); stroke-width: 1.1; opacity: .55; }
+  .dot { stroke: var(--bg); stroke-width: .8; cursor: pointer; }
+  .dot.copy { stroke: var(--copy); stroke-width: 1.2; }
+  .dot.ref { opacity: .55; }
+  .pill rect { fill: rgba(20,20,22,.92); stroke: #4a4a52; stroke-width: .6; }
+  .pill text { fill: var(--ink); font-size: 9.5px; font-weight: 600; }
+  .pill text.s { fill: var(--ink-3); font-weight: 400; font-size: 8.5px; }
+  .playhead { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
+  .hidden { display: none; }
+
+  .ticker { font-size: 12.5px; color: var(--ink-2); min-height: 18px; margin: 10px 2px 0; font-variant-numeric: tabular-nums; }
+  .ticker b { color: var(--ink); }
+
+  .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 560px) { .bars { grid-template-columns: 1fr; } header { grid-template-columns: 1fr; } .clock { text-align: left; } }
+  .bars h3 { font-size: 12px; margin: 0 0 8px; color: var(--ink-2); font-weight: 600; }
+  .bars h3 span { color: var(--ink-3); font-weight: 400; font-size: 10.5px; margin-left: 6px; }
+  .row { display: grid; grid-template-columns: 118px 1fr 56px; align-items: center; gap: 8px; margin: 4px 0; font-size: 11px; }
+  .row .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+  .row .bar { height: 12px; border-radius: 3px; transition: width .25s ease; min-width: 2px; }
+  .row .val { color: var(--ink-2); font-family: var(--mono); }
+
+  .tip { position: fixed; z-index: 10; max-width: min(360px, calc(100vw - 32px)); background: var(--surface-2);
+         border: 1px solid #3a3a42; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; line-height: 1.4;
+         box-shadow: 0 8px 30px rgba(0,0,0,.6); display: none; }
+  .tip .h { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 11px; margin-bottom: 4px; }
+  .tip .lane { font-weight: 700; }
+  .tip .x { position: absolute; top: 6px; right: 8px; color: var(--ink-3); cursor: pointer; }
+  .tip .txt { white-space: pre-wrap; word-break: break-word; }
+  .tip a { color: var(--ink-2); font-size: 11px; }
+  footer { margin-top: 18px; font-size: 10.5px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<script>window.__DATA__ = {"markets": [], "events": [{"label": "Early voting begins", "type": "calendar", "at": "2026-10-19T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}, {"label": "Early voting ends", "type": "calendar", "at": "2026-10-30T05:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}, {"label": "Election day", "type": "calendar", "at": "2026-11-03T06:00:00+00:00", "all_day": true, "source": "Texas Secretary of State", "auto": false}], "meta": {"slug": "issue-maternal-health-live", "title": "Maternal health and doulas, 16 days of posts", "subject": "maternal health policy in Texas — maternal mortality and morbidity, Medicaid postpartum coverage and doula reimbursement, the definition and certification of doulas, HHSC and DSHS maternal programs, the maternal mortality review committee, and county maternal-health funding in Houston, Austin and San Antonio", "subtitle": "Oct 1 to Oct 16, 2026. Each dot is one post with 1K+ views about Texas maternal health and doula policy, plus every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line back to it. Coloured lines link a post to the post it quoted or replied to. Updated daily.", "window": {"start": "2026-10-01", "end": "2026-10-16", "tz": "America/Chicago"}, "min_views": 1000, "generated_at": "2026-10-16T19:42:33.861769+00:00", "pulled_at": "2026-10-16T19:41:12.940799+00:00", "source": "Data via twitterapi.io", "synthetic": false, "partial": false, "credit": ""}, "lanes": [{"key": "abortion_ban_killing_mothers", "label": "Abortion ban is killing mothers", "description": "Texas's abortion ban (SB 8, post-Dobbs near-total ban) is causally driving higher maternal deaths, citing rising mortality figures and comparisons with ban versus non-ban states.", "keywords": ["abortion ban", "sb 8", "dobbs", "roe", "maternal mortality rose", "ban states", "killing women", "sepsis"], "color": "#3987e5", "order": 0}, {"key": "report_delay_coverup", "label": "Mortality report delay is cover-up", "description": "The state is delaying or withholding the maternal mortality review committee report and 2022-2023 data for political reasons, such as the midterms, to hide the ban's harms.", "keywords": ["maternal mortality report", "review committee", "cover-up", "delay", "midterms", "withholding data", "2022 and 2023", "dshs"], "color": "#d95926", "order": 1}, {"key": "black_maternal_health_crisis", "label": "Black maternal health disparity crisis", "description": "Black women in Texas, especially in Harris County, face far higher maternal death rates, and candidates and advocates must fix this racial disparity.", "keywords": ["black women", "three times", "harris county", "deadliest place", "black maternal health", "disparity", "talarico", "racial"], "color": "#c98500", "order": 2}, {"key": "ban_blame_is_misleading", "label": "Ban-blame claims are misleading", "description": "Claims linking Texas's abortion laws to rising maternal mortality are misleading or false, with statistics misread and politicians accused of lying.", "keywords": ["lying", "correct her", "misleading", "not due to abortion law", "statistics", "data shows", "fact check", "misinformation"], "color": "#d55181", "order": 3}, {"key": "coverage_doulas_funding_solutions", "label": "Medicaid, doulas and funding solutions", "description": "Texas should expand postpartum Medicaid, reimburse and certify doulas, and fund county and rural maternal-health programs to improve outcomes.", "keywords": ["medicaid", "postpartum coverage", "doula", "reimbursement", "medicaid expansion", "rural hospital", "hhsc", "county funding"], "color": "#9085e9", "order": 4}, {"key": "pushback", "label": "Pushback", "description": "Posts doubting, mocking, fact-checking or arguing against the dominant framings.", "keywords": [], "color": "#199e70", "order": 5}], "posts": [{"id": "2105908041522581529", "t": "2026-10-02T06:29:37+00:00", "views": 3023, "likes": 149, "reposts": 7, "handle": "Rach4Patriarchy", "name": "Rachel Wilson", "avatar": "data:image/jpeg;base64,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", "followers": 122000, "text": "@TheAKGuy @katy4congress I’ve caught her lying about Texas abortion laws multiple times. She has repeatedly claimed that maternal mortality is on the rise because of it no matter how many times I correct her. Again, either lying or too stupid to read this. https://t.co/9FP4klJzWf", "url": "https://x.com/Rach4Patriarchy/status/2105908041522581529", "lane": "ban_blame_is_misleading", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2106201821358493969", "t": "2026-10-03T01:57:00+00:00", "views": 671437, "likes": 5320, "reposts": 2069, "handle": "LunaForTruth", "name": "Luna 🇺🇸", "avatar": "data:image/jpeg;base64,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", "followers": 4307, "text": "Texas is refusing to release its maternal death report until after voters cast their midterm ballots.  \n\nThis comes as reporting finds that ectopic pregnancy deaths rose faster in states with abortion bans. https://t.co/3LUXBs6XmO", "url": "https://x.com/LunaForTruth/status/2106201821358493969", "lane": "report_delay_coverup", "copy_origin": null, "in_dataset": 0, "copies": 0}, {"id": "2106404529088409865", "t": "2026-10-03T15:22:29+00:00", "views": 9593, "likes": 15, "reposts": 2, "handle": "J_Texas_C", "name": "J_Grant_C", "avatar": "data:image/jpeg;base64,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", "followers": 2049, "text": "@LunaForTruth How many deaths versus births have happened since the abortion ban in Texas\n\nTexas’s early-pregnancy abortion ban (SB 8) took effect September 1, 2021, and a near-total ban followed after Dobbs in 2022. Research comparing observed outcomes with expected trends finds thousands of additional births and a much smaller rise in infant and maternal deaths.\n\nBirths\nA Johns Hopkins study in JAMA estimated that SB 8 was associated with 9,799 additional births in Texas from April through December 2022 (297,088 observed vs. 287,289 expected under a synthetic-control counterfactual)—about a 3% increase. The pattern was not seen in other states. A University of Houston analysis of CDC data reported more than 16,000 more births in 2022 than in 2021 (about a 2% rise in the fertility rate), with larger increases among Hispanic women. Broader work on states with bans estimated roughly 22,000 more births than expected across those states, with Texas accounting for a large share. Later access to out-of-state care and mailed medication abortion has reduced the share of pregnancies carried to term that would otherwise have been aborted.\n\nInfant deaths\nInfant deaths in Texas rose from 1,985 in 2021 to 2,240 in 2022 (+255, or 12.9%), versus a 1.8% rise in the rest of the U.S. A JAMA Pediatrics counterfactual analysis estimated about 216 excess infant deaths from March to December 2022 (12.7% above expectation; confidence interval wide and including zero at the low end). The increase was concentrated in congenital anomalies (up about 23% in Texas while falling slightly elsewhere)—conditions often diagnosed after six weeks and previously a common reason for abortion. A later multi-state analysis attributed most of an estimated 478 excess infant deaths in ban states to Texas (about 384).\n\nMaternal deaths\nThese numbers are far smaller. ProPublica’s analysis of Texas hospital data found 79 in-hospital deaths of pregnant or postpartum women in 2018–2019 versus 120 in 2022–2023. CDC-based analyses report the Texas maternal mortality rate up about 33% from 2019 to 2023 while the national rate fell about 7.5%; one analysis put the 2022 rate increase at 56%. Sepsis among women hospitalized for second-trimester pregnancy loss rose more than 50% after the ban. Absolute maternal deaths remain on the order of dozens per year in a state with roughly 370,000–400,000 births annually.\n\nScale\nIn the first post-ban birth window that has been studied carefully, additional births were on the order of ~10,000, excess infant deaths in the low hundreds, and excess maternal deaths in the tens. Studies treat the ban as associated with these shifts after accounting for other states’ trends, but they do not claim every extra birth or death is caused only by the law; COVID-era disruptions, care access, and continued out-of-state or medication abortions all affect the totals.", "url": "https://x.com/J_Texas_C/status/2106404529088409865", "lane": "abortion_ban_killing_mothers", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2106612327088877736", "t": "2026-10-04T05:08:12+00:00", "views": 28619, "likes": 4350, "reposts": 1982, "handle": "broadwaybabyto", "name": "Kelly", "avatar": "data:image/jpeg;base64,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", "followers": 47944, "text": "Texas can’t release its maternal mortality report before the midterms because it’ll show what we already know….\n\nThe state’s abortion ban is killing women.\n\nGeorgia had the same problem and they fired their maternal mortality review committee. \n\nWake up.", "url": "https://x.com/broadwaybabyto/status/2106612327088877736", "lane": "report_delay_coverup", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2107878714134483329", "t": "2026-10-07T17:00:22+00:00", "views": 1575, "likes": 11, "reposts": 7, "handle": "TexasObserver", "name": "Texas Observer", "avatar": "data:image/jpeg;base64,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", "followers": 72514, "text": "New from @TumaTime: “By delaying their most recent report and refusing to release data from 2022 and 2023, [Texas is] not only preventing lifesaving information from being made public, but they are also refusing to honor the lives lost.” https://t.co/zfcRepSFR0", "url": "https://x.com/TexasObserver/status/2107878714134483329", "lane": "report_delay_coverup", "copy_origin": null, "in_dataset": 1, "copies": 0}, {"id": "2108257499501433116", "t": "2026-10-08T18:05:32+00:00", "views": 2677, "likes": 66, "reposts": 1, "handle": "svegfinne", "name": "Markku Ristola 🇫🇮 🇸🇪", "avatar": "data:image/jpeg;base64,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", "followers": 813, "text": "@YourAnonNews A 2025 Gender Equity Policy Institute analysis found mothers in abortion ban states were nearly twice as likely to die during pregnancy or childbirth compared to in supportive states. In Texas alone, maternal mortality rose 56% in the first full year of its ban (2022), versus an  average 11% increase in other abortion ban states, while in supportive states maternal mortality rate fell 21%.", "url": "https://x.com/svegfinne/status/2108257499501433116", "lane": "abortion_ban_killing_mothers", "copy_origin": null, "in_dataset": 1, "copies": 0}], "edges": [{"src": "2106404529088409865", "dst": "2106201821358493969", "type": "reply"}, {"src": "2106612327088877736", "dst": "2106201821358493969", "type": "quote"}], "stats": {"pushing": 5, "repeated": 0, "pushback": 0, "total": 6}};</script>
+<div id="app"></div>
+<div class="tip" id="tip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(async function () {
+  let DATA = window.__DATA__;
+  if (!DATA) {
+    try { DATA = await (await fetch('data.json')).json(); }
+    catch (e) { document.getElementById('app').textContent = 'No data.json found next to this page.'; return; }
+  }
+  const { meta, lanes, posts, edges, stats } = DATA;
+  const markets = (DATA.markets || []).filter(m => (m.points || []).length > 1);
+  const TZ = (meta.window && meta.window.tz) || 'UTC';
+  const laneByKey = Object.fromEntries(lanes.map(l => [l.key, l]));
+  const PUSHBACK = 'pushback', OTHER = 'other';
+  const isMobile = window.innerWidth < 560;
+  const isVideo = /[?&]video=1/.test(location.search) || document.body.classList.contains('video');
+  if (isVideo) document.body.classList.add('video');
+
+  // ---- derived ------------------------------------------------------------
+  posts.forEach(p => { p.ts = +new Date(p.t); p.isCopy = !!p.copy_origin; });
+  const byId = Object.fromEntries(posts.map(p => [p.id, p]));
+  // range: ?days=N shows the last N days of the window; long windows default to 14 so the dots stay readable
+  const allMax = d3.max(posts, p => p.ts) || Date.now(), allMin = d3.min(posts, p => p.ts) || allMax;
+  const windowDays = (allMax - allMin) / 864e5;
+  const daysParam = (location.search.match(/[?&]days=(\d+|all)/) || [])[1];
+  const rangeDays = daysParam === 'all' ? 0 : daysParam ? +daysParam : windowDays > 21 ? 14 : 0;
+  const rangeStart = rangeDays ? allMax - rangeDays * 864e5 : -Infinity;
+  const drawn = posts.filter(p => laneByKey[p.lane] && p.ts >= rangeStart);           // 'other' lane is not drawn
+  if (!drawn.length) {
+    const a = d3.select('#app');
+    a.append('h1').text(meta.title);
+    a.append('p').attr('class', 'sub').text(lanes.length > 1 ? 'No posts in any lane yet — run classify, then export and render again.' : 'No lanes yet — run discover (or write lanes into the incident YAML), then classify, export, render.');
+    return;
+  }
+  const drawnIds = new Set(drawn.map(p => p.id));
+  const links = edges.filter(e => drawnIds.has(e.src) && drawnIds.has(e.dst));
+  const tMin = d3.min(drawn, p => p.ts), tMax = d3.max(drawn, p => p.ts);
+  const span = Math.max(1, tMax - tMin);
+  const vMin = Math.max(1, Math.min(meta.min_views || 1, d3.max(drawn, p => p.views) || 1)), vMax = Math.max(vMin + 1, d3.max(drawn, p => p.views) || 1);   // copies under the threshold sit at the lane floor
+
+  const fmtDate = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric' });
+  const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+  const fmtAxis = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', month: 'short', day: 'numeric' });
+  const fmtFull = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const fmtN = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'K' : String(n);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; };
+
+  // ---- layout -------------------------------------------------------------
+  const app = d3.select('#app');
+  if (meta.synthetic) app.append('div').attr('class', 'banner').text('SYNTHETIC SAMPLE — every account here is sample_acct_NNN and no post is real. This page exists to develop the chart; run the pull to replace it with live data.');
+
+  const head = app.append('header');
+  const hl = head.append('div');
+  hl.append('h1').text(meta.title);
+  hl.append('p').attr('class', 'sub').text(meta.subtitle);
+  if (windowDays > 10 && !isVideo) {
+    const r = hl.append('p').attr('class', 'range');
+    r.append('span').text('Showing ');
+    [[7, 'last 7 days'], [14, 'last 14 days'], [30, 'last 30 days'], [0, 'the whole window']].filter(([d]) => !d || d < windowDays + 1).forEach(([d, label], i, arr) => {
+      const on = rangeDays === d;
+      r.append('a').attr('href', '?days=' + (d || 'all')).attr('class', on ? 'on' : '').text(label);
+      if (i < arr.length - 1) r.append('span').text(' · ');
+    });
+  }
+  const clock = head.append('div').attr('class', 'clock');
+  const clockDate = clock.append('div').attr('class', 'date');
+  const clockTime = clock.append('div').attr('class', 'time');
+  const clockSpeed = clock.append('div').attr('class', 'speed');
+
+  const statsEl = app.append('div').attr('class', 'stats');
+  const stat = (cls, label) => { const s = statsEl.append('div').attr('class', 'stat ' + cls); const n = s.append('div').attr('class', 'n'); s.append('div').attr('class', 'l').text(label); return n; };
+  const sPush = stat('push', 'posts pushing the story');
+  const sRep = stat('rep', 'repeated posts');
+  const sBack = stat('back', 'posts pushing back');
+
+  const ctl = app.append('div').attr('class', 'controls');
+  const playBtn = ctl.append('button').attr('aria-label', 'Play').text('▶');
+  const slider = ctl.append('input').attr('type', 'range').attr('min', 0).attr('max', 1000).attr('value', 1000);
+  const spd = ctl.append('div').attr('class', 'spd');
+  spd.append('span').text(isMobile ? '' : 'speed');
+  const speeds = [20, 40, 80];      // seconds for the whole window
+  let speedIdx = 1;
+  const spdBtn = spd.append('button').text('1×');
+
+  const wrap = app.append('div').attr('class', 'chartwrap');
+  const W = Math.max(360, wrap.node().getBoundingClientRect().width);
+  // Each lane = a label band (title, counts, description) on top of a plot band for the dots.
+  const band = isMobile ? 30 : isVideo ? 28 : 42;
+  // video: lanes share a fixed plot height so the whole frame fits 1600x1000 with bars below
+  const laneH = isMobile ? 100 : isVideo ? Math.max(70, Math.floor((1080 - 215 - 205 - (markets.length ? 62 : 0)) / Math.max(1, lanes.length))) : 122;
+  const stripH = markets.length ? (isMobile ? 54 : isVideo ? 62 : 72) : 0;
+  // events (incidents/events.yaml) inside the drawn span, grouped when they share a moment; they get a band under the axis
+  const evMap = new Map();
+  (DATA.events || []).forEach(e => { const t = Date.parse(e.at); if (!(t >= tMin - span * 0.015 && t <= tMax + span * 0.02)) return; const g = evMap.get(t) || { t, labels: [], types: [] }; g.labels.push(e.label + (e.all_day ? ' (all day)' : '')); g.types.push(e.type); evMap.set(t, g); });
+  const events = [...evMap.values()].sort((a, b) => a.t - b.t);
+  const evBand = events.length && !isMobile ? 26 : events.length ? 10 : 0;
+  const top = 22 + stripH + evBand, bottom = 8;
+  const H = top + lanes.length * laneH + bottom;
+  const svg = wrap.append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H);
+  const x = d3.scaleLinear().domain([tMin - span * 0.015, tMax + span * 0.02]).range([6, W - 6]);
+  const vNorm = v => Math.max(0, (Math.log10(Math.max(1, v)) - Math.log10(vMin)) / Math.max(1e-9, (Math.log10(vMax) - Math.log10(vMin))));
+  const r = d3.scaleSqrt().domain([vMin, vMax]).range([2.2, isMobile ? 10 : 13]).clamp(true);
+  const laneTop = key => top + laneByKey[key].order * laneH;
+  const plotTop = key => laneTop(key) + band + 4, plotH = laneH - band - 10;
+  // views are log-scaled then eased (pow 0.6) so the 1–10K bulk uses the lane's height instead of hugging the floor
+  const cy = p => plotTop(p.lane) + 10 + (1 - Math.pow(vNorm(p.views), 0.6)) * (plotH - 16) * 0.88 + (hash(p.id) - 0.5) * (plotH - 16) * 0.22;
+  const cx = p => x(p.ts);
+  drawn.forEach(p => { p.x = cx(p); p.y = cy(p); });
+
+  // axis: every 6 local hours, majors at local midnight (walk the domain hour by hour in the incident's tz)
+  const hourOf = t => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false }).formatToParts(new Date(t)); return +parts.find(p => p.type === 'hour').value % 24; };
+  const ticks = [];
+  { const t0 = Math.floor(x.domain()[0] / 36e5) * 36e5; for (let t = t0; t <= x.domain()[1]; t += 36e5) { const hr = hourOf(t); const every = span > 12 * 864e5 ? 24 : span > 4 * 864e5 ? 12 : 6; if (hr % every === 0 && t >= x.domain()[0]) ticks.push({ t, major: hr === 0 }); } }
+  const axis = svg.append('g').attr('class', 'axis');
+  const tick = axis.selectAll('g').data(ticks).join('g').attr('class', d => d.major ? 'major' : 'minor').attr('transform', d => `translate(${x(d.t)},0)`);
+  tick.append('line').attr('y1', 14).attr('y2', H - bottom);
+  const fmtAxisShort = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', day: 'numeric' });
+  const pxPerDay = x(tMin + 864e5) - x(tMin); const fmtDayNum = new Intl.DateTimeFormat('en-US', { timeZone: TZ, day: 'numeric' });
+  tick.filter(d => d.major).append('text').attr('y', 11).attr('x', 3).text(d => (pxPerDay < 46 ? fmtDayNum : isMobile || pxPerDay < 90 ? fmtAxisShort : fmtAxis).format(new Date(d.t)));
+  const pxPer12h = x(tMin + 12 * 36e5) - x(tMin);
+  tick.filter(d => !d.major && !isMobile && hourOf(d.t) === 12 && pxPer12h > 120).append('text').attr('y', 11).attr('x', 2).text('noon');
+
+  // event markers: a dashed rule through the lanes, a dot and a label in the events band (two rows, greedy placement)
+  const evG = svg.append('g').attr('class', 'events');
+  const evColor = t => t === 'poll' ? '#8fb4ff' : t === 'calendar' ? '#e08a2e' : t === 'rally' || t === 'campaign' ? '#f0b06a' : t === 'trump' ? '#ff6b6b' : '#f2f2f0';
+  const bandY = 22 + stripH, rowEnd = [-1e9, -1e9];
+  events.forEach(e => {
+    const px = x(e.t), label = e.labels.length > 1 ? e.labels.length + ' events: ' + e.labels.join(' · ') : e.labels[0];
+    const g = evG.append('g').attr('transform', `translate(${px},0)`);
+    g.append('line').attr('y1', bandY + 4).attr('y2', H - bottom).attr('stroke', evColor(e.types[0])).attr('stroke-opacity', .3).attr('stroke-dasharray', '2,4');
+    g.append('circle').attr('cy', bandY + 4).attr('r', 3).attr('fill', evColor(e.types[0]));
+    g.append('title').text(label);
+    if (isMobile) return;
+    const short = label.length > 38 ? label.slice(0, 37) + '…' : label, w = short.length * 5.4 + 8;
+    const row = px - rowEnd[0] > 8 ? 0 : px - rowEnd[1] > 8 ? 1 : -1;
+    if (row < 0) return;
+    rowEnd[row] = px + w;
+    g.append('text').attr('x', 5).attr('y', bandY + 9 + row * 11).attr('fill', '#b9b9b3').attr('font-size', 9).attr('font-family', 'var(--mono)').text(short);
+  });
+
+  // lanes
+  const laneG = svg.append('g');
+  lanes.forEach(l => {
+    const g = laneG.append('g').attr('class', 'lane-label').attr('transform', `translate(0,${laneTop(l.key)})`);
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', band).attr('fill', 'rgba(11,11,12,.55)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', laneH).attr('y2', laneH);
+    g.append('rect').attr('x', 6).attr('y', 5).attr('width', 3).attr('height', band - 10).attr('fill', l.color).attr('rx', 1.5);
+    g.append('text').attr('class', 't').attr('x', 14).attr('y', 15).attr('fill', l.color).text(l.label);
+    g.append('text').attr('class', 'c').attr('x', 14).attr('y', 27).attr('data-lane', l.key).text('');
+    if (!isMobile && !isVideo) g.append('text').attr('class', 'd').attr('x', 14).attr('y', 38).text((l.description || '').slice(0, 110) + ((l.description || '').length > 110 ? '…' : ''));
+  });
+
+  // prediction-market strip: price (¢) of the first market over the same time axis
+  let priceAt = null;
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    if (pts.length < 2) markets.length = 0;   // nothing in range: no strip (layout already reserved it; harmless)
+  }
+  if (markets.length) {
+    const m = markets[0];
+    const sy0 = 22 + 8, sy1 = 22 + stripH - 14;
+    const pts = m.points.filter(q => q.t >= x.domain()[0] && q.t <= x.domain()[1]);
+    const pmin = Math.min(...pts.map(q => q.p)), pmax = Math.max(...pts.map(q => q.p));
+    const pad = Math.max(2, (pmax - pmin) * 0.25);
+    const y = d3.scaleLinear().domain([pmin - pad, pmax + pad]).range([sy1, sy0]);
+    const g = svg.append('g').attr('class', 'strip');
+    g.append('rect').attr('x', 0).attr('y', 22).attr('width', W).attr('height', stripH - 4).attr('fill', 'rgba(255,255,255,0.025)');
+    g.append('line').attr('class', 'lane-rule').attr('x1', 0).attr('x2', W).attr('y1', 22 + stripH - 4).attr('y2', 22 + stripH - 4);
+    const area = d3.area().x(q => x(q.t)).y0(sy1).y1(q => y(q.p)).curve(d3.curveStepAfter);
+    const line = d3.line().x(q => x(q.t)).y(q => y(q.p)).curve(d3.curveStepAfter);
+    g.append('path').attr('d', area(pts)).attr('fill', 'rgba(224,138,46,0.12)');
+    g.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', '#e08a2e').attr('stroke-width', 1.4);
+    g.append('text').attr('x', 10).attr('y', 22 + 12).attr('fill', '#e08a2e').attr('font-size', 11).attr('font-weight', 700).text(m.label);
+    g.append('text').attr('x', 10).attr('y', 22 + 24).attr('fill', 'var(--ink-3)').attr('font-size', 9.5).attr('font-family', 'var(--mono)').text(`${m.source} · hourly · ${pmin}¢ – ${pmax}¢`);
+    const dot = g.append('circle').attr('r', 3.5).attr('fill', '#e08a2e').attr('stroke', 'var(--bg)');
+    const lbl = g.append('text').attr('fill', 'var(--ink)').attr('font-size', 11).attr('font-weight', 700).attr('font-family', 'var(--mono)');
+    priceAt = t => { let q = pts[0]; for (const r of pts) { if (r.t <= t) q = r; else break; } return q; };
+    window.__priceCursor = t => { const q = priceAt(t); const px = Math.min(x(q.t), x(t)); dot.attr('cx', px).attr('cy', y(q.p)); lbl.attr('x', Math.min(W - 44, px + 6)).attr('y', y(q.p) - 6).text(q.p + '¢'); };
+  }
+
+  // links (drawn before dots)
+  const linkPath = e => { const a = byId[e.dst], b = byId[e.src]; const dx = b.x - a.x; return `M${a.x},${a.y} C${a.x + dx * 0.55},${a.y} ${b.x - dx * 0.55},${b.y} ${b.x},${b.y}`; };
+  const linkSel = svg.append('g').selectAll('path').data(links).join('path')
+    .attr('class', e => 'link ' + e.type).attr('d', linkPath)
+    .attr('stroke', e => e.type === 'copy' ? null : (laneByKey[byId[e.src].lane] || {}).color || '#888');
+
+  // dots + avatars
+  const defs = svg.append('defs');
+  const dotSel = svg.append('g').selectAll('g.p').data(drawn, p => p.id).join('g').attr('class', 'p').attr('transform', p => `translate(${p.x},${p.y})`);
+  dotSel.append('circle').attr('class', p => 'dot' + (p.isCopy ? ' copy' : '') + (p.in_dataset ? '' : ' ref'))
+    .attr('r', p => r(p.views)).attr('fill', p => p.isCopy ? '#ffffff' : laneByKey[p.lane].color);
+  const topAvatars = new Set(drawn.filter(p => p.avatar).sort((a, b) => b.views - a.views).slice(0, 40).map(p => p.id));
+  dotSel.filter(p => topAvatars.has(p.id)).each(function (p) {
+    const rr = r(p.views);
+    if (rr < 5) return;
+    defs.append('clipPath').attr('id', 'c' + p.id).append('circle').attr('r', rr - 1);
+    d3.select(this).append('image').attr('href', p.avatar.replace('_normal', '_bigger')).attr('x', -rr + 1).attr('y', -rr + 1)
+      .attr('width', 2 * rr - 2).attr('height', 2 * rr - 2).attr('clip-path', `url(#c${p.id})`).attr('preserveAspectRatio', 'xMidYMid slice')
+      .on('error', function () { this.remove(); });
+  });
+
+  // "same words ×N" pills on cluster origins
+  const originCounts = {};
+  drawn.forEach(p => { if (p.copy_origin && drawnIds.has(p.copy_origin)) originCounts[p.copy_origin] = (originCounts[p.copy_origin] || 0) + 1; });
+  const pillData = Object.entries(originCounts).filter(([, n]) => n >= 3).map(([id, n]) => { const accts = new Set(drawn.filter(q => q.copy_origin === id).map(q => q.handle)); return { p: byId[id], n, accts: accts.size }; });
+  const pillSel = svg.append('g').selectAll('g').data(pillData).join('g').attr('class', 'pill')
+    .attr('transform', d => {
+      const px = Math.min(W - 96, Math.max(2, d.p.x + r(d.p.views) + 4));
+      const lo = plotTop(d.p.lane), hi = plotTop(d.p.lane) + plotH - 26;
+      const py = Math.max(lo, Math.min(hi, d.p.y - 12));
+      return `translate(${px},${py})`;
+    });
+  pillSel.append('rect').attr('width', 92).attr('height', 24).attr('rx', 4);
+  pillSel.append('text').attr('x', 6).attr('y', 10.5).text(d => `same words ×${d.n}`);
+  pillSel.append('text').attr('class', 's').attr('x', 6).attr('y', 20).text(d => d.accts === 1 ? 'all from 1 account' : `from ${d.accts} accounts`);
+
+  const playhead = svg.append('line').attr('class', 'playhead').attr('y1', top - 6).attr('y2', H - bottom);
+
+  // ticker + bars
+  const ticker = app.append('div').attr('class', 'ticker');
+  const bars = app.append('div').attr('class', 'bars');
+  const barBlock = (title, note) => { const b = bars.append('div'); b.append('h3').text(title).append('span').text(note); return b.append('div'); };
+  const bPosts = barBlock('Posts so far', '');
+  const bViews = barBlock('Views so far', 'each post’s views at pull time, counted when it went up');
+
+  const foot = app.append('footer');
+  foot.append('span').text(`${meta.pulled_at ? 'Views as of ' + fmtFull.format(new Date(meta.pulled_at)) + ' ' + TZ.split('/').pop().replace('_', ' ') + '. ' : ''}${meta.source}.${meta.partial ? ' Pull still in progress — counts will grow on the next run.' : ''}`);
+  foot.append('span').html((meta.credit ? meta.credit + ' · ' : '') + '<a href="accounts.html" style="color:var(--ink-2)">Who moved it →</a> · <a href="analysis.html" style="color:var(--ink-2)">Timing &amp; pushback →</a> · <a href="claims.html" style="color:var(--ink-2)">What is claimed →</a> · <a href="review.html" style="color:var(--ink-2)">Review lanes →</a>');
+
+  // tooltip
+  const tip = d3.select('#tip');
+  const showTip = (ev, p) => {
+    const lane = laneByKey[p.lane] || {};
+    tip.style('display', 'block').html(
+      `<span class="x">✕</span><div class="h"><span>@${esc(p.handle)}${p.name ? ' · ' + esc(p.name) : ''}</span><span>${fmtFull.format(new Date(p.ts))}</span></div>` +
+      `<div class="h"><span class="lane" style="color:${lane.color}">${esc(lane.label || p.lane)}</span><span>${fmtN(p.views)} views · ${fmtN(p.likes)} likes</span></div>` +
+      `<div class="txt">${esc(p.text)}</div>` +
+      (p.copy_origin ? `<div class="h"><span>same words as an earlier post</span></div>` : '') +
+      (p.url && !meta.synthetic && /^https:\/\//.test(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">open on X ↗</a>` : ''));
+    const bw = tip.node().getBoundingClientRect();
+    const px = Math.min(window.innerWidth - bw.width - 12, Math.max(12, ev.clientX - bw.width / 2));
+    const py = ev.clientY + 18 + bw.height > window.innerHeight ? ev.clientY - bw.height - 14 : ev.clientY + 18;
+    tip.style('left', px + 'px').style('top', py + 'px');
+    tip.select('.x').on('click', () => tip.style('display', 'none'));
+  };
+  dotSel.on('click', (ev, p) => { ev.stopPropagation(); showTip(ev, p); });
+  document.addEventListener('click', e => { if (!tip.node().contains(e.target)) tip.style('display', 'none'); });
+
+  // ---- time scrub ---------------------------------------------------------
+  let cur = tMax, playing = false, raf = null, lastTick = 0;
+  const visible = () => drawn.filter(p => p.ts <= cur);
+  function update() {
+    dotSel.classed('hidden', p => p.ts > cur);
+    linkSel.classed('hidden', e => byId[e.src].ts > cur);
+    pillSel.classed('hidden', d => d.p.ts > cur || drawn.filter(q => q.copy_origin === d.p.id && q.ts <= cur).length < 3);
+    playhead.attr('x1', x(cur)).attr('x2', x(cur)).classed('hidden', cur >= tMax);
+    if (window.__priceCursor) window.__priceCursor(cur);
+    const vis = visible();
+    sPush.text(vis.filter(p => p.lane !== PUSHBACK && p.in_dataset).length);
+    sRep.text(vis.filter(p => p.isCopy && p.in_dataset).length);
+    sBack.text(vis.filter(p => p.lane === PUSHBACK && p.in_dataset).length);
+    const d = new Date(cur);
+    clockDate.text(fmtDate.format(d) + '  ·  T+' + (() => { const h = (cur - tMin) / 36e5; return h >= 24 ? Math.floor(h / 24) + 'd ' + Math.floor(h % 24) + 'h' : Math.floor(h) + 'h ' + Math.floor((h % 1) * 60) + 'm'; })());
+    clockTime.text(fmtTime.format(d));
+    clockSpeed.text(playing ? Math.round(span / 6e4 / speeds[speedIdx]) + ' minutes per second' : (cur >= tMax ? 'end of window' : 'paused'));
+    const byLane = {}; lanes.forEach(l => byLane[l.key] = { n: 0, v: 0 });
+    vis.forEach(p => { byLane[p.lane].n++; byLane[p.lane].v += p.views; });
+    laneG.selectAll('text.c').text(function () { const s = byLane[this.dataset.lane]; return `${s.n} posts, ${fmtN(s.v)} views`; });
+    const row = (host, key) => {
+      const data = lanes.map(l => ({ l, v: byLane[l.key][key] })).sort((a, b) => b.v - a.v);
+      const max = Math.max(1, d3.max(data, d => d.v));
+      host.selectAll('div.row').data(data, d => d.l.key).join(enter => { const g = enter.append('div').attr('class', 'row'); g.append('div').attr('class', 'lbl'); g.append('div').attr('class', 'bar'); g.append('div').attr('class', 'val'); return g; })
+        .style('order', (d, i) => i)
+        .each(function (d) { const g = d3.select(this); g.select('.lbl').text(d.l.label).style('color', d.l.color); g.select('.bar').style('width', (100 * d.v / max) + '%').style('background', d.l.color); g.select('.val').text(key === 'v' ? fmtN(d.v) : d.v); });
+    };
+    bPosts.style('display', 'flex').style('flex-direction', 'column'); bViews.style('display', 'flex').style('flex-direction', 'column');
+    row(bPosts, 'n'); row(bViews, 'v');
+    const last = vis[vis.length - 1];
+    ticker.html(last ? `<b>@${esc(last.handle)}</b> · <span style="color:${laneByKey[last.lane].color}">${esc(laneByKey[last.lane].label)}</span> · ${fmtN(last.views)} views${last.isCopy ? ' · <b>same words</b> as an earlier post' : ''}` : '');
+  }
+  function setCur(t, fromSlider) { cur = Math.max(tMin, Math.min(tMax, t)); if (!fromSlider) slider.property('value', Math.round(1000 * (cur - tMin) / span)); update(); }
+  slider.on('input', function () { stop(); setCur(tMin + span * (+this.value / 1000), true); });
+  function step(now) {
+    if (!playing) return;
+    if (now - lastTick > 50) { const dt = (now - lastTick) / 1000; lastTick = now; setCur(cur + span * dt / speeds[speedIdx]); if (cur >= tMax) { stop(); return; } }
+    raf = requestAnimationFrame(step);
+  }
+  function play() { if (cur >= tMax) setCur(tMin); playing = true; playBtn.text('❚❚'); lastTick = performance.now(); raf = requestAnimationFrame(step); update(); }
+  function stop() { playing = false; playBtn.text('▶'); if (raf) cancelAnimationFrame(raf); update(); }
+  playBtn.on('click', () => playing ? stop() : play());
+  spdBtn.on('click', () => { speedIdx = (speedIdx + 1) % speeds.length; spdBtn.text(['2×', '1×', '½×'][speedIdx]); update(); });
+  document.addEventListener('keydown', e => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); playing ? stop() : play(); } });
+  setCur(tMax);
+  window.__tracker = {
+    tMin, tMax, span,
+    setTime: t => setCur(t),
+    setProgress: f => setCur(tMin + span * Math.max(0, Math.min(1, f))),
+    setPlaying: v => { playing = !!v; clockSpeed.text(v ? '' : (cur >= tMax ? 'end of window' : 'paused')); },
+    setSpeedLabel: txt => clockSpeed.text(txt),
+  };
+})();
+</script>
+</body>
+</html>

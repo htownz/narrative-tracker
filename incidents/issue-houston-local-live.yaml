@@ -38,7 +38,88 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about county budget fights and the tax rate, Hidalgo versus the commissioners, Whitmire's agenda and the city budget gap, development rules and growth in Montgomery County, flood and infrastructure spending, and partisan control of the county. Posts about other cities' local government are off-topic.
 
-lanes: []
+lanes:
+- key: county_tax_hikes
+  label: Democrats raised Harris County taxes
+  description: Democratic control of Commissioners Court has driven up homeowner tax bills and the tax
+    rate, and officials like Briones are accused of wasting taxpayer money (billboards, Pride events)
+    while claiming budgets are tight.
+  keywords:
+  - tax bill
+  - tax rate
+  - highest tax rate
+  - commissioners court
+  - briones
+  - billboards
+  - taxpayer money
+  - 8% hike
+- key: county_judge_succession_race
+  label: Race to replace Hidalgo
+  description: The Plummer vs. Sanchez contest for county judge is a referendum on Democratic control
+    of the county, with Plummer attacked as absent and anti-police and Hidalgo's falling approval used
+    as a talking point.
+  keywords:
+  - letitia plummer
+  - orlando sanchez
+  - county judge race
+  - poll
+  - absence rate
+  - anti-police
+  - hobby school
+  - succeed hidalgo
+- key: whitmire_city_hall_dysfunction
+  label: Whitmire's budget gap and controller fights
+  description: 'Mayor Whitmire''s administration is portrayed as chaotic and overreaching: a growing city
+    budget shortfall, clashes with the controller over contracts and adviser pay, and a federal grant
+    filed without council approval.'
+  keywords:
+  - whitmire
+  - controller
+  - budget shortfall
+  - car wash contract
+  - city council
+  - adviser salary
+  - hollins
+  - grant application
+- key: hidalgo_mental_health_smear
+  label: Hidalgo as Democratic cautionary tale
+  description: Hidalgo's 2023 treatment stay is used as a smear and as a supposed pattern of Democrats
+    hiding unstable candidates, notably in the rumor about Talarico and the Ohio facility.
+  keywords:
+  - lina hidalgo
+  - lindner center
+  - talarico
+  - ohio
+  - mental breakdown
+  - nuthouse
+  - private jet
+  - cover up
+- key: flock_policing_ice_security
+  label: Surveillance, policing and ICE fights
+  description: 'Local officials are fought over public safety and surveillance: Flock camera data and
+    oversight, the ICE implications of a federal grant, and whether Democrats are soft on police.'
+  keywords:
+  - flock cameras
+  - privacy
+  - sheriff
+  - ice
+  - public safety
+  - hpd
+  - federal grant
+  - surveillance
+- key: infrastructure_growth_flood_funding
+  label: Infrastructure, growth and flood spending
+  description: 'Posts argue over whether governments are spending on the right priorities: drainage, roads,
+    transit, data centers, housing, homelessness, and the stadium, against tight budgets.'
+  keywords:
+  - drainage
+  - data centers
+  - metro
+  - roads
+  - affordable housing
+  - homelessness
+  - stadium
+  - vision zero
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

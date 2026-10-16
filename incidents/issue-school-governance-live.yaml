@@ -39,7 +39,91 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about the takeover as a turnaround that works versus an undemocratic power grab, test scores and A-F ratings, teacher exodus and discipline, the return to an elected board and whether reforms survive it, Abbott and TEA as drivers, and Fort Worth as the next HISD. The anchor phrases of the pro-reform campaign ('largest turnaround in Texas history', 'no student attends a failing school', 'regardless of zip code') should land in one lane. Posts about school districts outside Texas are off-topic.
 
-lanes: []
+lanes:
+- key: takeover_works_turnaround
+  label: Takeover is a proven turnaround
+  description: The state takeover and Miles' reforms are working, citing improved A-F ratings, rising
+    achievement, 'largest turnaround in Texas history', 'no student attends a failing school', and a financially
+    sustainable model.
+  keywords:
+  - turnaround
+  - a or b ratings
+  - failing school
+  - regardless of zip code
+  - miles
+  - improved ratings
+  - academic gains
+  - sustainable
+- key: undemocratic_power_grab
+  label: Undemocratic state power grab
+  description: The takeover strips local voters and parents of control, with Abbott, Morath and TEA hand-picking
+    unaccountable managers and a commission report offering a counternarrative to the state's account;
+    the fix is returning to an elected board.
+  keywords:
+  - abbott
+  - morath
+  - tea
+  - unelected
+  - board of managers
+  - elected board
+  - power grab
+  - democracy
+  - counternarrative
+- key: classroom_cost_scripted
+  label: Harm to classrooms and staff
+  description: Reforms have damaged schools through scripted lessons, narrowed curriculum, cut arts programs,
+    teacher turnover, harsh discipline, school closures and bus hub changes, as voiced by students and
+    parents.
+  keywords:
+  - scripted
+  - teacher exodus
+  - cut programs
+  - choir
+  - narrowed curriculum
+  - open letter
+  - students
+  - discipline
+  - bus hubs
+- key: money_enrollment_vouchers
+  label: Money, enrollment and vouchers
+  description: Funding and enrollment losses, voucher diversion, surplus spending and school closures
+    show the state's priorities hurting neighborhood schools and costing taxpayers.
+  keywords:
+  - enrollment decline
+  - vouchers
+  - funding
+  - budget
+  - tax dollars
+  - surplus
+  - closures
+  - million
+- key: fort_worth_next_hisd
+  label: Fort Worth as the next HISD
+  description: Fort Worth ISD's takeover is repeating the Houston model, with Board of Managers meetings,
+    student pushback and a warning that other districts are next.
+  keywords:
+  - fort worth isd
+  - fwisd
+  - next hisd
+  - takeover
+  - board of managers
+  - meacham
+  - students letter
+  - other districts
+- key: edtech_privatization_politics
+  label: Privatization, edtech and election politics
+  description: The takeover is framed as serving tech and private interests (Alpha School, TimeBack, SB
+    1882 partners) and as a campaign issue for the governor's race and November ballot.
+  keywords:
+  - alpha school
+  - timeback
+  - ai
+  - privatization
+  - tech giant
+  - governor
+  - ballot
+  - november
+  - campaign
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

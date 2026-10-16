@@ -39,7 +39,79 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about jobs and the trades versus four-year degrees, licensing as a barrier or a protection, employer-led training, state funding and who gets it, immigration and the labor supply, AI and automation, and community colleges' role. Posts about workforce policy in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: short_term_credentials_pipeline
+  label: Short-term credentials fill jobs
+  description: Fast, employer-aligned short-term programs, such as Workforce Pell at community colleges,
+    give Texans a quick path to high-wage, in-demand jobs without a four-year degree.
+  keywords:
+  - workforce pell
+  - short-term programs
+  - high-wage
+  - in-demand jobs
+  - community colleges
+  - credentials
+  - skills training
+- key: economic_growth_needs_workforce
+  label: Booming economy needs skilled workforce
+  description: Texas' economic and energy dominance depends on state investment in training workers for
+    industries like oil and gas, manufacturing and data centers.
+  keywords:
+  - booming economy
+  - energy
+  - permian basin
+  - strengthen our workforce
+  - skilled workers
+  - opportunity
+  - industry
+- key: cte_and_local_champions
+  label: CTE builds school-to-career pathways
+  description: Career and technical education in Texas ISDs and local college partnerships prepare students
+    for trades and careers, led by dedicated educators and employer sponsors.
+  keywords:
+  - career and technical education
+  - cte
+  - isd
+  - students
+  - pathways
+  - lone star college
+  - apprenticeship
+- key: program_integrity_and_aid_fraud
+  label: Student aid needs fraud oversight
+  description: Cases of student aid fraud and wasteful education spending show that state and federal
+    workforce and college funding needs tighter accountability.
+  keywords:
+  - student aid fraud
+  - financial aid
+  - scheme
+  - federal prison
+  - accountability
+  - taxpayer
+  - oversight
+- key: workforce_data_surveillance
+  label: Workforce data used for immigration enforcement
+  description: Texas workforce and labor records are being opened to ICE and other enforcement, raising
+    privacy and labor-supply concerns for immigrant workers.
+  keywords:
+  - ice
+  - texas workforce commission
+  - unemployment records
+  - subpoenas
+  - immigrant workers
+  - labor records
+  - surveillance
+- key: abbott_globalist_tech_conspiracy
+  label: Abbott's tech push as globalist plot
+  description: Abbott's focus on crypto, data centers and human capital is framed as part of a global
+    economic reset, not real opportunity for Texas workers.
+  keywords:
+  - global economy
+  - digital currency
+  - blockchain
+  - data centers
+  - human capital
+  - collapse the dollar
+  - abbott
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

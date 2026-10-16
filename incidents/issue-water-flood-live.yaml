@@ -39,7 +39,81 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about who failed before the Hill Country floods, warning systems and camp rules, state versus local responsibility, water supply and the Water Fund as a long-term fix, Harris County bond spending and equity, and disaster money. Posts about floods or water in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: warning_forecast_alerts
+  label: Warnings and forecasts worked
+  description: Posts relay live flash flood warnings, river rises and forecasts as proof that the warning
+    system works, and urge people to turn around rather than drive into floodwater, sometimes defending
+    forecasters against 'fear mongering' claims.
+  keywords:
+  - flash flood warning
+  - llano river
+  - forecast
+  - turn around don't drown
+  - flood watch
+  - low-water crossings
+  - nws
+- key: honor_victims_act_now
+  label: Honor victims with new laws
+  description: Officials and advocates say the July 4, 2025 Hill Country deaths demand concrete action,
+    such as camp safety rules, warning systems and flood funding, so a repeat never happens.
+  keywords:
+  - july 4
+  - 139 lives
+  - take action
+  - prevent
+  - camp safety
+  - legislation
+  - honor their memories
+- key: camp_mystic_remembrance
+  label: Camp Mystic grief and healing
+  description: Human-interest posts about bereaved families, survivors and public figures remembering
+    the girls lost at Camp Mystic, focused on mourning and resilience rather than blame.
+  keywords:
+  - kellyanne
+  - lost his daughter
+  - bracelet
+  - pray
+  - little girls
+  - healing
+  - camp mystic
+- key: harris_county_flood_failure
+  label: Harris County flood money failures
+  description: Harris County Flood Control District is accused of failing to deliver projects despite
+    Harvey relief and bond money, with state and federal officials pressing it on deadlines and oversight.
+  keywords:
+  - harris county
+  - flood control district
+  - harvey
+  - relief
+  - lack of deliverables
+  - glo
+  - bond
+- key: left_mocked_victims
+  label: Left mocked Christian flood victims
+  description: Partisan claim that liberals cheered or mocked the Camp Mystic deaths because the victims
+    were Christian or conservative, grouped with reactions to Charlie Kirk's killing.
+  keywords:
+  - leftists
+  - rejoiced
+  - mocked
+  - christian
+  - trump supporters
+  - charlie kirk
+  - never forget
+- key: camp_owner_accountability
+  label: Preventable deaths, no accountability
+  description: Argues the Camp Mystic deaths were preventable and blames camp owners and local politicians,
+    for example for refusing aid or warnings, while noting nobody has been charged and that investigations
+    are ongoing.
+  keywords:
+  - nobody has been charged
+  - manslaughter
+  - owners
+  - preventable
+  - 15 months
+  - guadalupe river
+  - county politicians
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

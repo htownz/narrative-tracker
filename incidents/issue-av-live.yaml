@@ -39,7 +39,87 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about safety incidents and who is accountable, jobs for drivers, technology and Texas as the proving ground, cities wanting control versus state preemption, Tesla and Musk, and insurance and liability. Posts about AVs in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: tesla_scaling_hype
+  label: Cybercab scaling proves Tesla winning
+  description: Tesla's fast Cybercab ramp in Austin (300+ cars, 8x in a month, Dallas next) is shown as
+    proof that Tesla's robotaxi is scaling faster than anyone and is the future of transport.
+  keywords:
+  - cybercab
+  - 300+
+  - 8x
+  - scaling
+  - fleet
+  - flooded austin
+  - registered
+  - dallas next
+- key: tesla_vs_waymo_duel
+  label: Tesla overtakes Waymo in Austin
+  description: Head-to-head claims that Waymo is losing ground, shut down, or outnumbered in Austin, and
+    that Tesla's vertical integration and Texas factory give it the edge.
+  keywords:
+  - waymo
+  - overtaken
+  - passed waymo
+  - sightings
+  - tracker
+  - vertical integration
+  - uber
+  - waymo is done
+- key: camera_vs_lidar_weather
+  label: Cameras vs lidar in storms
+  description: 'Austin''s rainstorms and night operations are used as a test of sensor strategy: Tesla''s
+    camera-only system kept running while Waymo''s lidar fleet paused, versus arguments that lidar is
+    needed for edge cases like dark roads.'
+  keywords:
+  - lidar
+  - rain
+  - storm
+  - camera-only
+  - night
+  - 11pm
+  - suspended operations
+  - grey kittens
+- key: safety_first_accountability
+  label: Safety incidents and who answers
+  description: Safety stories and incident reports (NHTSA crashes, stuck or misrouted robotaxis, Waymo
+    blunders, Cybercab crash photos) raise questions of accountability, remote assistance and whether
+    rollouts are careful enough.
+  keywords:
+  - incident
+  - nhtsa
+  - crash
+  - stuck
+  - safety
+  - no injuries
+  - remote assist
+  - blocked ambulance
+- key: texas_proving_ground
+  label: Texas as the AV proving ground
+  description: Texas is framed as the place where autonomy, manufacturing and the economy get built, with
+    the Texas DMV registration and light regulation letting robotaxis expand across the Texas Triangle.
+  keywords:
+  - texas triangle
+  - texas dmv
+  - giga texas
+  - austin
+  - houston
+  - san antonio
+  - no income tax
+  - permit
+- key: rider_economics_experience
+  label: Rider experience, pricing and waits
+  description: First-hand ride reports and price and wait-time comparisons between Cybercab, Model Y robotaxi,
+    Waymo and Uber, treated as evidence of whether robotaxis are really replacing human-driven rides.
+  keywords:
+  - first ride
+  - wait time
+  - price
+  - uberx
+  - surge
+  - no steering wheel
+  - ride quality
+  - tip
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

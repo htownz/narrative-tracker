@@ -39,7 +39,86 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about supply and deregulation versus neighborhood character, manufactured and tiny homes as the answer or as a blight, developers and investors versus residents, county and city rules, encampment bans and housing-first, and who is to blame for rents. Posts about housing in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: build_more_deregulate
+  label: Cut rules, build more supply
+  description: Texas rents and prices are high because zoning, minimum lot sizes, permitting and parking
+    rules block construction, so cities and counties should deregulate and let more homes be built.
+  keywords:
+  - zoning
+  - lot size
+  - permitting
+  - deregulate
+  - supply
+  - upzoning
+  - red tape
+  - build more
+- key: factory_built_tiny_homes
+  label: Manufactured and tiny homes fix it
+  description: Manufactured, modular, factory-built and tiny homes are the fast, cheap route to affordable
+    Texas housing, and rules that restrict them should be loosened.
+  keywords:
+  - manufactured housing
+  - modular
+  - factory-built
+  - tiny homes
+  - mobile home
+  - affordable starter
+  - prefab
+  - hud code
+- key: investors_developers_blame
+  label: Blame investors, landlords, developers
+  description: Corporate landlords, institutional investors, out-of-state buyers and big developers are
+    driving up Texas rents and home prices and pricing out residents.
+  keywords:
+  - corporate landlords
+  - investors
+  - blackrock
+  - rent gouging
+  - price fixing
+  - developers
+  - greed
+  - out-of-state buyers
+- key: nimby_local_control
+  label: Protect neighborhoods, local control
+  description: Residents oppose new apartments, subdivisions and manufactured-home communities as threats
+    to neighborhood character, traffic, schools and property values, and defend local and county control
+    over development.
+  keywords:
+  - neighborhood character
+  - nimby
+  - local control
+  - traffic
+  - property values
+  - county
+  - city council
+  - not in my backyard
+- key: encampment_bans_order
+  label: Enforce encampment bans, restore order
+  description: Homelessness is a public-safety and disorder problem, so Texas should enforce camping bans,
+    clear encampments and push people into shelter or treatment.
+  keywords:
+  - camping ban
+  - encampment
+  - sweeps
+  - prop b
+  - public safety
+  - shelter
+  - clear
+  - enforcement
+- key: housing_first_funding
+  label: Fund housing-first, not criminalization
+  description: Ending homelessness requires funding permanent supportive housing and services, and encampment
+    bans and arrests only move people around without fixing the cause.
+  keywords:
+  - housing first
+  - supportive housing
+  - criminalization
+  - homeless funding
+  - services
+  - vouchers
+  - unhoused
+  - evictions
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

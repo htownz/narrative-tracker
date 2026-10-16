@@ -51,7 +51,87 @@ discover_hint: >
   results, and calls to protect election workers and certification. National posts with no Texas angle belong
   here when they are about the midterms' legitimacy; posts about elections in other countries are off-topic.
 
-lanes: []
+lanes:
+- key: martial_law_ballot_seizure
+  label: Trump allies plot martial law
+  description: Trump and his allies (Tina Peters, Ticktin, Axios-reported activists) are planning martial
+    law, the Insurrection Act, or seizing ballots and voting machines if the midterms go badly, in order
+    to subvert the result.
+  keywords:
+  - martial law
+  - seize ballots
+  - insurrection act
+  - tina peters
+  - ticktin
+  - cancel the midterms
+  - national emergency
+  - axios
+- key: preemptive_rigged_excuse
+  label: Trump pre-claims midterms are rigged
+  description: Trump and the GOP say elections are rigged whenever they lose, so the 'rigged' claim, the
+    2020 fraud hunt and the push to reshape elections are a pretext to reject a Democratic win.
+  keywords:
+  - if we lose it was rigged
+  - authoritarian playbook
+  - 2020 election
+  - rigged excuse
+  - federal seizure
+  - voting equipment
+  - election officials fear
+  - cheat like hell
+- key: musk_gop_rigging
+  label: Musk and GOP will rig it
+  description: Elon Musk, Starlink and Republicans rigged the 2024 election and will rig the midterms
+    again, so Democrats should expect and prevent machine- or tech-based manipulation.
+  keywords:
+  - musk rigged
+  - starlink
+  - rig the midterms
+  - rigged 2024
+  - marc elias
+  - voting machines
+  - dell
+  - stolen election
+- key: noncitizen_voter_fraud
+  label: Noncitizen and voter-roll fraud
+  description: Illegal voting by noncitizens, dirty voter rolls and insecure mail ballots are real threats,
+    so voter ID, the SAVE Act, roll checks and DOJ prosecutions are needed to protect the vote.
+  keywords:
+  - noncitizens
+  - illegal voting
+  - voter rolls
+  - voter id
+  - save act
+  - mail ballots
+  - election integrity
+  - doj charged
+- key: texas_paxton_harris_county
+  label: Paxton and Harris County elections
+  description: In Texas, Paxton's election-fraud cases and control of 'election integrity' are framed
+    either as protecting the vote or as persecution, with Harris County as the contested example of how
+    elections are run.
+  keywords:
+  - paxton
+  - harris county
+  - election integrity
+  - voter registration
+  - felony counts
+  - talarico
+  - early voting
+  - poll watchers
+- key: protect_vote_organize
+  label: Check registration, defend the vote
+  description: Voters and groups urge people to verify registration, vote early and organize against interference,
+    ICE presence and intimidation, and to guard election workers and certification.
+  keywords:
+  - check your registration
+  - plan to vote
+  - verify
+  - blue wave
+  - vote
+  - election workers
+  - certification
+  - voter registration organizations
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
