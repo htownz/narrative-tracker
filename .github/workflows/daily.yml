@@ -50,7 +50,8 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
-            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | grep -vx 'brief' | tr '\n' ' ' || true)
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | grep -v '^lookup=' | grep -vx 'brief' | tr '\n' ' ' || true)
+            LOOKUP=$(grep -o '^lookup=[0-9,]*' .run | head -1 | cut -d= -f2 || true)       # lookup=<id,id>: print those posts (text, counts, links) in the log
             BUDGET=$(grep -o '^budget=[0-9]*' .run | head -1 | cut -d= -f2 || true)     # a backfill run can ask for a longer pull per incident
             grep -qx 'brief' .run && BRIEF=true || true                                  # a line saying `brief` writes the weekly brief this run
             case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
@@ -60,6 +61,7 @@ jobs:
           echo "budget=${BUDGET:-780}" >> "$GITHUB_OUTPUT"
           [ "$(date -u +%u%H)" = "111" ] && BRIEF=true || true                          # Monday 11:17 UTC (6:17 AM CT): the weekly brief
           echo "brief=${BRIEF:-false}" >> "$GITHUB_OUTPUT"
+          echo "lookup=${LOOKUP:-}" >> "$GITHUB_OUTPUT"
           echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
 
       - name: Check secrets
@@ -85,6 +87,7 @@ jobs:
         run: |
           set +e; FAILED=""; OK=0
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
+          [ -n "${{ steps.pick.outputs.lookup }}" ] && python run.py lookup "${{ steps.pick.outputs.lookup }}" || true   # .run: lookup=<id,id>: print those posts
           python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
           python -m tracker.newsfeeds || true  # the Texas and national press into data/news.sqlite (bucket-synced), for claim coverage
           python -m tracker.truth || true      # Trump's Truth Social posts (archive feed) into the same store: events + posts

@@ -50,7 +50,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "refresh-views", "bsky", "youtube", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "refresh-views", "bsky", "youtube", "lookup", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
@@ -75,6 +75,25 @@ def main() -> None:
     if args.command == "registry":
         from tracker import registry
         registry.build()
+        return
+    if args.command == "lookup":                       # print posts by id (the incident argument carries the ids, comma-separated)
+        import json as _json
+        from tracker.config import env
+        ids = [x.strip() for x in (args.incident or "").replace("/", ",").split(",") if x.strip().isdigit()]
+        if not ids:
+            ap.error("lookup needs one or more post ids")
+        api = pull_mod.TwitterAPI(env("TWITTERAPI_IO_KEY"))
+        for t in api.lookup(ids):
+            a = t.get("author") or {}
+            print(f"--- {t.get('id')}  @{a.get('userName')} ({a.get('followers'):,} followers)  {t.get('createdAt')}  views={t.get('viewCount'):,} likes={t.get('likeCount'):,} rt={t.get('retweetCount'):,} quotes={t.get('quoteCount'):,}")
+            print(t.get("text"))
+            q = t.get("quoted_tweet") or {}
+            if q.get("text"):
+                print(f"  [quoting @{(q.get('author') or {}).get('userName')}]: {q.get('text')[:600]}")
+            for u in ((t.get("entities") or {}).get("urls") or []):
+                print("  link:", u.get("expanded_url"))
+            for m in ((t.get("extendedEntities") or {}).get("media") or []):
+                print("  media:", m.get("type"), m.get("media_url_https") or m.get("url"))
         return
     if args.command == "accounts" and args.all:
         from tracker import accounts
