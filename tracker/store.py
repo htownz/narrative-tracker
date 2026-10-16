@@ -38,6 +38,18 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+-- view counts over time: one row per sighting of a post at the threshold (every re-pull and refresh), so growth
+-- is measured rather than reconstructed (tracker/features.py, the weekly brief, the collapse-after-denial outcome)
+CREATE TABLE IF NOT EXISTS view_history (
+    post_id TEXT NOT NULL,
+    at TEXT NOT NULL,
+    view_count INTEGER,
+    like_count INTEGER,
+    retweet_count INTEGER,
+    reply_count INTEGER,
+    quote_count INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_vh_post ON view_history(post_id, at);
 -- claims layer (tracker/claims.py): what each post asserts, grouped into canonical claims
 CREATE TABLE IF NOT EXISTS claims (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -178,8 +190,51 @@ class Store:
         self.conn.executescript(SCHEMA)
 
     # ---- writes -------------------------------------------------------------
+    HISTORY_MIN_VIEWS = 1000
+
+    def record_views(self, rows: Iterable[dict[str, Any]], at: str | None = None) -> int:
+        """Append a view_history sighting for each post at the threshold, unless the latest sighting already
+        shows the same count (re-pulls of a quiet post add nothing)."""
+        at = at or datetime.now(timezone.utc).isoformat(timespec="minutes")
+        n = 0
+        for r in rows:
+            v = int(r.get("view_count") or 0)
+            if v < self.HISTORY_MIN_VIEWS:
+                continue
+            last = self.conn.execute("SELECT view_count FROM view_history WHERE post_id=? ORDER BY at DESC LIMIT 1", (r["id"],)).fetchone()
+            if last and int(last["view_count"] or 0) == v:
+                continue
+            self.conn.execute("INSERT INTO view_history (post_id, at, view_count, like_count, retweet_count, reply_count, quote_count) VALUES (?,?,?,?,?,?,?)",
+                              (r["id"], at, v, int(r.get("like_count") or 0), int(r.get("retweet_count") or 0), int(r.get("reply_count") or 0), int(r.get("quote_count") or 0)))
+            n += 1
+        return n
+
+    def seed_history(self) -> int:
+        """First run with the history table: one sighting per post at the threshold, dated by the last pull."""
+        if self.conn.execute("SELECT 1 FROM view_history LIMIT 1").fetchone():
+            return 0
+        at = self.get_meta("pulled_at") or datetime.now(timezone.utc).isoformat(timespec="minutes")
+        rows = [dict(r) for r in self.conn.execute("SELECT id, view_count, like_count, retweet_count, reply_count, quote_count FROM posts WHERE view_count >= ?",
+                                                   (self.HISTORY_MIN_VIEWS,))]
+        n = self.record_views(rows, at=at)
+        self.conn.commit()
+        return n
+
+    def view_series(self, post_ids: Iterable[str]) -> dict[str, list[tuple[str, int]]]:
+        out: dict[str, list[tuple[str, int]]] = {}
+        ids = list(post_ids)
+        for i in range(0, len(ids), 500):
+            chunk = ids[i:i + 500]
+            q = f"SELECT post_id, at, view_count FROM view_history WHERE post_id IN ({','.join('?' * len(chunk))}) ORDER BY post_id, at"
+            for r in self.conn.execute(q, chunk):
+                out.setdefault(r["post_id"], []).append((r["at"], int(r["view_count"] or 0)))
+        return out
+
     def upsert_posts(self, rows: Iterable[dict[str, Any]]) -> int:
-        """Insert or refresh posts. A row already in the dataset is never demoted to a reference-only row."""
+        """Insert or refresh posts. A row already in the dataset is never demoted to a reference-only row.
+        Every sighting at the threshold is also appended to view_history."""
+        rows = list(rows)
+        self.record_views(rows)
         n = 0
         for r in rows:
             existing = self.conn.execute("SELECT in_dataset FROM posts WHERE id = ?", (r["id"],)).fetchone()

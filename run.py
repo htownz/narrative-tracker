@@ -141,11 +141,18 @@ def main() -> None:
         render_mod.render(inc)
     elif args.command == "all":
         if inc.db_path.exists():
-            st = Store(inc.db_path); n = st.compact(); st.close()
+            st = Store(inc.db_path); n = st.compact(); seeded = st.seed_history(); st.close()
             if n:
                 print(f"compact: {n} rows slimmed; store is {inc.db_path.stat().st_size / 1e6:.1f} MB")
+            if seeded:
+                print(f"view history seeded with {seeded} posts")
         if not pull_mod.pull(inc, budget=args.budget, pause=args.pause):
             print("pull paused on the time budget — continuing with what is stored; the next run resumes the pull", file=sys.stderr)
+        if inc.live:
+            try:   # the still-moving tail: posts 2-7 days old that the re-pull window no longer covers (2 calls, ~1.5 cents)
+                pull_mod.refresh_views(inc, top_n=100, min_age_hours=48, max_age_hours=168, pause=args.pause)
+            except SystemExit as e:
+                print(f"[refresh-views] skipped: {e}", file=sys.stderr)
         if not inc.lanes:
             lanes = lanes_mod.discover(inc)
             save_lanes(inc, lanes)

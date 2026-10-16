@@ -30,7 +30,7 @@ from .store import Store
 
 COLUMNS = ["run_at", "asof", "slug", "kind", "key", "label", "age_h", "posts", "views", "accounts", "copies", "first_views",
            "first_followers", "views_1h", "views_6h", "views_24h", "momentum_6h", "control", "new_accounts", "burst",
-           "event_follow", "event_type", "market_price", "market_change_24h", "gain_24h", "gain_72h", "top5_24h"]
+           "event_follow", "event_type", "market_price", "market_change_24h", "gain_24h", "gain_72h", "top5_24h", "measured"]
 
 def _window_start_utc(inc) -> str:
     from datetime import datetime, timezone
@@ -92,7 +92,7 @@ def _group_rows(inc: Incident, kind: str, groups: dict[str, tuple[str, list[dict
             "control": ctrl, "new_accounts": round(f["new_accounts"], 3), "burst": round(f["burst"], 3),
             "event_follow": int(bool(ev)), "event_type": ev["type"] if ev else "",
             "market_price": market[0], "market_change_24h": market[1],
-            "gain_24h": None, "gain_72h": None, "top5_24h": None,
+            "gain_24h": None, "gain_72h": None, "top5_24h": None, "measured": None,
         })
     return rows
 
@@ -111,9 +111,45 @@ def rank_now(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def _label_outcomes(existing: list[dict[str, Any]], groups_by_kind: dict[str, dict[str, list[dict[str, Any]]]], asof: datetime) -> int:
-    """Fill gain_24h / gain_72h / top5_24h on rows old enough, from the posts now in the store."""
+def _views_at(series: list[tuple[str, int]], t: datetime) -> int | None:
+    """The last sighting at or before t; None when the first sighting is later than t."""
+    best = None
+    for at, v in series:
+        if datetime.fromisoformat(at) <= t:
+            best = v
+        else:
+            break
+    return best
+
+
+def measured_gain(posts: list[dict[str, Any]], series: dict[str, list[tuple[str, int]]], t0: datetime, t1: datetime) -> int | None:
+    """Views the group's posts gained between t0 and t1 according to view_history: for posts seen before t0 the
+    difference of sightings, for posts born in between their views at t1. None when fewer than half of the
+    group's posts have a sighting in the window (then the caller falls back to the reconstruction)."""
+    total, covered = 0, 0
+    for p in posts:
+        created = datetime.fromisoformat(p["created_at"])
+        if created >= t1:
+            continue
+        ser = series.get(p["id"]) or []
+        if not any(t0 <= datetime.fromisoformat(at) <= t1 + timedelta(hours=6) for at, _ in ser):
+            continue
+        v1 = _views_at(ser, t1 + timedelta(hours=6))
+        if v1 is None:
+            continue
+        v0 = _views_at(ser, t0) if created < t0 else 0
+        total += max(0, v1 - (v0 or 0))
+        covered += 1
+    eligible = sum(1 for p in posts if datetime.fromisoformat(p["created_at"]) < t1)
+    return total if eligible and covered >= max(1, eligible // 2) else None
+
+
+def _label_outcomes(existing: list[dict[str, Any]], groups_by_kind: dict[str, dict[str, list[dict[str, Any]]]], asof: datetime,
+                    series: dict[str, list[tuple[str, int]]] | None = None) -> int:
+    """Fill gain_24h / gain_72h / top5_24h on rows old enough. Measured from view_history when it covers the
+    group (measured=1), otherwise reconstructed from when posts appeared (measured=0)."""
     filled = 0
+    series = series or {}
     by_asof_kind: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for r in existing:
         by_asof_kind[(r["asof"], r["kind"])].append(r)
@@ -126,7 +162,12 @@ def _label_outcomes(existing: list[dict[str, Any]], groups_by_kind: dict[str, di
                 posts = groups_by_kind.get(kind, {}).get(r["key"])
                 if posts is None:
                     continue
-                r[col] = _views_between(posts, t0, t0 + timedelta(hours=horizon))
+                m = measured_gain(posts, series, t0, t0 + timedelta(hours=horizon)) if series else None
+                if m is not None:
+                    r[col], r["measured"] = m, 1
+                else:
+                    r[col] = _views_between(posts, t0, t0 + timedelta(hours=horizon))
+                    r["measured"] = r.get("measured") or 0
                 filled += 1
             if col == "gain_24h" and kind == "claim":
                 ranked = sorted((r for r in rows if r["gain_24h"] not in ("", None)), key=lambda r: -int(r["gain_24h"]))
@@ -171,7 +212,10 @@ def features(inc: Incident) -> Path:
         with path.open(encoding="utf-8", newline="") as f:
             existing = [dict(r) for r in csv.DictReader(f)]
     groups_by_kind = {"lane": {k: v[1] for k, v in lane_groups.items()}, "claim": {k: v[1] for k, v in claim_groups.items()}}
-    filled = _label_outcomes(existing, groups_by_kind, asof)
+    st2 = Store(inc.db_path)
+    series = st2.view_series({p["id"] for g in groups_by_kind.values() for ps in g.values() for p in ps})
+    st2.close()
+    filled = _label_outcomes(existing, groups_by_kind, asof, series)
     # one snapshot per asof: a re-run on unchanged data replaces its own rows instead of duplicating them
     existing = [r for r in existing if r["asof"] != asof.isoformat()]
     with path.open("w", encoding="utf-8", newline="") as f:

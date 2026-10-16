@@ -164,7 +164,10 @@ not only the post it fixed. If a whole lane is wrong, edit its label or descript
 ## View counts
 
 Posts keep the view count from when they were first pulled (the original chart's convention), except the last
-`refresh_days` days, which are re-pulled each run. Once a week (the Sunday 6:17 AM CT run) `refresh-views`
+`refresh_days` days, which are re-pulled each run, and the 100 most-viewed posts between two and seven days old,
+which every live run re-looks-up (two calls). Every sighting of a post at 1K+ views is appended to `view_history`,
+so growth is measured: the feature table's `gain_24h` / `gain_72h` come from the history when it covers a claim
+(`measured=1`) and from when posts appeared otherwise. Once a week (the Sunday 6:17 AM CT run) `refresh-views`
 re-looks-up each tracker's 500 most-viewed posts (10 calls, about 8 cents) so the big numbers stay current.
 
 ## Tests

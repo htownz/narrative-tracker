@@ -271,17 +271,20 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
     return complete
 
 
-def refresh_views(inc: Incident, top_n: int = 500, min_age_hours: float = 24.0, pause: float | None = None) -> int:
-    """Re-look-up the most-viewed posts so view counts don't stay frozen at first-pull values.
-    50 ids per call, so 500 posts = 10 calls (~$0.075). Returns the number of posts updated."""
+def refresh_views(inc: Incident, top_n: int = 500, min_age_hours: float = 24.0, max_age_hours: float | None = None,
+                  pause: float | None = None) -> int:
+    """Re-look-up the most-viewed posts so view counts don't stay frozen at first-pull values; every look-up is
+    also a view_history sighting. 50 ids per call, so 500 posts = 10 calls (~$0.075). With max_age_hours the
+    candidates are limited to posts younger than that (the per-run refresh of the still-moving tail)."""
     api_key = env("TWITTERAPI_IO_KEY")
     if not api_key:
         sys.exit("TWITTERAPI_IO_KEY is not set")
     store = Store(inc.db_path)
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=min_age_hours)).isoformat()
+    floor = (datetime.now(timezone.utc) - timedelta(hours=max_age_hours)).isoformat() if max_age_hours else "0000"
     rows = store.conn.execute(
-        "SELECT id FROM posts WHERE created_at IS NOT NULL AND created_at <= ? AND view_count >= ? ORDER BY view_count DESC LIMIT ?",
-        (cutoff, inc.min_views, top_n)).fetchall()
+        "SELECT id FROM posts WHERE created_at IS NOT NULL AND created_at <= ? AND created_at >= ? AND view_count >= ? ORDER BY view_count DESC LIMIT ?",
+        (cutoff, floor, inc.min_views, top_n)).fetchall()
     ids = [r["id"] for r in rows if r["id"]]
     if not ids:
         store.close()
@@ -294,6 +297,7 @@ def refresh_views(inc: Incident, top_n: int = 500, min_age_hours: float = 24.0, 
         if not row:
             continue
         new = flatten_tweet(t, in_dataset=int(row["in_dataset"] or 0))
+        store.record_views([new])
         store.conn.execute(
             "UPDATE posts SET view_count=?, like_count=?, retweet_count=?, reply_count=?, quote_count=?, author_followers=?, raw=? WHERE id=?",
             (new["view_count"], new["like_count"], new["retweet_count"], new["reply_count"], new["quote_count"],

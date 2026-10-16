@@ -401,3 +401,19 @@ def test_link_rings_normalize_and_detect():
     found = rings.find_rings(burst + slow)
     assert len(found) == 1 and found[0]["url"] == "example.com/story" and found[0]["burst_accounts"] == 6 and found[0]["suspicious"]
     assert found[0]["small_accounts"] == 1.0 and found[0]["lanes"] == {"x": 6}
+
+
+# ------------------------------------------------------------------ view history
+def test_view_history_records_sightings_and_seeds_once(tmp_path):
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    t = {"id": "1", "text": "a", "createdAt": "Mon Oct 12 10:00:00 +0000 2026", "viewCount": 1500, "author": {"userName": "h"}}
+    st.upsert_posts([flatten_tweet(t), flatten_tweet({**t, "id": "2", "viewCount": 50})])      # post 2 is under the threshold
+    st.upsert_posts([flatten_tweet(t)])                                                          # same count again: no new row
+    st.upsert_posts([flatten_tweet({**t, "viewCount": 4000})])                                   # grew: new row
+    series = st.view_series(["1", "2"])
+    assert [v for _, v in series["1"]] == [1500, 4000] and "2" not in series
+    assert st.seed_history() == 0                                                                # history exists: nothing to seed
+    st.conn.execute("DELETE FROM view_history"); st.conn.commit()
+    assert st.seed_history() == 1 and st.seed_history() == 0
+    st.close()
