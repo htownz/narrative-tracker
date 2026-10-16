@@ -1,13 +1,15 @@
-# Grey Havens Strategies: clients and prospects, the policy areas each one lives or dies on, and the trackers
-# that watch those areas. This is the long-term map — the race trackers end Nov 3; these run through the 2027
-# session. Edit freely; the clients page (/clients/) and the hub's "By client" grouping are built from it.
+# Grey Havens Strategies: clients, prospects and former clients (from the firm's client notice list, Oct 2026,
+# plus Doulio, Housing Forward, RTX and the Houston Food Bank), the policy areas each lives on, and the trackers
+# that watch them. The race trackers end Nov 3; the issue trackers run through the 2027 session.
 #
-# Fields per client: name, status (client | prospect | pro-bono | former), lead (firm), practice, areas: a list of
+# Fields per client: name, status (client | prospect | pro-bono | former), notice (who sends client notices),
+# practice, areas: a list of
 #   - area:        a policy area the client cares about
 #     trackers:    slugs of trackers that watch it (incidents/<slug>.yaml)
 #     why:         one line on what the client needs from it
 #     legislation: bills, riders, agencies, rulemakings, committees to watch (free text; session mode reads this)
-#     voices:      elected officials and institutions whose rhetoric on the area matters (X handles or names)
+#     voices:      elected officials and institutions whose rhetoric on the area matters
+#   confirm: a question for the firm when the mapping is a guess
 # Keep client-confidential detail out of here: the repo is public.
 
 firm_practices: [energy and electricity, transportation and infrastructure, appropriations and tax, local and municipal government]
@@ -22,25 +24,102 @@ clients:
         why: Whether the midterm result is accepted decides the political weather every client works in through January; the Texas side (Harris County, the SOS, Paxton's prosecutions) is where election bills come from
         legislation: Election Code changes in 2027 (certification, mail ballots, voter roll maintenance, poll watchers); SOS and AG election-integrity units; Harris County election administration
         voices: [GregAbbott_TX, KenPaxtonTX, TXsecofstate, Harris County Clerk, Sen. Bryan Hughes, Rep. Briscoe Cain, Senate State Affairs, House Elections]
-      - area: The 2027 legislative session
+      - area: The 2027 session's big four
         trackers: [issue-property-tax-live, issue-vouchers-live, issue-grid-live, issue-data-centers-live]
         why: The firm's practice areas, watched continuously so the session starts with a baseline
         legislation: Interim charges; the Governor's emergency items; Patrick's priority list; the budget
-        voices: [GregAbbott_TX, DanPatrick, SpeakerBurrows, Texas House and Senate leadership]
+        voices: [GregAbbott_TX, DanPatrick, SpeakerBurrows, House and Senate leadership]
 
+  # ---- current clients ----
   - name: Anheuser-Busch
     status: client
+    notice: Jim; cc Andrea, Ben
     practice: appropriations and tax
     areas:
       - area: Hemp-derived THC and beverage alcohol regulation
         trackers: [issue-hemp-thc-live]
         why: The THC ban fight (Patrick's priority) and alcohol-to-go, distribution and excise rules shape the beverage market and the Lege calendar
         legislation: SB 3-style THC ban and its special-session sequels; TABC rules; beer distribution and franchise law; alcohol excise in the budget
-        voices: [DanPatrick, GregAbbott_TX, TexasTABC, Texas House Licensing & Administrative Procedures, Senate State Affairs]
+        voices: [DanPatrick, GregAbbott_TX, TexasTABC, House Licensing & Administrative Procedures, Senate State Affairs]
+
+  - name: CenterPoint Energy
+    status: client
+    notice: Jim
+    practice: energy and electricity
+    areas:
+      - area: Outages, rates, resiliency and utility accountability
+        trackers: [issue-centerpoint-live, issue-grid-live]
+        why: Every outage is a story about the company; rate cases and the resiliency plan are decided in that weather; accountability bills follow
+        legislation: PUC rate cases and the resiliency plan; utility accountability bills (post-Beryl); SB 6 large-load rules; ERCOT market design
+        voices: [PUCTX, ERCOT_ISO, GregAbbott_TX, DanPatrick, Houston delegation, Sen. Charles Schwertner, Rep. Todd Hunter, Harris County Commissioners Court]
+      - area: Transmission build-out
+        trackers: [issue-765kv-live]
+        why: CenterPoint builds and pays for transmission; routing fights and cost allocation land on it
+        legislation: PUC 765-kV orders; cost allocation; eminent domain rules
+
+  - name: City of Alamo Heights
+    status: client
+    notice: Andrea
+    practice: local and municipal government
+    areas:
+      - area: Municipal authority, preemption and revenue caps
+        trackers: [issue-local-control-live]
+        why: A small city's room to govern is set by preemption bills and the revenue cap
+        legislation: Preemption bills; 3.5% revenue cap and its exceptions; TML priorities; annexation and ETJ
+        voices: [Texas Municipal League, Bexar County delegation, Senate Local Government, House Urban Affairs]
+
+  - name: City of Eagle Pass
+    status: client
+    notice: Andrea
+    practice: local and municipal government
+    areas:
+      - area: The border, Operation Lone Star and trade
+        trackers: [issue-border-live]
+        why: The city is the stage for state border policy; funding, Shelby Park, the bridges and trade decide its budget and its politics
+        legislation: Operation Lone Star appropriations; border infrastructure and ports-of-entry funding; state–federal litigation; disaster and reimbursement rules
+        voices: [GregAbbott_TX, Rep. Eddie Morales, Sen. Pete Flores, Texas DPS, Maverick County, CBP]
+      - area: Municipal authority and revenue
+        trackers: [issue-local-control-live]
+        why: Same preemption and cap questions as every city
+
+  - name: CDCAT
+    status: client
+    notice: Jay
+    practice: local and municipal government
+    confirm: Community Development Corporation Association of Texas? Mapped to housing and community development
+    areas:
+      - area: Affordable housing finance and community development
+        trackers: [issue-housing-live]
+        why: TDHCA programs, housing tax credits, and the politics of "affordable" decide the pipeline
+        legislation: TDHCA and housing tax credit rules; local housing incentives; CDC-related statutes
+        voices: [TDHCA, House Urban Affairs, Senate Local Government]
+
+  - name: Etex Communications
+    status: client
+    notice: Jay
+    practice: transportation and infrastructure
+    areas:
+      - area: Rural broadband and telecom
+        trackers: [issue-broadband-live]
+        why: BEAD money, the Universal Service Fund and pole rules decide whether rural fiber pays
+        legislation: BEAD administration (Broadband Development Office); Texas Universal Service Fund; pole attachment and right-of-way; satellite subsidy fights
+        voices: [Texas Comptroller / BDO, PUCTX, Sen. Robert Nichols, Rep. Trent Ashby, rural caucus]
+
+  - name: Flex
+    status: client
+    notice: Jim; cc Andrea
+    practice: appropriations and tax
+    confirm: Flex Ltd (manufacturing, Austin)? Mapped to economic development and manufacturing
+    areas:
+      - area: Manufacturing incentives, semiconductors and tariffs
+        trackers: [issue-economic-development-live]
+        why: JETI, the chips fund and tariff policy shape where the company builds and what it asks the state for
+        legislation: JETI (Gov. Code ch. 403); Texas Semiconductor Innovation Fund; franchise and sales tax on manufacturing; workforce riders
+        voices: [GregAbbott_TX, Texas Economic Development & Tourism, Senate Business & Commerce, House Trade Workforce & Economic Development]
 
   - name: Gated Rentals
     status: client
-    lead: Ben Melson
+    notice: Jim
     practice: local and municipal government
     areas:
       - area: Rental housing that is affordable; manufactured and factory-built homes; lot-size and land-use rules
@@ -52,30 +131,172 @@ clients:
         trackers: [issue-houston-local-live]
         why: The client's communities sit in Montgomery and Harris counties; commissioners courts set the rules that bite first
 
-  - name: Transfr
+  - name: Houston Area Women's Center (HAWC)
     status: client
+    notice: Jim
     practice: appropriations and tax
     areas:
-      - area: Workforce and career-technical training; VR training; juvenile justice programs; JET grants
-        trackers: [issue-workforce-live]
-        why: Texas Jobs Council recommendations (Nov 2026), TEA/THECB/TWC program funding, JET grants (Oct 2026 round), juvenile probation partnerships in ~22 counties
-        legislation: Texas Jobs Council recommendations and any resulting bills; JET grant appropriation; TWC and THECB riders; HB 8 community college funding follow-ons; TJJD budget
-        voices: [GovAbbott, TXWorkforce, TEAinfo, THECB, Texas Jobs Council, Senate Education K-16, House Higher Education]
+      - area: Family violence and sexual assault services funding
+        trackers: [issue-victim-services-live]
+        why: VOCA cuts and the state backfill, HHSC family violence funding, and the stories that move appropriators
+        legislation: VOCA backfill in the budget; HHSC Family Violence Program and SAPCS riders; crime victims' compensation; protective order bills
+        voices: [TexasHHSC, Senate Finance, House Appropriations Article II, Harris County delegation, Texas Council on Family Violence]
+
+  - name: HISD Majority (Rajeev Bajaj and Alex Hales-Elizondo)
+    status: client
+    notice: Ben and Jim
+    practice: education
+    areas:
+      - area: HISD governance, redistricting and the return to an elected board
+        trackers: [issue-school-governance-live]
+        why: The Mon/Wed/Fri HISD sweep, automated — the suspected CRC Advisors-linked campaign, official amplification by the Governor's office and TEA, and the anchor phrases
+        legislation: TEC 11.052; HISD trustee redistricting; May 2027 bond mechanics (LGC / PFC); SB 1882
+        voices: [GregAbbott_TX, TEAinfo, Mike Miles, HISD trustees, Houston delegation, Texas 2036, Good Reason Houston]
+
+  - name: Montera Infrastructure
+    status: client
+    notice: Andrea; cc Jim
+    practice: energy and electricity
+    areas:
+      - area: Hyperscale data center siting, power and water
+        trackers: [issue-data-centers-live, issue-grid-live]
+        why: Local moratoria (seven jurisdictions and counting), Abbott's data center standards, PUCT/ERCOT large-load rules, Harris County sentiment
+        legislation: Large-load interconnection rules (SB 6 implementation); data center transparency; county moratorium authority; water-use reporting
+        voices: [PUCTX, ERCOT_ISO, GregAbbott_TX, Harris County Commissioners Court, Sen. Phil King, Sen. Charles Schwertner]
+
+  - name: Muller Law Firm
+    status: client
+    notice: Jim; cc Andrea
+    practice: appropriations and tax
+    confirm: What is the engagement about? No tracker mapped until the issue is named
+    areas: []
+
+  - name: NRHC
+    status: client
+    notice: Jim; cc Andrea
+    practice: appropriations and tax
+    confirm: Which NRHC? No tracker mapped until the issue is named
+    areas: []
+
+  - name: No More Victims
+    status: client
+    notice: Jim
+    practice: appropriations and tax
+    areas:
+      - area: Children of incarcerated parents; victims' services
+        trackers: [issue-victim-services-live]
+        why: Program funding and the criminal-justice frame around families of the incarcerated
+        legislation: Article II and V riders; TDCJ and TJJD family programs; grant programs at the Governor's office
+        voices: [Senate Criminal Justice, House Corrections, Harris County delegation]
+
+  - name: Nortex Communications
+    status: client
+    notice: Jay
+    practice: transportation and infrastructure
+    areas:
+      - area: Rural broadband and telecom
+        trackers: [issue-broadband-live]
+        why: As Etex
+
+  - name: Onward
+    status: client
+    notice: Jim; Andrea
+    practice: energy and electricity
+    confirm: Onward Energy (ERCOT generation)? Mapped to the grid and oil-and-gas trackers
+    areas:
+      - area: Power generation and the ERCOT market
+        trackers: [issue-grid-live, issue-oil-gas-live]
+        why: Market design, the Texas Energy Fund, renewables rules and gas policy decide what a generator earns
+        legislation: Texas Energy Fund; ERCOT market design (PCM, firming); renewables siting bills; PUC rules
+        voices: [PUCTX, ERCOT_ISO, Sen. Phil King, Sen. Charles Schwertner, Rep. Todd Hunter]
+
+  - name: Poka Lambro
+    status: client
+    notice: Jay
+    practice: transportation and infrastructure
+    areas:
+      - area: Rural broadband and telecom
+        trackers: [issue-broadband-live]
+        why: As Etex
+
+  - name: Recana Solutions
+    status: client
+    notice: Jim and Jay
+    practice: appropriations and tax
+    confirm: What does Recana do and what is the engagement? No tracker mapped until the issue is named
+    areas: []
+
+  - name: The Safety Navigator
+    status: pro-bono
+    notice: Jim
+    practice: local and municipal government
+    areas:
+      - area: Youth camp safety regulation; DSHS Sunset review
+        trackers: [issue-water-flood-live]
+        why: The post-Camp Mystic rules the client helps camps comply with, and the Sunset review of DSHS that could rewrite who regulates camps
+        legislation: DSHS Sunset bill (2027); youth camp safety rules (HSC ch. 141); flood-warning requirements
+        voices: [TexasDSHS, Sunset Advisory Commission, Sen. Charles Perry, Rep. Drew Darby, Kerr County officials]
+
+  - name: TD Bank Group
+    status: client
+    notice: Andrea; cc Jim
+    practice: appropriations and tax
+    areas:
+      - area: Banking, anti-ESG and anti-boycott law, financial regulation
+        trackers: [issue-financial-services-live]
+        why: The Comptroller's boycott lists, the firearms and energy boycott laws, and state banking rules decide whether a bank can do business with Texas governments
+        legislation: SB 13 / SB 19 boycott laws and the Comptroller's lists; Department of Banking rules; Texas Stock Exchange legislation; consumer finance and fee bills
+        voices: [Texas Comptroller, Texas Department of Banking, Senate State Affairs, House Pensions Investments & Financial Services]
+
+  - name: Teach for America
+    status: client
+    notice: Jim
+    practice: education
+    areas:
+      - area: Teacher pipeline, certification and TEA funding
+        trackers: [issue-k12-live]
+        why: Alternative certification rules, teacher pay and the TEA budget decide the corps' place in Texas schools
+        legislation: Teacher certification rules (SBEC); TEA riders; HB 2 implementation; school finance
+        voices: [TEAinfo, SBEC, Senate Education K-16, House Public Education]
+
+  - name: Texans for Lawsuit Reform (TLR)
+    status: client
+    notice: Jim and Jay
+    practice: appropriations and tax
+    areas:
+      - area: Civil justice and tort reform
+        trackers: [issue-tort-reform-live]
+        why: Nuclear verdicts, trucking litigation and the business courts are the 2027 fights; the narrative decides which side looks like the victim
+        legislation: Damages and verdict reform; trucking litigation (HB 19 follow-ons); business courts expansion; insurance litigation bills
+        voices: [Senate State Affairs, House Judiciary & Civil Jurisprudence, Texas Trial Lawyers Association, Sen. Bryan Hughes]
+
+  - name: Texas Association of Counties
+    status: client
+    notice: Jay
+    practice: local and municipal government
+    areas:
+      - area: County authority, unfunded mandates and property tax
+        trackers: [issue-local-control-live, issue-property-tax-live]
+        why: Jail costs, indigent defense, the revenue cap and state mandates are what counties fight about every session
+        legislation: County revenue cap; unfunded mandate bills; jail and indigent defense funding; county officials' bills
+        voices: [Senate Local Government, House County Affairs, county judges' associations]
 
   - name: TSPE / MATHCOUNTS
     status: client
-    lead: Jay Williamson
+    notice: Jay and Jennifer
     practice: appropriations and tax
     areas:
-      - area: TEA appropriations for academic competitions (MATHCOUNTS, Academic Decathlon); engineering profession
-        trackers: [issue-workforce-live]
-        why: Rider 15 and the FY 2028-29 LAR; the budget conference is where this is won or lost, and the narrative is thin until session
+      - area: TEA appropriations for academic competitions; engineering profession
+        trackers: [issue-k12-live, issue-workforce-live]
+        why: Rider 15 and the FY 2028-29 LAR; the budget conference is where this is won or lost
         legislation: TEA LAR Rider 15 (FSP GT set-aside, GR allocation for MATHCOUNTS); Article III; engineering licensure (TBPELS)
         voices: [TEAinfo, Senate Finance, House Appropriations, Article III subcommittee chairs]
 
   - name: TTARA
     status: client
+    notice: Jim
     practice: appropriations and tax
+    confirm: Listed as "TTAA" on the notice sheet; treated as the Texas Taxpayers and Research Association
     areas:
       - area: Data center sales-tax exemption and data center policy
         trackers: [issue-data-centers-live]
@@ -86,18 +307,82 @@ clients:
         trackers: [issue-property-tax-live]
         why: Compression, homestead exemption growth, appraisal caps, and the "abolish property tax" push define the 2027 tax debate
         legislation: Property tax relief in the budget; appraisal cap bills; local revenue limits; school finance interaction
-        voices: [DanPatrick, GregAbbott_TX, Senate Local Government, House Ways & Means, Texas Taxpayers and Research Association]
+        voices: [DanPatrick, GregAbbott_TX, Senate Local Government, House Ways & Means]
+
+  - name: Totelcom Communications
+    status: client
+    notice: Jay
+    practice: transportation and infrastructure
+    areas:
+      - area: Rural broadband and telecom
+        trackers: [issue-broadband-live]
+        why: As Etex
+
+  - name: Transfr
+    status: client
+    notice: Jay and Ben
+    practice: appropriations and tax
+    areas:
+      - area: Workforce and career-technical training; VR training; juvenile justice programs; JET grants
+        trackers: [issue-workforce-live]
+        why: Texas Jobs Council recommendations (Nov 2026), TEA/THECB/TWC program funding, JET grants (Oct 2026 round), juvenile probation partnerships in ~22 counties
+        legislation: Texas Jobs Council recommendations and any resulting bills; JET grant appropriation; TWC and THECB riders; HB 8 community college follow-ons; TJJD budget
+        voices: [GovAbbott, TXWorkforce, TEAinfo, THECB, Texas Jobs Council, Senate Education K-16, House Higher Education]
+
+  - name: US Chamber of Commerce
+    status: client
+    notice: Jim and Jay
+    practice: appropriations and tax
+    areas:
+      - area: Business climate, civil justice and trade
+        trackers: [issue-tort-reform-live, issue-economic-development-live]
+        why: Lawsuit reform, tariffs and the regulatory climate are the Chamber's Texas agenda
+        legislation: Tort reform; business courts; tariff and trade responses; regulatory bills
+        voices: [Senate Business & Commerce, House Trade Workforce & Economic Development, Texas Association of Business]
+
+  - name: Veo
+    status: client
+    notice: Andrea; cc Jim
+    practice: transportation and infrastructure
+    areas:
+      - area: Micromobility and city scooter rules
+        trackers: [issue-transportation-live]
+        why: City ordinances in Austin, Houston and San Antonio and any state micromobility bill decide where the fleet can operate
+        legislation: City micromobility ordinances and permits; state e-scooter rules; sidewalk and helmet bills
+        voices: [Austin City Council, Houston City Council, San Antonio City Council, TxDOT]
+
+  - name: Verra Mobility
+    status: client
+    notice: Andrea; cc Jim
+    practice: transportation and infrastructure
+    areas:
+      - area: Automated enforcement and toll solutions
+        trackers: [issue-transportation-live]
+        why: School bus stop-arm and school zone cameras, the red-light camera ban's legacy, and toll billing rules
+        legislation: Automated enforcement bills (school bus cameras, speed cameras); toll billing and collection; Transportation Code ch. 707 history
+        voices: [Senate Transportation, House Transportation, TxDOT, school districts' associations]
+
+  - name: Waymo
+    status: client
+    notice: Jim; cc Andrea
+    practice: transportation and infrastructure
+    areas:
+      - area: Autonomous vehicles and robotaxis in Texas cities
+        trackers: [issue-av-live]
+        why: Every incident becomes a story; city councils and the Lege react to the stories; the client needs the narrative before the hearing
+        legislation: AV permitting and oversight (SB 2807 implementation at DMV); local authority over AVs; insurance and liability bills
+        voices: [TxDMV, Austin City Council, Houston City Council, Dallas City Council, Sen. Robert Nichols, Rep. Terry Canales]
 
   - name: WSP
     status: client
-    lead: Ben Melson
+    notice: Ben and Jim
     practice: transportation and infrastructure
     areas:
       - area: Flood control, water infrastructure and disaster recovery
         trackers: [issue-water-flood-live]
         why: HCFCD projects, the Texas Water Fund, post-Hill Country flood policy, and the Harris County bond conversation drive the work WSP competes for
-        legislation: Texas Water Fund appropriations; Flood Infrastructure Fund; HCFCD bond program; Camp Mystic / youth-camp safety follow-ons; GLO disaster funds
-        voices: [HCFCD, Harris County Commissioners Court (Garcia, Ellis, Ramsey, Briones), TWDB, Rep. Drew Darby, Sen. Charles Perry]
+        legislation: Texas Water Fund appropriations; Flood Infrastructure Fund; HCFCD bond program; GLO disaster funds
+        voices: [HCFCD, Harris County Commissioners Court, TWDB, Rep. Drew Darby, Sen. Charles Perry]
       - area: Transportation and major infrastructure
         trackers: [issue-transportation-live]
         why: TxDOT's UTP, I-45 and other Houston-region projects, airports and transit decide the pipeline
@@ -107,16 +392,18 @@ clients:
         trackers: [issue-houston-local-live]
         why: County and city procurement, bonds and leadership changes
 
-  - name: The Safety Navigator
-    status: pro-bono
-    practice: local and municipal government
+  - name: W&T Offshore
+    status: client
+    notice: Jim
+    practice: energy and electricity
     areas:
-      - area: Youth camp safety regulation; DSHS Sunset review
-        trackers: [issue-water-flood-live]
-        why: The post-Camp Mystic rules the client helps camps comply with, and the Sunset review of DSHS that could rewrite who regulates camps
-        legislation: DSHS Sunset bill (2027); youth camp safety rules (HSC ch. 141); flood-warning requirements
-        voices: [TexasDSHS, Sunset Advisory Commission, Sen. Charles Perry, Rep. Drew Darby, Kerr County officials]
+      - area: Offshore oil and gas, the RRC and state energy policy
+        trackers: [issue-oil-gas-live]
+        why: Gulf leasing, severance and the Railroad Commission's rules set the business; the industry's narrative sets the politics
+        legislation: Severance tax and ESF; RRC rules on plugging and bonding; GLO leasing; pipeline and eminent domain bills
+        voices: [Railroad Commission, Texas GLO, Senate Natural Resources, House Energy Resources, TXOGA, TIPRO]
 
+  # ---- prospects ----
   - name: Doulio
     status: prospect
     lead: Ben Melson
@@ -125,7 +412,7 @@ clients:
       - area: Maternal health, doula services and Medicaid reimbursement
         trackers: [issue-maternal-health-live]
         why: Texas is deciding whether and how Medicaid reimburses doulas; the definition of "doula" in statute or rule and the maternal mortality narrative set the table
-        legislation: HHSC Medicaid doula benefit (rule or bill); DSHS Maternal & Child Health; maternal mortality review committee recommendations; county maternal-health funding (Houston, Austin, San Antonio)
+        legislation: HHSC Medicaid doula benefit (rule or bill); DSHS Maternal & Child Health; maternal mortality review committee recommendations; county maternal-health funding
         voices: [TexasHHSC, TexasDSHS, Senate Health & Human Services, House Public Health, county health departments]
 
   - name: Housing Forward
@@ -139,6 +426,26 @@ clients:
         legislation: State camping ban enforcement; TDHCA funding; HUD continuum-of-care changes; city ordinances in Dallas and Fort Worth
         voices: [Dallas and Fort Worth city councils, TDHCA, Sen. Royce West, Rep. Rafael Anchía, Dallas County Commissioners]
 
+  - name: RTX
+    status: prospect
+    practice: appropriations and tax
+    areas:
+      - area: Defense and aerospace industry, military installations, space
+        trackers: [issue-economic-development-live]
+        why: State incentives, the Space Commission, base support and the defense supply chain decide what Texas offers a defense prime
+        legislation: Texas Military Preparedness Commission; Space Commission funding; JETI; defense manufacturing incentives
+        voices: [GregAbbott_TX, Texas Military Preparedness Commission, Texas Space Commission, Senate Veteran Affairs, House Defense & Veterans' Affairs]
+
+  - name: Houston Food Bank
+    status: prospect
+    practice: appropriations and tax
+    areas:
+      - area: SNAP, Summer EBT, school meals and hunger
+        trackers: [issue-food-security-live]
+        why: Federal SNAP changes shift costs to the state and demand to food banks; HHSC administration and TDA decisions set the terms
+        legislation: SNAP state cost share and error-rate penalties; Summer EBT participation; TDA nutrition programs; school meal bills
+        voices: [TexasHHSC, Texas Department of Agriculture (Sid Miller), Senate Health & Human Services, House Human Services, Harris County delegation]
+
   - name: The City Fund
     status: prospect
     lead: Ben Melson
@@ -146,30 +453,9 @@ clients:
     areas:
       - area: School district governance, TEA interventions, partnership (SB 1882) continuity
         trackers: [issue-school-governance-live]
-        why: HISD under a board of managers, Fort Worth ISD's intervention, and the "largest turnaround in Texas history" messaging campaign; the client funds the reforms that a returning elected board could unwind
-        legislation: SB 1882 partnerships; TEC 11.052 redistricting; board-of-managers exit rules; the "reform continuity" concept; A-F accountability
-        voices: [GregAbbott_TX, TEAinfo, Mike Morath, Mike Miles, HISD and Fort Worth ISD boards, Houston and Fort Worth legislative delegations]
-
-  - name: HISD policy work
-    status: client
-    lead: Ben Melson
-    practice: education
-    areas:
-      - area: HISD governance, redistricting and the return to an elected board
-        trackers: [issue-school-governance-live]
-        why: Ben's Mon/Wed/Fri HISD sweep, automated — the suspected CRC Advisors-linked campaign, official amplification by the Governor's office and TEA, and the anchor phrases
-        legislation: TEC 11.052; HISD trustee redistricting; May 2027 bond mechanics (LGC / PFC); SB 1882
-        voices: [GregAbbott_TX, TEAinfo, Mike Miles, HISD trustees, Houston delegation, Texas 2036, Good Reason Houston]
-
-  - name: Montera Infrastructure
-    status: prospect
-    practice: energy and electricity
-    areas:
-      - area: Hyperscale data center siting, power and water
-        trackers: [issue-data-centers-live, issue-grid-live]
-        why: Local moratoria (seven jurisdictions and counting), Abbott's data center standards, PUCT/ERCOT large-load rules, Harris County sentiment
-        legislation: Large-load interconnection rules (SB 6 implementation); data center transparency; county moratorium authority; water-use reporting
-        voices: [PUCTX, ERCOT_ISO, GregAbbott_TX, Harris County Commissioners Court, Sen. Phil King, Sen. Charles Schwertner]
+        why: HISD under a board of managers, Fort Worth ISD's intervention, and the "largest turnaround in Texas history" messaging campaign
+        legislation: SB 1882 partnerships; TEC 11.052 redistricting; board-of-managers exit rules; A-F accountability
+        voices: [GregAbbott_TX, TEAinfo, Mike Morath, Mike Miles, HISD and Fort Worth ISD boards]
 
   - name: TESA
     status: prospect
@@ -181,18 +467,8 @@ clients:
         legislation: TDLR electrician licensing (Occupations Code ch. 1305); Texas Jobs Council recommendations; TSTC funding
         voices: [TDLR, GovAbbott, Texas Jobs Council, House Licensing & Administrative Procedures]
 
-  - name: Waymo / autonomous vehicles
-    status: client
-    practice: transportation and infrastructure
-    areas:
-      - area: Autonomous vehicles and robotaxis in Texas cities
-        trackers: [issue-av-live]
-        why: Every incident becomes a story; city councils and the Lege react to the stories; the client needs the narrative before the hearing
-        legislation: AV permitting and oversight (SB 2807 implementation at DMV); local authority over AVs; insurance and liability bills
-        voices: [TxDMV, Austin City Council, Houston City Council, Dallas City Council, Sen. Robert Nichols, Rep. Terry Canales]
-
   - name: Lone Star College (CESL)
-    status: client
+    status: prospect
     lead: Ben Melson
     practice: education
     areas:
@@ -201,3 +477,11 @@ clients:
         why: HB 8 outcomes-based funding, workforce alignment, the civic-engagement program's standing
         legislation: HB 8 funding formula and its riders; THECB rules; civics requirements
         voices: [THECB, TACC, House Higher Education, Senate Education K-16]
+
+  # ---- former clients (no trackers) ----
+  - {name: Aidan Ali-Sullivan, status: former, notice: "Andrea; cc Jim", areas: []}
+  - {name: BIC, status: former, notice: Jim, areas: []}
+  - {name: CNA Insurance, status: former, notice: Jim, areas: []}
+  - {name: Copenhagen Infrastructure Partners, status: former, notice: "Andrea; cc Jim", areas: []}
+  - {name: Colby Swain, status: former, notice: "Andrea; cc Jim", areas: []}
+  - {name: Will Barnow, status: former, notice: Jim, areas: []}

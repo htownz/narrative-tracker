@@ -90,7 +90,8 @@ CSS = """
   ul { margin:4px 0 6px; padding-left:16px; font-size:12px; line-height:1.45; } li .m { color:var(--ink-3); font-size:11px; }
   .pill { display:inline-block; font-size:10px; border-radius:999px; padding:0 6px; margin-left:4px; border:1px solid var(--line); color:var(--ink-3); } .pill.bad { color:#ff5252; border-color:#ff525255; }
   .hooks { font-size:11.5px; color:var(--ink-2); } .hooks b { color:var(--ink-3); font-weight:600; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; }
-  .dead { color:var(--ink-3); font-size:12px; } footer { margin-top:22px; color:var(--ink-3); font-size:11px; }
+  .dead { color:var(--ink-3); font-size:12px; } .confirm { color:#e08a2e; font-size:12px; margin:0 0 6px; }
+  footer { margin-top:22px; color:var(--ink-3); font-size:11px; }
 """
 
 
@@ -120,7 +121,7 @@ def _tracker_html(p: dict[str, Any]) -> str:
 
 def render(out: dict[str, Any]) -> Path:
     e = html.escape
-    blocks = []
+    blocks, former = [], []
     for c in out["clients"]:
         areas = []
         for a in c.get("areas", []):
@@ -131,9 +132,17 @@ def render(out: dict[str, Any]) -> Path:
             if a.get("voices"):
                 hooks += f'<div class="hooks"><b>Voices</b> {e(", ".join(str(v) for v in a["voices"]))}</div>'
             areas.append(f'<div class="area"><h3>{e(a["area"])}</h3><p class="why">{e(a.get("why") or "")}</p><div class="row"><div>{trackers}</div><div>{hooks}</div></div></div>')
-        meta = " · ".join(x for x in (c.get("practice"), f'lead: {c["lead"]}' if c.get("lead") else "") if x)
+        meta = " · ".join(x for x in (c.get("practice"), f'lead: {c["lead"]}' if c.get("lead") else "", f'notices: {c["notice"]}' if c.get("notice") else "") if x)
+        confirm = f'<div class="confirm">To confirm: {e(str(c["confirm"]))}</div>' if c.get("confirm") else ""
+        if c.get("status") == "former":
+            former.append(e(c["name"]))
+            continue
+        if not c.get("areas") and not confirm:
+            areas.append('<div class="dead">no policy area mapped yet</div>')
         blocks.append(f'<section class="client"><h2>{e(c["name"])} <span class="status {e(c.get("status", "client"))}">{e(c.get("status", "client"))}</span></h2>'
-                      f'<div class="meta">{e(meta)}</div>{"".join(areas)}</section>')
+                      f'<div class="meta">{e(meta)}</div>{confirm}{"".join(areas)}</section>')
+    if former:
+        blocks.append(f'<section class="client"><h2>Former clients</h2><div class="meta">{", ".join(former)}</div></section>')
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clients — Texas Narrative Trackers</title><style>{CSS}</style></head><body>
 <h1>Client desk: what is moving on the issues our clients care about</h1>

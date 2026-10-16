@@ -1,0 +1,52 @@
+# Live issue tracker: financial services policy in Texas — the anti-ESG and anti-boycott laws (energy, firearms), the Comptroller's lists, bank regulation and state banking law, and the Texas Stock Exchange. Long-term tracker through the 2027 session.
+# Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-financial-services-live
+title: "Banking, ESG and financial regulation, {days} days of posts"
+subject: "financial services policy in Texas — the anti-ESG and anti-boycott laws covering energy and firearms, the Comptroller's lists of boycotting firms, state banking and lending law, the Department of Banking, the Texas Stock Exchange and Texas as a financial center, and bank fees and consumer finance rules"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas banking, ESG and financial regulation, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - 'Texas "anti-ESG"'
+  - 'Texas Comptroller boycott list'
+  - 'Texas banks firearms law'
+  - '"Texas Stock Exchange"'
+  - 'Texas banking regulation'
+  - 'Texas "SB 13" OR "SB 19" banks'
+  - 'Texas "financial services" Hegar'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about woke capital versus free markets, the boycott laws as protecting Texas industries or as costing taxpayers, Texas as the new Wall Street, bank fees and consumers, and the Comptroller's enforcement. Posts about financial regulation with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

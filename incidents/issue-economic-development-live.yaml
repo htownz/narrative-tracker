@@ -1,0 +1,53 @@
+# Live issue tracker: Texas economic development — JETI and incentives, the semiconductor and space funds, manufacturing and tariffs, defense and aerospace, and relocations. Long-term tracker through the 2027 session.
+# Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-economic-development-live
+title: "Economic development, manufacturing and defense, {days} days of posts"
+subject: "economic development policy in Texas — the JETI incentive program and the end of Chapter 313, the Texas Semiconductor Innovation Fund and the Space Commission, manufacturing and the effect of tariffs, defense and aerospace industry and military installations, corporate relocations, and the Governor's economic development office"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas economic development, manufacturing and defense, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - 'Texas JETI incentives'
+  - '"Texas Semiconductor Innovation Fund"'
+  - '"Texas Space Commission"'
+  - 'Texas manufacturing tariffs'
+  - 'Texas "economic development" Abbott'
+  - 'Texas defense aerospace industry'
+  - 'Raytheon Texas'
+  - 'Texas "military installations"'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about incentives as corporate welfare versus job creation, Texas winning relocations, tariffs helping or hurting manufacturers, the chips and space funds, defense spending and bases, and the Governor's deals. Posts about economic development in other states with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

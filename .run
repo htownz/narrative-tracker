@@ -1,11 +1,12 @@
-# first run of the ten client-driven issue trackers (discovery + backfill from Oct 1)
-incidents/issue-av-live.yaml
-incidents/issue-election-integrity-live.yaml
-incidents/issue-hemp-thc-live.yaml
-incidents/issue-housing-live.yaml
-incidents/issue-houston-local-live.yaml
-incidents/issue-maternal-health-live.yaml
-incidents/issue-school-governance-live.yaml
-incidents/issue-transportation-live.yaml
-incidents/issue-water-flood-live.yaml
-incidents/issue-workforce-live.yaml
+# first run of the eleven roster-driven issue trackers (queued behind the run in progress)
+incidents/issue-border-live.yaml
+incidents/issue-broadband-live.yaml
+incidents/issue-centerpoint-live.yaml
+incidents/issue-economic-development-live.yaml
+incidents/issue-financial-services-live.yaml
+incidents/issue-food-security-live.yaml
+incidents/issue-k12-live.yaml
+incidents/issue-local-control-live.yaml
+incidents/issue-oil-gas-live.yaml
+incidents/issue-tort-reform-live.yaml
+incidents/issue-victim-services-live.yaml

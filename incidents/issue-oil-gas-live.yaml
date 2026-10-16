@@ -1,0 +1,53 @@
+# Live issue tracker: Texas oil and gas policy — the Railroad Commission, severance taxes and the rainy day fund, offshore drilling in the Gulf and the GLO, flaring and produced water, orphan wells, and the industry's politics. Long-term tracker through the 2027 session.
+# Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-oil-gas-live
+title: "Oil, gas and offshore, {days} days of posts"
+subject: "oil and gas policy in Texas — the Railroad Commission and its races, severance taxes and the Economic Stabilization Fund, offshore leasing and drilling in the Gulf of Mexico, the General Land Office, flaring and produced water rules, orphan wells and plugging, pipelines and eminent domain, and the industry's role in state politics"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas oil, gas and offshore, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - '"Railroad Commission" Texas'
+  - 'Texas "severance tax"'
+  - 'Gulf offshore drilling lease'
+  - '"W&T Offshore"'
+  - 'Texas orphan wells'
+  - 'Texas "produced water"'
+  - 'Permian flaring'
+  - 'Texas oil gas lege'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about the industry as the state's backbone versus its polluter, the Railroad Commission's capture, offshore leasing under federal policy, the rainy day fund, water and seismicity, and pipeline eminent domain. Posts about oil and gas in other states with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

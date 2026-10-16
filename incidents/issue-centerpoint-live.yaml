@@ -1,0 +1,52 @@
+# Live issue tracker: CenterPoint Energy — outages and storm response, rate cases at the PUC, the resiliency plan, utility accountability bills, and CenterPoint's transmission build. Long-term tracker through the 2027 session.
+# Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-centerpoint-live
+title: "CenterPoint and Houston's power, {days} days of posts"
+subject: "CenterPoint Energy and electric service in the Houston region — outages and storm response, rate cases and bills at the PUC, the resiliency plan and vegetation management, legislative accountability measures aimed at the utility, and CenterPoint's transmission and generation build"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about CenterPoint Energy and Houston's power, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - 'CenterPoint'
+  - '"CenterPoint Energy"'
+  - 'Houston "power outage"'
+  - 'Houston outages CenterPoint'
+  - 'CenterPoint PUC rate'
+  - 'CenterPoint resiliency'
+  - 'Houston grid storm'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about outages and who is to blame, rates and profits versus reliability spending, the Beryl aftermath and the resiliency plan, the Legislature and PUC holding the utility accountable, and the transmission build. Posts about other utilities with no Houston angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

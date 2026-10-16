@@ -248,10 +248,13 @@ by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set
 watch them, the legislation to follow and the elected voices that matter (nothing confidential: the repo is
 public). `python run.py clients` (the job runs it at assemble time) renders `/clients/`: per client and area,
 the trackers' last seven days — views, top lanes, biggest claims with verdicts, what is gaining, flagged
-pushes — beside the legislative hooks. The long-term issue trackers that serve it (`issue-*-live`: hemp and
-THC, housing, workforce, autonomous vehicles, school governance, maternal health, water and flood, transportation,
-Houston-region local government, election integrity, plus the original data centers, grid, property tax,
-vouchers and 765-kV) start Oct 1, 2026 and run through the 2027 session; the race trackers end Nov 3.
+pushes — beside the legislative hooks and a "to confirm" line wherever a mapping is a guess. The long-term
+issue trackers that serve it (`issue-*-live`, 26 of them: hemp and THC, housing, workforce, autonomous vehicles,
+school governance, maternal health, water and flood, transportation, Houston-region local government, election
+integrity, CenterPoint, local control, the border, broadband, economic development, victims' services,
+financial services, K-12, tort reform, oil and gas, food security, plus the original data centers, grid,
+property tax, vouchers and 765-kV) start Oct 1, 2026 and run through the 2027 session. The job pulls the race
+trackers every run and the issue trackers on the 05:17 and 17:17 UTC runs; the race trackers end Nov 3.
 
 ## Platforms beyond X
 

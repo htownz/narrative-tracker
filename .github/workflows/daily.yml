@@ -46,7 +46,9 @@ jobs:
       - name: Pick the incidents
         id: pick
         run: |
-          LIVE="$(ls incidents/*-live.yaml | grep -v '/issue-' | tr '\n' ' ') $(ls incidents/issue-*-live.yaml 2>/dev/null | tr '\n' ' ')"   # candidates first, issues after
+          RACES="$(ls incidents/*-live.yaml | grep -v '/issue-' | tr '\n' ' ')"
+          ISSUES="$(ls incidents/issue-*-live.yaml 2>/dev/null | tr '\n' ' ')"
+          case "$(date -u +%H)" in 05|17) LIVE="$RACES $ISSUES";; *) LIVE="$RACES";; esac   # races every run; the issue trackers twice a day (refresh_days covers the gap)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
