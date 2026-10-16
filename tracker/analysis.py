@@ -179,7 +179,7 @@ def render_html(inc: Incident, data: dict[str, Any], out: dict[str, Any]) -> Pat
             etrs.append(f'<tr><td><b>{html.escape(e["label"])}</b><div class="muted">{html.escape(e["type"])} · {when}{(" · " + html.escape(e["source"])) if e.get("source") else ""}</div></td>'
                         f'<td class="n">{tot_txt}<div class="muted">{_fmt(e["after_views"])}</div></td>{"".join(cells)}<td class="muted">{html.escape(top)}</td></tr>')
         ev_html = f"""<h2>Events and how the lanes answered</h2>
-<p class="sub">From <code>incidents/events.yaml</code>: for each off-platform event, views posted in the {AFTER_H} hours after it versus the {AFTER_H} hours before, per lane
+<p class="sub">From <code>incidents/events.yaml</code> and poll releases found in the claims (labelled "from N claims"): for each off-platform event, views posted in the {AFTER_H} hours after it versus the {AFTER_H} hours before, per lane
 (an all-day event compares its day with the day before). "new" means the lane had nothing in the hours before. Times taken from the first post on X are a lower bound for the moment itself.
 Red: three times the views or more, at 50K+ views after.</p>
 <div class="wrap"><table><thead><tr><th style="min-width:230px">Event</th><th class="n">All lanes</th>{head}<th>Biggest lane after</th></tr></thead><tbody>{"".join(etrs)}</tbody></table></div>"""

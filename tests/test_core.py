@@ -5,6 +5,7 @@ tweet flattening, pull resume/refresh planning, overrides, and the chart's data 
 """
 from __future__ import annotations
 
+import csv
 import json
 import sqlite3
 from collections import Counter
@@ -491,3 +492,89 @@ def test_news_skips_claims_older_than_the_feed_and_marks_old_checks_unknown(tmp_
     assert checks[old]["covered"] is False and checks[old]["sources_48h"] is None and checks[old]["articles"] == 40
     assert checks[new]["covered"] is True and checks[new]["sources_48h"] == 0
     st.close()
+
+
+def test_scorecard_logs_picks_and_scores_them_against_outcomes(tmp_path, monkeypatch):
+    from tracker import scorecard
+    monkeypatch.setattr(scorecard, "DATA_DIR", tmp_path)
+    base = {c: "" for c in ["run_at", "asof", "slug", "kind", "key", "label", "views_6h", "momentum_6h", "accounts", "control", "event_follow", "gain_24h", "top5_24h", "measured"]}
+    rows = []
+    for i in range(1, 13):                                  # one competitive snapshot: 12 claims, claims 1-2 win
+        rows.append({**base, "run_at": "r", "asof": "s1", "slug": "a", "kind": "claim", "key": str(i), "label": f"c{i}", "views_6h": 50_000 // i, "momentum_6h": 2.0,
+                     "accounts": 4, "control": 0, "event_follow": 0, "gain_24h": 100 if i <= 2 else 1, "top5_24h": 1 if i <= 2 else 0, "measured": 1})
+    ranked = [{"key": str(i), "label": f"c{i}", "heuristic": 10 - i, "views_6h": 50_000 // i, "accounts": 4} for i in range(1, 6)]
+    assert scorecard.log_picks("a", ranked, "s1", "r") == 5 and scorecard.log_picks("a", ranked, "s1", "r2") == 5    # re-log replaces, no duplicates
+    with (tmp_path / "features" / "picks.csv").open(encoding="utf-8") as f:
+        logged = list(csv.DictReader(f))
+    assert len(logged) == 5 and logged[0]["eligible"] == "1" and logged[3]["eligible"] == "0" and logged[0]["run_at"] == "r2"
+    s = scorecard.scorecard(rows)
+    assert s["n_scored"] == 5 and s["n_logged"] == 5 and s["all"]["hits"] == 2 and s["top3"]["hit_rate"] == 0.67 and s["base_rate"] == round(2 / 12, 3)
+    assert s["latest"][0]["hit"] == 1 and "too few" in s["reading"]
+    (tmp_path / "features" / "picks.csv").unlink()           # no log: the snapshot is backtested with the same heuristic
+    s2 = scorecard.scorecard(rows)
+    assert s2["n_logged"] == 0 and s2["n_scored"] == 10 and s2["all"]["hits"] == 2
+    thin = [{**r, "asof": "s2"} for r in rows[:5]]            # five claims competing: not a result
+    assert scorecard.scorecard(rows + thin)["n_scored"] == 10
+
+
+def test_poll_events_from_claims_merge_spellings_and_defer_to_hand_entries(tmp_path):
+    from tracker import pollevents as pe
+    assert pe.pollster("A YouGov/Univision poll has Talarico leading 48% to 43%.") == "YouGov/Univision"
+    assert pe.pollster("In NYT/Siena polling, Greg Abbott led 51% to 44% in June.") == "NYT/Siena"
+    assert pe.pollster("A University of Houston Hobby School poll of Harris County finds") == "Houston Hobby School"
+    assert pe.pollster("A Democratic-sponsored poll of TX-35 shows") is None and pe.pollster("A poll shows Paxton leading by 6 points.") is None
+    assert pe.pollster("The RCP Texas Senate polling average shows Talarico ahead") is None
+    assert pe.tokens("Insider Advantage") & pe.tokens("InsiderAdvantage") and pe.tokens("Univision/YouGov") == pe.tokens("YouGov/Univision")
+    assert pe.subject_tokens(['"Ken Paxton"', "@KenPaxtonTX", "Paxton Talarico"]) >= {"ken paxton", "paxton", "talarico"}
+    mk = lambda i, at, text, views=100_000: {"id": i, "type": "fact", "checkable": True, "views": views, "text": text, "first_seen": at, "first_handle": "h"}
+    claims = {
+        "paxton-live": [mk(1, "2026-10-13T11:00:00+00:00", "A University of Houston poll shows James Talarico leading Ken Paxton 58% to 36%."),
+                        mk(2, "2026-10-13T17:28:00+00:00", "A Quantus poll of likely voters shows Ken Paxton at 47.2% and James Talarico at 46.7%."),
+                        mk(3, "2026-10-13T12:00:00+00:00", "An Insider Polling survey shows Sherrod Brown leading Jon Husted 47% to 44% in Ohio."),
+                        mk(4, "2026-10-13T12:30:00+00:00", "Ken Paxton is a criminal.", 900_000)],
+        "abbott-oct-2026": [mk(5, "2026-10-13T11:08:49+00:00", "A UH/Hobby School poll of Harris County has Gina Hinojosa leading Greg Abbott 52% to 44%.")],
+        "governor-race-live": [mk(6, "2026-10-13T11:08:49+00:00", "A University of Houston Hobby School poll finds Gina Hinojosa at 49% and Greg Abbott at 45%."),
+                               mk(7, "2026-10-16T11:00:00+00:00", "A University of Houston poll shows Greg Abbott at 48% and Gina Hinojosa at 46%.")],
+    }
+    subjects = {"paxton-live": {"paxton", "talarico"}, "abbott-oct-2026": {"abbott", "hinojosa"}, "governor-race-live": {"abbott", "hinojosa"}}
+    ev = pe.events_from_claims(claims, subjects)
+    assert [e["label"] for e in ev] == ["Houston Hobby School, UH/Hobby School polls", "Quantus poll", "Houston poll"]   # Ohio poll dropped; the 10/16 release is separate
+    assert ev[0]["trackers"] == ["abbott-oct-2026", "governor-race-live", "paxton-live"] and ev[0]["at"] == "2026-10-13T11:00:00+00:00" and "3 claims" in ev[0]["source"]
+    hand = [{"label": "UH Hobby School Harris County poll", "type": "poll", "at": "2026-10-13T11:12:00+00:00", "auto": False},
+            {"label": "Quantus poll: Paxton 47.2-46.7", "type": "poll", "at": "2026-10-10T17:28:00+00:00", "auto": False}]
+    assert pe.covered_by(ev[0], hand) and not pe.covered_by(ev[1], hand)                                                 # same pollster 3 days apart is not the same release
+    # load_events merges: hand entries, then automatic ones not covered
+    from tracker import events as events_mod
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    yaml_path = tmp_path / "events.yaml"
+    yaml_path.write_text('timezone: America/Chicago\nevents:\n  - {at: "2026-10-13 06:12", label: "UH Hobby School Harris County poll", type: poll, trackers: all}\n')
+    import tracker.pollevents
+    tracker.pollevents.auto_events.cache_clear()
+    tracker.pollevents.auto_events = lambda: tuple({**e, "trackers": [inc.slug]} for e in ev)
+    merged = events_mod.load_events(inc, path=yaml_path)
+    assert [e["auto"] for e in merged] == [False, True, True] and merged[0]["label"].startswith("UH Hobby") and merged[1]["label"] == "Quantus poll"
+    assert len(events_mod.load_events(inc, path=yaml_path, with_auto=False)) == 1
+
+
+def test_registry_scores_first_posters_and_early_touches(tmp_path, monkeypatch):
+    from tracker import registry
+    monkeypatch.setattr(registry, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(registry, "DATA_DIR", tmp_path / "data")
+    (tmp_path / "out" / "t-live").mkdir(parents=True)
+    (tmp_path / "out" / "accounts").mkdir(parents=True)
+    clusters = [{"id": i, "first_handles": ["alpha", "beta"] if i % 2 else ["gamma"], "first_handle": "alpha" if i % 2 else "gamma",
+                 "verdict": ("supported" if i in (1, 3, 5) else "misleading" if i == 7 else None)} for i in range(1, 13)]
+    (tmp_path / "out" / "t-live" / "claims.json").write_text(json.dumps({"clusters": clusters}), encoding="utf-8")
+    (tmp_path / "out" / "t-live" / "rings.json").write_text(json.dumps({"rings": [{"suspicious": True, "handles": ["gamma", "delta"]}, {"suspicious": False, "handles": ["alpha"]}]}), encoding="utf-8")
+    (tmp_path / "out" / "t-live" / "accounts.json").write_text(json.dumps([{"handle": "alpha", "name": "A", "followers": 5000, "reach": 10, "posts": 2, "role": "originator"}]), encoding="utf-8")
+    (tmp_path / "out" / "accounts" / "accounts.json").write_text("[]", encoding="utf-8")
+    rows = [{"slug": "t-live", "asof": "s1", "kind": "claim", "key": str(i), "gain_24h": 1, "top5_24h": 1 if i in (1, 3, 5, 7) else 0} for i in range(1, 13)]
+    reg = {r["handle"]: r for r in registry.build(["t-live"], rows)}
+    alpha, gamma = reg["alpha"], reg["gamma"]
+    assert alpha["claims_first"] == 6 and alpha["verified"] == 4 and alpha["supported"] == 3 and alpha["reliability"] == 0.75 and alpha["followers"] == 5000
+    assert reg["beta"]["claims_first"] == 0 and reg["beta"]["claims_early"] == 6                      # second poster on every odd claim
+    assert alpha["early_n"] == 6 and alpha["early_top5"] == 0.67 and alpha["early_lift"] == round(0.67 / (4 / 12), 1)
+    assert gamma["reliability"] is None and gamma["early_top5"] == 0.0 and gamma["rings"] == 1 and reg["delta"]["rings"] == 1
+    assert registry.lookup()["alpha"]["reliability"] == 0.75
+    html_text = registry.table_html(list(reg.values()), 4 / 12)
+    assert "@alpha" in html_text and "3 of 4 held up" in html_text and "@beta" in html_text and "@delta" not in html_text   # delta has only a ring

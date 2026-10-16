@@ -257,6 +257,13 @@ def accounts_all() -> Path:
     out_dir = OUT_DIR / "accounts"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "accounts.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
+    from .registry import build as build_registry, table_html as registry_html
+    reg_rows = build_registry([i.slug for i in incs])
+    reg_base = (json.loads((out_dir / "registry.json").read_text(encoding="utf-8")) or {}).get("base_rate")
+    registry_section = (f'<h2 id="reliability" style="font-size:15px;margin:28px 0 4px;color:#e08a2e">Who to believe, who to follow</h2>'
+                        f'<p class="sub">Each account\'s record as an originator: whether the claims it put on X first held up when checked, and whether the claims it touched early went on to grow. '
+                        f'Accounts with {len([r for r in reg_rows if r["reliability"] is not None])} reliability scores and {len([r for r in reg_rows if r["early_lift"] is not None])} early-touch lifts so far; both need more verdicts and outcomes to mean much.</p>'
+                        + registry_html(reg_rows, reg_base))
 
     cols = "".join(f'<th>{html.escape(i.slug.replace("-live", "").replace("-oct-2026", ""))}</th>' for i in incs)
     trs = []
@@ -281,6 +288,7 @@ def accounts_all() -> Path:
 <p class="sub">Every account with a 1K+ view post in any tracker, ranked by how many trackers they appear in, then by total reach. Role is their most common role across trackers; the per-tracker cells show role and reach there. "First-mover" counts lanes where they were among the first five posts.</p>
 <div class="legend">{legend}</div>
 <div class="wrap"><table><thead><tr><th class="n">#</th><th>Account</th><th class="n">Trackers</th><th class="n">Reach</th><th class="n">Posts</th><th class="n">First-mover</th>{cols}</tr></thead><tbody>{"".join(trs)}</tbody></table></div>
+{registry_section}
 <footer>{len(rows)} accounts across {len(incs)} trackers · built {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}</footer>{SCRIPT}</body></html>"""
     out = out_dir / "index.html"
     out.write_text(doc, encoding="utf-8")

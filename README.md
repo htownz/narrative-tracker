@@ -242,6 +242,35 @@ headline, a summary that doubles as the Telegram message, a section per race (is
 watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
 by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
 
+## Scorecard
+
+Every run, `features` logs each tracker's ten "likely to grow" picks to `data/features/picks.csv` (rank, heuristic,
+whether the hub's "Gaining now" list showed it). A day later the feature table has their outcome, and the insights
+page scores them: how often the picks reached the tracker's top five within 24h against the base rate of every
+claim competing that day, overall, by rank, and for the hub-shown picks only; snapshots older than the log are
+backtested with the same heuristic. The verdict line holds until 50 picks are scored. This is the bar the growth
+model has to beat (`tracker/scorecard.py`).
+
+## Poll releases as events
+
+Hand-entered events live in `incidents/events.yaml`; poll releases are also found automatically in the claims
+(`tracker/pollevents.py`): a checkable fact that names a pollster and carries numbers, at 50K+ views, becomes a
+poll event timed at its first post on X, one per pollster per release (claims within 36h sharing a pollster token
+are one release, so "YouGov/Univision" and "Univision/YouGov" do not double up), applied to every tracker whose
+subject the claim mentions (an Ohio poll quoted in a Texas thread is not a Texas event). A hand-entered poll
+event within 24h naming the same pollster wins. They feed the chart's events band, the analysis page's response
+table, claim event tags, the control score's burst exemption and the feature table like any other event.
+
+## Account registry
+
+`python run.py registry` (the job runs it before each pull, and `accounts --all` rebuilds it for the amplifier map)
+writes `out/accounts/registry.json`: one row per account across every tracker with its record as an originator —
+canonical claims it posted first and was among the first three on, how many were verified and how many held up
+(reliability: supported share, 3+ verified), how often a claim it touched early reached the tracker's top five
+within 24h against the base rate (early-touch lift, 5+ scored), suspicious link rings it posted in, followers,
+account age and amplifier-map role. The amplifier map shows it under "Who to believe, who to follow"; the feature
+table stamps each claim-day with its first poster's `first_reliability` and `first_early_lift`.
+
 ## Insights
 
 `python run.py insights` (the job runs it before assembling the site) recomputes, across every tracker, the

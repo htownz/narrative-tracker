@@ -82,6 +82,7 @@ jobs:
         run: |
           set +e; FAILED=""; OK=0
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
+          python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
             [ "$WEEKLY" = "1" ] && python run.py refresh-views "$inc"

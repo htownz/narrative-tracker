@@ -50,7 +50,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "refresh-views", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "refresh-views", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
@@ -71,6 +71,10 @@ def main() -> None:
     if args.command == "insights":
         from tracker import insights
         insights.insights()
+        return
+    if args.command == "registry":
+        from tracker import registry
+        registry.build()
         return
     if args.command == "accounts" and args.all:
         from tracker import accounts

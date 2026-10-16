@@ -1,6 +1,8 @@
-"""Events calendar: things that happen off X (incidents/events.yaml) and how the lanes respond to them.
+"""Events calendar: things that happen off X (incidents/events.yaml, plus poll releases found automatically in
+the claims by tracker/pollevents.py) and how the lanes respond to them.
 
-load_events(inc)        events that bear on this tracker, with UTC timestamps
+load_events(inc)        events that bear on this tracker, with UTC timestamps (hand-entered first, then automatic
+                        poll events not already covered by a hand-entered one)
 response(posts, lanes, events, hours=12)
                         per event, per lane: views and posts in the `hours` after vs. the `hours` before
 nearest_before(ts, events, hours=6)
@@ -30,10 +32,8 @@ def _parse_at(value: Any, tz: ZoneInfo) -> tuple[datetime, bool]:
     return datetime.fromisoformat(s.replace(" ", "T")).replace(tzinfo=tz).astimezone(timezone.utc), False
 
 
-def load_events(inc: Incident, path: Path = EVENTS_PATH) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+def load_events(inc: Incident, path: Path = EVENTS_PATH, with_auto: bool = True) -> list[dict[str, Any]]:
+    raw = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}) if path.exists() else {}
     tz = ZoneInfo(raw.get("timezone") or inc.timezone)
     out = []
     for e in raw.get("events") or []:
@@ -45,7 +45,12 @@ def load_events(inc: Incident, path: Path = EVENTS_PATH) -> list[dict[str, Any]]
         except (KeyError, ValueError):
             continue
         out.append({"label": str(e.get("label") or "")[:120], "type": str(e.get("type") or "other"), "at": at.isoformat(),
-                    "all_day": all_day, "source": str(e.get("source") or "")})
+                    "all_day": all_day, "source": str(e.get("source") or ""), "auto": False})
+    if with_auto:
+        from .pollevents import auto_events, covered_by
+        for e in auto_events():
+            if inc.slug in e["trackers"] and not covered_by(e, out):
+                out.append({k: e[k] for k in ("label", "type", "at", "all_day", "source", "auto", "detail")})
     out.sort(key=lambda e: e["at"])
     return out
 

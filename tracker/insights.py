@@ -3,6 +3,7 @@
 Each block is a table with its N and a plain reading written by rule, not by a model, so it says the same thing
 tomorrow with more data. Nothing here is a prediction; it is what has co-occurred so far.
 
+  0. Scorecard: did the claims flagged as "likely to grow" grow? (tracker/scorecard.py)
   1. Who posts first vs. whether a claim reaches its tracker's top five within 24h
   2. Accounts whose early touch is followed by growth (P(top 5) when they are among a claim's first posters)
   3. Event type -> lane response (views in the 12h after vs. before)
@@ -331,8 +332,10 @@ def insights() -> Path:
             c["first_handles"] = c.get("first_handles") or [c.get("first_handle")]
             by_id[str(c["id"])] = c
         claims_by_tracker[slug] = by_id
+    from .scorecard import scorecard
     out = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "trackers": trackers, "feature_rows": len(rows),
+        "scorecard": scorecard(rows),
         "first_poster": first_poster_size(rows), "early_touch": early_touch(rows, claims_by_tracker), "control": control_vs_growth(rows),
         "events": event_response(trackers), "lead_lag": lane_lead_lag(trackers), "verdicts": verdicts_by_lane(trackers, claims_by_tracker),
         "pushback": pushback_vs_reach(trackers), "news": news_crossover(trackers, claims_by_tracker), "markets": markets(trackers),
@@ -362,9 +365,11 @@ def _table(cols: list[tuple[str, str, bool]], rows: list[dict[str, Any]]) -> str
         v = r.get(key)
         if v is None:
             return "—"
-        if isinstance(v, float) and key.startswith(("p_", "share")):
+        if isinstance(v, float) and (key.startswith(("p_", "share")) or key == "hit_rate"):
             return f"{v:.0%}"
-        if isinstance(v, (int, float)) and key in ("views", "median_gain"):
+        if isinstance(v, (int, float)) and key == "lift":
+            return f"{v}×"
+        if isinstance(v, (int, float)) and key in ("views", "median_gain", "views_6h", "gain_24h"):
             return f"{v/1e6:.1f}M" if v >= 1e6 else f"{v/1e3:.0f}K" if v >= 1e3 else str(int(v))
         return html.escape(str(v))
     body = "".join("<tr>" + "".join(f'<td class="{"n" if num else ""}">{cell(r, key, num)}</td>' for _, key, num in cols) + "</tr>" for r in rows)
@@ -373,7 +378,14 @@ def _table(cols: list[tuple[str, str, bool]], rows: list[dict[str, Any]]) -> str
 
 def render(out: dict[str, Any]) -> Path:
     e = html.escape
+    sc = out["scorecard"]
+    sc_rows = [{"set": "All picks", **sc["all"]}, {"set": "Ranks 1–3", **sc["top3"]}, {"set": "Ranks 4–10", **sc["rank4_10"]}, {"set": "Shown on the hub", **sc["shown"]}]
+    sc_latest = [{"tracker": r["slug"], "rank": r["rank"], "claim": r["label"], "views_6h": r["views_6h"], "gain_24h": r["gain_24h"], "result": "top five" if r["hit"] else "—"} for r in sc["latest"]]
     secs = [
+        ("0. Scorecard: did the flagged claims grow?", sc["reading"],
+         _table([("Picks", "set", False), ("Scored", "n", True), ("Reached top 5", "hits", True), ("Hit rate", "hit_rate", True), ("Lift vs base", "lift", True)], sc_rows)
+         + (f'<p class="muted">Base rate {sc["base_rate"]:.0%} over {sc["field_n"]:,} claim-days on competitive snapshots; {sc["n_logged"]} of {sc["n_scored"]} picks were logged live, the rest backtested. Latest scored snapshot: {html.escape(str(sc["latest_asof"] or "")[:16])}.</p>' if sc["base_rate"] is not None else "")
+         + _table([("Tracker", "tracker", False), ("Rank", "rank", True), ("Claim", "claim", False), ("Views in 6h", "views_6h", True), ("Gain 24h", "gain_24h", True), ("Result", "result", False)], sc_latest)),
         ("1. Who posts first", out["first_poster"]["reading"], _table([("First poster", "bucket", False), ("Claim-days", "n", True), ("Reached top 5 in 24h", "p_top5", True)], out["first_poster"]["table"])),
         ("2. Accounts whose early touch is followed by growth", out["early_touch"]["reading"], _table([("Account", "handle", False), ("Claims touched early", "n", True), ("Reached top 5", "p_top5", True)], out["early_touch"]["table"])),
         ("3. Events and the lanes that answer", out["events"]["reading"], _table([("Event type", "type", False), ("Events", "n", True), ("Median lift (12h after / before)", "median_lift", True), ("Share doubling", "share_doubling", True), ("Lane most often", "lane_most_often", False)], out["events"]["table"])),

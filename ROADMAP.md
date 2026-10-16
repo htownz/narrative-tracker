@@ -159,7 +159,10 @@ link-ring and control scores on every lane, a weekly brief. Everything below bui
 3. **Mistruth-at-first-sight (verdicts ≥ 300).** Classifier for O3 from claim type, specificity, lane,
    originator reliability, account mix, source presence. Flags claims to verify first, which also cuts
    verification cost.
-4. **Account reliability (with the registry).** Published per account on the amplifier map.
+4. **Account reliability — built Oct 15 (`tracker/registry.py`).** Published per account on the amplifier map
+   ("Who to believe, who to follow"); `first_reliability` / `first_early_lift` in the feature table. Scorecard
+   (`tracker/scorecard.py`) and automatic poll events (`tracker/pollevents.py`) built the same day: first
+   backtest has the top-three picks hitting 29% vs 7% base; poll events went from 16 hand-entered to ~50 found.
 5. **Post-election retrospective.** Score every prediction made; publish what worked.
 6. **Session mode (December).** One tracker per priority bill; outcome = bill action (referred, heard, voted,
    passed) from TLO; backfill the 2025 session from X search history and bill histories as training data. The

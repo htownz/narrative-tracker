@@ -30,7 +30,7 @@ from .store import Store
 
 COLUMNS = ["run_at", "asof", "slug", "kind", "key", "label", "age_h", "posts", "views", "accounts", "copies", "first_views",
            "first_followers", "views_1h", "views_6h", "views_24h", "momentum_6h", "control", "new_accounts", "burst",
-           "event_follow", "event_type", "market_price", "market_change_24h", "news_sources_48h", "news_before_x",
+           "event_follow", "event_type", "market_price", "market_change_24h", "news_sources_48h", "news_before_x", "first_reliability", "first_early_lift",
            "gain_24h", "gain_72h", "top5_24h", "measured"]
 
 def _window_start_utc(inc) -> str:
@@ -73,11 +73,14 @@ def _group_rows(inc: Incident, kind: str, groups: dict[str, tuple[str, list[dict
                 run_at: str, news: dict[str, dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     rows = []
     news = news or {}
+    from .registry import lookup as registry_lookup
+    registry = registry_lookup() if kind == "claim" else {}
     for key, (label, posts) in groups.items():
         if not posts:
             continue
         posts = sorted(posts, key=lambda p: p["created_at"])
         first = posts[0]
+        reg = registry.get(first["author_handle"]) or {}
         f = control_features(posts, origin_handle)
         ctrl, _ = control_score(f, events)
         v6 = _views_between(posts, asof - timedelta(hours=6), asof + timedelta(seconds=1))
@@ -96,6 +99,7 @@ def _group_rows(inc: Incident, kind: str, groups: dict[str, tuple[str, list[dict
             "market_price": market[0], "market_change_24h": market[1],
             "news_sources_48h": (news.get(key) or {}).get("sources_48h") if kind == "claim" else None,
             "news_before_x": (news.get(key) or {}).get("news_before_x") if kind == "claim" else None,
+            "first_reliability": reg.get("reliability"), "first_early_lift": reg.get("early_lift"),
             "gain_24h": None, "gain_72h": None, "top5_24h": None, "measured": None,
         })
     return rows
@@ -230,6 +234,8 @@ def features(inc: Incident) -> Path:
         for r in existing + new_rows:
             w.writerow({c: ("" if r.get(c) is None else r.get(c)) for c in COLUMNS})
     ranked = rank_now(new_rows)[:10]
+    from .scorecard import log_picks
+    log_picks(inc.slug, ranked, asof.isoformat(), run_at)          # scored a day later against this table (tracker/scorecard.py)
     labelled = sum(1 for r in existing if r.get("gain_24h") not in ("", None))
     out = {"generated_at": run_at, "asof": asof.isoformat(), "slug": inc.slug, "title": inc.title,
            "rows_total": len(existing) + len(new_rows), "rows_labelled_24h": labelled,
