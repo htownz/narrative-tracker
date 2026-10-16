@@ -26,6 +26,8 @@ queries:
   - '"border security" Texas funding'
   - 'Texas "ports of entry" trade'
   - 'Maverick County'
+  - 'Texas "detention center"'
+  - 'ICE detention Texas'
 
 min_faves_hint: 10
 exclude_retweets: true

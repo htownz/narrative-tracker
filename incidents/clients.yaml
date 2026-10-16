@@ -166,14 +166,14 @@ clients:
     status: client
     notice: Jim; cc Andrea
     practice: appropriations and tax
-    confirm: Engagement issue not yet named; no tracker until it is
+    confirm: Engagement issue not yet named (Jim sends the notices); no tracker until it is
     areas: []
 
   - name: NRHC
     status: client
     notice: Jim; cc Andrea
     practice: appropriations and tax
-    confirm: Engagement issue not yet named; no tracker until it is
+    confirm: Engagement issue not yet named (Jim sends the notices); no tracker until it is
     areas: []
 
   - name: No More Victims
@@ -219,9 +219,14 @@ clients:
   - name: Recana Solutions
     status: client
     notice: Jim and Jay
-    practice: appropriations and tax
-    confirm: Engagement issue not yet named; no tracker until it is
-    areas: []
+    practice: local and municipal government
+    confirm: Mapped from public hiring (detention officers, Laredo) to detention and corrections contracting; Jim or Jay to confirm the actual engagement
+    areas:
+      - area: Detention, corrections and immigration-enforcement contracting
+        trackers: [issue-border-live, issue-local-control-live]
+        why: Detention contracts ride on Operation Lone Star, ICE policy and county jail outsourcing; the narrative around detention conditions decides the politics
+        legislation: Operation Lone Star and detention appropriations; county jail and detention standards (TCJS); state–federal detention agreements; contracting rules
+        voices: [Texas DPS, Texas Commission on Jail Standards, Senate Border Security, House Corrections, Webb County, Maverick County]
 
   - name: The Safety Navigator
     status: pro-bono
