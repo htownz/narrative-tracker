@@ -164,6 +164,11 @@ link-ring and control scores on every lane, a weekly brief. Everything below bui
    per-platform first-seen and lag on every canonical claim; the Texas and national press in an RSS store
    with outlet leans; claim-level relevance replaces name matching in the news step. TikTok and Meta wait on
    an academic partner (their research APIs exclude commercial users).
+4b. **Client desk and elected rhetoric — built Oct 16.** `incidents/clients.yaml` (47 entries from the firm's
+   notice list), 26 long-term issue trackers, `/clients/`, `incidents/officials.yaml` with "What electeds said"
+   on every surface, and a by-client section in the weekly brief. Next for the "potential legislation" leg:
+   when pre-filing opens (Nov 9, 2026), a TLO filed-bills feed matched to each client area's legislation
+   hooks, shown on the client desk beside the narrative — the bridge to Harbormaster's session mode.
 4. **Account reliability — built Oct 15 (`tracker/registry.py`).** Published per account on the amplifier map
    ("Who to believe, who to follow"); `first_reliability` / `first_early_lift` in the feature table. Scorecard
    (`tracker/scorecard.py`) and automatic poll events (`tracker/pollevents.py`) built the same day: first

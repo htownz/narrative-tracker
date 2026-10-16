@@ -40,6 +40,10 @@ USER = """Week: {start} to {end} (America/Chicago). Facts, as JSON, one object p
 
 {facts}
 
+The firm's clients and the trackers that watch their issues (JSON; "slug" matches the trackers above):
+
+{clients}
+
 Write the brief as JSON with these keys:
   "headline": one sentence, the single most important thing that happened on X in Texas politics this week.
   "summary": 3-5 sentences that stand on their own (this goes out as a text message).
@@ -53,6 +57,10 @@ Write the brief as JSON with these keys:
       is there.
   "watch": 3-5 bullet strings: what to watch next week, each tied to a fact (an event on the calendar, a claim
       still gaining, a lane that is rising).
+  "clients": a list of {{"client": ..., "body": ...}} — one short paragraph (2-4 sentences) per client whose trackers
+      had meaningful activity this week: what moved on its issues, what electeds said, any claim verified false,
+      and what it means for that client in one clause. Skip clients with nothing to report. Former clients never
+      appear.
 Return JSON only."""
 
 def _window_start_utc(inc) -> str:
@@ -175,20 +183,35 @@ def facts(days: int = 7, end: datetime | None = None) -> dict[str, Any]:
         if f:
             out.append(f)
     out.sort(key=lambda f: -f["views_this_week"])
+    clients = []
+    try:
+        from .clients import registry
+        active = {f["slug"] for f in out}
+        for c in registry().get("clients", []):
+            if c.get("status") == "former":
+                continue
+            slugs = sorted({s for a in c.get("areas", []) for s in a.get("trackers", []) if s in active})
+            if slugs:
+                clients.append({"client": c["name"], "status": c.get("status", "client"), "trackers": slugs,
+                                "areas": [a["area"] for a in c.get("areas", []) if any(s in active for s in a.get("trackers", []))]})
+    except Exception:
+        pass
     return {"start": start.astimezone(TZ).strftime("%b %d"), "end": end.astimezone(TZ).strftime("%b %d, %Y"),
-            "start_iso": start.isoformat(), "end_iso": end.isoformat(), "days": days, "trackers": out}
+            "start_iso": start.isoformat(), "end_iso": end.isoformat(), "days": days, "trackers": out, "clients": clients}
 
 
 def write(fx: dict[str, Any], model: str = "claude-sonnet-5-5") -> dict[str, Any]:
     from .lanes import _ask
     client = _client()
     slim = json.dumps(fx["trackers"], ensure_ascii=False)
-    res = _ask(client, model, SYSTEM, USER.format(start=fx["start"], end=fx["end"], facts=slim), max_tokens=16000)   # ~8K tokens of prose
+    res = _ask(client, model, SYSTEM, USER.format(start=fx["start"], end=fx["end"], facts=slim, clients=json.dumps(fx.get("clients") or [], ensure_ascii=False)),
+               max_tokens=20000)   # ~10K tokens of prose
     if not res.get("sections"):
         raise SystemExit("brief: the model returned no sections")
     return {"headline": str(res.get("headline") or ""), "summary": str(res.get("summary") or ""),
             "sections": [{"title": str(s.get("title") or ""), "body": str(s.get("body") or "")} for s in res["sections"] if isinstance(s, dict)],
-            "watch": [str(w) for w in (res.get("watch") or [])][:6]}
+            "watch": [str(w) for w in (res.get("watch") or [])][:6],
+            "clients": [{"client": str(c.get("client") or ""), "body": str(c.get("body") or "")} for c in (res.get("clients") or []) if isinstance(c, dict) and c.get("body")]}
 
 
 CSS = """
@@ -213,6 +236,10 @@ def render(fx: dict[str, Any], text: dict[str, Any], archive: list[str]) -> str:
     secs = "".join(f"<h2>{html.escape(s['title'])}</h2>" + "".join(f"<p>{html.escape(par.strip())}</p>" for par in s["body"].split("\n\n") if par.strip())
                    for s in text["sections"])
     watch = "".join(f"<li>{html.escape(w)}</li>" for w in text["watch"])
+    clients_html = ""
+    if text.get("clients"):
+        clients_html = ('<h2>By client</h2>' + "".join(f'<h3 style="font-size:14px;margin:14px 0 4px">{html.escape(c["client"])}</h3><p>{html.escape(c["body"])}</p>' for c in text["clients"])
+                        + '<p class="when">Client mapping: <a href="../clients/" style="color:inherit">the client desk</a>.</p>')
     tables = []
     for t in fx["trackers"]:
         lanes = "".join(f'<tr><td>{html.escape(l["lane"])}</td><td class="n">{_fmt(l["views"])}</td><td class="n">{l["share"]:.0%}</td><td class="n">{("%+.0f%%" % (l["change_vs_prior_week"]*100)) if l["change_vs_prior_week"] is not None else "new"}</td></tr>' for l in t["lanes"])
@@ -236,6 +263,7 @@ def render(fx: dict[str, Any], text: dict[str, Any], archive: list[str]) -> str:
 <div class="lead">{html.escape(text["summary"])}</div>
 {secs}
 <h2>What to watch</h2><ul>{watch}</ul>
+{clients_html}
 <details class="facts"><summary>The numbers behind this brief ({len(fx["trackers"])} trackers)</summary>{"".join(tables)}</details>
 <footer>Written by Claude from the trackers' data for the week; verdicts link to their sources on each tracker's claims page. <span class="archive">Earlier briefs: {arch or "none yet"}</span></footer>
 </body></html>"""
