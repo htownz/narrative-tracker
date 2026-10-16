@@ -94,3 +94,76 @@ originator reach) stand in.
 - Session mode: an operator chat over a tracker's data ("what changed since this morning?").
 - Pull the Talarico calibration to its full six days and compare lane counts to the original chart.
 - Widen the thin issue trackers (vouchers, grid) with more queries.
+
+
+---
+
+# Phase 2 (planned Oct 15): correlation, learning, prediction
+
+Where things stand after nine days of live operation plus the September backfill: 34K posts stored (11K drawn),
+23K lane labels, 9.5K atomic claims in 6K canonical claims, 169 verdicts (95 supported, 52 misleading, 11
+unsupported, 11 unverifiable), 5K feature rows with 491 already carrying a 24-hour outcome, 16 calendar events,
+link-ring and control scores on every lane, a weekly brief. Everything below builds on that.
+
+## What limits prediction today
+
+1. **View counts are snapshots.** A post's views are what they were when it was pulled (the last two days are
+   re-pulled; the top 500 refreshed weekly). "Views 24 hours later" is therefore reconstructed from when posts
+   were created, not measured. Growth prediction needs real growth curves.
+2. **Lanes are fixed hypotheses.** A narrative that was not in the lane set lives in `other` until an alert
+   notices it. New-topic detection is the alerts clusterer, which is crude.
+3. **One platform, no news signal.** Whether a claim crossed to mainstream coverage is inferred from news
+   accounts posting on X. There is no direct measure of news coverage, and no second platform.
+4. **Markets are one feed.** Kalshi only; no lane has correlated with price above |r| = 0.31 in nine days.
+5. **No account memory.** Roles are recomputed per tracker from scratch; nothing records that an account has
+   spread three claims later rated unsupported.
+6. **No human labels yet.** Zero overrides; the few-shot loop is idle.
+
+## Outcomes worth predicting (defined so they can be scored)
+
+| # | Outcome | Label source | Horizon |
+|---|---|---|---|
+| O1 | Claim is in its tracker's top five by views gained | feature table (`gain_24h`, `top5_24h`) | 24h |
+| O2 | Claim crosses into mainstream news (3+ outlets) | GDELT article counts for the claim's entities + key terms | 48h |
+| O3 | Checkable claim will be rated unsupported or misleading | verifier verdicts | at first sight |
+| O4 | A false claim collapses (views < 10% of peak) after an institutional denial | post-denial view series | 48h |
+| O5 | Lane velocity leads a market or poll move | Kalshi + Polymarket candles, poll averages | 6–48h |
+
+## Data to add, ranked by value per dollar
+
+1. **View-count time series** — every run, re-look-up the 100 most-viewed posts of the last 48 hours per tracker
+   and append (post, time, views) rows. About $1/day across ten trackers. Turns O1 and O4 into measured outcomes
+   and gives "velocity at hour h" features.
+2. **GDELT news mentions** (free) — hourly article counts per canonical claim (entities + two key terms) from the
+   GDELT 2.0 DOC API. Gives O2, a news lead/lag, and "debunked in print but still spreading on X".
+3. **Polymarket** (free) beside Kalshi for the same three races; poll averages as the slow outcome.
+4. **Account registry** — a persistent table across trackers: first seen, follower history, roles per tracker,
+   claims originated and carried, and the verdicts those claims got. Yields an account reliability score (share of
+   carried claims later rated unsupported) and the "who touched it" predictor (once @spencerpratt and
+   @nicksortor both carry a claim, what is its top-five probability?).
+5. **Events from the data** — poll releases auto-added when a poll aggregator account posts first; later TLO
+   bill actions and hearings for session mode.
+6. **Bluesky firehose** (free) — origination vs. spread across platforms.
+
+## Analytics and models, in sequence
+
+1. **Insights page (now, ≤ 1 week).** Descriptive correlations on existing data, auto-rebuilt each run:
+   lane→lane lead/lag (does the polls lane lead "Abbott in trouble"?), event-type → lane response distributions,
+   originator → spread (which accounts' touches predict top-five), claim type × lane → verdict rates, pushback lag
+   vs. final reach, control score vs. growth. Each with N and a plain-language reading.
+2. **Growth model (data ≥ 2 weeks, ~Nov 1).** Gradient-boosted classifier for O1 on the feature table with
+   time-ordered validation; calibration shown on the hub; "Likely to grow" switches from the heuristic to model
+   probability. AUC reported honestly, including when it is near 0.5.
+3. **Mistruth-at-first-sight (verdicts ≥ 300).** Classifier for O3 from claim type, specificity, lane,
+   originator reliability, account mix, source presence. Flags claims to verify first, which also cuts
+   verification cost.
+4. **Account reliability (with the registry).** Published per account on the amplifier map.
+5. **Post-election retrospective.** Score every prediction made; publish what worked.
+6. **Session mode (December).** One tracker per priority bill; outcome = bill action (referred, heard, voted,
+   passed) from TLO; backfill the 2025 session from X search history and bill histories as training data. The
+   real question for the firm: does narrative pressure on X predict a bill's movement, and with what lead?
+
+## Cost
+
+twitterapi.io: about +$1/day for the view series. GDELT, Polymarket, Bluesky: free. Anthropic: unchanged
+(the models run on the runner with scikit-learn). GitHub Actions: free.
