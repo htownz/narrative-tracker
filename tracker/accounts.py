@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import OTHER_KEY, PUSHBACK_KEY, ROOT, OUT_DIR, Incident, load_incident
-from .store import Store, parse_created_at
+from .store import Store, parse_created_at, profile_url
 
 ROLE_ORDER = ["originator", "bridge", "pushback", "copier", "poster"]
 ROLE_COLOR = {"originator": "#e08a2e", "bridge": "#3987e5", "copier": "#ffffff", "pushback": "#2fbf8c", "poster": "#7c7c78"}
@@ -195,7 +195,7 @@ def render_html(inc: Incident, rows: list[dict[str, Any]], top_n: int = 80) -> P
         tp = r["top_post"] or {}
         trs.append(
             f'<tr data-role="{r["role"]}"><td class="n">{i}</td>'
-            f'<td><div class="who">{img}<div><div class="nm"><a href="https://x.com/{html.escape(r["handle"])}" target="_blank" rel="noopener">{html.escape(r["name"] or r["handle"])}</a></div>'
+            f'<td><div class="who">{img}<div><div class="nm"><a href="{html.escape(profile_url(r["handle"]))}" target="_blank" rel="noopener">{html.escape(r["name"] or r["handle"])}</a></div>'
             f'<div class="h">@{html.escape(r["handle"])} · {_fmt(r["followers"])} followers{(" · " + str(r["account_age_years"]) + "y") if r["account_age_years"] is not None else ""}</div></div></div></td>'
             f'<td>{_badge(r["role"])}</td><td class="n">{r["posts"]}</td><td class="n">{_fmt(r["views"])}</td><td class="n">{_fmt(r["downstream_views"])}</td>'
             f'<td class="n"><b>{_fmt(r["reach"])}</b></td><td>{_mix(r["lanes"], colors, labels)}</td>'
@@ -273,7 +273,7 @@ def accounts_all() -> Path:
             x = a["incidents"].get(inc.slug)
             cells += f'<td>{_badge(x["role"])}<div class="inc">{_fmt(x["reach"])}</div></td>' if x else "<td></td>"
         img = f'<img src="{html.escape(a["avatar"])}" alt="">' if a["avatar"] else '<img alt="">'
-        trs.append(f'<tr data-role="{a["role"]}"><td class="n">{n}</td><td><div class="who">{img}<div><div class="nm"><a href="https://x.com/{html.escape(a["handle"])}" target="_blank" rel="noopener">{html.escape(a["name"] or a["handle"])}</a></div>'
+        trs.append(f'<tr data-role="{a["role"]}"><td class="n">{n}</td><td><div class="who">{img}<div><div class="nm"><a href="{html.escape(profile_url(a["handle"]))}" target="_blank" rel="noopener">{html.escape(a["name"] or a["handle"])}</a></div>'
                    f'<div class="h">@{html.escape(a["handle"])} · {_fmt(a["followers"])} followers</div></div></div></td>'
                    f'<td class="n">{len(a["incidents"])}</td><td class="n"><b>{_fmt(a["reach"])}</b></td><td class="n">{a["posts"]}</td><td class="n">{a["first_mover_n"]}</td>{cells}</tr>')
     counts = defaultdict(int)

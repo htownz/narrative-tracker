@@ -21,7 +21,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from .config import OTHER_KEY, PUSHBACK_KEY, ROOT, Incident
-from .store import Store
+from .store import Store, profile_url
 
 
 def overrides_path(inc: Incident) -> Path:
@@ -130,7 +130,7 @@ def render_html(inc: Incident, samples: dict[str, list[dict[str, Any]]], existin
             manual = '<br><span style="color:var(--accent)">manual</span>' if src == "manual" else ""
             opts = options.replace(f'value="{key}"', f'value="{key}" selected', 1)
             rows.append(
-                '<div class="post"><div class="who"><b><a href="https://x.com/' + html.escape(p["author_handle"]) + '" target="_blank" rel="noopener">@'
+                '<div class="post"><div class="who"><b><a href="' + html.escape(profile_url(p["author_handle"])) + '" target="_blank" rel="noopener">@'
                 + html.escape(p["author_handle"]) + '</a></b><br>' + f'{int(p["view_count"] or 0):,}' + ' views<br>' + t + manual + '</div>'
                 + '<div class="txt">' + html.escape(p["text"] or "") + link + '</div>'
                 + '<div><select data-id="' + p["id"] + '" data-orig="' + key + '">' + opts + '</select><div class="meta">'

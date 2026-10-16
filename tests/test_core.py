@@ -581,3 +581,43 @@ def test_registry_scores_first_posters_and_early_touches(tmp_path, monkeypatch):
     assert registry.lookup()["alpha"]["reliability"] == 0.75
     html_text = registry.table_html(list(reg.values()), 4 / 12)
     assert "@alpha" in html_text and "3 of 4 held up" in html_text and "@beta" in html_text and "@delta" not in html_text   # delta has only a ring
+
+
+# ------------------------------------------------------------------ Bluesky in the same store
+def test_bluesky_posts_share_the_store_with_their_own_threshold(tmp_path):
+    from tracker import bsky
+    from tracker.store import flatten_bsky, profile_url
+    assert bsky.bare_query('"Ken Paxton" since:2026-10-01_00:00:00_UTC until:2026-10-02_00:00:00_UTC min_faves:5 -filter:retweets') == '"Ken Paxton"'
+    assert bsky.bare_query("@KenPaxtonTX Talarico") == "KenPaxtonTX Talarico"
+    pv = {"uri": "at://did:plc:abc/app.bsky.feed.post/3kxyz", "cid": "c1",
+          "author": {"did": "did:plc:abc", "handle": "jane.bsky.social", "displayName": "Jane", "avatar": "https://cdn/av.jpg", "createdAt": "2024-11-01T00:00:00.000Z"},
+          "record": {"$type": "app.bsky.feed.post", "text": "Paxton ducked the debate again", "createdAt": "2026-10-12T15:00:00.000Z", "langs": ["en"],
+                     "reply": {"parent": {"uri": "at://did:plc:xyz/app.bsky.feed.post/parent1", "cid": "c0"}, "root": {"uri": "at://did:plc:xyz/app.bsky.feed.post/parent1", "cid": "c0"}},
+                     "facets": [{"features": [{"$type": "app.bsky.richtext.facet#link", "uri": "https://texastribune.org/story"}]}]},
+          "embed": {"$type": "app.bsky.embed.record#view", "record": {"$type": "app.bsky.embed.record#viewRecord", "uri": "at://did:plc:q/app.bsky.feed.post/quoted1", "cid": "c2",
+                                                                      "author": {"handle": "reporter.bsky.social"}, "value": {"text": "original"}}},
+          "replyCount": 3, "repostCount": 10, "likeCount": 40, "quoteCount": 2, "indexedAt": "2026-10-12T15:00:05.000Z"}
+    row = flatten_bsky(pv)
+    assert row["id"] == pv["uri"] and row["source"] == "bsky" and row["view_count"] == 0 and row["engagement"] == 55
+    assert row["url"] == "https://bsky.app/profile/jane.bsky.social/post/3kxyz" and row["created_at"] == "2026-10-12T15:00:00+00:00"
+    assert row["quoted_id"] == "at://did:plc:q/app.bsky.feed.post/quoted1" and row["in_reply_to_id"].endswith("parent1")
+    raw = json.loads(row["raw"])
+    assert raw["author"]["createdAt"] == "2024-11-01T00:00:00.000Z" and raw["entities"]["urls"] == ["https://texastribune.org/story"] and raw["quoted_tweet"]["author"] == "reporter.bsky.social"
+    assert profile_url("jane.bsky.social") == "https://bsky.app/profile/jane.bsky.social" and profile_url("EricLDaugh") == "https://x.com/EricLDaugh" and profile_url("yt:UC123") == "https://www.youtube.com/channel/UC123"
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    x = flatten_tweet({"id": "1", "text": "a", "createdAt": "Mon Oct 12 10:00:00 +0000 2026", "viewCount": 1500, "author": {"userName": "h"}})
+    st.upsert_posts([x, row, flatten_bsky({**pv, "uri": "at://did:plc:abc/app.bsky.feed.post/small", "likeCount": 2, "repostCount": 0, "replyCount": 0, "quoteCount": 0})])
+    assert {r["id"] for r in st.dataset(1000)} == {"1", pv["uri"]}                     # the 2-like Bluesky post is under its threshold
+    assert {r["id"] for r in st.unlabeled(1000)} == {"1", pv["uri"]}
+    assert st.count("source='bsky'") == 2 and st.count("source='x'") == 1
+    st.close()
+    # an old store without the columns gets them on open
+    import sqlite3
+    old = tmp_path / "old.sqlite"
+    c = sqlite3.connect(old); c.execute("CREATE TABLE posts (id TEXT PRIMARY KEY, created_at TEXT, view_count INTEGER, like_count INTEGER, retweet_count INTEGER, reply_count INTEGER, quote_count INTEGER, author_handle TEXT, author_name TEXT, author_avatar TEXT, author_followers INTEGER, text TEXT, url TEXT, in_reply_to_id TEXT, quoted_id TEXT, retweeted_id TEXT, in_dataset INTEGER DEFAULT 1, lane TEXT, lane_source TEXT, copy_origin TEXT, raw TEXT)")
+    c.execute("INSERT INTO posts (id, created_at, view_count, like_count, retweet_count, reply_count, quote_count, in_dataset) VALUES ('9','2026-10-12T00:00:00+00:00',5000,10,5,1,0,1)"); c.commit(); c.close()
+    st2 = Store(old)
+    r = st2.conn.execute("SELECT source, engagement FROM posts WHERE id='9'").fetchone()
+    assert r["source"] == "x" and r["engagement"] == 16
+    st2.close()

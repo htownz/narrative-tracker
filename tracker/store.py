@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS posts (
     lane TEXT,                      -- lane key, 'pushback', 'other', or NULL
     lane_source TEXT,               -- 'claude' | 'keywords' | 'manual'
     copy_origin TEXT,               -- id of the earliest post with the same words, or NULL
-    raw TEXT                        -- original JSON from the API
+    raw TEXT,                       -- original JSON from the API
+    source TEXT DEFAULT 'x',        -- 'x' | 'bsky' | 'yt': the platform the post lives on
+    engagement INTEGER DEFAULT 0    -- likes + reposts + replies + quotes; the threshold for platforms without view counts
 );
 CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at);
 CREATE INDEX IF NOT EXISTS idx_posts_lane ON posts(lane);
@@ -175,7 +177,70 @@ def flatten_tweet(t: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
         "retweeted_id": str(retweeted["id"]) if retweeted.get("id") else None,
         "in_dataset": in_dataset,
         "raw": json.dumps(slim_raw(t), ensure_ascii=False),
+        "source": "x",
+        "engagement": int(t.get("likeCount") or 0) + int(t.get("retweetCount") or 0) + int(t.get("replyCount") or 0) + int(t.get("quoteCount") or 0),
     }
+
+
+SOURCES = {"x": "X", "bsky": "Bluesky", "yt": "YouTube"}
+BSKY_MIN_ENGAGEMENT = 25      # Bluesky has no view counts; a post with this much engagement is roughly a 1K-view post on X
+
+
+def profile_url(handle: str) -> str:
+    """Where an account lives. Bluesky handles are domains (name.bsky.social); YouTube channels are stored as yt:<id>."""
+    if handle.startswith("yt:"):
+        return f"https://www.youtube.com/channel/{handle[3:]}"
+    if "." in handle:
+        return f"https://bsky.app/profile/{handle}"
+    return f"https://x.com/{handle}"
+
+
+def flatten_bsky(p: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
+    """Map a Bluesky PostView (app.bsky.feed.searchPosts / getPosts) onto the posts table. The post id is its
+    at:// URI. No view counts exist on Bluesky: view_count stays 0 and the engagement column carries the threshold."""
+    author = p.get("author") or {}
+    rec = p.get("record") or {}
+    uri = str(p.get("uri") or "")
+    rkey = uri.rsplit("/", 1)[-1] if uri else ""
+    handle = author.get("handle") or ""
+    embed = p.get("embed") or {}
+    quoted = None
+    if "record" in embed:                                    # app.bsky.embed.record#view or recordWithMedia#view
+        q = embed["record"]
+        q = q.get("record") if isinstance(q.get("record"), dict) and "uri" not in q else q
+        if isinstance(q, dict) and q.get("uri"):
+            quoted = {"id": str(q["uri"]), "author": ((q.get("author") or {}).get("handle") or ""), "text": (q.get("value") or {}).get("text", "")}
+    reply = (rec.get("reply") or {}).get("parent") or {}
+    urls = []
+    for f in rec.get("facets") or []:
+        for feat in f.get("features") or []:
+            if feat.get("uri"):
+                urls.append(feat["uri"])
+    ext = embed.get("external") or (embed.get("media") or {}).get("external") or {}
+    if ext.get("uri"):
+        urls.append(ext["uri"])
+    likes, reposts, replies, quotes = (int(p.get(k) or 0) for k in ("likeCount", "repostCount", "replyCount", "quoteCount"))
+    raw = {"_slim": 1, "_src": "bsky", "id": uri, "createdAt": rec.get("createdAt"), "lang": (rec.get("langs") or [None])[0],
+           "author": {"id": author.get("did"), "userName": handle, "name": author.get("displayName"), "createdAt": author.get("createdAt"),
+                      "followers": int(author.get("followersCount") or 0), "profilePicture": author.get("avatar"), "description": (author.get("description") or "")[:200]},
+           "entities": {"urls": urls[:10], "hashtags": []}, "quoted_tweet": {"id": quoted["id"], "author": quoted["author"]} if quoted else None,
+           "media": ["image"] if "images" in embed or "images" in (embed.get("media") or {}) else (["video"] if "playlist" in embed or "playlist" in (embed.get("media") or {}) else [])}
+    return {
+        "id": uri, "created_at": parse_created_at(rec.get("createdAt") or p.get("indexedAt")),
+        "view_count": 0, "like_count": likes, "retweet_count": reposts, "reply_count": replies, "quote_count": quotes,
+        "author_handle": handle, "author_name": author.get("displayName") or "", "author_avatar": author.get("avatar") or "",
+        "author_followers": int(author.get("followersCount") or 0),
+        "text": rec.get("text") or "", "url": f"https://bsky.app/profile/{handle}/post/{rkey}" if handle and rkey else "",
+        "in_reply_to_id": str(reply["uri"]) if reply.get("uri") else None,
+        "quoted_id": quoted["id"] if quoted else None, "retweeted_id": None,
+        "in_dataset": in_dataset, "raw": json.dumps(raw, ensure_ascii=False),
+        "source": "bsky", "engagement": likes + reposts + replies + quotes,
+    }
+
+
+def _thr(min_views: int, min_engagement: int) -> tuple[str, tuple[int, int]]:
+    """SQL for 'this post clears its platform's threshold'."""
+    return "(view_count >= ? OR (source = 'bsky' AND engagement >= ?))", (min_views, min_engagement)
 
 
 class Store:
@@ -188,6 +253,13 @@ class Store:
         self.conn.execute("PRAGMA journal_mode=MEMORY")
         self.conn.execute("PRAGMA synchronous=OFF")
         self.conn.executescript(SCHEMA)
+        cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(posts)")}
+        if "source" not in cols:                              # stores created before posts had a platform
+            self.conn.execute("ALTER TABLE posts ADD COLUMN source TEXT DEFAULT 'x'")
+        if "engagement" not in cols:
+            self.conn.execute("ALTER TABLE posts ADD COLUMN engagement INTEGER DEFAULT 0")
+            self.conn.execute("UPDATE posts SET engagement = COALESCE(like_count,0)+COALESCE(retweet_count,0)+COALESCE(reply_count,0)+COALESCE(quote_count,0)")
+        self.conn.commit()
 
     # ---- writes -------------------------------------------------------------
     HISTORY_MIN_VIEWS = 1000
@@ -238,15 +310,18 @@ class Store:
         n = 0
         for r in rows:
             existing = self.conn.execute("SELECT in_dataset FROM posts WHERE id = ?", (r["id"],)).fetchone()
+            r = dict(r)
+            r.setdefault("source", "x")
+            r.setdefault("engagement", int(r.get("like_count") or 0) + int(r.get("retweet_count") or 0) + int(r.get("reply_count") or 0) + int(r.get("quote_count") or 0))
             if existing:
-                r = dict(r)
                 r["in_dataset"] = max(int(existing["in_dataset"] or 0), int(r.get("in_dataset", 0)))
                 self.conn.execute(
                     """UPDATE posts SET created_at=:created_at, view_count=:view_count, like_count=:like_count,
                        retweet_count=:retweet_count, reply_count=:reply_count, quote_count=:quote_count,
                        author_handle=:author_handle, author_name=:author_name, author_avatar=:author_avatar,
                        author_followers=:author_followers, text=:text, url=:url, in_reply_to_id=:in_reply_to_id,
-                       quoted_id=:quoted_id, retweeted_id=:retweeted_id, in_dataset=:in_dataset, raw=:raw
+                       quoted_id=:quoted_id, retweeted_id=:retweeted_id, in_dataset=:in_dataset, raw=:raw,
+                       source=:source, engagement=:engagement
                        WHERE id=:id""",
                     r,
                 )
@@ -254,10 +329,10 @@ class Store:
                 self.conn.execute(
                     """INSERT INTO posts (id, created_at, view_count, like_count, retweet_count, reply_count, quote_count,
                        author_handle, author_name, author_avatar, author_followers, text, url, in_reply_to_id,
-                       quoted_id, retweeted_id, in_dataset, raw)
+                       quoted_id, retweeted_id, in_dataset, raw, source, engagement)
                        VALUES (:id, :created_at, :view_count, :like_count, :retweet_count, :reply_count, :quote_count,
                        :author_handle, :author_name, :author_avatar, :author_followers, :text, :url, :in_reply_to_id,
-                       :quoted_id, :retweeted_id, :in_dataset, :raw)""",
+                       :quoted_id, :retweeted_id, :in_dataset, :raw, :source, :engagement)""",
                     r,
                 )
             n += 1
@@ -291,50 +366,53 @@ class Store:
     def ids(self) -> set[str]:
         return {r["id"] for r in self.conn.execute("SELECT id FROM posts")}
 
-    def dataset(self, min_views: int = 0) -> list[dict[str, Any]]:
+    def dataset(self, min_views: int = 0, min_engagement: int = BSKY_MIN_ENGAGEMENT) -> list[dict[str, Any]]:
+        thr, args = _thr(min_views, min_engagement)
         rows = self.conn.execute(
-            "SELECT * FROM posts WHERE in_dataset=1 AND view_count >= ? AND created_at IS NOT NULL ORDER BY created_at",
-            (min_views,),
+            f"SELECT * FROM posts WHERE in_dataset=1 AND {thr} AND created_at IS NOT NULL ORDER BY created_at", args,
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def drawable(self, min_views: int = 0) -> list[dict[str, Any]]:
+    def drawable(self, min_views: int = 0, min_engagement: int = BSKY_MIN_ENGAGEMENT) -> list[dict[str, Any]]:
         """What the chart shows: dataset posts at the threshold, plus every dataset post that repeats one (any views)."""
+        thr, args = _thr(min_views, min_engagement)
         rows = self.conn.execute(
             "SELECT * FROM posts WHERE in_dataset=1 AND created_at IS NOT NULL AND "
-            "(view_count >= ? OR (copy_origin IS NOT NULL AND lane IS NOT NULL)) ORDER BY created_at",
-            (min_views,),
+            f"({thr} OR (copy_origin IS NOT NULL AND lane IS NOT NULL)) ORDER BY created_at", args,
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def chart_posts(self, min_views: int, window_start_utc: str) -> list[dict[str, Any]]:
+    def chart_posts(self, min_views: int, window_start_utc: str, min_engagement: int = BSKY_MIN_ENGAGEMENT) -> list[dict[str, Any]]:
         """Everything the chart draws: drawable dataset posts plus labelled reference posts (quoted / replied-to)
         inside the window at the threshold — the same rule export.py uses."""
+        thr, args = _thr(min_views, min_engagement)
         rows = self.conn.execute(
             "SELECT * FROM posts WHERE created_at IS NOT NULL AND ("
-            "(in_dataset=1 AND (view_count >= ? OR (copy_origin IS NOT NULL AND lane IS NOT NULL))) OR "
-            "(in_dataset=0 AND view_count >= ? AND created_at >= ? AND lane IS NOT NULL)) ORDER BY created_at",
-            (min_views, min_views, window_start_utc),
+            f"(in_dataset=1 AND ({thr} OR (copy_origin IS NOT NULL AND lane IS NOT NULL))) OR "
+            f"(in_dataset=0 AND {thr} AND created_at >= ? AND lane IS NOT NULL)) ORDER BY created_at",
+            args + args + (window_start_utc,),
         ).fetchall()
         return [dict(r) for r in rows]
 
     def all_posts(self) -> list[dict[str, Any]]:
         return [dict(r) for r in self.conn.execute("SELECT * FROM posts ORDER BY created_at")]
 
-    def unlabeled(self, min_views: int = 0) -> list[dict[str, Any]]:
+    def unlabeled(self, min_views: int = 0, min_engagement: int = BSKY_MIN_ENGAGEMENT) -> list[dict[str, Any]]:
+        thr, args = _thr(min_views, min_engagement)
         rows = self.conn.execute(
-            "SELECT * FROM posts WHERE in_dataset=1 AND view_count >= ? AND lane IS NULL ORDER BY view_count DESC",
-            (min_views,),
+            f"SELECT * FROM posts WHERE in_dataset=1 AND {thr} AND lane IS NULL ORDER BY view_count DESC, engagement DESC", args,
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def unlabeled_refs(self, min_views: int, window_start_utc: str, include_labeled: bool = False) -> list[dict[str, Any]]:
+    def unlabeled_refs(self, min_views: int, window_start_utc: str, include_labeled: bool = False,
+                       min_engagement: int = BSKY_MIN_ENGAGEMENT) -> list[dict[str, Any]]:
         """Reference-only posts (quoted / replied-to) that sit inside the window and clear the threshold —
         they get drawn, so they need a lane too."""
+        thr, args = _thr(min_views, min_engagement)
         rows = self.conn.execute(
-            "SELECT * FROM posts WHERE in_dataset=0 AND view_count >= ? AND created_at >= ? "
-            + ("" if include_labeled else "AND lane IS NULL ") + "ORDER BY view_count DESC",
-            (min_views, window_start_utc),
+            f"SELECT * FROM posts WHERE in_dataset=0 AND {thr} AND created_at >= ? "
+            + ("" if include_labeled else "AND lane IS NULL ") + "ORDER BY view_count DESC, engagement DESC",
+            args + (window_start_utc,),
         ).fetchall()
         return [dict(r) for r in rows]
 
@@ -348,13 +426,13 @@ class Store:
         return wanted
 
     # ---- claims ---------------------------------------------------------------
-    def claims_pending(self, min_views: int, window_start_utc: str, limit: int) -> list[dict[str, Any]]:
+    def claims_pending(self, min_views: int, window_start_utc: str, limit: int, min_engagement: int = BSKY_MIN_ENGAGEMENT * 2) -> list[dict[str, Any]]:
         """In-lane posts (not 'other') that have not been through claim extraction, biggest first."""
         rows = self.conn.execute(
             "SELECT p.* FROM posts p LEFT JOIN claims_done d ON d.post_id = p.id "
-            "WHERE d.post_id IS NULL AND p.lane IS NOT NULL AND p.lane != 'other' AND p.view_count >= ? "
-            "AND p.created_at >= ? ORDER BY p.view_count DESC LIMIT ?",
-            (min_views, window_start_utc, limit),
+            "WHERE d.post_id IS NULL AND p.lane IS NOT NULL AND p.lane != 'other' AND (p.view_count >= ? OR (p.source = 'bsky' AND p.engagement >= ?)) "
+            "AND p.created_at >= ? ORDER BY p.view_count DESC, p.engagement DESC LIMIT ?",
+            (min_views, min_engagement, window_start_utc, limit),
         ).fetchall()
         return [dict(r) for r in rows]
 

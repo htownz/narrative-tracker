@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import DATA_DIR, OUT_DIR
+from .store import profile_url
 
 MIN_VERIFIED = 3
 MIN_EARLY = 5
@@ -154,7 +155,7 @@ def table_html(rows: list[dict[str, Any]], base_rate: float | None, top_n: int =
         lift_cell = (f'<b style="color:{"#e08a2e" if lift >= 2 else "var(--ink)"}">{lift}×</b><div class="inc">{r["early_top5"]:.0%} of {r["early_n"]}</div>'
                      if lift is not None else f'<span class="inc">{r["early_n"]} scored</span>')
         bad = r["unsupported"] + r["misleading"]
-        trs.append(f'<tr><td><div class="nm"><a href="https://x.com/{html.escape(r["handle"])}" target="_blank" rel="noopener">@{html.escape(r["handle"])}</a></div>'
+        trs.append(f'<tr><td><div class="nm"><a href="{html.escape(profile_url(r["handle"]))}" target="_blank" rel="noopener">@{html.escape(r["handle"])}</a></div>'
                    f'<div class="h">{_fmt(r["followers"] or 0)} followers · {len(r["trackers"])} tracker{"s" if len(r["trackers"]) != 1 else ""}'
                    f'{" · " + html.escape(r["role"]) if r.get("role") else ""}</div></td>'
                    f'<td class="n">{r["claims_first"]}</td><td class="n">{r["claims_early"]}</td><td class="n">{rel_cell}</td>'

@@ -38,7 +38,7 @@ def export(inc: Incident, include_other: bool = False, synthetic: bool = False) 
     lanes = inc.lane_table()
     lane_keys = {l["key"] for l in lanes} | {OTHER_KEY}
 
-    dataset = store.drawable(inc.min_views)
+    dataset = [p for p in store.drawable(inc.min_views) if (p.get("source") or "x") == "x"]     # the chart plots views: X only
     chart_posts = [p for p in dataset if include_other or (p.get("lane") or OTHER_KEY) != OTHER_KEY]
     chart_ids = {p["id"] for p in chart_posts}
 

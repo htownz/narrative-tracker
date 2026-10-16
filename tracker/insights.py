@@ -306,6 +306,33 @@ def news_crossover(trackers: list[str], claims_by_tracker: dict[str, dict[str, A
             "top": [{"claim": c["text"], "outlets_48h": c["news"]["sources_48h"], "verdict": c.get("verdict"), "views": c["views"]} for c in top], "reading": reading}
 
 
+# ---- 10: platforms --------------------------------------------------------------------------------
+def platforms(trackers: list[str], claims_by_tracker: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Where canonical claims start and whether they cross platforms (X, Bluesky, YouTube)."""
+    from .store import SOURCES
+    allc = [c for slug in trackers for c in claims_by_tracker.get(slug, {}).values() if c.get("sources")]
+    multi = [c for c in allc if len(c["sources"]) > 1]
+    seen_any = {src for c in allc for src in c["sources"]}
+    if len(seen_any) < 2:
+        return {"n": len(allc), "table": [], "reading": "Only one platform has data so far; the Bluesky pull fills this in from its first run."}
+    first: dict[str, int] = defaultdict(int)
+    lags: dict[str, list[float]] = defaultdict(list)
+    for c in multi:
+        first[c["first_source"]] += 1
+        if c.get("platform_lag_h") is not None:
+            lags[c["first_source"]].append(float(c["platform_lag_h"]))
+    table = [{"platform": SOURCES.get(src, src), "first_on_cross_claims": n, "share": round(n / len(multi), 2),
+              "median_lag_h": round(statistics.median(lags[src]), 1) if lags[src] else None} for src, n in sorted(first.items(), key=lambda kv: -kv[1])]
+    single = [c for c in allc if len(c["sources"]) == 1 and c["first_source"] == "x"]
+    mv_multi = statistics.median(c["views"] for c in multi) if multi else 0
+    mv_single = statistics.median(c["views"] for c in single) if single else 0
+    top = table[0] if table else None
+    reading = (f"{len(multi)} of {len(allc)} canonical claims appeared on more than one platform. "
+               + (f"{top['platform']} had it first {top['share']:.0%} of the time, with a median {top['median_lag_h']}h before the next platform. " if top and top["median_lag_h"] is not None else "")
+               + (f"Claims that crossed platforms ran a median {mv_multi/1e6:.1f}M views on X against {mv_single/1e3:.0f}K for X-only claims." if multi and single else ""))
+    return {"n": len(allc), "cross": len(multi), "table": table, "reading": reading}
+
+
 # ---- 9: markets ----------------------------------------------------------------------------------
 def markets(trackers: list[str]) -> dict[str, Any]:
     rows = []
@@ -341,6 +368,7 @@ def insights() -> Path:
         "first_poster": first_poster_size(rows), "early_touch": early_touch(rows, claims_by_tracker), "control": control_vs_growth(rows),
         "events": event_response(trackers), "lead_lag": lane_lead_lag(trackers), "verdicts": verdicts_by_lane(trackers, claims_by_tracker),
         "pushback": pushback_vs_reach(trackers), "news": news_crossover(trackers, claims_by_tracker), "markets": markets(trackers),
+        "platforms": platforms(trackers, claims_by_tracker),
     }
     (OUT_DIR / "insights.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     page = render(out)
@@ -396,7 +424,8 @@ def render(out: dict[str, Any]) -> Path:
         ("6. Pushback timing and reach", out["pushback"]["reading"], _table([("Tracker", "tracker", False), ("Lane", "lane", False), ("Views", "views", True), ("Pushback lag h", "pushback_lag_h", True), ("Pushback share", "pushback_share", True), ("Half-life h", "half_life_h", True)], out["pushback"]["table"])),
         ("7. Control score and growth", out["control"]["reading"], _table([("Control", "control", False), ("Claim-days", "n", True), ("Reached top 5", "p_top5", True), ("Any growth", "p_any_gain", True), ("Median 24h gain", "median_gain", True)], out["control"]["table"])),
         ("8. Crossing into the news", out["news"]["reading"], _table([("Verdict", "verdict", False), ("Checked", "n", True), ("3+ outlets in 48h", "p_crossover", True)], out["news"]["table"]) + _table([("Claim", "claim", False), ("Outlets in 48h", "outlets_48h", True), ("Verdict", "verdict", False), ("Views", "views", True)], out["news"].get("top", []))),
-        ("9. Markets", out["markets"]["reading"], _table([("Tracker", "tracker", False), ("Market", "market", False), ("Lane", "lane", False), ("Best lag h", "lag_h", True), ("r", "r", True)], out["markets"]["table"])),
+        ("9. Where claims start: X, Bluesky, YouTube", out["platforms"]["reading"], _table([("Platform", "platform", False), ("First on cross-platform claims", "first_on_cross_claims", True), ("Share", "share", True), ("Median lead h", "median_lag_h", True)], out["platforms"]["table"])),
+        ("10. Markets", out["markets"]["reading"], _table([("Tracker", "tracker", False), ("Market", "market", False), ("Lane", "lane", False), ("Best lag h", "lag_h", True), ("r", "r", True)], out["markets"]["table"])),
     ]
     body = "".join(f"<h2>{e(t)}</h2><p class=\"read\">{e(r)}</p>{tbl}" for t, r, tbl in secs)
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">

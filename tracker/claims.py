@@ -319,6 +319,16 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
                 first_handles.append(p["author_handle"])
             if len(first_handles) == 3:
                 break
+        sources: dict[str, dict[str, Any]] = {}
+        for p in ps:                                          # ps is in time order: the first post per platform wins
+            src = p.get("source") or "x"
+            d = sources.setdefault(src, {"posts": 0, "views": 0, "engagement": 0, "first_seen": p["created_at"], "first_handle": p["author_handle"], "first_url": p["url"]})
+            d["posts"] += 1; d["views"] += int(p["view_count"] or 0); d["engagement"] += int(p.get("engagement") or 0)
+        first_source = min(sources, key=lambda k: sources[k]["first_seen"]) if sources else "x"
+        lag_h = None
+        if len(sources) > 1:
+            times = sorted(datetime.fromisoformat(d["first_seen"]) for d in sources.values())
+            lag_h = round((times[1] - times[0]).total_seconds() / 3600, 1)
         out.append({
             "event": ev["label"] if ev else None, "event_type": ev["type"] if ev else None,
             "news": {"articles": nc["articles"], "sources": nc["sources"], "sources_48h": nc["sources_48h"], "articles_48h": nc["articles_48h"],
@@ -334,6 +344,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
             "lanes": [{"key": k, "label": lanes[k]["label"], "color": lanes[k]["color"], "posts": n}
                       for k, n in sorted(lane_counts.items(), key=lambda kv: -kv[1])],
             "first_seen": first["created_at"], "first_handle": first["author_handle"], "first_handles": first_handles, "first_url": first["url"],
+            "first_source": first_source, "sources": sources, "cross_platform": len(sources) > 1, "platform_lag_h": lag_h,
             "first_views": int(first["view_count"] or 0), "last_seen": ps[-1]["created_at"],
             "views_24h": last24, "series": series,
             "top_post": max(ps, key=lambda p: int(p["view_count"] or 0))["url"],
@@ -346,6 +357,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
                   "checkable": sum(1 for r in out if r["checkable"]),
                   "verified": sum(1 for r in out if r["verdict"]),
                   "unsupported_spreading": sum(1 for r in out if r["verdict"] in ("unsupported", "misleading") and r["views_24h"] > 0),
+                  "cross_platform": sum(1 for r in out if r["cross_platform"]),
                   "news_checked": sum(1 for r in out if r.get("news")),
                   "crossed_over": sum(1 for r in out if r.get("news") and (r["news"]["sources_48h"] or 0) >= 3)},
         "clusters": out,
@@ -400,6 +412,21 @@ def _news_cell(n: dict[str, Any] | None) -> str:
             f'<div class="muted">{n["articles"]} articles, {n["sources"]} outlets in 7d{first}</div>')
 
 
+def _sources_cell(r: dict[str, Any]) -> str:
+    """Which platforms carried the claim, who had it first, and the lag to the second platform."""
+    from .store import SOURCES
+    srcs = r.get("sources") or {}
+    if len(srcs) <= 1:
+        return f'<span class="muted">{html.escape(SOURCES.get(r.get("first_source") or "x", "X"))}</span>'
+    parts = []
+    for k, d in sorted(srcs.items(), key=lambda kv: kv[1]["first_seen"]):
+        n = f'{d["posts"]} post{"s" if d["posts"] != 1 else ""}'
+        parts.append(f'<a href="{html.escape(d["first_url"] or "#")}" style="color:var(--ink)">{html.escape(SOURCES.get(k, k))}</a> <span class="muted">{n}</span>')
+    lag = r.get("platform_lag_h")
+    lag_s = f'<div class="muted">{html.escape(SOURCES.get(r["first_source"], r["first_source"]))} first, +{lag:g}h to the next</div>' if lag is not None else ""
+    return " → ".join(parts) + lag_s
+
+
 def _spark(series: list[list[Any]], start: datetime, end: datetime, w: int = 120, h: int = 22) -> str:
     """Cumulative views over the window as a tiny SVG path."""
     if not series:
@@ -442,13 +469,13 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
             src = " ".join(f'<a href="{html.escape(u)}" style="color:var(--ink-2)">[{i + 1}]</a>' for i, u in enumerate(r["verdict_sources"][:4]))
             verdict_html = f'<details><summary>why</summary><div class="muted" style="max-width:52ch">{html.escape(r.get("verdict_basis") or "")} {src}</div></details>'
         trs.append(
-            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}">'
+            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}" data-cross="{int(bool(r.get("cross_platform")))}">'
             f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>'
             + (f'<div class="muted">after: {html.escape(r["event"])}</div>' if r.get("event") else "") + f'{verdict_html}</td>'
             f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">@{html.escape(r["first_handle"])}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
             f'<td class="n"><a href="{html.escape(r["top_post"] or "#")}" style="color:var(--ink)">{r["posts"]}</a></td><td class="n">{_fmt(r["views"])}</td>'
             f'<td class="n">{_fmt(r["views_24h"])}</td><td class="n">{r["accounts"]}</td><td class="n">{r["copies"]}</td>'
-            f'<td><div class="chips">{chips}</div></td><td>{_news_cell(r.get("news"))}</td><td>{_spark(r["series"], start, end)}</td></tr>'
+            f'<td><div class="chips">{chips}</div></td><td>{_sources_cell(r)}</td><td>{_news_cell(r.get("news"))}</td><td>{_spark(r["series"], start, end)}</td></tr>'
         )
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(inc.title)} — claims</title><style>{CSS}{EXTRA_CSS}</style></head><body>
@@ -461,15 +488,16 @@ Checkable means a reporter could confirm or refute it from public records. Verdi
   <div class="tile"><div class="t">Canonical claims</div><div class="v">{s["clusters"]}</div><div class="d">from {s["claims"]:,} claims in {s["posts_processed"]:,} posts</div></div>
   <div class="tile"><div class="t">Checkable</div><div class="v">{s["checkable"]}</div><div class="d">factual claims a reporter could test</div></div>
   <div class="tile"><div class="t">Verified</div><div class="v">{s["verified"]}</div><div class="d">{s["unsupported_spreading"]} unsupported and still spreading</div></div>
+  <div class="tile"><div class="t">On two platforms</div><div class="v">{s.get("cross_platform", 0)}</div><div class="d">claims seen on X and Bluesky (or YouTube), with the lag between them</div></div>
   <div class="tile"><div class="t">Crossed into news</div><div class="v">{s.get("crossed_over", 0)}</div><div class="d">3+ outlets within 48h, of {s.get("news_checked", 0)} checked (Google News)</div></div>
 </div>
 <div class="filters" id="filters">
   <button data-f="all" class="on">All</button><button data-f="type:fact">Facts</button><button data-f="type:opinion">Opinions</button>
   <button data-f="type:prediction">Predictions</button><button data-f="type:call_to_action">Calls to action</button>
   <button data-f="check:1">Checkable</button><button data-f="stance:against">Against</button><button data-f="stance:for">For</button>
-  <button data-f="verdict:unsupported">Unsupported</button><button data-f="news:1">In the news</button>
+  <button data-f="verdict:unsupported">Unsupported</button><button data-f="news:1">In the news</button><button data-f="cross:1">On two platforms</button>
 </div>
-<div class="wrap"><table id="t"><thead><tr><th>Claim</th><th>First made by</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Last 24h</th><th class="n">Accounts</th><th class="n">Copies</th><th>Lanes</th><th>News</th><th>Spread</th></tr></thead>
+<div class="wrap"><table id="t"><thead><tr><th>Claim</th><th>First made by</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Last 24h</th><th class="n">Accounts</th><th class="n">Copies</th><th>Lanes</th><th>Platforms</th><th>News</th><th>Spread</th></tr></thead>
 <tbody>{"".join(trs)}</tbody></table></div>
 <footer>Generated {html.escape(data["generated_at"][:16].replace("T", " "))} UTC · claims extracted and grouped by Claude · <a href="accounts.html" style="color:var(--ink-2)">who moved it</a> · <a href="analysis.html" style="color:var(--ink-2)">timing &amp; pushback</a></footer>
 <script>
