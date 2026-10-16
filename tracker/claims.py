@@ -344,7 +344,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
             "lanes": [{"key": k, "label": lanes[k]["label"], "color": lanes[k]["color"], "posts": n}
                       for k, n in sorted(lane_counts.items(), key=lambda kv: -kv[1])],
             "first_seen": first["created_at"], "first_handle": first["author_handle"], "first_handles": first_handles, "first_url": first["url"],
-            "first_source": first_source, "sources": sources, "cross_platform": len(sources) > 1, "platform_lag_h": lag_h,
+            "first_source": first_source, "first_name": first.get("author_name") or "", "sources": sources, "cross_platform": len(sources) > 1, "platform_lag_h": lag_h,
             "first_views": int(first["view_count"] or 0), "last_seen": ps[-1]["created_at"],
             "views_24h": last24, "series": series,
             "top_post": max(ps, key=lambda p: int(p["view_count"] or 0))["url"],
@@ -415,6 +415,16 @@ def _news_cell(n: dict[str, Any] | None) -> str:
             f'<div class="muted">{n["articles"]} articles about it, {n["sources"]} outlets{sides}{first}</div>')
 
 
+def _who(r: dict[str, Any]) -> str:
+    """@handle on X and Bluesky; the channel name on YouTube; the account name on Truth Social."""
+    h = r.get("first_handle") or ""
+    if h.startswith("yt:"):
+        return f'{r.get("first_name") or "YouTube channel"} (YouTube)'
+    if r.get("first_source") == "truth":
+        return f"@{h} (Truth Social)"
+    return f"@{h}"
+
+
 def _sources_cell(r: dict[str, Any]) -> str:
     """Which platforms carried the claim, who had it first, and the lag to the second platform."""
     from .store import SOURCES
@@ -475,7 +485,7 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
             f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}" data-cross="{int(bool(r.get("cross_platform")))}">'
             f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>'
             + (f'<div class="muted">after: {html.escape(r["event"])}</div>' if r.get("event") else "") + f'{verdict_html}</td>'
-            f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">@{html.escape(r["first_handle"])}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
+            f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">{html.escape(_who(r))}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
             f'<td class="n"><a href="{html.escape(r["top_post"] or "#")}" style="color:var(--ink)">{r["posts"]}</a></td><td class="n">{_fmt(r["views"])}</td>'
             f'<td class="n">{_fmt(r["views_24h"])}</td><td class="n">{r["accounts"]}</td><td class="n">{r["copies"]}</td>'
             f'<td><div class="chips">{chips}</div></td><td>{_sources_cell(r)}</td><td>{_news_cell(r.get("news"))}</td><td>{_spark(r["series"], start, end)}</td></tr>'
