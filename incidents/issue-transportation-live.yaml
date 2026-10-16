@@ -1,0 +1,53 @@
+# Live issue tracker: Texas transportation — TxDOT's program and funding, I-45 and other Houston-region projects, transit, tolls, and airports. Long-term tracker through the 2027 session.
+# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-transportation-live
+title: "Transportation and infrastructure, {days} days of posts"
+subject: "transportation and infrastructure policy in Texas — TxDOT's Unified Transportation Program and funding, highway expansions like I-45 in Houston, transit including Houston METRO, toll roads, airports and ports, and the fights over what gets built"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas transportation and infrastructure, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - 'TxDOT'
+  - '"I-45" Houston'
+  - 'Houston METRO transit'
+  - '"toll road" Texas'
+  - 'Texas highway funding'
+  - '"Unified Transportation Program"'
+  - 'Houston airport expansion'
+  - 'Texas "high-speed rail"'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about highways versus transit, displacement and neighborhoods, congestion and growth, tolls, funding and who pays, rail, and TxDOT's competence. Posts about transportation in other states with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

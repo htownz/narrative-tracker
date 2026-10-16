@@ -1,0 +1,54 @@
+# Live issue tracker: rental housing that is affordable, manufactured and factory-built homes, lot-size and land-use rules, NIMBY fights, and homelessness policy in Texas cities. Long-term tracker through the 2027 session.
+# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-housing-live
+title: "Housing affordability and homelessness, {days} days of posts"
+subject: "housing affordability in Texas — rents and home prices, manufactured and factory-built housing, tiny homes, lot-size and zoning rules, county and city development regulations, NIMBY opposition to new communities, and homelessness policy including encampment bans and housing-first funding"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas housing affordability, manufactured housing and homelessness, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - '"manufactured housing" Texas'
+  - '"manufactured homes" Texas'
+  - '"tiny homes" Texas'
+  - '"lot size" Texas'
+  - '"affordable housing" Texas'
+  - '"housing crisis" Texas'
+  - 'Texas homelessness'
+  - '"homeless" Houston OR Dallas OR Austin'
+  - '"Montgomery County" housing'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about supply and deregulation versus neighborhood character, manufactured and tiny homes as the answer or as a blight, developers and investors versus residents, county and city rules, encampment bans and housing-first, and who is to blame for rents. Posts about housing in other states with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

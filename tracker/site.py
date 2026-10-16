@@ -37,7 +37,7 @@ def trackers() -> list[dict[str, Any]]:
     """Every rendered, non-synthetic tracker with its title, group and which pages exist."""
     out = []
     for d in sorted(OUT_DIR.iterdir()):
-        if not d.is_dir() or d.name == "accounts" or not (d / "index.html").exists() or not (d / "data.json").exists():
+        if not d.is_dir() or d.name in ("accounts", "insights", "clients") or not (d / "index.html").exists() or not (d / "data.json").exists():
             continue
         try:
             meta = json.loads((d / "data.json").read_text(encoding="utf-8")).get("meta", {})
@@ -78,6 +78,7 @@ def nav_html(all_trackers: list[dict[str, Any]], slug: str | None, page: str | N
             for p, label in PAGES if p in cur["pages"]) + "</span>"
     right = (f'<span class="right"><a href="{root}brief/" class="{"on" if slug == "brief" else ""}">Weekly brief</a>'
              f'<a href="{root}insights/" class="{"on" if slug == "insights" else ""}">Insights</a>'
+             f'<a href="{root}clients/" class="{"on" if slug == "clients" else ""}">Clients</a>'
              f'<a href="{root}accounts/" class="{"on" if slug == "accounts" else ""}">Amplifier map</a></span>')
     return (f'{NAV_CSS}<nav id="nt-nav"><a class="home" href="{root}">Texas Narrative Trackers</a>'
             f'<select onchange="if(this.value)location.href=this.value">{"".join(options)}</select>{tabs}{right}</nav>{NAV_JS}')
@@ -104,7 +105,7 @@ def assemble(site_dir: Path) -> int:
         for extra in ("data.json", "claims.json", "analysis.json", "control.json", "features.json"):
             if (OUT_DIR / t["slug"] / extra).exists():
                 shutil.copy(OUT_DIR / t["slug"] / extra, dest / extra)
-    for name in ("accounts", "insights"):            # cross-tracker pages: the amplifier map and the insights page
+    for name in ("accounts", "insights", "clients"):  # cross-tracker pages: the amplifier map, the insights page, the client desk
         page = OUT_DIR / name / "index.html"
         if page.exists():
             (site_dir / name).mkdir(parents=True, exist_ok=True)

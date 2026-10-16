@@ -1,0 +1,54 @@
+# Live issue tracker: Texas water and flood policy — the Texas Water Fund, Harris County Flood Control, flood bonds, post-Hill Country-flood policy including youth camp safety and the DSHS Sunset review, and disaster recovery. Long-term tracker through the 2027 session.
+# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-water-flood-live
+title: "Water, flood control and disaster policy, {days} days of posts"
+subject: "water, flood control and disaster policy in Texas — the Texas Water Fund and water supply projects, Harris County Flood Control District and flood bonds, the Hill Country floods and Camp Mystic, youth camp safety rules and the DSHS Sunset review, flood warning systems, and disaster recovery funding"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about Texas water, flood control and disaster policy, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - '"Harris County Flood Control"'
+  - 'HCFCD'
+  - '"Texas Water Fund"'
+  - 'Texas flood bond'
+  - '"Camp Mystic"'
+  - '"camp safety" Texas'
+  - 'Texas "flood warning"'
+  - 'TWDB water'
+  - '"Hill Country" flood'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
+  against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
+  will recur over one-day events. Expect frames about who failed before the Hill Country floods, warning systems and camp rules, state versus local responsibility, water supply and the Water Fund as a long-term fix, Harris County bond spending and equity, and disaster money. Posts about floods or water in other states with no Texas angle are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

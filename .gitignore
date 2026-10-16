@@ -12,3 +12,4 @@ data/*.sqlite
 data/*.sqlite-journal
 out/insights.json
 out/insights/
+out/clients/

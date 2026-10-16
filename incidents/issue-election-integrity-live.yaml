@@ -1,0 +1,66 @@
+# Live issue tracker: election integrity and the "rigged midterms" narrative — claims that the 2026 midterms
+# are or will be rigged, calls for federal intervention (up to martial law), and the Texas side: Harris County
+# election administration, the Secretary of State, Paxton's election-fraud prosecutions, mail ballots and voter
+# rolls. The example that started it: @unusual_whales, Oct 16 2026, "Trump's longtime outside allies are urging
+# him to take control of the midterms, with martial law being considered, if they deem 'midterms rigged'".
+# Long-term tracker through the 2027 session (election bills follow every cycle).
+# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+
+slug: issue-election-integrity-live
+title: "Election integrity and the 'rigged midterms' narrative, {days} days of posts"
+subject: "claims and counter-claims about the integrity of the 2026 midterm elections — that they are or will be rigged, calls for federal intervention or martial law, and in Texas the administration of the election: Harris County, the Secretary of State, Attorney General Paxton's election-fraud cases, mail ballots, voter rolls, poll watchers and certification"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 1K+ views about election integrity and the 2026 midterms, plus
+  every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
+  White means 90% or more the same words as an earlier post, with a white line back to it.
+  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+live: true
+
+queries:
+  - '"rigged" midterms'
+  - '"martial law" midterms'
+  - '"martial law" election'
+  - '"election fraud" Texas'
+  - '"Harris County" election'
+  - 'Paxton "election fraud"'
+  - '"Texas Secretary of State" election'
+  - '"mail ballots" Texas'
+  - '"voter rolls" Texas'
+  - '"election integrity" Texas'
+  - 'Texas election "poll watchers"'
+  - 'Texas election certification'
+
+min_faves_hint: 10
+exclude_retweets: true
+query_type: Latest
+min_views: 1000
+fetch_referenced: true
+
+discover_hint: >
+  This is a narrative and a policy issue, not a candidate. Lanes are the durable arguments people make about it
+  and will be reused unchanged for months, so prefer arguments that will recur over one-day events. Expect frames
+  about the midterms being rigged and what should be done about it (federal control, martial law, refusing to
+  certify), fraud claims about mail ballots, noncitizens and voter rolls, Harris County as the example, Paxton's
+  prosecutions as protection or persecution, the counter-claim that the fraud story is the pretext for overturning
+  results, and calls to protect election workers and certification. National posts with no Texas angle belong
+  here when they are about the midterms' legitimacy; posts about elections in other countries are off-topic.
+
+lanes: []
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

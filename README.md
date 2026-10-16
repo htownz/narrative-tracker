@@ -242,6 +242,17 @@ headline, a summary that doubles as the Telegram message, a section per race (is
 watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
 by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
 
+## Client desk
+
+`incidents/clients.yaml` maps each client and prospect to the policy areas it cares about, the trackers that
+watch them, the legislation to follow and the elected voices that matter (nothing confidential: the repo is
+public). `python run.py clients` (the job runs it at assemble time) renders `/clients/`: per client and area,
+the trackers' last seven days — views, top lanes, biggest claims with verdicts, what is gaining, flagged
+pushes — beside the legislative hooks. The long-term issue trackers that serve it (`issue-*-live`: hemp and
+THC, housing, workforce, autonomous vehicles, school governance, maternal health, water and flood, transportation,
+Houston-region local government, election integrity, plus the original data centers, grid, property tax,
+vouchers and 765-kV) start Oct 1, 2026 and run through the 2027 session; the race trackers end Nov 3.
+
 ## Platforms beyond X
 
 Every tracker's store holds posts from more than one platform (`posts.source`: `x`, `bsky`, `yt`, `truth`);

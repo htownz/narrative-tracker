@@ -30,7 +30,8 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update every six hours.</p>
 @@ALERTS@@
 <div class="grid" style="display:none">@@CARDS@@</div>
-<p class="lead" style="margin-top:18px"><a href="insights/" style="color:#8cf">Insights →</a> what has gone together so far across every tracker: who posts first, which events move which lanes, where the false claims live, what crosses into the news.<br>
+<p class="lead" style="margin-top:18px"><a href="clients/" style="color:#8cf">Client desk →</a> each client's policy areas, the trackers watching them, and what moved this week.<br>
+<a href="insights/" style="color:#8cf">Insights →</a> what has gone together so far across every tracker: who posts first, which events move which lanes, where the false claims live, what crosses into the news.<br>
 <a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
 <footer>Built @@BUILT@@. Lanes assigned by Claude. @@SOURCES@@</footer>
 </body></html>"""
@@ -75,7 +76,7 @@ def sources_line() -> str:
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     cards = []
     for d in sorted(OUT_DIR.iterdir()):
-        if d.name == "accounts":
+        if d.name in ("accounts", "insights", "clients"):
             continue
         data_path = d / "data.json"
         if not (d / "index.html").exists() or not data_path.exists():

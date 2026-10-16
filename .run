@@ -1,3 +1,11 @@
-# what is this post? (printed in the job log) 18:12
-lookup=2111136587849621510
-none
+# first run of the ten client-driven issue trackers (discovery + backfill from Oct 1)
+incidents/issue-av-live.yaml
+incidents/issue-election-integrity-live.yaml
+incidents/issue-hemp-thc-live.yaml
+incidents/issue-housing-live.yaml
+incidents/issue-houston-local-live.yaml
+incidents/issue-maternal-health-live.yaml
+incidents/issue-school-governance-live.yaml
+incidents/issue-transportation-live.yaml
+incidents/issue-water-flood-live.yaml
+incidents/issue-workforce-live.yaml
