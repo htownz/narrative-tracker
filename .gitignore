@@ -10,3 +10,5 @@ site/
 # the stores live in the bucket (tracker/bucket.py); git keeps only the text outputs
 data/*.sqlite
 data/*.sqlite-journal
+out/insights.json
+out/insights/
