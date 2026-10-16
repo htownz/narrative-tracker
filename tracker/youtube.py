@@ -24,7 +24,7 @@ from .store import Store, parse_created_at
 
 API = "https://www.googleapis.com/youtube/v3"
 PULL_EVERY_H = 20
-PAGES_FIRST_RUN = 3          # 150 newest videos per query on the first pull; 50 per day after
+PAGES_FIRST_RUN = 2          # 100 newest videos per query on the first pull; 50 per day after (11 trackers must fit the 10,000-unit day)
 QUOTA_SEARCHES_PER_DAY = 60  # 6,000 units, leaving room for the statistics calls
 
 
