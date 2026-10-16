@@ -221,12 +221,18 @@ top-5 share (views carried by the five biggest accounts) and link rings (share o
 {FLAG}+ is flagged on the hub as a coordinated push. The features matter more than the number.</p>
 {table_html(ctrl["lanes"])}
 {claims_part}"""
+    from .officials import said, table_html as officials_table
+    said_rows = said(inc.slug, days=14)
+    officials_html = f"""<h2>What electeds said</h2>
+<p class="sub">Posts in this tracker by elected officials, candidates, agencies and public bodies (<code>incidents/officials.yaml</code>), last 14 days, newest first — the rhetoric the lanes answer or amplify. {len(said_rows)} posts.</p>
+{officials_table(said_rows, inc.timezone)}"""
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(inc.title)} — analysis</title><style>{CSS}</style></head><body>
 <a class="back" href="./">← chart</a> · <a class="back" href="accounts.html">who moved it</a>
 <h1>Timing and pushback: {html.escape(inc.title)}</h1>
 <p class="sub">For each narrative lane: when it started, how fast it burned (half-life = hours until half of its eventual views had posted), when the first pushback aimed at it landed (a pushback post quoting or replying to a post in the lane), and how much pushback it drew relative to its own views.</p>
 {tiles}
+{officials_html}
 <h2>Lanes</h2>
 <div class="wrap"><table><thead><tr><th>Lane</th><th>First post</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Half-life h</th><th class="n">Peak hour</th><th class="n">Pushback lag h</th><th class="n">Pushback posts</th><th class="n">Pushback share</th><th>First pushback</th></tr></thead><tbody>{trs}</tbody></table></div>
 {ev_html}

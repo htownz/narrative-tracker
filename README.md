@@ -242,6 +242,14 @@ headline, a summary that doubles as the Telegram message, a section per race (is
 watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
 by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
 
+## Elected rhetoric
+
+`incidents/officials.yaml` lists elected officials, candidates, agencies and public bodies by X handle (add
+freely; a wrong handle never matches). Their posts are surfaced wherever a tracker is read: "What electeds
+said" on each analysis page (14 days, newest first, with the lane each post landed in), a line per tracker on
+the client desk, the hub's "What electeds said this week" by reach, and the weekly brief, which is told to say
+what office-holders said and into which lane.
+
 ## Client desk
 
 `incidents/clients.yaml` maps each client and prospect to the policy areas it cares about, the trackers that

@@ -1,0 +1,108 @@
+# Elected officials, candidates and public bodies whose posts count as "elected rhetoric" in every tracker.
+# A post by any of these handles is marked on the analysis page, the client desk and the hub ("What electeds
+# said"), and the weekly brief reads them first. Handles are X handles without the @; Bluesky handles may be
+# added as name.bsky.social. Wrong or stale handles simply never match — add freely, prune when sure.
+#
+# Fields: handle, name, office, level (statewide | legislature | federal | local | candidate | agency), party (R | D | —)
+
+officials:
+  # ---- statewide ----
+  - {handle: GregAbbott_TX, name: Greg Abbott, office: Governor, level: statewide, party: R}
+  - {handle: GovAbbott, name: Greg Abbott (office), office: Governor's office, level: statewide, party: R}
+  - {handle: DanPatrick, name: Dan Patrick, office: Lieutenant Governor, level: statewide, party: R}
+  - {handle: LtGovTX, name: Lt. Governor's office, office: Lieutenant Governor, level: statewide, party: R}
+  - {handle: KenPaxtonTX, name: Ken Paxton, office: Attorney General, level: statewide, party: R}
+  - {handle: TXAG, name: Office of the Attorney General, office: Attorney General, level: agency, party: R}
+  - {handle: SidMillerTX, name: Sid Miller, office: Agriculture Commissioner, level: statewide, party: R}
+  - {handle: DawnBuckingham, name: Dawn Buckingham, office: Land Commissioner, level: statewide, party: R}
+  - {handle: TxGLO, name: General Land Office, office: GLO, level: agency, party: —}
+  - {handle: ChristiCraddick, name: Christi Craddick, office: Railroad Commissioner, level: statewide, party: R}
+  - {handle: TXsecofstate, name: Texas Secretary of State, office: Secretary of State, level: agency, party: —}
+  - {handle: TexasComptroller, name: Texas Comptroller, office: Comptroller, level: agency, party: —}
+  # ---- federal, Texas ----
+  - {handle: JohnCornyn, name: John Cornyn, office: U.S. Senator, level: federal, party: R}
+  - {handle: tedcruz, name: Ted Cruz, office: U.S. Senator, level: federal, party: R}
+  - {handle: SenTedCruz, name: Ted Cruz (office), office: U.S. Senator, level: federal, party: R}
+  - {handle: RepDanCrenshaw, name: Dan Crenshaw, office: U.S. Representative, level: federal, party: R}
+  - {handle: RepChipRoy, name: Chip Roy, office: U.S. Representative, level: federal, party: R}
+  - {handle: RepJasmine, name: Jasmine Crockett, office: U.S. Representative, level: federal, party: D}
+  - {handle: RepSylviaGarcia, name: Sylvia Garcia, office: U.S. Representative, level: federal, party: D}
+  - {handle: RepAlGreen, name: Al Green, office: U.S. Representative, level: federal, party: D}
+  - {handle: RepLizzieFletcher, name: Lizzie Fletcher, office: U.S. Representative, level: federal, party: D}
+  - {handle: RepTonyGonzales, name: Tony Gonzales, office: U.S. Representative, level: federal, party: R}
+  - {handle: RepMoniDe, name: Monica De La Cruz, office: U.S. Representative, level: federal, party: R}
+  # ---- candidates, 2026 ----
+  - {handle: jamestalarico, name: James Talarico, office: Candidate, U.S. Senate (also state Rep.), level: candidate, party: D}
+  - {handle: GinaHinojosaTX, name: Gina Hinojosa, office: Candidate, Governor (also state Rep.), level: candidate, party: D}
+  - {handle: VikkiGoodwinTX, name: Vikki Goodwin, office: Candidate, Lt. Governor (also state Rep.), level: candidate, party: D}
+  - {handle: NathanLJohnson, name: Nathan Johnson, office: Candidate, Attorney General (also state Sen.), level: candidate, party: D}
+  - {handle: WesleyHuntTX, name: Wesley Hunt, office: U.S. Representative, level: federal, party: R}
+  # ---- Texas Legislature: leadership and chairs ----
+  - {handle: Burrows4TX, name: Dustin Burrows, office: Speaker of the House, level: legislature, party: R}
+  - {handle: SenBryanHughes, name: Bryan Hughes, office: State Senator (State Affairs chair), level: legislature, party: R}
+  - {handle: JoanHuffman, name: Joan Huffman, office: State Senator (Finance chair), level: legislature, party: R}
+  - {handle: SenCharlesPerry, name: Charles Perry, office: State Senator (Water, Agriculture & Rural Affairs chair), level: legislature, party: R}
+  - {handle: SenPhilKing, name: Phil King, office: State Senator, level: legislature, party: R}
+  - {handle: SenBettencourt, name: Paul Bettencourt, office: State Senator (Local Government chair), level: legislature, party: R}
+  - {handle: Schwertner, name: Charles Schwertner, office: State Senator (Business & Commerce chair), level: legislature, party: R}
+  - {handle: BrandonCreighton, name: Brandon Creighton, office: State Senator (Education K-16 chair), level: legislature, party: R}
+  - {handle: SenatorMiles, name: Borris Miles, office: State Senator, level: legislature, party: D}
+  - {handle: CarolAlvarado, name: Carol Alvarado, office: State Senator, level: legislature, party: D}
+  - {handle: SenatorMenendez, name: José Menéndez, office: State Senator, level: legislature, party: D}
+  - {handle: RoyceWestTX, name: Royce West, office: State Senator, level: legislature, party: D}
+  - {handle: SarahEckhardt, name: Sarah Eckhardt, office: State Senator, level: legislature, party: D}
+  - {handle: MollyCookTX, name: Molly Cook, office: State Senator, level: legislature, party: D}
+  - {handle: RepMeyer, name: Morgan Meyer, office: State Representative (Ways & Means chair), level: legislature, party: R}
+  - {handle: BriscoeCain, name: Briscoe Cain, office: State Representative, level: legislature, party: R}
+  - {handle: RepToddHunter, name: Todd Hunter, office: State Representative, level: legislature, party: R}
+  - {handle: DrewDarby, name: Drew Darby, office: State Representative, level: legislature, party: R}
+  - {handle: RepCecilBell, name: Cecil Bell, office: State Representative, level: legislature, party: R}
+  - {handle: RepTrentAshby, name: Trent Ashby, office: State Representative, level: legislature, party: R}
+  - {handle: GeneForTexas, name: Gene Wu, office: State Representative (House Democratic Caucus chair), level: legislature, party: D}
+  - {handle: RepAnchia, name: Rafael Anchía, office: State Representative, level: legislature, party: D}
+  - {handle: RepEddieMorales, name: Eddie Morales, office: State Representative, level: legislature, party: D}
+  - {handle: RepRonReynolds, name: Ron Reynolds, office: State Representative, level: legislature, party: D}
+  - {handle: RepArmandoWalle, name: Armando Walle, office: State Representative, level: legislature, party: D}
+  - {handle: ChristinaForTX, name: Christina Morales, office: State Representative, level: legislature, party: D}
+  - {handle: RepMaryGonzalez, name: Mary González, office: State Representative, level: legislature, party: D}
+  - {handle: TexasHouseDems, name: Texas House Democratic Caucus, office: Caucus, level: legislature, party: D}
+  - {handle: TexasGOP, name: Republican Party of Texas, office: Party, level: statewide, party: R}
+  - {handle: texasdemocrats, name: Texas Democratic Party, office: Party, level: statewide, party: D}
+  # ---- Houston region ----
+  - {handle: LinaHidalgoTX, name: Lina Hidalgo, office: Harris County Judge, level: local, party: D}
+  - {handle: AdrianGarciaHC, name: Adrian Garcia, office: Harris County Commissioner, Pct. 2, level: local, party: D}
+  - {handle: RodneyEllis, name: Rodney Ellis, office: Harris County Commissioner, Pct. 1, level: local, party: D}
+  - {handle: CommTomRamsey, name: Tom Ramsey, office: Harris County Commissioner, Pct. 3, level: local, party: R}
+  - {handle: LesleyBriones, name: Lesley Briones, office: Harris County Commissioner, Pct. 4, level: local, party: D}
+  - {handle: JohnWhitmire, name: John Whitmire, office: Mayor of Houston, level: local, party: D}
+  - {handle: HoustonTX, name: City of Houston, office: City of Houston, level: local, party: —}
+  - {handle: ChrisHollinsTX, name: Chris Hollins, office: Houston City Controller, level: local, party: D}
+  - {handle: HarrisCountyTX, name: Harris County, office: Harris County, level: local, party: —}
+  - {handle: HCFCD, name: Harris County Flood Control District, office: HCFCD, level: agency, party: —}
+  - {handle: MontgomeryCoTX, name: Montgomery County, office: Montgomery County, level: local, party: —}
+  - {handle: FtBendCounty, name: Fort Bend County, office: Fort Bend County, level: local, party: —}
+  # ---- other cities ----
+  - {handle: MayorWatson, name: Kirk Watson, office: Mayor of Austin, level: local, party: D}
+  - {handle: Ron4TX, name: Ron Nirenberg, office: Mayor of San Antonio (former), level: local, party: D}
+  - {handle: MayorOfDallas, name: Mayor of Dallas, office: Mayor of Dallas, level: local, party: —}
+  - {handle: MayorFortWorth, name: Mayor of Fort Worth, office: Mayor of Fort Worth, level: local, party: —}
+  # ---- agencies and bodies ----
+  - {handle: TEAinfo, name: Texas Education Agency, office: TEA, level: agency, party: —}
+  - {handle: TexasHHSC, name: Texas HHSC, office: HHSC, level: agency, party: —}
+  - {handle: TexasDSHS, name: Texas DSHS, office: DSHS, level: agency, party: —}
+  - {handle: PUCTX, name: Public Utility Commission, office: PUC, level: agency, party: —}
+  - {handle: ERCOT_ISO, name: ERCOT, office: ERCOT, level: agency, party: —}
+  - {handle: TxDOT, name: TxDOT, office: TxDOT, level: agency, party: —}
+  - {handle: TxDMV, name: Texas DMV, office: DMV, level: agency, party: —}
+  - {handle: TexasTABC, name: TABC, office: TABC, level: agency, party: —}
+  - {handle: TXWorkforce, name: Texas Workforce Commission, office: TWC, level: agency, party: —}
+  - {handle: THECB, name: Texas Higher Education Coordinating Board, office: THECB, level: agency, party: —}
+  - {handle: TxDPS, name: Texas DPS, office: DPS, level: agency, party: —}
+  - {handle: TWDB, name: Texas Water Development Board, office: TWDB, level: agency, party: —}
+  - {handle: HoustonISD, name: Houston ISD, office: HISD, level: agency, party: —}
+  - {handle: FortWorthISD, name: Fort Worth ISD, office: Fort Worth ISD, level: agency, party: —}
+  # ---- national figures that move Texas narratives ----
+  - {handle: realDonaldTrump, name: Donald Trump, office: President (Truth Social via archive), level: federal, party: R}
+  - {handle: VP, name: JD Vance (office), office: Vice President, level: federal, party: R}
+  - {handle: JDVance, name: JD Vance, office: Vice President, level: federal, party: R}
+  - {handle: WhiteHouse, name: The White House, office: White House, level: federal, party: R}

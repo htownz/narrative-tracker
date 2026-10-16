@@ -701,3 +701,24 @@ def test_youtube_videos_flatten_into_posts_and_skip_without_a_key(tmp_path, monk
     inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
     assert youtube.pull(inc) == 0
     st = Store(inc.db_path); st.upsert_posts([row]); assert [r["id"] for r in st.dataset(1000)] == ["yt:abc123"]; st.close()
+
+
+def test_officials_registry_matches_posts_and_renders(tmp_path, monkeypatch):
+    from tracker import officials as of
+    monkeypatch.setattr(of, "OUT_DIR", tmp_path / "out")
+    of.officials.cache_clear()
+    assert of.is_official("gregabbott_tx")["name"] == "Greg Abbott" and of.is_official("nobody") is None and of.is_official(None) is None
+    (tmp_path / "out" / "t-live").mkdir(parents=True)
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+    posts = [{"id": "1", "handle": "KenPaxtonTX", "t": (now - timedelta(hours=5)).isoformat(), "lane": "a", "views": 50000, "text": "Talarico is hiding", "url": "https://x.com/KenPaxtonTX/status/1"},
+             {"id": "2", "handle": "randomguy", "t": (now - timedelta(hours=5)).isoformat(), "lane": "a", "views": 900000, "text": "x", "url": ""},
+             {"id": "3", "handle": "jamestalarico", "t": (now - timedelta(days=9)).isoformat(), "lane": "b", "views": 70000, "text": "old", "url": ""}]
+    (tmp_path / "out" / "t-live" / "data.json").write_text(json.dumps({"meta": {"title": "T"}, "lanes": [{"key": "a", "label": "Lane A", "color": "#123"}, {"key": "b", "label": "Lane B", "color": "#456"}], "posts": posts}), encoding="utf-8")
+    rows = of.said("t-live", days=7)
+    assert len(rows) == 1 and rows[0]["name"] == "Ken Paxton" and rows[0]["lane"] == "Lane A" and rows[0]["office"] == "Attorney General"
+    ev = of.said_everywhere(14, slugs=["t-live"])
+    assert [b["handle"] for b in ev["by_official"]] == ["jamestalarico", "KenPaxtonTX"] and ev["by_official"][0]["top"]["text"] == "old"
+    html_text = of.table_html(rows)
+    assert "Ken Paxton" in html_text and "Talarico is hiding" in html_text and "50K" in html_text
+    of.officials.cache_clear()

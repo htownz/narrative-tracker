@@ -52,7 +52,10 @@ def tracker_pulse(slug: str, days: int = 7) -> dict[str, Any]:
     fj = _load(OUT_DIR / slug / "features.json") or {}
     gaining = [g for g in fj.get("likely_to_grow", [])[:3] if g.get("accounts", 0) >= 2]
     ctl = _load(OUT_DIR / slug / "control.json") or {}
+    from .officials import said
+    electeds = said(slug, days)[:4]
     return {
+        "electeds": [{"name": r["name"], "office": r["office"], "lane": r["lane"], "views": r["views"], "text": r["text"], "url": r["url"]} for r in electeds],
         "slug": slug, "exists": True, "live": True, "title": d.get("meta", {}).get("title", slug),
         "posts_7d": len(posts), "views_7d": sum(int(p.get("views") or 0) for p in posts),
         "top_lanes": [{"label": lanes.get(k, {}).get("label", k), "color": lanes.get(k, {}).get("color", "#999"), "views": v} for k, v in top],
@@ -114,6 +117,7 @@ def _tracker_html(p: dict[str, Any]) -> str:
     return (f'<div class="tr"><a class="t" href="../{e(p["slug"])}/">{e(p["title"])}</a> <span class="n">{p["posts_7d"]} posts · {_fmt(p["views_7d"])} views in 7d'
             + (f' · {p["false_7d"]} false claims' if p["false_7d"] else "") + f'</span><div>{lanes}</div>'
             + (f'<ul>{claims}</ul>' if claims else '<div class="dead">no claims this week</div>')
+            + (f'<div class="hooks"><b>Electeds</b> ' + "; ".join(f'{e(x["name"])} ({e(x["office"][:28])}) in {e(x["lane"])}: <a href="{e(x["url"] or "#")}" style="color:var(--ink-2)">{e(x["text"][:90])}</a>' for x in p.get("electeds", [])) + '</div>' if p.get("electeds") else "")
             + (f'<div class="hooks"><b>Gaining now</b> {gaining}</div>' if gaining else "")
             + (f'<div class="hooks"><b>Flagged pushes</b> {flagged}</div>' if flagged else "")
             + f' <a href="../{e(p["slug"])}/claims.html" style="font-size:11px;color:#8cf">claims</a> · <a href="../{e(p["slug"])}/analysis.html" style="font-size:11px;color:#8cf">timing &amp; control</a></div>')

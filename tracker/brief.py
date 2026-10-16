@@ -47,8 +47,10 @@ Write the brief as JSON with these keys:
       with almost nothing; group the issue trackers into one section called "Issues"), each body 2-6 short
       paragraphs separated by blank lines. Lead each with what changed versus the prior week. Name the biggest
       claims and say which were verified unsupported or misleading and on what basis. Name who originated and who
-      carried. Mention coordinated pushes or link rings only when the facts flag them. Note the market move in one
-      clause when it is there.
+      carried. Where "electeds" lists posts by officials, candidates or agencies, say what they said and into which
+      lane, in one or two sentences — rhetoric from office-holders is what the firm's clients act on. Mention
+      coordinated pushes or link rings only when the facts flag them. Note the market move in one clause when it
+      is there.
   "watch": 3-5 bullet strings: what to watch next week, each tied to a fact (an event on the calendar, a claim
       still gaining, a lane that is rising).
 Return JSON only."""
@@ -158,6 +160,7 @@ def tracker_facts(inc, prev_start: datetime, start: datetime, end: datetime) -> 
         "lanes": lane_rows[:7], "top_accounts": top_accounts, "biggest_claims": week_claims[:6], "failed_verification": failed[:5],
         "new_claims_this_week": sum(1 for c in week_claims if c["new_this_week"]), "coordinated_pushes": flagged, "link_rings": rings,
         "market": market, "events": events, "alerts": alerts,
+        "electeds": [{"who": f"{r['name']} ({r['office']})", "lane": r["lane"], "views": r["views"], "post": r["text"][:200]} for r in __import__("tracker.officials", fromlist=["said"]).said(inc.slug, days=7, end=end)[:6]],
     }
 
 

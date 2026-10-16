@@ -171,6 +171,18 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                       f'{" · " + str(r["momentum_6h"]) + "× the prior 6h" if r["momentum_6h"] not in (None, 99.0) else " · new"} · {r["accounts"]} accounts{" · after a calendar event" if r["event_follow"] else ""}</span></li>'
                       for _, slug, r in gaining[:6])
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#8fb4ff">Gaining now</h2><p class="lead" style="margin:0 0 6px">Claims with the most momentum over the last six hours of data, from more than one account.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
+    # what electeds said: the biggest official posts across trackers this week
+    try:
+        from .officials import said_everywhere
+        ev = said_everywhere(7)
+        top_off = [b for b in ev["by_official"] if b["top"]][:6]
+        if top_off:
+            lis = "".join(f'<li><b>{html.escape(b["name"])}</b> <span style="color:#7c7c78">{html.escape(b["office"])} · {b["posts"]} post{"s" if b["posts"] != 1 else ""} · {b["views"]:,} views · '
+                          f'{html.escape(", ".join(l for l, _ in b["lanes"][:2]))}</span><br><a href="{html.escape(b["top"]["url"] or "#")}" style="color:#b9b9b3;font-size:12px">{html.escape(b["top"]["text"][:160])}</a></li>'
+                          for b in top_off)
+            alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#d8c27a">What electeds said this week</h2><p class="lead" style="margin:0 0 6px">Elected officials, candidates and agencies posting into the tracked narratives, by reach; each tracker\'s analysis page has the full list.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
+    except Exception:
+        pass
     # debunked but spreading: canonical claims verified unsupported/misleading, the ones still gaining first
     bad = []
     for d in sorted(OUT_DIR.iterdir()):
