@@ -24,8 +24,8 @@ queries:
   - '"lot size" Texas'
   - '"affordable housing" Texas'
   - '"housing crisis" Texas'
-  - 'Texas homelessness'
-  - '"homeless" Houston OR Dallas OR Austin'
+  - '"homelessness" Texas'
+  - '"encampment" Houston OR Dallas OR Austin'
   - '"Montgomery County" housing'
 
 min_faves_hint: 10
