@@ -29,6 +29,8 @@ GNEWS = "https://news.google.com/rss/search"
 NEWS_TOP = 15
 NEWS_MIN_VIEWS = 50_000
 NEWS_RECHECK_H = 12
+FEED_DAYS = 7               # Google News search RSS reaches back this far ...
+COVER_H = 48                # ... so the 48h-after-first-post window is only measurable for claims first seen within FEED_DAYS - 2d
 PACE_S = 2.0
 STOP = set("""a an the and or but of to in on at for with by from as is are was were be been being this that these those it its he
 she they them his her their we you i our your not no do does did have has had will would can could should about into over
@@ -168,14 +170,22 @@ def summarise(articles: list[dict[str, Any]], first_x: datetime) -> dict[str, An
     }
 
 
+def covered_since(now: datetime | None = None) -> str:
+    """Earliest first-post time whose 48h window the feed still covers."""
+    return ((now or datetime.now(timezone.utc)) - timedelta(days=FEED_DAYS) + timedelta(hours=COVER_H)).isoformat()
+
+
 def candidates(store: Store, min_views: int, top: int, recheck_h: float) -> list[dict[str, Any]]:
-    """Biggest canonical claims by views, skipping ones checked within recheck_h hours."""
-    since = (datetime.now(timezone.utc) - timedelta(hours=recheck_h)).isoformat()
+    """Biggest canonical claims by views whose first post is recent enough for the feed to cover the 48h after it,
+    skipping ones checked within recheck_h hours. Older claims cannot be measured with a 7-day feed, so they are
+    not checked at all rather than recorded as zero."""
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=recheck_h)).isoformat()
     rows = store.conn.execute(
         "SELECT cl.id, cl.text, cl.entities, MIN(p.created_at) first_seen, SUM(p.view_count) views "
         "FROM claim_clusters cl JOIN claims c ON c.cluster_id = cl.id JOIN posts p ON p.id = c.post_id "
         "WHERE cl.id NOT IN (SELECT cluster_id FROM news_checks WHERE at >= ?) "
-        "GROUP BY cl.id HAVING views >= ? ORDER BY views DESC LIMIT ?", (since, min_views, top)).fetchall()
+        "GROUP BY cl.id HAVING views >= ? AND first_seen >= ? ORDER BY views DESC LIMIT ?", (since, min_views, covered_since(now), top)).fetchall()
     return [dict(r) for r in rows]
 
 
@@ -215,12 +225,26 @@ def news(inc: Incident, top: int = NEWS_TOP, min_views: int = NEWS_MIN_VIEWS) ->
 
 
 def latest_checks(store: Store) -> dict[int, dict[str, Any]]:
-    """The most recent news check per canonical claim."""
+    """The most recent news check per canonical claim. A check made more than FEED_DAYS-2d after the claim's first
+    post could not see the 48h window, so its 24h/48h counts are None (unknown), not zero; `covered` says which."""
     if not store.conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='news_checks'").fetchone():
         return {}
+    first_seen = {int(r["cluster_id"]): r["first_seen"] for r in store.conn.execute(
+        "SELECT c.cluster_id, MIN(p.created_at) first_seen FROM claims c JOIN posts p ON p.id = c.post_id WHERE c.cluster_id IS NOT NULL GROUP BY c.cluster_id")}
     out: dict[int, dict[str, Any]] = {}
     for r in store.conn.execute("SELECT * FROM news_checks ORDER BY at"):
         d = dict(r)
         d["top_domains"] = json.loads(d.get("top_domains") or "[]")
-        out[int(d["cluster_id"])] = d
+        cid = int(d["cluster_id"])
+        fs = first_seen.get(cid)
+        try:
+            at = datetime.fromisoformat(d["at"])
+            at = at if at.tzinfo else at.replace(tzinfo=timezone.utc)
+        except (TypeError, ValueError):
+            at = datetime.now(timezone.utc)
+        d["covered"] = bool(fs and fs >= covered_since(at))
+        if not d["covered"]:
+            for k in ("articles_24h", "sources_24h", "articles_48h", "sources_48h"):
+                d[k] = None
+        out[cid] = d
     return out

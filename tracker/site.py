@@ -77,6 +77,7 @@ def nav_html(all_trackers: list[dict[str, Any]], slug: str | None, page: str | N
             f'<a href="{root}{slug}/{"" if p == "index.html" else p}" class="{"on" if p == page else ""}">{label}</a>'
             for p, label in PAGES if p in cur["pages"]) + "</span>"
     right = (f'<span class="right"><a href="{root}brief/" class="{"on" if slug == "brief" else ""}">Weekly brief</a>'
+             f'<a href="{root}insights/" class="{"on" if slug == "insights" else ""}">Insights</a>'
              f'<a href="{root}accounts/" class="{"on" if slug == "accounts" else ""}">Amplifier map</a></span>')
     return (f'{NAV_CSS}<nav id="nt-nav"><a class="home" href="{root}">Texas Narrative Trackers</a>'
             f'<select onchange="if(this.value)location.href=this.value">{"".join(options)}</select>{tabs}{right}</nav>{NAV_JS}')
@@ -103,11 +104,14 @@ def assemble(site_dir: Path) -> int:
         for extra in ("data.json", "claims.json", "analysis.json", "control.json", "features.json"):
             if (OUT_DIR / t["slug"] / extra).exists():
                 shutil.copy(OUT_DIR / t["slug"] / extra, dest / extra)
-    amp = OUT_DIR / "accounts" / "index.html"
-    if amp.exists():
-        (site_dir / "accounts").mkdir(parents=True, exist_ok=True)
-        (site_dir / "accounts" / "index.html").write_text(inject(amp.read_text(encoding="utf-8"), nav_html(all_t, "accounts", None)), encoding="utf-8")
-        n += 1
+    for name in ("accounts", "insights"):            # cross-tracker pages: the amplifier map and the insights page
+        page = OUT_DIR / name / "index.html"
+        if page.exists():
+            (site_dir / name).mkdir(parents=True, exist_ok=True)
+            (site_dir / name / "index.html").write_text(inject(page.read_text(encoding="utf-8"), nav_html(all_t, name, None)), encoding="utf-8")
+            n += 1
+    if (OUT_DIR / "insights.json").exists():
+        shutil.copy(OUT_DIR / "insights.json", site_dir / "insights" / "insights.json") if (site_dir / "insights").exists() else None
     briefs = sorted((OUT_DIR / "brief").glob("*.html")) if (OUT_DIR / "brief").exists() else []
     if briefs:
         (site_dir / "brief").mkdir(parents=True, exist_ok=True)

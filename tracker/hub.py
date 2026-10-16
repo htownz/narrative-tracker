@@ -30,7 +30,8 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <p class="lead">How political stories spread on X: every post with 1K+ views, sorted into the narrative it pushes, linked to what it quoted or copied. Live trackers update every six hours.</p>
 @@ALERTS@@
 <div class="grid" style="display:none">@@CARDS@@</div>
-<p class="lead" style="margin-top:18px"><a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
+<p class="lead" style="margin-top:18px"><a href="insights/" style="color:#8cf">Insights →</a> what has gone together so far across every tracker: who posts first, which events move which lanes, where the false claims live, what crosses into the news.<br>
+<a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
 <footer>Built @@BUILT@@. Data via twitterapi.io; lanes assigned by Claude.</footer>
 </body></html>"""
 

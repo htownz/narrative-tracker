@@ -429,3 +429,65 @@ def test_news_query_and_summary():
             {"seendate": "20261012T020000Z", "domain": "cnn.com"}, {"seendate": "20261009T000000Z", "domain": "foxnews.com"}, {"seendate": "bad"}]
     s = news.summarise(arts, datetime(2026, 10, 11, 17, 0, tzinfo=timezone.utc))
     assert s["articles"] == 4 and s["sources"] == 3 and s["sources_48h"] == 2 and s["news_before_x"] == 1 and s["top_domains"][0] == "cnn.com"
+
+
+def test_insights_counts_outcomes_only_on_competitive_days_and_reads_by_rule(tmp_path, monkeypatch):
+    from tracker import insights
+    monkeypatch.setattr(insights, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(insights, "DATA_DIR", tmp_path / "data")
+    (tmp_path / "out" / "big-live").mkdir(parents=True)
+    (tmp_path / "data" / "features").mkdir(parents=True)
+    (tmp_path / "out" / "big-live" / "data.json").write_text(json.dumps({"meta": {"title": "Big"}, "lanes": [], "posts": []}))
+    (tmp_path / "out" / "big-live" / "claims.json").write_text(json.dumps({"clusters": [
+        {"id": i, "text": f"claim {i}", "type": "fact", "verdict": "unsupported" if i % 2 else "supported", "views": 1000 * i,
+         "lanes": [{"label": "Lane A"}], "first_handles": ["big" if i % 3 == 0 else "small"]} for i in range(1, 31)]}))
+    (tmp_path / "out" / "big-live" / "analysis.json").write_text(json.dumps({"events": [{"type": "poll", "ratio": 2.5, "top_lane": "a"}, {"type": "poll", "ratio": 1.5}],
+                                                                             "lanes": [], "lead_lag": [], "market": "M"}))
+    base = {c: "" for c in ["run_at", "asof", "slug", "kind", "key", "label", "age_h", "posts", "views", "accounts", "copies", "first_views", "first_followers",
+                            "views_1h", "views_6h", "views_24h", "momentum_6h", "control", "new_accounts", "burst", "event_follow", "event_type",
+                            "market_price", "market_change_24h", "gain_24h", "gain_72h", "top5_24h"]}
+    rows = []
+    for i in range(1, 31):                                  # a competitive day: 30 claims, big first posters win
+        rows.append({**base, "asof": "d1", "slug": "big-live", "kind": "claim", "key": str(i), "first_followers": 5_000_000 if i % 3 == 0 else 100,
+                     "control": 5, "gain_24h": 10, "top5_24h": 1 if i % 3 == 0 else 0})
+    for i in range(1, 4):                                   # a thin day: three claims, all trivially top five -> must not count
+        rows.append({**base, "asof": "d2", "slug": "big-live", "kind": "claim", "key": str(i), "first_followers": 100, "control": 5, "gain_24h": 1, "top5_24h": 1})
+    import csv
+    with (tmp_path / "data" / "features" / "big-live.csv").open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(base)); w.writeheader(); w.writerows(rows)
+    page = insights.insights()
+    out = json.loads((tmp_path / "out" / "insights.json").read_text())
+    assert out["first_poster"]["n"] == 30 and {t["bucket"]: t["p_top5"] for t in out["first_poster"]["table"]}["1M+"] == 1.0
+    assert "million-plus" in out["first_poster"]["reading"]
+    assert out["early_touch"]["table"][0]["handle"] == "big" and out["early_touch"]["table"][0]["p_top5"] == 1.0
+    assert out["events"]["table"][0] == {"type": "poll", "n": 2, "median_lift": 2.0, "share_doubling": 0.5, "lane_most_often": "a"}
+    assert out["verdicts"]["n"] == 30 and out["verdicts"]["table"][0]["share_false"] == 0.5 and "(Big)" in out["verdicts"]["table"][0]["lane"]
+    html_text = page.read_text()
+    assert "Insights" in html_text and "Lane A (Big)" in html_text and "100%" in html_text
+
+
+def test_news_skips_claims_older_than_the_feed_and_marks_old_checks_unknown(tmp_path):
+    from datetime import datetime, timedelta, timezone
+    from tracker import news
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    st.conn.executescript(news.SCHEMA)
+    now = datetime.now(timezone.utc)
+    def tweet(i, when):
+        return flatten_tweet({"id": str(i), "text": f"t{i}", "createdAt": when.strftime("%a %b %d %H:%M:%S +0000 %Y"), "viewCount": 90_000, "author": {"userName": "h"}})
+    st.upsert_posts([tweet(1, now - timedelta(days=20)), tweet(2, now - timedelta(days=1))])
+    old = st.add_cluster("old claim", "fact", True, "for", ["A"], now.isoformat())
+    new = st.add_cluster("new claim", "fact", True, "for", ["B"], now.isoformat())
+    st.add_claims("1", [{"text": "old claim", "type": "fact", "checkable": True}], now.isoformat())
+    st.add_claims("2", [{"text": "new claim", "type": "fact", "checkable": True}], now.isoformat())
+    st.assign_clusters({1: old, 2: new})
+    todo = news.candidates(st, 50_000, 10, 12)
+    assert [c["id"] for c in todo] == [new]                                     # the old claim's 48h window is beyond the 7-day feed
+    for cid in (old, new):                                                      # a check recorded for each, as the job did before the fix
+        st.conn.execute("INSERT INTO news_checks (cluster_id, at, query, articles, sources, articles_24h, sources_24h, articles_48h, sources_48h, first_news_at, news_before_x, top_domains) "
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (cid, now.isoformat(timespec="minutes"), "q", 40, 9, 0, 0, 0, 0, None, 0, "[]"))
+    st.conn.commit()
+    checks = news.latest_checks(st)
+    assert checks[old]["covered"] is False and checks[old]["sources_48h"] is None and checks[old]["articles"] == 40
+    assert checks[new]["covered"] is True and checks[new]["sources_48h"] == 0
+    st.close()

@@ -313,11 +313,17 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
         series = [[p["created_at"], int(p["view_count"] or 0)] for p in ps]
         ev = nearest_before(first["created_at"], events) if events else None
         nc = news.get(cid)
+        first_handles: list[str] = []
+        for p in ps:
+            if p["author_handle"] not in first_handles:
+                first_handles.append(p["author_handle"])
+            if len(first_handles) == 3:
+                break
         out.append({
             "event": ev["label"] if ev else None, "event_type": ev["type"] if ev else None,
             "news": {"articles": nc["articles"], "sources": nc["sources"], "sources_48h": nc["sources_48h"], "articles_48h": nc["articles_48h"],
                      "first_news_at": nc["first_news_at"], "news_before_x": bool(nc["news_before_x"]), "top_domains": nc["top_domains"],
-                     "checked_at": nc["at"]} if nc else None,
+                     "covered": nc["covered"], "checked_at": nc["at"]} if nc else None,
             "id": cid, "text": cl["text"], "type": cl["type"], "checkable": bool(cl["checkable"]), "stance": cl["stance"],
             "entities": json.loads(cl["entities"] or "[]"),
             "verdict": cl["verdict"], "verdict_basis": cl["verdict_basis"],
@@ -327,7 +333,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
             "pushback_posts": lane_counts.get(PUSHBACK_KEY, 0),
             "lanes": [{"key": k, "label": lanes[k]["label"], "color": lanes[k]["color"], "posts": n}
                       for k, n in sorted(lane_counts.items(), key=lambda kv: -kv[1])],
-            "first_seen": first["created_at"], "first_handle": first["author_handle"], "first_url": first["url"],
+            "first_seen": first["created_at"], "first_handle": first["author_handle"], "first_handles": first_handles, "first_url": first["url"],
             "first_views": int(first["view_count"] or 0), "last_seen": ps[-1]["created_at"],
             "views_24h": last24, "series": series,
             "top_post": max(ps, key=lambda p: int(p["view_count"] or 0))["url"],
@@ -341,7 +347,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
                   "verified": sum(1 for r in out if r["verdict"]),
                   "unsupported_spreading": sum(1 for r in out if r["verdict"] in ("unsupported", "misleading") and r["views_24h"] > 0),
                   "news_checked": sum(1 for r in out if r.get("news")),
-                  "crossed_over": sum(1 for r in out if r.get("news") and r["news"]["sources_48h"] >= 3)},
+                  "crossed_over": sum(1 for r in out if r.get("news") and (r["news"]["sources_48h"] or 0) >= 3)},
         "clusters": out,
     }
 
@@ -384,9 +390,12 @@ def _news_cell(n: dict[str, Any] | None) -> str:
     """Outlets within 48h of the first post, total articles, and whether the press had it first."""
     if not n:
         return '<span class="muted">—</span>'
-    tone = "#9ff0c9" if n["sources_48h"] >= 3 else "var(--ink-2)"
     first = ' · <span title="articles appeared before the first post on X">press first</span>' if n["news_before_x"] else ""
     doms = html.escape(", ".join(n["top_domains"][:3]))
+    if n.get("sources_48h") is None:                      # first post older than the feed reaches: the 48h window is unknown
+        return (f'<span class="muted" title="{doms}">48h window not covered</span>'
+                f'<div class="muted">{n["articles"]} articles, {n["sources"]} outlets in the last 7d{first}</div>')
+    tone = "#9ff0c9" if n["sources_48h"] >= 3 else "var(--ink-2)"
     return (f'<span style="color:{tone}" title="{doms}">{n["sources_48h"]} outlets/48h</span>'
             f'<div class="muted">{n["articles"]} articles, {n["sources"]} outlets in 7d{first}</div>')
 
@@ -433,7 +442,7 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
             src = " ".join(f'<a href="{html.escape(u)}" style="color:var(--ink-2)">[{i + 1}]</a>' for i, u in enumerate(r["verdict_sources"][:4]))
             verdict_html = f'<details><summary>why</summary><div class="muted" style="max-width:52ch">{html.escape(r.get("verdict_basis") or "")} {src}</div></details>'
         trs.append(
-            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and r["news"]["sources_48h"] >= 3))}">'
+            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}">'
             f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>'
             + (f'<div class="muted">after: {html.escape(r["event"])}</div>' if r.get("event") else "") + f'{verdict_html}</td>'
             f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">@{html.escape(r["first_handle"])}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
@@ -452,7 +461,7 @@ Checkable means a reporter could confirm or refute it from public records. Verdi
   <div class="tile"><div class="t">Canonical claims</div><div class="v">{s["clusters"]}</div><div class="d">from {s["claims"]:,} claims in {s["posts_processed"]:,} posts</div></div>
   <div class="tile"><div class="t">Checkable</div><div class="v">{s["checkable"]}</div><div class="d">factual claims a reporter could test</div></div>
   <div class="tile"><div class="t">Verified</div><div class="v">{s["verified"]}</div><div class="d">{s["unsupported_spreading"]} unsupported and still spreading</div></div>
-  <div class="tile"><div class="t">Crossed into news</div><div class="v">{s.get("crossed_over", 0)}</div><div class="d">3+ outlets within 48h, of {s.get("news_checked", 0)} checked (GDELT)</div></div>
+  <div class="tile"><div class="t">Crossed into news</div><div class="v">{s.get("crossed_over", 0)}</div><div class="d">3+ outlets within 48h, of {s.get("news_checked", 0)} checked (Google News)</div></div>
 </div>
 <div class="filters" id="filters">
   <button data-f="all" class="on">All</button><button data-f="type:fact">Facts</button><button data-f="type:opinion">Opinions</button>

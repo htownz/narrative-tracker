@@ -96,7 +96,8 @@ Only 4 near-verbatim repeats — this week's Abbott discourse was quote-driven, 
 re-pulled for new posts and fresher view counts). `.github/workflows/daily.yml` runs every six hours:
 pull → classify new posts → dedup → export → render → accounts → analysis → alerts, for every live incident
 (candidates first, then `issue-*`), commits `data/` and `out/`, and publishes `site/` to GitHub Pages
-(hub at the root, each tracker under `/<slug>/`, the cross-tracker amplifier map under `/accounts/`).
+(hub at the root, each tracker under `/<slug>/`, the cross-tracker amplifier map under `/accounts/`, the
+insights page under `/insights/`).
 Lanes are discovered on the first run and then frozen so days stay comparable; `python run.py report`
 shows what is landing outside them.
 
@@ -241,6 +242,17 @@ headline, a summary that doubles as the Telegram message, a section per race (is
 watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
 by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
 
+## Insights
+
+`python run.py insights` (the job runs it before assembling the site) recomputes, across every tracker, the
+correlations the data supports so far and writes `out/insights.json` and `out/insights/index.html`: who posts
+first vs. reaching the tracker's top five within 24h; accounts whose early touch is followed by growth; event
+type → lane response; lanes that lead other lanes (hourly views, best lag within ±12h, so the daily cycle does
+not pose as a lead); where the unsupported and misleading claims live, by lane; pushback timing vs. reach;
+control score vs. growth; which claims crossed into the news; the strongest lane-to-market relation. Every
+block states its N and a reading written by rule from the numbers, not by a model, so it says the same thing
+tomorrow with more data. A top-five outcome only counts on tracker-days where at least ten claims competed.
+
 ## Link rings
 
 `python run.py rings incidents/x.yaml` (part of `all`, before `control`) groups every stored post by the links it
@@ -250,15 +262,17 @@ story and that is news; a ring where a fifth of the accounts are under 90 days o
 is marked suspicious, shown red on `analysis.html`, and counts toward the control score ("link rings" feature).
 Re-uploaded video clips can't be matched this way (no shared URL); same-words copies cover the caption side.
 
-## News coverage (GDELT)
+## News coverage (Google News)
 
 `python run.py news incidents/x.yaml` (part of `all`, after verification) reads Google News search RSS (free, no key; the GDELT DOC API is the fallback) for
 each tracker's biggest recent claims — 15 per run at 50K+ views, re-checked every 12 hours, one query built from
 the claim's entities and its most distinctive word — and records how many outlets and articles carried it in the
 24 and 48 hours after the claim first appeared on X, when the first article ran, and whether the press had it
 before X did. `claims.html` shows a News column and an "In the news" filter (3+ outlets within 48h is the
-crossover outcome the feature table records as `news_sources_48h`). News lookups are best-effort: when neither source answers,
-the rest of the list waits for the next run.
+crossover outcome the feature table records as `news_sources_48h`). The feed reaches back seven days, so only
+claims first seen within the last five days are checked: for anything older the 48 hours after the first post
+cannot be seen, and an earlier check of such a claim shows "48h window not covered" rather than a zero. News
+lookups are best-effort: when neither source answers, the rest of the list waits for the next run.
 
 ## Narrative control
 

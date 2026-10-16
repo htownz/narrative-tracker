@@ -137,6 +137,7 @@ jobs:
           mkdir -p site
           python -m tracker.status site || true
           python run.py accounts --all || true
+          python run.py insights || true       # cross-tracker correlations page, from out/ and the feature tables
           python -m tracker.site site      # copies every tracker's pages, puts the navigation bar on each, builds the hub
 
       - uses: actions/configure-pages@v5

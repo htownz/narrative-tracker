@@ -147,10 +147,12 @@ link-ring and control scores on every lane, a weekly brief. Everything below bui
 
 ## Analytics and models, in sequence
 
-1. **Insights page (now, ≤ 1 week).** Descriptive correlations on existing data, auto-rebuilt each run:
-   lane→lane lead/lag (does the polls lane lead "Abbott in trouble"?), event-type → lane response distributions,
-   originator → spread (which accounts' touches predict top-five), claim type × lane → verdict rates, pushback lag
-   vs. final reach, control score vs. growth. Each with N and a plain-language reading.
+1. **Insights page — built Oct 15 (`tracker/insights.py`, `/insights/`).** Descriptive correlations on existing
+   data, auto-rebuilt each run: lane→lane lead/lag, event-type → lane response, originator → spread, verdict
+   rates by lane, pushback lag vs. reach, control score vs. growth, news crossover, markets. Each with N and a
+   plain-language reading written by rule. First readings (N=647 claim-days): a first poster with 1M+ followers
+   doubles the chance of the top five (12% vs 6%); polls move lanes most (median 1.67×); 75 of 210 verified
+   claims were unsupported or misleading; the lanes answered fastest are the biggest ones.
 2. **Growth model (data ≥ 2 weeks, ~Nov 1).** Gradient-boosted classifier for O1 on the feature table with
    time-ordered validation; calibration shown on the hub; "Likely to grow" switches from the heuristic to model
    probability. AUC reported honestly, including when it is near 0.5.
