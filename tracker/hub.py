@@ -32,12 +32,44 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <div class="grid" style="display:none">@@CARDS@@</div>
 <p class="lead" style="margin-top:18px"><a href="insights/" style="color:#8cf">Insights →</a> what has gone together so far across every tracker: who posts first, which events move which lanes, where the false claims live, what crosses into the news.<br>
 <a href="accounts/" style="color:#8cf">Amplifier map →</a> the accounts that move these narratives, across every tracker.</p>
-<footer>Built @@BUILT@@. Data via twitterapi.io; lanes assigned by Claude.</footer>
+<footer>Built @@BUILT@@. Lanes assigned by Claude. @@SOURCES@@</footer>
 </body></html>"""
 
 CARD = """<div class="card" data-group="{group}"><h2><a href="{slug}/">{title}</a>{live}</h2><div class="w">{window}{updated}</div>
 <div class="nums"><div class="n push">{pushing}<small>pushing the story</small></div><div class="n">{repeated}<small>repeated</small></div><div class="n back">{pushback}<small>pushing back</small></div></div>
 <div class="links"><a href="{slug}/">Chart</a>{links}</div></div>"""
+
+
+def sources_line() -> str:
+    """What fed this build: X, Bluesky, YouTube, Truth Social, the press — with counts, so a missing key is visible."""
+    import sqlite3
+    from .config import DATA_DIR
+    counts = {"bsky": 0, "yt": 0, "truth": 0}
+    for db in sorted(DATA_DIR.glob("*.sqlite")):
+        if db.name == "news.sqlite":
+            continue
+        try:
+            c = sqlite3.connect(db)
+            cols = {r[1] for r in c.execute("PRAGMA table_info(posts)")}
+            if "source" in cols:
+                for src, n in c.execute("SELECT source, COUNT(*) FROM posts WHERE in_dataset=1 GROUP BY source"):
+                    if src in counts:
+                        counts[src] += n
+            c.close()
+        except sqlite3.Error:
+            continue
+    parts = ["X via twitterapi.io"]
+    parts.append(f"Bluesky {counts['bsky']:,} posts" if counts["bsky"] else "Bluesky: waiting for sign-in")
+    parts.append(f"YouTube {counts['yt']:,} videos" if counts["yt"] else "YouTube: waiting for a key")
+    try:
+        from .newsfeeds import status
+        from .truth import _all_posts
+        st = status()
+        parts.append(f"Truth Social (Trump) {len(_all_posts()):,} posts")
+        parts.append(f"press {st['articles']:,} articles from {st['feeds_ok']} feeds" if st["articles"] else "press: no feeds yet")
+    except Exception:
+        pass
+    return "Sources: " + " · ".join(parts) + "."
 
 
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
@@ -200,7 +232,8 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     site_dir.mkdir(parents=True, exist_ok=True)
     out = site_dir / "index.html"
     built = datetime.now(ZoneInfo(tz)).strftime("%b %d, %Y %I:%M %p %Z").replace(" 0", " ")
-    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", status_html + alerts_html))
+    out.write_text(PAGE.replace("@@CARDS@@", "\n".join(cards)).replace("@@BUILT@@", built).replace("@@ALERTS@@", status_html + alerts_html)
+                   .replace("@@SOURCES@@", sources_line()))
     print(f"wrote {out} ({sum(1 for c in cards if c.startswith('<div class=' + chr(34) + 'card'))} trackers)")
     return out
 
