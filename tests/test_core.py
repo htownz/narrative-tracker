@@ -722,3 +722,30 @@ def test_officials_registry_matches_posts_and_renders(tmp_path, monkeypatch):
     html_text = of.table_html(rows)
     assert "Ken Paxton" in html_text and "Talarico is hiding" in html_text and "50K" in html_text
     of.officials.cache_clear()
+
+
+def test_message_doc_phrases_are_counted_across_posts_and_press(tmp_path, monkeypatch):
+    from tracker import phrases as ph, newsfeeds
+    monkeypatch.setattr(newsfeeds, "DB_PATH", tmp_path / "news.sqlite")
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: Turnaround works}", header='phrases:\n  - "largest turnaround in Texas history"\n  - "93 to 197"\n')
+    st = Store(inc.db_path)
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+    def tweet(i, text, when, handle="h"):
+        return flatten_tweet({"id": str(i), "text": text, "createdAt": when.strftime("%a %b %d %H:%M:%S +0000 %Y"), "viewCount": 5000, "author": {"userName": handle, "followers": 10}})
+    st.upsert_posts([tweet(1, "HISD is the LARGEST turnaround in Texas history!", now - timedelta(days=1), "GovAbbott"),
+                     tweet(2, "largest turnaround... in texas history", now - timedelta(days=2), "booster"),
+                     tweet(3, "unrelated", now - timedelta(days=1)),
+                     tweet(4, "largest turnaround in Texas history, said nobody", now - timedelta(days=30))])     # outside the window
+    st.set_lanes({"1": "x", "2": "x"}, "manual"); st.close()
+    conn = newsfeeds.connect(tmp_path / "news.sqlite")
+    conn.execute("INSERT INTO articles (url, domain, feed, title, summary, published, fetched_at) VALUES (?,?,?,?,?,?,?)",
+                 ("https://city-journal.org/a", "city-journal.org", "CJ", "The largest turnaround in Texas history", "", (now - timedelta(days=3)).isoformat(), now.isoformat()))
+    conn.commit(); conn.close()
+    data = ph.count(inc)
+    r = {x["phrase"]: x for x in data["phrases"]}["largest turnaround in Texas history"]
+    assert r["posts"] == 2 and r["accounts"] == 2 and r["articles"] == 1 and r["outlet_list"] == ["city-journal.org"]
+    assert r["first_article"]["domain"] == "city-journal.org" and r["first_post"]["handle"] == "booster" and r["lanes"][0][0] == "Turnaround works"
+    assert {x["phrase"]: x["posts"] for x in data["phrases"]}["93 to 197"] == 0
+    html_text = ph.section_html(data)
+    assert "press first" in html_text and "@GovAbbott" in html_text

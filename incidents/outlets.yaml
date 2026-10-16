@@ -52,6 +52,12 @@ outlets:
   - {domain: thetexasvoice.com,     name: The Texas Voice,          lean: right,      texas: true}
   - {domain: texasgop.org,          name: Republican Party of Texas, lean: right,     texas: true}
   - {domain: texasdemocrats.org,    name: Texas Democratic Party,   lean: left,       texas: true}
+  - {domain: texas2036.org,         name: Texas 2036,               lean: center,     texas: true}
+  - {domain: goodreasonhouston.org, name: Good Reason Houston,      lean: center,     texas: true}
+  - {domain: houston.org,           name: Greater Houston Partnership, lean: center,  texas: true}
+  - {domain: the74million.org,      name: The 74,                   lean: center}
+  - {domain: realcleareducation.com, name: RealClearEducation,      lean: lean-right}
+  - {domain: city-journal.org,      name: City Journal,             lean: right}
   # ---- national ----
   - {domain: apnews.com,            name: AP,                       lean: center}
   - {domain: reuters.com,           name: Reuters,                  lean: center}

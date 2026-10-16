@@ -50,7 +50,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "clients", "refresh-views", "bsky", "youtube", "lookup", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "clients", "refresh-views", "bsky", "youtube", "lookup", "phrases", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
@@ -175,6 +175,9 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, synthetic=True)
         render_mod.render(inc)
+    elif args.command == "phrases":
+        from tracker import phrases
+        phrases.phrases(inc)
     elif args.command == "bsky":
         from tracker import bsky
         bsky.pull(inc, budget=args.budget, dry_run=args.dry_run)
@@ -221,7 +224,7 @@ def main() -> None:
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)
-        from tracker import accounts, analysis, alerts, claims, control, features, news, review, rings, verify
+        from tracker import accounts, analysis, alerts, claims, control, features, news, phrases, review, rings, verify
         def claims_and_verify(inc):
             claims.claims(inc)                       # extract + cluster + page
             changed = bool(verify.verify(inc))
@@ -232,7 +235,7 @@ def main() -> None:
             if changed:
                 claims.claims(inc, skip_model=True)  # page again with the new verdicts and news checks
         for name, fn in (("accounts", accounts.accounts), ("claims", claims_and_verify), ("rings", rings.rings), ("control", control.control),
-                         ("features", features.features), ("analysis", analysis.analysis), ("review", review.review),
+                         ("features", features.features), ("phrases", phrases.phrases), ("analysis", analysis.analysis), ("review", review.review),
                          ("alerts", alerts.alerts_cmd), ("report", lanes_mod.other_report)):
             try:
                 fn(inc)

@@ -54,7 +54,9 @@ def tracker_pulse(slug: str, days: int = 7) -> dict[str, Any]:
     ctl = _load(OUT_DIR / slug / "control.json") or {}
     from .officials import said
     electeds = said(slug, days)[:4]
+    ph = _load(OUT_DIR / slug / "phrases.json") or {}
     return {
+        "phrases": [{"phrase": r["phrase"], "posts": r["posts"], "articles": r["articles"], "accounts": r["accounts"]} for r in ph.get("phrases", []) if r["posts"] or r["articles"]][:4],
         "electeds": [{"name": r["name"], "office": r["office"], "lane": r["lane"], "views": r["views"], "text": r["text"], "url": r["url"]} for r in electeds],
         "slug": slug, "exists": True, "live": True, "title": d.get("meta", {}).get("title", slug),
         "posts_7d": len(posts), "views_7d": sum(int(p.get("views") or 0) for p in posts),
@@ -118,6 +120,7 @@ def _tracker_html(p: dict[str, Any]) -> str:
             + (f' · {p["false_7d"]} false claims' if p["false_7d"] else "") + f'</span><div>{lanes}</div>'
             + (f'<ul>{claims}</ul>' if claims else '<div class="dead">no claims this week</div>')
             + (f'<div class="hooks"><b>Electeds</b> ' + "; ".join(f'{e(x["name"])} ({e(x["office"][:28])}) in {e(x["lane"])}: <a href="{e(x["url"] or "#")}" style="color:var(--ink-2)">{e(x["text"][:90])}</a>' for x in p.get("electeds", [])) + '</div>' if p.get("electeds") else "")
+            + (f'<div class="hooks"><b>Message-doc phrases</b> ' + "; ".join(f'“{e(x["phrase"])}” {x["posts"]} posts / {x["articles"]} articles' for x in p.get("phrases", [])) + '</div>' if p.get("phrases") else "")
             + (f'<div class="hooks"><b>Gaining now</b> {gaining}</div>' if gaining else "")
             + (f'<div class="hooks"><b>Flagged pushes</b> {flagged}</div>' if flagged else "")
             + f' <a href="../{e(p["slug"])}/claims.html" style="font-size:11px;color:#8cf">claims</a> · <a href="../{e(p["slug"])}/analysis.html" style="font-size:11px;color:#8cf">timing &amp; control</a></div>')

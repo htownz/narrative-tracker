@@ -250,6 +250,16 @@ said" on each analysis page (14 days, newest first, with the lane each post land
 the client desk, the hub's "What electeds said this week" by reach, and the weekly brief, which is told to say
 what office-holders said and into which lane.
 
+## Message-doc phrases
+
+An incident YAML may list `phrases:` — the anchor lines a coordinated campaign hands its carriers. `python run.py
+phrases` (part of `all`) counts each phrase over the last 14 days in every post in the tracker's store (all
+platforms) and every article in the press store: posts, accounts, views, articles, outlets, who was first (X or
+the press), the top accounts, the lanes, and a day-by-day. Shown on the analysis page ("Message-doc phrases")
+and the client desk. The HISD tracker carries the pro-reform campaign's lines ("largest turnaround in Texas
+history", "no student attends a failing school", "regardless of zip code", the 93-to-197 figure); the sweep's
+outlets (Texas 2036, Good Reason Houston, GHP, The 74, RealClearEducation, City Journal) are in the feed list.
+
 ## Client desk
 
 `incidents/clients.yaml` maps each client and prospect to the policy areas it cares about, the trackers that

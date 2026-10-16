@@ -222,6 +222,11 @@ top-5 share (views carried by the five biggest accounts) and link rings (share o
 {table_html(ctrl["lanes"])}
 {claims_part}"""
     from .officials import said, table_html as officials_table
+    from .phrases import section_html as phrases_section
+    try:
+        phrases_html = phrases_section(json.loads((inc.out_dir / "phrases.json").read_text(encoding="utf-8")) if (inc.out_dir / "phrases.json").exists() else None)
+    except ValueError:
+        phrases_html = ""
     said_rows = said(inc.slug, days=14)
     officials_html = f"""<h2>What electeds said</h2>
 <p class="sub">Posts in this tracker by elected officials, candidates, agencies and public bodies (<code>incidents/officials.yaml</code>), last 14 days, newest first — the rhetoric the lanes answer or amplify. {len(said_rows)} posts.</p>
@@ -233,6 +238,7 @@ top-5 share (views carried by the five biggest accounts) and link rings (share o
 <p class="sub">For each narrative lane: when it started, how fast it burned (half-life = hours until half of its eventual views had posted), when the first pushback aimed at it landed (a pushback post quoting or replying to a post in the lane), and how much pushback it drew relative to its own views.</p>
 {tiles}
 {officials_html}
+{phrases_html}
 <h2>Lanes</h2>
 <div class="wrap"><table><thead><tr><th>Lane</th><th>First post</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Half-life h</th><th class="n">Peak hour</th><th class="n">Pushback lag h</th><th class="n">Pushback posts</th><th class="n">Pushback share</th><th>First pushback</th></tr></thead><tbody>{trs}</tbody></table></div>
 {ev_html}

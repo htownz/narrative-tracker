@@ -38,6 +38,12 @@ feeds:
   - {name: Republican Party of Texas,  url: "https://texasgop.org/feed/", kind: party}
   - {name: Texas Democratic Party,     url: "https://www.texasdemocrats.org/feed/", kind: party}
   - {name: TPPF,                       url: "https://www.texaspolicy.com/feed/", kind: advocacy}
+  - {name: Texas 2036,                 url: "https://texas2036.org/feed/", kind: advocacy, domain: texas2036.org}
+  - {name: Good Reason Houston,        url: "https://goodreasonhouston.org/feed/", kind: advocacy, domain: goodreasonhouston.org}
+  - {name: Greater Houston Partnership, url: "https://www.houston.org/news/rss", kind: advocacy, domain: houston.org}
+  - {name: The 74,                     url: "https://www.the74million.org/feed/", kind: press, domain: the74million.org}
+  - {name: RealClearEducation,         url: "https://www.realcleareducation.com/index.xml", kind: press, domain: realcleareducation.com}
+  - {name: City Journal,               url: "https://www.city-journal.org/feed", kind: press, domain: city-journal.org}
   - {name: AP Politics,                url: "https://rsshub.app/apnews/topics/politics", kind: wire, note: "via rsshub; AP has no public RSS"}
   - {name: The Hill,                   url: "https://thehill.com/feed/", kind: press}
   - {name: Politico,                   url: "https://rss.politico.com/politics-news.xml", kind: press}

@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS feed_log (
 """
 
 
-def connect(path: Path = DB_PATH) -> sqlite3.Connection:
+def connect(path: Path | None = None) -> sqlite3.Connection:
+    path = path or DB_PATH                                    # resolved at call time so tests (and a moved data dir) can point it elsewhere
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
@@ -142,8 +143,9 @@ def gnews_url(domain: str) -> str:
     return f"https://news.google.com/rss/search?q={quote(f'site:{domain} when:3d')}&hl=en-US&gl=US&ceid=US:en"
 
 
-def pull_feeds(path: Path = FEEDS_PATH, db: Path = DB_PATH, session: requests.Session | None = None) -> dict[str, int]:
+def pull_feeds(path: Path = FEEDS_PATH, db: Path | None = None, session: requests.Session | None = None) -> dict[str, int]:
     """Fetch every feed once; insert articles not seen before. Returns {feed name: new articles}."""
+    db = db or DB_PATH
     if not path.exists():
         return {}
     feeds = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("feeds") or []
@@ -233,9 +235,10 @@ def relevant(article: dict[str, Any], claim_text: str, entities: list[str], subj
     return (bool(matched) and other_hit >= 1) or other_hit >= 3
 
 
-def search(claim_text: str, entities: list[str], since: datetime, until: datetime | None = None, db: Path = DB_PATH,
+def search(claim_text: str, entities: list[str], since: datetime, until: datetime | None = None, db: Path | None = None,
            subjects: set[str] | None = None) -> list[dict[str, Any]]:
     """Stored articles about the claim published between since and until, in news.summarise()'s shape."""
+    db = db or DB_PATH
     if not db.exists():
         return []
     conn = connect(db)
@@ -259,7 +262,8 @@ def search(claim_text: str, entities: list[str], since: datetime, until: datetim
     return out
 
 
-def status(db: Path = DB_PATH) -> dict[str, Any]:
+def status(db: Path | None = None) -> dict[str, Any]:
+    db = db or DB_PATH
     if not db.exists():
         return {"articles": 0, "feeds_ok": 0, "since": None}
     conn = connect(db)

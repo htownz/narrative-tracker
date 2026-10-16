@@ -28,6 +28,17 @@ queries:
   - '"largest turnaround"'
   - '"SB 1882"'
 
+# Anchor lines of the pro-reform message document (the HISD sweep's language flags): counted in every post and
+# press article, with who used them and who was first (tracker/phrases.py -> analysis page, client desk).
+phrases:
+  - "largest turnaround in Texas history"
+  - "no student attends a failing school"
+  - "regardless of zip code"
+  - "93 to 197"
+  - "197 A and B schools"
+  - "90% of families"
+  - "largest school turnaround"
+
 min_faves_hint: 10
 exclude_retweets: true
 query_type: Latest
