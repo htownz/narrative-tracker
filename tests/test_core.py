@@ -652,3 +652,52 @@ def test_news_feeds_store_relevance_and_lean(tmp_path, monkeypatch):
     m = outlets.mix(["texastribune.org", "foxnews.com", "dailywire.com", "nobody.example"])
     assert (m["L"], m["C"], m["R"], m["?"], m["rated"], m["texas"], m["one_sided"]) == (0, 1, 2, 1, 3, 1, "R")
     assert outlets.mix(["nytimes.com", "foxnews.com"])["one_sided"] is None and outlets.mix(["nytimes.com"])["one_sided"] is None
+
+
+def test_truth_social_archive_items_become_events_and_posts(tmp_path, monkeypatch):
+    from tracker import truth, newsfeeds
+    monkeypatch.setattr(newsfeeds, "DB_PATH", tmp_path / "news.sqlite")
+    rss = (b'<rss version="2.0" xmlns:truth="https://trumpstruth.org/ns/truth" xmlns:archive="https://trumpstruth.org/ns/archive"><channel>'
+           b'<item><title>t</title><link>https://www.trumpstruth.org/statuses/42382</link><description>&lt;p&gt;Ken Paxton will WIN Texas! Complete and Total Endorsement.&lt;/p&gt;</description>'
+           b'<pubDate>Fri, 16 Oct 2026 05:13:07 +0000</pubDate><truth:originalUrl>https://truthsocial.com/@realDonaldTrump/117448873604871574</truth:originalUrl><archive:postType>original</archive:postType></item>'
+           b'<item><title>Video post from October 16, 2026</title><link>https://www.trumpstruth.org/statuses/42390</link><description>&lt;a href="x.mp4"&gt;View video&lt;/a&gt;</description><pubDate>Fri, 16 Oct 2026 13:40:04 +0000</pubDate></item>'
+           b'<item><title>t2</title><link>https://www.trumpstruth.org/statuses/42391</link><description>&lt;p&gt;Ohio is doing great.&lt;/p&gt;</description><pubDate>Fri, 16 Oct 2026 14:00:00 +0000</pubDate></item>'
+           b'</channel></rss>')
+    class Resp:
+        content, status_code = rss, 200
+    class Sess:
+        headers = {}
+        def get(self, url, timeout=0): return Resp()
+    assert truth.pull(session=Sess()) == 3 and truth.pull(session=Sess()) == 0
+    items = truth.parse_items(rss)
+    assert items[0]["text"].startswith("Ken Paxton will WIN") and items[0]["original_url"].startswith("https://truthsocial.com/") and items[1]["text"] == ""
+    inc = _incident(tmp_path, start="2026-10-10", end="2026-10-17", queries=('"Ken Paxton"', "Paxton Talarico"), lanes_literal="lanes:\n  - {key: x, label: X}")
+    rows = truth.rows_for(inc)
+    assert len(rows) == 1 and rows[0]["source"] == "truth" and rows[0]["id"] == "truth:42382" and rows[0]["author_handle"] == "realDonaldTrump"
+    assert truth.ingest(inc) == 1
+    st = Store(inc.db_path)
+    assert [r["id"] for r in st.unlabeled(1000)] == ["truth:42382"]                      # above threshold regardless of counts
+    st.close()
+    monkeypatch.setattr(truth, "_all_posts", lambda: [{"url": "https://www.trumpstruth.org/statuses/1", "original_url": "", "text": "Ken Paxton is a winner", "published": "2026-10-16T05:13:07+00:00", "post_type": "original"}])
+    import tracker.config
+    monkeypatch.setattr(tracker.config, "incident_paths", lambda: [inc.path])
+    truth.auto_events.cache_clear()
+    ev = truth.auto_events()
+    assert len(ev) == 1 and ev[0]["type"] == "trump" and ev[0]["trackers"] == [inc.slug] and ev[0]["label"].startswith("Trump on Truth Social: Ken Paxton")
+    from tracker.store import profile_url
+    assert profile_url("realDonaldTrump") == "https://truthsocial.com/@realDonaldTrump"
+
+
+def test_youtube_videos_flatten_into_posts_and_skip_without_a_key(tmp_path, monkeypatch):
+    from tracker import youtube
+    v = {"id": "abc123", "snippet": {"publishedAt": "2026-10-12T15:00:00Z", "channelId": "UC9", "channelTitle": "KXAN", "title": "Paxton skips debate",
+                                     "description": "Full story.", "thumbnails": {"default": {"url": "https://i/t.jpg"}}, "tags": ["texas"]},
+         "statistics": {"viewCount": "12000", "likeCount": "300", "commentCount": "40"}, "contentDetails": {"duration": "PT2M"}}
+    row = youtube.flatten_video(v)
+    assert row["id"] == "yt:abc123" and row["source"] == "yt" and row["view_count"] == 12000 and row["engagement"] == 340
+    assert row["author_handle"] == "yt:UC9" and row["author_name"] == "KXAN" and row["url"].endswith("v=abc123") and row["text"].startswith("Paxton skips debate")
+    assert row["created_at"] == "2026-10-12T15:00:00+00:00"
+    monkeypatch.delenv("YOUTUBE_API_KEY", raising=False)
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    assert youtube.pull(inc) == 0
+    st = Store(inc.db_path); st.upsert_posts([row]); assert [r["id"] for r in st.dataset(1000)] == ["yt:abc123"]; st.close()

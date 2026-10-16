@@ -182,12 +182,15 @@ def flatten_tweet(t: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
     }
 
 
-SOURCES = {"x": "X", "bsky": "Bluesky", "yt": "YouTube"}
+SOURCES = {"x": "X", "bsky": "Bluesky", "yt": "YouTube", "truth": "Truth Social"}
+KNOWN_PROFILES = {"realDonaldTrump": "https://truthsocial.com/@realDonaldTrump"}
 BSKY_MIN_ENGAGEMENT = 25      # Bluesky has no view counts; a post with this much engagement is roughly a 1K-view post on X
 
 
 def profile_url(handle: str) -> str:
     """Where an account lives. Bluesky handles are domains (name.bsky.social); YouTube channels are stored as yt:<id>."""
+    if handle in KNOWN_PROFILES:
+        return KNOWN_PROFILES[handle]
     if handle.startswith("yt:"):
         return f"https://www.youtube.com/channel/{handle[3:]}"
     if "." in handle:
@@ -240,7 +243,7 @@ def flatten_bsky(p: dict[str, Any], in_dataset: int = 1) -> dict[str, Any]:
 
 def _thr(min_views: int, min_engagement: int) -> tuple[str, tuple[int, int]]:
     """SQL for 'this post clears its platform's threshold'."""
-    return "(view_count >= ? OR (source = 'bsky' AND engagement >= ?))", (min_views, min_engagement)
+    return "(view_count >= ? OR (source = 'bsky' AND engagement >= ?) OR source = 'truth')", (min_views, min_engagement)
 
 
 class Store:
@@ -430,7 +433,7 @@ class Store:
         """In-lane posts (not 'other') that have not been through claim extraction, biggest first."""
         rows = self.conn.execute(
             "SELECT p.* FROM posts p LEFT JOIN claims_done d ON d.post_id = p.id "
-            "WHERE d.post_id IS NULL AND p.lane IS NOT NULL AND p.lane != 'other' AND (p.view_count >= ? OR (p.source = 'bsky' AND p.engagement >= ?)) "
+            "WHERE d.post_id IS NULL AND p.lane IS NOT NULL AND p.lane != 'other' AND (p.view_count >= ? OR (p.source = 'bsky' AND p.engagement >= ?) OR p.source = 'truth') "
             "AND p.created_at >= ? ORDER BY p.view_count DESC, p.engagement DESC LIMIT ?",
             (min_views, min_engagement, window_start_utc, limit),
         ).fetchall()

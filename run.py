@@ -50,7 +50,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "refresh-views", "bsky", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "refresh-views", "bsky", "youtube", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
@@ -155,6 +155,9 @@ def main() -> None:
     elif args.command == "bsky":
         from tracker import bsky
         bsky.pull(inc, budget=args.budget, dry_run=args.dry_run)
+    elif args.command == "youtube":
+        from tracker import youtube
+        youtube.pull(inc, force=True)
     elif args.command == "all":
         if inc.db_path.exists():
             st = Store(inc.db_path); n = st.compact(); seeded = st.seed_history(); st.close()
@@ -170,6 +173,16 @@ def main() -> None:
                 print("bluesky pull paused on the time budget; the next run resumes it", file=sys.stderr)
         except Exception as e:
             print(f"[bluesky] failed: {type(e).__name__}: {e}", file=sys.stderr)
+        try:   # YouTube, once a day per tracker, when YOUTUBE_API_KEY is set
+            from tracker import youtube
+            youtube.pull(inc)
+        except Exception as e:
+            print(f"[youtube] failed: {type(e).__name__}: {e}", file=sys.stderr)
+        try:   # Trump's Truth Social posts that name this tracker's subject (archive feed): events + posts
+            from tracker import truth
+            truth.ingest(inc)
+        except Exception as e:
+            print(f"[truth social] failed: {type(e).__name__}: {e}", file=sys.stderr)
         if inc.live:
             try:   # the still-moving tail: posts 2-7 days old that the re-pull window no longer covers (2 calls, ~1.5 cents)
                 pull_mod.refresh_views(inc, top_n=100, min_age_hours=48, max_age_hours=168, pause=args.pause)

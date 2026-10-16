@@ -51,6 +51,13 @@ def load_events(inc: Incident, path: Path = EVENTS_PATH, with_auto: bool = True)
         for e in auto_events():
             if inc.slug in e["trackers"] and not covered_by(e, out):
                 out.append({k: e[k] for k in ("label", "type", "at", "all_day", "source", "auto", "detail")})
+        try:
+            from .truth import auto_events as trump_events
+            for e in trump_events():
+                if inc.slug in e["trackers"]:
+                    out.append({k: e[k] for k in ("label", "type", "at", "all_day", "source", "auto", "detail")})
+        except Exception:                                     # the archive store is optional
+            pass
     out.sort(key=lambda e: e["at"])
     return out
 

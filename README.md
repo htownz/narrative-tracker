@@ -242,6 +242,43 @@ headline, a summary that doubles as the Telegram message, a section per race (is
 watch. Published at `brief/` on the site with the numbers behind it in a fold-out, featured on the hub, archived
 by date; sent to Telegram when `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` are set.
 
+## Platforms beyond X
+
+Every tracker's store holds posts from more than one platform (`posts.source`: `x`, `bsky`, `yt`, `truth`);
+the chart still plots X alone, because it plots views and the others' counts are not comparable, while
+classification, same-words detection, claims, control scores and the account tables see every platform.
+The claims page shows which platforms carried each canonical claim, which had it first and the lag; the
+insights page's "Where claims start" block sums that up.
+
+- **Bluesky** (`tracker/bsky.py`, part of `all`): the tracker's queries, X operators stripped, against the
+  official search API, day by day and resumable. Bluesky has no view counts, so a post's `engagement` (likes +
+  reposts + replies + quotes) is its threshold, 25 by default. The public endpoint refuses datacenter
+  addresses, so the job signs in with `BSKY_HANDLE` / `BSKY_APP_PASSWORD` (a free account's *app password*,
+  never the account password); without them the step logs why it skipped. `bluesky: false` in an incident
+  YAML turns it off.
+- **YouTube** (`tracker/youtube.py`): once a day per tracker when `YOUTUBE_API_KEY` is set (Google Cloud
+  console, YouTube Data API v3, free 10,000-unit quota; a search is 100 units). Videos are posts with real
+  view counts; the title and description are the text; the channel is the account (`yt:<channel id>`).
+- **Truth Social** (`tracker/truth.py`): Trump's posts from the trumpstruth.org public archive feed. A post
+  that names a tracker's subject becomes a calendar event (type `trump`) and a post in that tracker's store,
+  always above threshold, so "Trump said it on Truth Social, X screenshotted it" shows up as Truth Social
+  first with the lag. No other Truth Social account is read; there is no official API.
+- **Not read, by decision:** TikTok and Facebook/Instagram/Threads, whose research APIs are closed to
+  commercial users (an academic partner can open both); Ground News, which has no API (its outlet-lean idea
+  is replicated in `incidents/outlets.yaml`); third-party scrapers of any platform.
+
+## The press
+
+`python -m tracker.newsfeeds` (the job runs it before each pull) reads the RSS feeds in
+`incidents/news_feeds.yaml` — the Texas political press, TV and public radio, the two state parties, and the
+national desks — into `data/news.sqlite` (synced to the bucket), which keeps every article it has seen.
+`incidents/outlets.yaml` gives each outlet a lean (left / lean-left / center / lean-right / right; a judgment,
+edit freely) and marks the Texas outlets. The news step counts an article for a claim only when it is about
+the claim: it names a specific entity of the claim (not the tracker's own subject) with another entity or
+distinctive word, or any entity plus a distinctive word, or three distinctive words. Each claim's coverage
+carries outlet counts by lean and a one-sided flag; the claims page shows them and the insights news block
+reads how many claims were carried on one side of the press only.
+
 ## Scorecard
 
 Every run, `features` logs each tracker's ten "likely to grow" picks to `data/features/picks.csv` (rank, heuristic,
@@ -298,10 +335,11 @@ each tracker's biggest recent claims — 15 per run at 50K+ views, re-checked ev
 the claim's entities and its most distinctive word — and records how many outlets and articles carried it in the
 24 and 48 hours after the claim first appeared on X, when the first article ran, and whether the press had it
 before X did. `claims.html` shows a News column and an "In the news" filter (3+ outlets within 48h is the
-crossover outcome the feature table records as `news_sources_48h`). The feed reaches back seven days, so only
-claims first seen within the last five days are checked: for anything older the 48 hours after the first post
-cannot be seen, and an earlier check of such a claim shows "48h window not covered" rather than a zero. News
-lookups are best-effort: when neither source answers, the rest of the list waits for the next run.
+crossover outcome the feature table records as `news_sources_48h`). Google's feed reaches back seven days; the
+RSS article store (above) reaches back to its first article, so the 48 hours after a claim's first post can be
+measured for any claim first seen after the store began. A claim whose window neither source covers is not
+checked, and an earlier check of such a claim shows "48h window not covered" rather than a zero. News lookups
+are best-effort: when neither source answers, the rest of the list waits for the next run.
 
 ## Narrative control
 

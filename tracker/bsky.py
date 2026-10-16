@@ -186,6 +186,11 @@ def pull(inc: Incident, budget: float | None = None, dry_run: bool = False) -> b
                     complete = complete and nxt is None
                     break
         except RuntimeError as e:
+            if "HTTP 403" in str(e) or "HTTP 401" in str(e):   # blocked or not signed in: nothing else will answer either
+                log(f"bluesky: {e}")
+                log("bluesky: stopping this run; set BSKY_HANDLE and BSKY_APP_PASSWORD (GitHub secrets) to sign in")
+                complete = False
+                break
             log(f"  [skip] bluesky {q[:50]} {since[:10]}: {e}")
             progress[key] = {"done": True, "cursor": "", "rows": rows_n, "error": str(e)[:200]}
             store.set_meta("bsky_progress", progress)
