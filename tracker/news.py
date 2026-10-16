@@ -24,10 +24,10 @@ from .config import Incident
 from .store import Store
 
 API = "https://api.gdeltproject.org/api/v2/doc/doc"
-NEWS_TOP = 15
+NEWS_TOP = 10
 NEWS_MIN_VIEWS = 50_000
 NEWS_RECHECK_H = 12
-PACE_S = 3.0
+PACE_S = 6.0            # GDELT throttles anything faster than about one request every five seconds
 STOP = set("""a an the and or but of to in on at for with by from as is are was were be been being this that these those it its he
 she they them his her their we you i our your not no do does did have has had will would can could should about into over
 than then so if just more most very who whom what which when where why how all any some such own same says said say up out off
@@ -82,7 +82,8 @@ def fetch_articles(query: str, timespan: str = "7d", session: requests.Session |
             time.sleep(5 * (attempt + 1))
             continue
         if r.status_code == 429:
-            time.sleep(10 * (attempt + 1))
+            print(f"  gdelt: rate limited; waiting {30 * (attempt + 1)}s", file=sys.stderr)
+            time.sleep(30 * (attempt + 1))
             continue
         if r.status_code != 200:
             print(f"  gdelt: HTTP {r.status_code} for {query[:60]}", file=sys.stderr)
