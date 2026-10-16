@@ -47,6 +47,8 @@ def _trackers() -> list[str]:
 def _feature_rows() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for f in sorted((DATA_DIR / "features").glob("*.csv")) if (DATA_DIR / "features").exists() else []:
+        if f.name == "picks.csv":                      # the scorecard's pick log, not a feature table
+            continue
         with f.open(encoding="utf-8", newline="") as fh:
             rows += [r for r in csv.DictReader(fh)]
     return rows

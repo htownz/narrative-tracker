@@ -433,9 +433,10 @@ def test_news_query_and_summary():
 
 
 def test_insights_counts_outcomes_only_on_competitive_days_and_reads_by_rule(tmp_path, monkeypatch):
-    from tracker import insights
+    from tracker import insights, scorecard
     monkeypatch.setattr(insights, "OUT_DIR", tmp_path / "out")
     monkeypatch.setattr(insights, "DATA_DIR", tmp_path / "data")
+    monkeypatch.setattr(scorecard, "DATA_DIR", tmp_path / "data")
     (tmp_path / "out" / "big-live").mkdir(parents=True)
     (tmp_path / "data" / "features").mkdir(parents=True)
     (tmp_path / "out" / "big-live" / "data.json").write_text(json.dumps({"meta": {"title": "Big"}, "lanes": [], "posts": []}))
@@ -456,8 +457,10 @@ def test_insights_counts_outcomes_only_on_competitive_days_and_reads_by_rule(tmp
     import csv
     with (tmp_path / "data" / "features" / "big-live.csv").open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(base)); w.writeheader(); w.writerows(rows)
-    page = insights.insights()
+    (tmp_path / "data" / "features" / "picks.csv").write_text("run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible\nr,d1,big-live,3,claim 3,1,9.0,50000,4,1\n", encoding="utf-8")
+    page = insights.insights()                                                    # the pick log sits beside the feature tables and must not be read as one
     out = json.loads((tmp_path / "out" / "insights.json").read_text(encoding="utf-8"))
+    assert out["scorecard"]["n_logged"] == 1 and out["scorecard"]["all"]["hits"] == 1
     assert out["first_poster"]["n"] == 30 and {t["bucket"]: t["p_top5"] for t in out["first_poster"]["table"]}["1M+"] == 1.0
     assert "million-plus" in out["first_poster"]["reading"]
     assert out["early_touch"]["table"][0]["handle"] == "big" and out["early_touch"]["table"][0]["p_top5"] == 1.0
