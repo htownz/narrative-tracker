@@ -18,13 +18,14 @@ refresh_days: 2
 live: true
 
 queries:
-  - 'Texas broadband BEAD'
+  - 'Texas broadband'
+  - '"rural broadband" Texas'
+  - 'Texas BEAD broadband'
   - '"Broadband Development Office"'
   - '"Texas Universal Service Fund"'
-  - '"rural broadband" Texas'
-  - 'Texas broadband Starlink fiber'
+  - 'Starlink Texas rural'
+  - 'Texas rural fiber internet'
   - 'Texas "pole attachment"'
-  - 'Texas telephone cooperative'
 
 min_faves_hint: 10
 exclude_retweets: true
