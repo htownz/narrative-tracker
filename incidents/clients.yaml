@@ -9,7 +9,7 @@
 #     why:         one line on what the client needs from it
 #     legislation: bills, riders, agencies, rulemakings, committees to watch (free text; session mode reads this)
 #     voices:      elected officials and institutions whose rhetoric on the area matters
-#   confirm: a question for the firm when the mapping is a guess
+#   confirm: an open question for the firm (shown on the client desk)
 # Keep client-confidential detail out of here: the repo is public.
 
 firm_practices: [energy and electricity, transportation and infrastructure, appropriations and tax, local and municipal government]
@@ -82,11 +82,10 @@ clients:
         trackers: [issue-local-control-live]
         why: Same preemption and cap questions as every city
 
-  - name: CDCAT
+  - name: Community Development Corporation Association of Texas (CDCAT)
     status: client
     notice: Jay
     practice: local and municipal government
-    confirm: Community Development Corporation Association of Texas? Mapped to housing and community development
     areas:
       - area: Affordable housing finance and community development
         trackers: [issue-housing-live]
@@ -105,11 +104,10 @@ clients:
         legislation: BEAD administration (Broadband Development Office); Texas Universal Service Fund; pole attachment and right-of-way; satellite subsidy fights
         voices: [Texas Comptroller / BDO, PUCTX, Sen. Robert Nichols, Rep. Trent Ashby, rural caucus]
 
-  - name: Flex
+  - name: Flex Ltd
     status: client
     notice: Jim; cc Andrea
     practice: appropriations and tax
-    confirm: Flex Ltd (manufacturing, Austin)? Mapped to economic development and manufacturing
     areas:
       - area: Manufacturing incentives, semiconductors and tariffs
         trackers: [issue-economic-development-live]
@@ -168,14 +166,14 @@ clients:
     status: client
     notice: Jim; cc Andrea
     practice: appropriations and tax
-    confirm: What is the engagement about? No tracker mapped until the issue is named
+    confirm: Engagement issue not yet named; no tracker until it is
     areas: []
 
   - name: NRHC
     status: client
     notice: Jim; cc Andrea
     practice: appropriations and tax
-    confirm: Which NRHC? No tracker mapped until the issue is named
+    confirm: Engagement issue not yet named; no tracker until it is
     areas: []
 
   - name: No More Victims
@@ -198,11 +196,10 @@ clients:
         trackers: [issue-broadband-live]
         why: As Etex
 
-  - name: Onward
+  - name: Onward Energy
     status: client
     notice: Jim; Andrea
     practice: energy and electricity
-    confirm: Onward Energy (ERCOT generation)? Mapped to the grid and oil-and-gas trackers
     areas:
       - area: Power generation and the ERCOT market
         trackers: [issue-grid-live, issue-oil-gas-live]
@@ -223,7 +220,7 @@ clients:
     status: client
     notice: Jim and Jay
     practice: appropriations and tax
-    confirm: What does Recana do and what is the engagement? No tracker mapped until the issue is named
+    confirm: Engagement issue not yet named; no tracker until it is
     areas: []
 
   - name: The Safety Navigator
@@ -296,7 +293,6 @@ clients:
     status: client
     notice: Jim
     practice: appropriations and tax
-    confirm: Listed as "TTAA" on the notice sheet; treated as the Texas Taxpayers and Research Association
     areas:
       - area: Data center sales-tax exemption and data center policy
         trackers: [issue-data-centers-live]
