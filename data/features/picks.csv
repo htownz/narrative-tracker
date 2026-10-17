@@ -46,8 +46,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-16T17:41+00:00,2026-10-16T16:19:01+00:00,trump-texas-live,581,James Talarico is a far-left freak who will bring disaster to Texas.,9,22.33,2708,2,0
 2026-10-16T17:41+00:00,2026-10-16T16:19:01+00:00,trump-texas-live,1458,Donald Trump and Ken Paxton deserve blame if Paxton loses the Texas Senate race.,10,22.18,2564,2,0
 2026-10-16T17:43+00:00,2026-10-16T14:10:56+00:00,vance-texas-live,12,JD Vance implied that James Talarico is gay.,1,36.65,3899,11,0
-2026-10-16T17:45+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,11,Ken Paxton as Attorney General blocked cities from raising property taxes.,1,32.38,94960,2,0
-2026-10-16T17:45+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,77,Don Huffines is working in the Texas Comptroller's Office to root out government waste.,2,31.3,64770,2,0
 2026-10-16T17:46+00:00,2026-10-16T12:59:42+00:00,issue-vouchers-live,1,School vouchers are becoming a political liability for Republicans in Texas and beyond.,1,22.8,3201,2,0
 2026-10-16T19:02+00:00,2026-10-16T18:07:10+00:00,issue-election-integrity-live,6,Trump's allies are discussing or urging martial law or taking control of the midterms if they are deemed rigged.,1,69.68,1139000,20,1
 2026-10-16T19:02+00:00,2026-10-16T18:07:10+00:00,issue-election-integrity-live,75,"Peter Ticktin, Tina Peters' attorney, said martial law and seizing ballots and election equipment might be necessary to ",2,45.33,81859,7,1
@@ -60,11 +58,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-16T19:31+00:00,2026-10-16T19:05:51+00:00,issue-housing-live,13,Americans are 25 times more likely to be millionaires than to be homeless.,3,26.84,13362,2,0
 2026-10-16T20:15+00:00,2026-10-16T17:48:25+00:00,issue-border-live,27,Greg Abbott has renewed or amended his 2021 border emergency proclamation at least 69 times.,1,29.52,2092,6,0
 2026-10-16T20:15+00:00,2026-10-16T17:48:25+00:00,issue-border-live,28,The border emergency proclamation greatly expanded Abbott's powers without going through the Texas Legislature.,2,26.6,2092,4,0
-2026-10-16T20:44+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,36.01,75184,3,1
-2026-10-16T20:44+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
-2026-10-16T20:44+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
-2026-10-16T21:04+00:00,2026-10-16T18:34:55+00:00,issue-oil-gas-live,64,"U.S. LNG feedgas demand rose as Freeport and Cove Point returned and Golden Pass hit a record, showing Gulf Coast LNG ne",1,21.56,2060,2,0
-2026-10-16T21:11+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166469,2,0
 2026-10-16T23:49+00:00,2026-10-16T22:19:04+00:00,governor-race-live,159,Texas needs and is ready for a change in governor.,1,48.48,56216,11,1
 2026-10-16T23:49+00:00,2026-10-16T22:19:04+00:00,governor-race-live,251,Greg Abbott is not fit to be governor if he will not debate Gina Hinojosa.,2,46.35,12898,18,0
 2026-10-16T23:49+00:00,2026-10-16T22:19:04+00:00,governor-race-live,1758,Greg Abbott is refusing to debate Gina Hinojosa and defend his record.,3,30.53,2037,7,0
@@ -84,3 +77,43 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-17T01:05+00:00,2026-10-17T00:25:16.486000+00:00,trump-texas-live,1521,James Talarico would bring oil drilling in Texas to a halt.,7,4.68,3924,2,0
 2026-10-17T01:14+00:00,2026-10-16T23:38:16.702000+00:00,vance-texas-live,197,JD Vance wore drag or posed in drag in college.,1,23.76,4495,2,0
 2026-10-17T01:14+00:00,2026-10-16T23:38:16.702000+00:00,vance-texas-live,12,JD Vance implied that James Talarico is gay.,2,7.95,4495,15,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,159,Texas needs and is ready for a change in governor.,1,59.05,318291,14,1
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,65,Texans should vote for Gina Hinojosa.,2,48.44,5478,39,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,248,Gina Hinojosa can win the Texas governor's race.,3,41.85,4019,21,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,980,Gina Hinojosa has never voted to raise Texans' property taxes.,4,38.06,30209,5,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,1754,Greg Abbott did not show up to a debate with Gina Hinojosa outside the Governor's Mansion.,5,36.18,4153,10,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,164,Gina Hinojosa would save Texas schools and put money in Texans' pockets.,6,33.09,30209,3,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,174,Gina Hinojosa supports a state income tax.,7,28.25,6683,3,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,2089,Gina Hinojosa's underdog campaign has gained momentum over the past month after being overshadowed by the Senate race.,8,27.84,5881,3,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,199,Texas voters passed the state income tax ban by nearly 3 to 1.,9,23.8,4555,2,0
+2026-10-17T06:08+00:00,2026-10-17T01:58:34.705000+00:00,governor-race-live,2038,"Jenn Mack, a declared write-in candidate for Texas governor, went to the empty podium to debate both candidates on their",10,23.54,4153,2,0
+2026-10-17T06:09+00:00,2026-10-16T23:54:30.800000+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,1,34.16,5039,7,0
+2026-10-17T06:09+00:00,2026-10-16T23:54:30.800000+00:00,patrick-live,326,Vikki Goodwin is outspent by Dan Patrick in the Lieutenant Governor race.,2,31.31,5039,2,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,116,Ken Paxton is corrupt.,1,53.02,8491,50,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,86,Texas will stay Republican and there will be no blue wave.,2,37.56,8859,8,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,2264,Polls showing Ken Paxton behind James Talarico are unreliable or fake.,3,37.4,11327,7,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,581,Ken Paxton has won three statewide races.,4,35.84,10745,6,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,1445,James Talarico is a radical leftist.,5,35.29,14272,5,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,1751,Lifelong Republicans say they will vote for James Talarico over Ken Paxton.,6,33.28,14272,4,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,3123,Texans will send Ken Paxton to the Senate in November.,7,32.47,11327,4,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,3388,"James Talarico does not have as much support as Beto O'Rourke had, and Beto lost.",8,28.28,22246,2,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,3288,Republicans are stuck with Ken Paxton as their Senate nominee.,9,27.03,14272,2,0
+2026-10-17T07:08+00:00,2026-10-16T23:56:40+00:00,paxton-live,2255,Ken Paxton was offered a spot at the CNN Town Hall but was too afraid to show up.,10,26.83,13329,2,0
+2026-10-17T07:20+00:00,2026-10-17T04:59:02.467000+00:00,trump-texas-live,1040,Donald Trump and the MAGA movement are scared because Texas is turning blue.,1,33.12,123579,2,0
+2026-10-17T07:20+00:00,2026-10-17T04:59:02.467000+00:00,trump-texas-live,1506,Donald Trump is starting to blame other people for the Texas Senate situation.,2,21.83,2267,2,0
+2026-10-17T07:25+00:00,2026-10-17T00:31:34+00:00,vance-texas-live,181,JD Vance is campaigning in Michigan for Mike Rogers against Mohamed El Sayed.,1,27.89,19412,2,0
+2026-10-17T07:25+00:00,2026-10-17T00:31:34+00:00,vance-texas-live,197,JD Vance wore drag or posed in drag in college.,2,24.55,5932,2,0
+2026-10-17T07:25+00:00,2026-10-17T00:31:34+00:00,vance-texas-live,12,JD Vance implied that James Talarico is gay.,3,9.05,5932,25,0
+2026-10-17T07:36+00:00,2026-10-16T20:41:51.146000+00:00,issue-border-live,80,"Ken Paxton is the chance to put a true MAGA candidate in the Senate, and supporters should stand with him.",1,25.17,7407,2,0
+2026-10-17T07:36+00:00,2026-10-16T20:41:51.146000+00:00,issue-border-live,78,"James Talarico is hiding out and relying on the media to campaign for him, like Biden's 2020 basement strategy.",2,23.93,4778,2,0
+2026-10-17T07:50+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,42.11,90545,5,1
+2026-10-17T07:50+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
+2026-10-17T07:50+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
+2026-10-17T08:07+00:00,2026-10-16T19:25:31+00:00,issue-housing-live,6,"The poor condition of cheap hotel rooms is due to their low price, not to immigrants.",1,37.11,105837,3,1
+2026-10-17T08:07+00:00,2026-10-16T19:25:31+00:00,issue-housing-live,11,"Dallas built many houses and apartments after 2022, and home prices and rents fell as a result.",2,27.83,18959,2,0
+2026-10-17T08:07+00:00,2026-10-16T19:25:31+00:00,issue-housing-live,13,Americans are 25 times more likely to be millionaires than to be homeless.,3,26.84,13362,2,0
+2026-10-17T08:11+00:00,2026-10-16T18:34:55+00:00,issue-oil-gas-live,64,"U.S. LNG feedgas demand rose as Freeport and Cove Point returned and Golden Pass hit a record, showing Gulf Coast LNG ne",1,22.23,2611,2,0
+2026-10-17T08:12+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,11,Ken Paxton as Attorney General blocked cities from raising property taxes.,1,32.38,94960,2,0
+2026-10-17T08:12+00:00,2026-10-15T18:51:28+00:00,issue-property-tax-live,77,Don Huffines is working in the Texas Comptroller's Office to root out government waste.,2,31.3,64770,2,0
+2026-10-17T08:14+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166523,2,0
+2026-10-17T08:16+00:00,2026-10-16T17:04:18.781000+00:00,issue-vouchers-live,1,School vouchers are becoming a political liability for Republicans in Texas and beyond.,1,28.62,7489,3,0

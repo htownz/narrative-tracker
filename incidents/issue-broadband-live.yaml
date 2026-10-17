@@ -38,7 +38,82 @@ discover_hint: >
   against, and the frames each side uses — and will be reused unchanged for months, so prefer arguments that
   will recur over one-day events. Expect frames about fiber versus satellite, federal money and how the state spends it, the Universal Service Fund and who pays, rural areas left behind, and the small carriers' role. Posts about broadband in other states with no Texas angle are off-topic.
 
-lanes: []
+lanes:
+- key: satellite_fills_gap
+  label: Satellite connects remote Texas
+  description: Satellite and direct-to-phone service (Starlink, AST SpaceMobile) is the fast, practical
+    way to reach rural and remote areas that wires and towers never will.
+  keywords:
+  - satellite-to-smartphone
+  - direct-to-cell
+  - starlink
+  - ast spacemobile
+  - remote areas
+  - no cell service
+  - unconnected
+- key: texas_space_hub
+  label: Texas builds the connectivity
+  description: Texas, especially Midland and the Permian Basin, is becoming the manufacturing and launch
+    hub for satellite connectivity, bringing jobs and local economic development.
+  keywords:
+  - midland
+  - permian basin
+  - texas space coalition
+  - built in texas
+  - manufacturing
+  - jobs
+  - launch
+- key: spectrum_competition
+  label: Spectrum and FCC open competition
+  description: FCC approvals, spectrum access and waived carrier-lease rules let satellite operators compete
+    head-on with terrestrial carriers, which would lower prices and improve service.
+  keywords:
+  - fcc
+  - spectrum
+  - approved
+  - waived
+  - t-mobile
+  - competition
+  - mbps
+  - price target
+- key: fiber_future_proof
+  label: Fiber is the lasting fix
+  description: Fiber is the durable, future-proof investment, and public money should build it to rural
+    homes rather than rely on satellite.
+  keywords:
+  - fiber
+  - fiber-to-the-home
+  - future-proof
+  - latency
+  - buildout
+  - last mile
+  - unserved locations
+- key: bead_state_spending
+  label: BEAD money and Texas spending
+  description: The way the Texas Broadband Development Office distributes federal BEAD dollars decides
+    who gets connected, and is criticized or defended as slow, wasteful or well targeted.
+  keywords:
+  - bead
+  - broadband development office
+  - federal funds
+  - grants
+  - nia
+  - texas comptroller
+  - awards
+  - unserved
+- key: usf_small_carriers
+  label: USF and rural carriers' survival
+  description: The Texas Universal Service Fund, who pays into it, and rural telephone cooperatives and
+    small carriers' reliance on it determine whether rural service stays affordable.
+  keywords:
+  - universal service fund
+  - usf
+  - rural telephone
+  - cooperatives
+  - small carriers
+  - puc
+  - surcharge
+  - pole attachment
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.

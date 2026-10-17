@@ -1,0 +1,4 @@
+run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,first_followers,views_1h,views_6h,views_24h,momentum_6h,control,new_accounts,burst,event_follow,event_type,market_price,market_change_24h,news_sources_48h,news_before_x,first_reliability,first_early_lift,gain_24h,gain_72h,top5_24h,measured
+2026-10-17T07:39+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,satellite_fills_gap,Satellite connects remote Texas,166.3,1,74303,1,0,74303,56728,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-17T07:39+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,texas_space_hub,Texas builds the connectivity,135.7,2,70855,2,0,66976,3258,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-17T07:39+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,spectrum_competition,Spectrum and FCC open competition,117.0,3,133754,3,0,127601,1148409,4659,4659,4659,99.0,7,0.0,0.333,0,,,,,,,,,,,
