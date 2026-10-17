@@ -1,6 +1,6 @@
 run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,first_followers,views_1h,views_6h,views_24h,momentum_6h,control,new_accounts,burst,event_follow,event_type,market_price,market_change_24h,news_sources_48h,news_before_x,first_reliability,first_early_lift,gain_24h,gain_72h,top5_24h,measured
-2026-10-17T08:14+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,transit_rail_underfunded,Transit and rail deserve more,306.2,5,88619,5,0,1035,0,0,0,45594,,3,0.0,0.2,0,,,,,,,,,,,
-2026-10-17T08:14+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,highway_expansion_progress,Highway expansion is progress,213.7,5,8347,2,0,2183,54828,1652,1652,5035,99.0,3,0.0,0.2,0,,,,,,,,,,,
-2026-10-17T08:14+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,txdot_incompetence,TxDOT can't build or manage,211.7,5,8803,5,0,2608,1509,0,0,0,,3,0.0,0.2,0,,,,,,,,,,,
-2026-10-17T08:14+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,megaproject_cost_who_pays,Megaprojects cost too much,119.1,1,10231,1,0,10231,16414,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-17T08:14+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,toll_roads_ripoff,Texas tolls are a ripoff,90.0,2,5742,2,0,1178,0,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-17T19:22+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,transit_rail_underfunded,Transit and rail deserve more,306.2,5,88664,5,0,1035,0,0,0,45639,,3,0.0,0.2,0,,,,,,,,,,,
+2026-10-17T19:22+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,highway_expansion_progress,Highway expansion is progress,213.7,5,8383,2,0,2183,54828,1669,1669,5071,99.0,3,0.0,0.2,0,,,,,,,,,,,
+2026-10-17T19:22+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,txdot_incompetence,TxDOT can't build or manage,211.7,5,8805,5,0,2608,1509,0,0,0,,3,0.0,0.2,0,,,,,,,,,,,
+2026-10-17T19:22+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,megaproject_cost_who_pays,Megaprojects cost too much,119.1,1,10231,1,0,10231,16414,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-17T19:22+00:00,2026-10-14T13:03:42+00:00,issue-transportation-live,lane,toll_roads_ripoff,Texas tolls are a ripoff,90.0,2,5743,2,0,1178,0,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
