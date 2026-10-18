@@ -218,9 +218,35 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T05:59+00:00,2026-10-18T02:40:28.065000+00:00,issue-election-integrity-live,6,Trump's allies are discussing or urging martial law or taking control of the midterms if they are deemed rigged.,1,50.05,8599,35,0
 2026-10-18T05:59+00:00,2026-10-18T02:40:28.065000+00:00,issue-election-integrity-live,81,Donald Trump plans to declare martial law after the midterms.,2,27.28,4932,3,0
 2026-10-18T05:59+00:00,2026-10-18T02:40:28.065000+00:00,issue-election-integrity-live,104,"Ukraine has postponed elections under martial law since 2022, and Zelenskyy has not faced voters since 2019.",3,24.02,4932,2,0
-2026-10-18T06:00+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,42.11,90545,5,1
-2026-10-18T06:00+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
-2026-10-18T06:00+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
-2026-10-18T06:36+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166660,2,0
 2026-10-18T11:33+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,1,33.82,4635,7,0
 2026-10-18T11:33+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,326,Vikki Goodwin is outspent by Dan Patrick in the Lieutenant Governor race.,2,23.85,4635,2,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,2510,A CBS/YouGov poll of Texas likely voters shows Greg Abbott leading Gina Hinojosa 52% to 48%.,1,47.6,90755,3,1
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,1049,A poll shows Gina Hinojosa at 48% and Greg Abbott at 47% in the Texas governor's race.,2,43.57,22757,10,1
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,325,Early voting in Texas starts on October 19.,3,41.01,27866,7,1
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,661,A Texas Southern University poll shows James Talarico leading Ken Paxton 49% to 44% in the Senate race.,4,40.49,35818,6,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,2511,A CBS/YouGov poll shows 55% of Texas voters disapprove of President Trump and 45% approve.,5,39.81,51031,2,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,1954,Texans should vote for Ken Paxton and Greg Abbott to save Texas and America.,6,28.92,27866,2,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,824,The Texas governor's race between Greg Abbott and Gina Hinojosa is a genuine tossup.,7,28.42,7042,3,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,1453,Greg Abbott has renewed or amended his border emergency proclamation at least 69 times since 2021.,8,28.4,2205,5,0
+2026-10-18T17:28+00:00,2026-10-18T16:59:22+00:00,governor-race-live,1454,Greg Abbott's border emergency proclamation greatly expanded his powers without going through the Texas Legislature.,9,26.78,2205,4,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,195,James Talarico hates Texans.,1,54.38,518658,8,1
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,717,Ken Paxton is an adulterer.,2,52.4,15247,32,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,783,A YouGov/Univision poll has James Talarico leading Ken Paxton 48% to 43% in the Texas Senate race.,3,47.4,36298,12,1
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,1807,"Donald Trump says that if Ken Paxton loses, it will be because of Karl Rove and John Cornyn.",4,47.23,12744,20,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,5102,A CBS/YouGov poll of Texas likely voters taken Oct 8-16 has James Talarico leading Ken Paxton 51% to 49%.,5,45.06,201529,5,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,414,A poll shows Greg Abbott at 48% and Gina Hinojosa at 47% in the Texas governor's race.,6,42.07,36298,7,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,4468,The Texas Senate race between Ken Paxton and James Talarico is a toss-up.,7,39.65,46517,5,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,498,The latest Fox News poll has James Talarico at 51% and Ken Paxton at 49%.,8,38.52,5074,12,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,47,A YouGov poll of likely voters in Texas shows James Talarico at 50% and Ken Paxton at 44%.,9,36.52,3781,11,0
+2026-10-18T17:41+00:00,2026-10-18T17:20:21.119000+00:00,paxton-live,5121,A CBS/YouGov poll finds Hispanic/Latino voters in Texas back James Talarico over Ken Paxton 60% to 39%.,10,35.33,15045,2,0
+2026-10-18T17:47+00:00,2026-10-18T17:09:34+00:00,trump-texas-live,1380,Donald Trump accused John Cornyn and Karl Rove of undermining Ken Paxton's Senate campaign.,1,46.37,12941,18,0
+2026-10-18T17:47+00:00,2026-10-18T17:09:34+00:00,trump-texas-live,2208,A CBS News/YouGov Texas poll shows James Talarico leading Ken Paxton 51% to 49% in the Senate race.,2,33.1,122521,2,0
+2026-10-18T17:47+00:00,2026-10-18T17:09:34+00:00,trump-texas-live,1101,Donald Trump is increasingly unpopular.,3,29.67,3108,5,0
+2026-10-18T17:53+00:00,2026-10-18T16:00:50+00:00,issue-av-live,49,"There were 868 Cybercab sightings in Austin yesterday, 670 of them driverless.",1,28.3,6791,3,0
+2026-10-18T17:55+00:00,2026-10-18T13:33:00+00:00,issue-border-live,27,Greg Abbott has renewed or amended his 2021 border emergency proclamation at least 69 times.,1,30.96,2267,7,0
+2026-10-18T17:55+00:00,2026-10-18T13:33:00+00:00,issue-border-live,28,The border emergency proclamation greatly expanded Abbott's powers without going through the Texas Legislature.,2,26.88,2267,4,0
+2026-10-18T18:02+00:00,2026-10-18T15:30:29.004000+00:00,issue-election-integrity-live,359,"Texas early voting for the 2026 general election does not start until Monday, October 19.",1,22.71,3092,2,0
+2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,42.11,90545,5,1
+2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
+2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
+2026-10-18T18:21+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166720,2,0
