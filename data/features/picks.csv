@@ -192,8 +192,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T05:30+00:00,2026-10-17T23:15:01.570157+00:00,governor-race-live,903,"The poster is voting for Ken Paxton, Bo French and Greg Abbott.",2,27.86,19195,2,0
 2026-10-18T05:30+00:00,2026-10-17T23:15:01.570157+00:00,governor-race-live,2449,"In Fox's Texas poll, 99% of MAGA Republicans say they will vote for Republicans and none for Democrats.",3,26.77,13050,2,0
 2026-10-18T05:30+00:00,2026-10-17T23:15:01.570157+00:00,governor-race-live,2099,Greg Abbott is corrupt.,4,12.2,5626,4,0
-2026-10-18T05:30+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,1,33.53,4305,7,0
-2026-10-18T05:30+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,326,Vikki Goodwin is outspent by Dan Patrick in the Lieutenant Governor race.,2,23.64,4305,2,0
 2026-10-18T05:41+00:00,2026-10-18T02:44:34.332000+00:00,paxton-live,30,"In Dubai, Ken Paxton and his girlfriend watched fireworks at a party with two fugitives who had failed to return to face",1,47.75,7557,29,0
 2026-10-18T05:41+00:00,2026-10-18T02:44:34.332000+00:00,paxton-live,587,James Talarico is ahead of Ken Paxton in the polls.,2,47.74,5429,36,0
 2026-10-18T05:41+00:00,2026-10-18T02:44:34.332000+00:00,paxton-live,279,Ken Paxton is going to lose Texas.,3,38.95,6540,11,0
@@ -224,3 +222,5 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T06:00+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
 2026-10-18T06:00+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
 2026-10-18T06:36+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166660,2,0
+2026-10-18T11:33+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,1,33.82,4635,7,0
+2026-10-18T11:33+00:00,2026-10-17T23:59:45.270000+00:00,patrick-live,326,Vikki Goodwin is outspent by Dan Patrick in the Lieutenant Governor race.,2,23.85,4635,2,0
