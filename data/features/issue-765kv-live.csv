@@ -1,19 +1,25 @@
 run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,first_followers,views_1h,views_6h,views_24h,momentum_6h,control,new_accounts,burst,event_follow,event_type,market_price,market_change_24h,news_sources_48h,news_before_x,first_reliability,first_early_lift,gain_24h,gain_72h,top5_24h,measured
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,180.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,161.7,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,134.2,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,88.5,1,5039,1,0,5039,17092,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,22.0,2,8598,2,0,7383,7902,1215,1215,8598,99.0,12,0.0,0.5,0,,,,,,,,,,,
-2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,17.1,1,2236,1,0,2236,8115,0,0,2236,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,183.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,164.8,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,137.3,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,91.5,1,5145,1,0,5145,17110,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,25.0,3,10423,2,0,8090,7906,1060,2333,2333,99.0,7,0.0,0.333,0,,,,,,,,,,,
-2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,20.2,1,2270,1,0,2270,8112,0,0,2270,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,194.2,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,175.1,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,147.6,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,101.8,1,5152,1,0,5152,17113,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,35.3,4,11295,3,1,8255,7908,0,0,3040,0.0,27,0.0,0.5,0,,,,,,,,,,,
-2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,30.5,2,2281,2,0,2281,8107,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,180.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,0,3140,,1
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,161.7,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,0,8623,,1
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,134.2,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,0,2494,,1
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,88.5,1,5039,1,0,5039,17092,0,0,0,,15,0.0,1.0,0,,,,,,,,0,5152,,1
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,22.0,2,8598,2,0,7383,7902,1215,1215,8598,99.0,12,0.0,0.5,0,,,,,,,,3058,10544,,1
+2026-10-15T06:04+00:00,2026-10-14T10:00:01+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,17.1,1,2236,1,0,2236,8115,0,0,2236,,15,0.0,1.0,0,,,,,,,,0,2278,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,183.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,0,3140,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,164.8,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,0,8623,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,137.3,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,0,2494,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,91.5,1,5145,1,0,5145,17110,0,0,0,,15,0.0,1.0,0,,,,,,,,0,5152,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,25.0,3,10423,2,0,8090,7906,1060,2333,2333,99.0,7,0.0,0.333,0,,,,,,,,1077,10611,,1
+2026-10-16T17:43+00:00,2026-10-14T13:04:23+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,20.2,1,2270,1,0,2270,8112,0,0,2270,,15,0.0,1.0,0,,,,,,,,0,2281,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,194.2,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,3140,,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,175.1,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,8623,,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,147.6,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,2494,,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,101.8,1,5152,1,0,5152,17113,0,0,0,,15,0.0,1.0,0,,,,,,,,5039,,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,35.3,4,11295,3,1,8255,7908,0,0,3040,0.0,27,0.0,0.5,0,,,,,,,,9681,,,1
+2026-10-17T18:45+00:00,2026-10-14T23:22:55.139000+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,30.5,2,2281,2,0,2281,8107,0,0,0,,12,0.0,0.5,0,,,,,,,,2236,,,1
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,data_centers_beneficiary,Lines built for data centers,259.8,1,3140,1,0,3140,1193,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,large_load_planning_strain,ERCOT large-load queue overwhelms planning,240.8,2,8623,2,0,4642,2281,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,build_it_power_growth,Build grid to power growth,213.3,1,2494,1,0,2494,23099,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,political_opposition_campaign,Candidates campaign against 765-kV,167.5,1,5152,1,0,5152,17113,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,permian_reliability_oil_gas,Permian plan and oil-gas load,101.0,4,11340,3,1,8282,7907,0,0,0,,27,0.0,0.5,0,,,,,,,,,,,
+2026-10-18T05:47+00:00,2026-10-17T17:03:38+00:00,issue-765kv-live,lane,eminent_domain_landowners,Landowners vs eminent domain,96.2,3,3422,3,0,2283,8107,1139,1139,1139,99.0,7,0.0,0.333,0,,,,,,,,,,,
