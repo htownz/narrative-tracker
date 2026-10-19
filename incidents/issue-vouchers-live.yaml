@@ -1,6 +1,7 @@
 # Live issue tracker: school vouchers / education savings accounts in Texas. Runs daily with the other *-live incidents.
 
 slug: issue-vouchers-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Texas school vouchers, {days} days of posts"
 subject: "Texas school vouchers and education savings accounts (ESAs) — the state program, its rollout, costs and effect on public schools"
 subtitle: >

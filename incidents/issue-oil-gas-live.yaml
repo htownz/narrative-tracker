@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-oil-gas-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Oil, gas and offshore, {days} days of posts"
 subject: "oil and gas policy in Texas — the Railroad Commission and its races, severance taxes and the Economic Stabilization Fund, offshore leasing and drilling in the Gulf of Mexico, the General Land Office, flaring and produced water rules, orphan wells and plugging, pipelines and eminent domain, and the industry's role in state politics"
 subtitle: >

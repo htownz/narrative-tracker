@@ -7,6 +7,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-election-integrity-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Election integrity and the 'rigged midterms' narrative, {days} days of posts"
 subject: "claims and counter-claims about the integrity of the 2026 midterm elections — that they are or will be rigged, calls for federal intervention or martial law, and in Texas the administration of the election: Harris County, the Secretary of State, Attorney General Paxton's election-fraud cases, mail ballots, voter rolls, poll watchers and certification"
 subtitle: >

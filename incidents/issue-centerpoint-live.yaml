@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-centerpoint-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "CenterPoint and Houston's power, {days} days of posts"
 subject: "CenterPoint Energy and electric service in the Houston region — outages and storm response, rate cases and bills at the PUC, the resiliency plan and vegetation management, legislative accountability measures aimed at the utility, and CenterPoint's transmission and generation build"
 subtitle: >

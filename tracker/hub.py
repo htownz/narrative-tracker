@@ -85,7 +85,9 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
         meta, stats = data.get("meta", {}), data.get("stats", {})
         if meta.get("synthetic"):
             continue
-        live = (ROOT / "incidents" / f"{d.name}.yaml").exists() and "end: today" in (ROOT / "incidents" / f"{d.name}.yaml").read_text(encoding="utf-8")
+        yaml_text = (ROOT / "incidents" / f"{d.name}.yaml").read_text(encoding="utf-8") if (ROOT / "incidents" / f"{d.name}.yaml").exists() else ""
+        live = "end: today" in yaml_text
+        paused = "\npaused: true" in yaml_text
         w = meta.get("window", {})
         updated = ""
         if meta.get("pulled_at"):
@@ -95,11 +97,13 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
             except ValueError:
                 pass
         group = "Issues" if d.name.startswith("issue-") else "Races and people" if live else "Archive"
+        if paused:
+            updated += " · paused"
         links = "".join(f'<a href="{d.name}/{p}">{label}</a>' for p, label in
                         (("claims.html", "Claims"), ("accounts.html", "Who moved it"), ("analysis.html", "Timing &amp; control"), ("review.html", "Review"))
                         if (d / p).exists())
         cards.append((group, meta.get("title", d.name).lower(), CARD.format(slug=d.name, title=html.escape(meta.get("title", d.name)), group=group,
-                                 live='<span class="live">live</span>' if live else "", links=links,
+                                 live='<span class="live" style="color:#7c7c78;border-color:#7c7c7855">paused</span>' if paused else '<span class="live">live</span>' if live else "", links=links,
                                  window=f"{w.get('start', '')} → {w.get('end', '')}", updated=updated,
                                  pushing=stats.get("pushing", 0), repeated=stats.get("repeated", 0), pushback=stats.get("pushback", 0))))
     order = {"Races and people": 0, "Issues": 1, "Archive": 2}

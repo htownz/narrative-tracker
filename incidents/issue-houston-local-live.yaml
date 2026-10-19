@@ -2,6 +2,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-houston-local-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Houston-region local government, {days} days of posts"
 subject: "local government in the Houston region — Harris County Commissioners Court and Judge Lina Hidalgo, Houston City Council and Mayor John Whitmire, Montgomery County Commissioners Court, county and city budgets, bonds, development regulations, and the fights among them"
 subtitle: >

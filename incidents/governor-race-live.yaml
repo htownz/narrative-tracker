@@ -4,6 +4,7 @@
 # `python run.py report incidents/governor-race-live.yaml` shows what is falling outside them.
 
 slug: governor-race-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Texas governor's race, {days} days of posts"
 subject: "the Texas governor's race — Gov. Greg Abbott (R) vs. Rep. Gina Hinojosa (D), election Nov 3, 2026"
 subtitle: >

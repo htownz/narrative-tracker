@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-financial-services-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Banking, ESG and financial regulation, {days} days of posts"
 subject: "financial services policy in Texas — the anti-ESG and anti-boycott laws covering energy and firearms, the Comptroller's lists of boycotting firms, state banking and lending law, the Department of Banking, the Texas Stock Exchange and Texas as a financial center, and bank fees and consumer finance rules"
 subtitle: >

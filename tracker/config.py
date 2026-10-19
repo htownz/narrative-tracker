@@ -47,6 +47,13 @@ class Incident:
         return bool(self.raw.get("live"))
 
     @property
+    def paused(self) -> bool:
+        """`paused: true` keeps the tracker's pages and store but takes it out of the scheduled runs (the job's
+        Pick step skips it; `python run.py all` on it by hand still works). Set it to stop spending on a tracker
+        without losing what it collected; remove the line to resume."""
+        return bool(self.raw.get("paused"))
+
+    @property
     def refresh_days(self) -> int:
         """Live mode: the most recent N days are re-pulled each run (new posts + fresher view counts)."""
         return int(self.raw.get("refresh_days", 2))

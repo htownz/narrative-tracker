@@ -110,6 +110,14 @@ the next run and the chart notes "pull still in progress". Live incidents should
 SQLite stores are committed, and a local run pushed from your PC would conflict with the job's commits. Run one-off
 incidents (fixed window) wherever you like.
 
+### Pausing a tracker
+
+`paused: true` at the top of a tracker's YAML keeps its pages, store and history but takes it out of the
+scheduled runs (the job's Pick step skips it, the brief ignores it, the hub and client desk mark it paused);
+`python run.py all incidents/x.yaml` by hand still works. Delete the line to resume. On Oct 19, 2026 every live
+tracker except the three Montera ones (`issue-montera-footprint-live`, `issue-data-centers-live`,
+`issue-grid-live`) was paused while costs are tuned; those three cost about $1.50 a day between them.
+
 ## Where the data lives
 
 The per-tracker SQLite stores (`data/<slug>.sqlite`) live in an S3-compatible bucket, not in git: committing

@@ -2,6 +2,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-maternal-health-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Maternal health and doulas, {days} days of posts"
 subject: "maternal health policy in Texas — maternal mortality and morbidity, Medicaid postpartum coverage and doula reimbursement, the definition and certification of doulas, HHSC and DSHS maternal programs, the maternal mortality review committee, and county maternal-health funding in Houston, Austin and San Antonio"
 subtitle: >

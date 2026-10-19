@@ -2,6 +2,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-workforce-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Workforce, skilled trades and training, {days} days of posts"
 subject: "workforce development and skilled-trades policy in Texas — the Governor's Texas Jobs Council, career and technical education, apprenticeships and trades licensure, TSTC and community college funding, JET grants, workforce programs in juvenile justice, and state funding for academic programs like MATHCOUNTS"
 subtitle: >

@@ -1,6 +1,7 @@
 # Live issue tracker: property tax in Texas (Abbott's elimination plan, appraisal caps, local budgets). Runs daily with the other *-live incidents.
 
 slug: issue-property-tax-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Texas property tax, {days} days of posts"
 subject: "Texas property taxes — Gov. Abbott's plan to eliminate school property taxes, appraisal caps, the $3,000 savings claim, local government budgets"
 subtitle: >

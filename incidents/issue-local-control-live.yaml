@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-local-control-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Cities, counties and state preemption, {days} days of posts"
 subject: "the relationship between the Texas Legislature and cities and counties — state preemption of local ordinances, property tax revenue caps and the 3.5% limit, unfunded mandates on counties, jail and indigent defense costs, annexation and ETJ rules, and municipal and county associations' fights with the state"
 subtitle: >

@@ -3,6 +3,7 @@
 # races. Scoped to Texas on purpose, like trump-texas-live. Runs with the other *-live incidents.
 
 slug: vance-texas-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Vance in Texas, {days} days of posts"
 subject: "Vice President JD Vance's role in Texas politics — rallies and surrogate appearances for Ken Paxton and the Texas GOP ticket, attacks on James Talarico and Texas Democrats, and how Texas voters and candidates invoke him before the Nov 3, 2026 election"
 subtitle: >

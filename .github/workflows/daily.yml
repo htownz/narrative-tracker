@@ -46,8 +46,10 @@ jobs:
       - name: Pick the incidents
         id: pick
         run: |
-          RACES="$(ls incidents/*-live.yaml | grep -v '/issue-' | tr '\n' ' ')"
-          ISSUES="$(ls incidents/issue-*-live.yaml 2>/dev/null | tr '\n' ' ')"
+          # a tracker with `paused: true` in its YAML keeps its pages but is left out of the scheduled runs
+          unpaused() { for f in "$@"; do grep -q '^paused: true' "$f" || printf '%s ' "$f"; done; }
+          RACES="$(unpaused $(ls incidents/*-live.yaml | grep -v '/issue-'))"
+          ISSUES="$(unpaused $(ls incidents/issue-*-live.yaml 2>/dev/null))"
           case "$(date -u +%H)" in 05|17) LIVE="$RACES $ISSUES";; *) LIVE="$RACES";; esac   # races every run; the issue trackers twice a day (refresh_days covers the gap)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
@@ -67,6 +69,7 @@ jobs:
           echo "lookup=${LOOKUP:-}" >> "$GITHUB_OUTPUT"
           echo "relabel=${RELABEL:-}" >> "$GITHUB_OUTPUT"
           echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
+          echo "paused: $(grep -l '^paused: true' incidents/*-live.yaml 2>/dev/null | tr '\n' ' ')"
 
       - name: Check secrets
         if: ${{ steps.pick.outputs.incidents != '' }}

@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-broadband-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Rural broadband and telecom, {days} days of posts"
 subject: "broadband and rural telecommunications policy in Texas — the BEAD program and the Broadband Development Office, the Texas Universal Service Fund and its funding, rural telephone cooperatives and small carriers, pole attachment and right-of-way rules, satellite versus fiber, and who gets connected"
 subtitle: >

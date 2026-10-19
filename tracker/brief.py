@@ -177,7 +177,7 @@ def facts(days: int = 7, end: datetime | None = None) -> dict[str, Any]:
     out = []
     for y in incident_paths():
         inc = load_incident(y)
-        if not inc.live or not inc.db_path.exists() or not inc.lanes:
+        if not inc.live or inc.paused or not inc.db_path.exists() or not inc.lanes:     # paused trackers are stale; the brief reads only what is running
             continue
         f = tracker_facts(inc, prev_start, start, end)
         if f:

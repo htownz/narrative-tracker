@@ -2,6 +2,7 @@
 # Runs daily from .github/workflows/daily.yml alongside the other *-live incidents.
 
 slug: paxton-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Paxton, {days} days of posts"
 subject: "Ken Paxton (R, Texas Attorney General), running for U.S. Senate against James Talarico (D), election Nov 3, 2026"
 subtitle: >

@@ -2,6 +2,7 @@
 # Runs daily from .github/workflows/daily.yml alongside the other *-live incidents.
 
 slug: patrick-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Dan Patrick, {days} days of posts"
 subject: "Lt. Gov. Dan Patrick (R), running for re-election against Rep. Vikki Goodwin (D), election Nov 3, 2026"
 subtitle: >

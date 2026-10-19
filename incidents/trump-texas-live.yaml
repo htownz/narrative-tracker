@@ -4,6 +4,7 @@
 # day and would exhaust the API balance. Runs with the other *-live incidents.
 
 slug: trump-texas-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Trump in Texas, {days} days of posts"
 subject: "President Donald Trump's role in Texas politics — endorsements and rallies for Ken Paxton, Greg Abbott and Dan Patrick, attacks on James Talarico and Gina Hinojosa, federal actions affecting Texas, and how Texas voters and candidates invoke him before the Nov 3, 2026 election"
 subtitle: >

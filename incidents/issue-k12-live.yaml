@@ -2,6 +2,7 @@
 # Runs with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-k12-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "K-12 funding, teachers and TEA, {days} days of posts"
 subject: "K-12 public education funding and the teaching profession in Texas — school finance and the basic allotment, teacher pay and retention, certification and alternative certification including Teach for America, the TEA budget and its riders, academic competition funding, A-F accountability ratings, and school district budget deficits"
 subtitle: >

@@ -2,6 +2,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-av-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Autonomous vehicles in Texas, {days} days of posts"
 subject: "autonomous vehicles and robotaxis in Texas — Waymo and Tesla robotaxi operations in Austin, Houston, Dallas and San Antonio, incidents and safety stories, city council and legislative reactions, state permitting at the DMV, and liability and insurance rules"
 subtitle: >

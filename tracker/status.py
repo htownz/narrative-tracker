@@ -41,7 +41,7 @@ def balance() -> dict[str, Any] | None:
 
 
 def tracker_state(inc: Incident) -> dict[str, Any]:
-    st: dict[str, Any] = {"slug": inc.slug, "title": inc.title, "live": inc.live, "start": inc.start, "end": inc.end,
+    st: dict[str, Any] = {"slug": inc.slug, "title": inc.title, "live": inc.live and not inc.paused, "paused": inc.paused, "start": inc.start, "end": inc.end,
                           "lanes": len(inc.lanes), "exists": inc.db_path.exists()}
     if not inc.db_path.exists():
         return st

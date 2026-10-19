@@ -2,6 +2,7 @@
 # Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
 
 slug: issue-housing-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Housing affordability and homelessness, {days} days of posts"
 subject: "housing affordability in Texas — rents and home prices, manufactured and factory-built housing, tiny homes, lot-size and zoning rules, county and city development regulations, NIMBY opposition to new communities, and homelessness policy including encampment bans and housing-first funding"
 subtitle: >

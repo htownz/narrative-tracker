@@ -4,6 +4,7 @@
 # Runs daily with the other *-live incidents.
 
 slug: issue-765kv-live
+paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "765-kV transmission lines, {days} days of posts"
 subject: "the 765-kilovolt transmission line build-out in Texas — the PUC and ERCOT extra-high-voltage backbone (Permian Basin reliability plan and statewide 765-kV network), line routing, landowner and eminent-domain objections, cost to ratepayers, and whether the lines serve data centers and industry or everyday reliability"
 subtitle: >
