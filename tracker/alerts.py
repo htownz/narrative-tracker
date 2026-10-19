@@ -86,7 +86,7 @@ def _cluster_claude(inc: Incident, posts: list[dict[str, Any]]) -> list[dict[str
     listing = "\n".join(f"{p['id']} | {p['view_count']} | @{p['author_handle']} | {_clean(p['text'])}" for p in posts[:150])
     lanes = "; ".join(f"{l['key']}: {l['label']}" for l in inc.lane_table())
     res = _ask(_client(), inc.classifier.get("model", "claude-sonnet-5-5"), CLUSTER_SYSTEM,
-               CLUSTER_USER.format(subject=inc.subject, lanes=lanes, posts=listing))
+               CLUSTER_USER.format(subject=inc.subject, lanes=lanes, posts=listing), step="alerts", slug=inc.slug)
     out = []
     for c in res.get("clusters") or []:
         key = re.sub(r"[^a-z0-9_]+", "_", str(c.get("key", "")).lower()).strip("_") or "cluster"

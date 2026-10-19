@@ -182,6 +182,17 @@ end-to-end render, on every push that touches code.
 The hub shows the twitterapi.io balance (red under $1), the last run time, and any live tracker with no lanes,
 unlabelled posts, a partial pull or query errors. `site/status.json` carries the same data for scripts.
 
+## What Claude costs
+
+Every model call the tracker makes (classify, discover, extract, cluster, alerts, brief, verify) logs its
+tokens and web searches to `data/usage.csv` (`tracker/usage.py`; committed by the job). `python -m
+tracker.usage` prints the totals by day and by step; `tracker.status` puts them in `status.json` and the hub's
+health strip shows "Claude ~$ this run · today · 7d". The dollar figures are estimates at the list prices in
+`usage.PRICES` (Sonnet 5.5: $3 in / $15 out per million tokens; web search $10 per 1,000) — the Anthropic
+console is the bill. Verification is the expensive step per call (each is one Sonnet call with up to five web
+searches and their results as input); clustering is the expensive step per run (every batch re-reads the 150
+biggest canonical claims plus neighbours).
+
 ## Markets
 
 ```yaml

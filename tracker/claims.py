@@ -144,7 +144,7 @@ def extract(inc: Incident, store: Store, client=None) -> int:
     for i in range(0, len(posts), batch):
         chunk = posts[i:i + batch]
         listing = "\n".join(f"{p['id']} | @{p['author_handle']} | {_clean(p['text'], 400)}" for p in chunk)
-        res = _ask(client, st["model"], EXTRACT_SYSTEM, EXTRACT_USER.format(subject=inc.subject, posts=listing), max_tokens=8000)
+        res = _ask(client, st["model"], EXTRACT_SYSTEM, EXTRACT_USER.format(subject=inc.subject, posts=listing), max_tokens=8000, step="extract", slug=inc.slug)
         got = res.get("claims") if isinstance(res.get("claims"), dict) else None
         if got is None:
             print("  claims: batch returned nothing usable; will retry those posts next run", file=sys.stderr)
@@ -239,7 +239,7 @@ def cluster(inc: Incident, store: Store, client=None) -> dict[str, int]:
         ex_by_id = {c["id"]: c for c in existing}
         ex_text = "\n".join(f"{cid} | {_clean(ex_by_id[cid]['text'], 200)}" for cid in sorted(show) if cid in ex_by_id) or "(none yet)"
         new_text = "\n".join(f"n{c['id']} | {c['text']}" for c in chunk)
-        res = _ask(client, st["model"], CLUSTER_SYSTEM, CLUSTER_USER.format(subject=inc.subject, existing=ex_text, new=new_text), max_tokens=8000)
+        res = _ask(client, st["model"], CLUSTER_SYSTEM, CLUSTER_USER.format(subject=inc.subject, existing=ex_text, new=new_text), max_tokens=8000, step="cluster", slug=inc.slug)
         assign = res.get("assign") if isinstance(res.get("assign"), dict) else {}
         groups = res.get("groups") if isinstance(res.get("groups"), dict) else {}
         made: dict[str, int] = {}

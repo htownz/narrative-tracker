@@ -92,8 +92,10 @@ def _json_from(text: str) -> dict[str, Any]:
     return json.loads(text[start:end + 1])
 
 
-def _ask(client, model: str, system: str, user: str, max_tokens: int = 4000) -> dict[str, Any]:
-    """One call, one retry on a non-JSON reply; {} when it still will not parse (callers treat {} as 'no result')."""
+def _ask(client, model: str, system: str, user: str, max_tokens: int = 4000, step: str = "ask", slug: str = "") -> dict[str, Any]:
+    """One call, one retry on a non-JSON reply; {} when it still will not parse (callers treat {} as 'no result').
+    Every reply's token usage is logged to data/usage.csv under `step` (tracker/usage.py)."""
+    from .usage import record
     last_err = None
     for attempt in range(2):
         msg = client.messages.create(
@@ -102,6 +104,7 @@ def _ask(client, model: str, system: str, user: str, max_tokens: int = 4000) -> 
             system=system,
             messages=[{"role": "user", "content": user + ("\n\nReply with valid JSON only." if attempt else "")}],
         )
+        record(step, model, msg, slug)
         text = "".join(getattr(b, "text", "") for b in msg.content)
         try:
             return _json_from(text)
@@ -127,7 +130,7 @@ def discover(inc: Incident, top_n: int = 150) -> list[dict[str, Any]]:
     listing = "\n".join(f"{p['id']} | {p['view_count']} | @{p['author_handle']} | {_clean(p['text'])}" for p in posts)
     hint = f"Guidance: {inc.discover_hint}\n" if inc.discover_hint else ""
     out = _ask(_client(), model, DISCOVER_SYSTEM,
-               DISCOVER_USER.format(subject=inc.subject, start=inc.start, end=inc.end, posts=listing, hint=hint))
+               DISCOVER_USER.format(subject=inc.subject, start=inc.start, end=inc.end, posts=listing, hint=hint), step="discover", slug=inc.slug)
     lanes = out.get("lanes") or []
     cleaned = []
     for i, lane in enumerate(lanes):
@@ -179,7 +182,7 @@ def classify_claude(inc: Incident, posts: list[dict[str, Any]], store: Store | N
         res = _ask(client, model, CLASSIFY_SYSTEM,
                    CLASSIFY_USER.format(subject=inc.subject, lanes=lane_text,
                                         pushback=inc.pushback.get("description", "doubting or mocking the story"),
-                                        examples=examples, posts=listing))
+                                        examples=examples, posts=listing), step="classify", slug=inc.slug)
         got = res.get("assignments") or {}
         part: dict[str, str] = {}
         for p in chunk:

@@ -142,7 +142,7 @@ jobs:
           else
             STORES="$(ls data/*.sqlite 2>/dev/null | tr '\n' ' ')"     # no bucket configured: stores stay in git
           fi
-          git add out/ incidents/ data/features/ 2>/dev/null || true
+          git add out/ incidents/ data/features/ data/usage.csv 2>/dev/null || true
           [ -n "$STORES" ] && git add -f $STORES
           git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%dT%H:%MZ)"
           # binary stores can't merge: on conflict keep this run's version (the newest pull)

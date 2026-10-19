@@ -205,7 +205,7 @@ def write(fx: dict[str, Any], model: str = "claude-sonnet-5-5") -> dict[str, Any
     client = _client()
     slim = json.dumps(fx["trackers"], ensure_ascii=False)
     res = _ask(client, model, SYSTEM, USER.format(start=fx["start"], end=fx["end"], facts=slim, clients=json.dumps(fx.get("clients") or [], ensure_ascii=False)),
-               max_tokens=20000)   # ~10K tokens of prose
+               max_tokens=20000, step="brief")   # ~10K tokens of prose
     if not res.get("sections"):
         raise SystemExit("brief: the model returned no sections")
     return {"headline": str(res.get("headline") or ""), "summary": str(res.get("summary") or ""),

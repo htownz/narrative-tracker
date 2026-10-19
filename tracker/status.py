@@ -70,13 +70,19 @@ def build(site_dir: Path) -> dict[str, Any]:
             trackers.append(tracker_state(load_incident(y)))
         except Exception as e:  # noqa: BLE001
             trackers.append({"slug": y.stem, "error": str(e)[:120]})
-    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "balance": balance(), "trackers": trackers,
+    try:
+        from .usage import summary
+        claude = summary(days=7, run_id=env("GITHUB_RUN_ID"))
+    except Exception as e:  # noqa: BLE001
+        claude = {"error": str(e)[:120]}
+    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "balance": balance(), "trackers": trackers, "claude": claude,
            "run_url": (f"{env('GITHUB_SERVER_URL', 'https://github.com')}/{env('GITHUB_REPOSITORY')}/actions/runs/{env('GITHUB_RUN_ID')}"
                        if env("GITHUB_RUN_ID") and env("GITHUB_REPOSITORY") else None)}
     site_dir.mkdir(parents=True, exist_ok=True)
     (site_dir / "status.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     b = out["balance"]
-    print(f"status: {len(trackers)} trackers; balance " + (f"${b['usd']:.2f}{' LOW' if b.get('low') else ''}" if b and 'usd' in b else "unknown"))
+    print(f"status: {len(trackers)} trackers; balance " + (f"${b['usd']:.2f}{' LOW' if b.get('low') else ''}" if b and 'usd' in b else "unknown")
+          + (f"; Claude this run ~${claude['last_run']['est_usd']:.2f} ({claude['last_run']['calls']} calls), today ~${claude['today']['est_usd']:.2f}, 7d ~${claude['recent']['est_usd']:.2f}" if claude.get("last_run") else ""))
     return out
 
 

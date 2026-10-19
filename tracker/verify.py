@@ -65,13 +65,15 @@ def candidates(store: Store, min_views: int, limit: int, scores: dict[str, float
     return (by_views + rest)[:limit]
 
 
-def ask(client, model: str, claim: str, first_seen: str, subject: str, max_searches: int) -> dict[str, Any]:
+def ask(client, model: str, claim: str, first_seen: str, subject: str, max_searches: int, slug: str = "") -> dict[str, Any]:
     """One verification call. Returns {verdict, basis, sources}; verdict 'unverifiable' when the reply cannot be parsed."""
+    from .usage import record
     msg = client.messages.create(
         model=model, max_tokens=2000, system=SYSTEM,
         tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": max_searches}],
         messages=[{"role": "user", "content": USER.format(claim=claim, first_seen=first_seen[:10], subject=subject)}],
     )
+    record("verify", model, msg, slug)
     texts, cited = [], []
     for b in msg.content:
         if getattr(b, "type", "") == "text":
@@ -119,7 +121,7 @@ def verify(inc: Incident) -> int:
     done = 0
     for c in todo:
         try:
-            r = ask(client, st["model"], c["text"], c["first_seen"] or "", inc.subject, st["max_searches"])
+            r = ask(client, st["model"], c["text"], c["first_seen"] or "", inc.subject, st["max_searches"], inc.slug)
         except Exception as e:  # web search unavailable on this key/model, network, etc.: say so, keep the claim for next time
             print(f"verify: {type(e).__name__}: {str(e)[:160]}", file=sys.stderr)
             break

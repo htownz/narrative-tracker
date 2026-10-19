@@ -246,6 +246,11 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
             pills.append(f'<span>last run {g.strftime("%b %d, %I:%M %p").replace(" 0", " ")}</span>')
         except (KeyError, ValueError):
             pass
+        c = stt.get("claude") or {}
+        if c.get("last_run") and c.get("all_time", {}).get("calls"):
+            steps = ", ".join(f'{d["step"]} ${d["est_usd"]:.2f}' for d in c.get("by_step", [])[:4])
+            pills.append(f'<span title="estimate at list price from every model call logged since {html.escape(str(c.get("first_at") or "")[:10])} (data/usage.csv); by step over 7 days: {html.escape(steps)}. The Anthropic console is the bill.">'
+                         f'● Claude ~${c["last_run"]["est_usd"]:.2f} this run · ~${c["today"]["est_usd"]:.2f} today · ~${c["recent"]["est_usd"]:.2f} / 7d</span>')
         bad = []
         for t in stt.get("trackers", []):
             if not t.get("exists") or not t.get("live"):

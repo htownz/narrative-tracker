@@ -873,3 +873,24 @@ def test_growth_model_validates_in_time_order_and_shadows_the_heuristic(tmp_path
     labelled = [{**r, "asof": "snap"} for r in snap]
     s = scorecard.scorecard(labelled)
     assert s["model"]["picks"]["n"] == 10 and s["model"]["heuristic_same_snapshots"]["n"] == 10 and s["model"]["snapshots"] == 1 and s["model"]["live"] > 0
+
+
+def test_usage_logs_every_model_call_and_sums_by_day_and_step(tmp_path, monkeypatch):
+    from types import SimpleNamespace as NS
+    from tracker import usage, lanes
+    monkeypatch.setattr(usage, "DATA_DIR", tmp_path)
+    monkeypatch.setenv("GITHUB_RUN_ID", "42")
+    msg = NS(usage=NS(input_tokens=12_000, output_tokens=800, cache_creation_input_tokens=0, cache_read_input_tokens=0, server_tool_use=NS(web_search_requests=4)),
+             content=[NS(type="text", text='{"ok": 1}')])
+    row = usage.record("verify", "claude-sonnet-5-5", msg, "paxton-live")
+    assert row["web_searches"] == 4 and abs(row["est_usd"] - (12_000 * 3 + 800 * 15) / 1e6 - 0.04) < 1e-6
+    assert usage.record("classify", "claude-sonnet-5-5", NS(content=[]), "x") is None          # a stub reply without usage logs nothing
+    class Client:
+        class messages:
+            @staticmethod
+            def create(**kw):
+                return NS(usage=NS(input_tokens=1000, output_tokens=100), content=[NS(type="text", text='{"assignments": {}}')])
+    assert lanes._ask(Client(), "claude-sonnet-5-5", "sys", "user", step="classify", slug="paxton-live") == {"assignments": {}}
+    s = usage.summary(days=7, run_id="42")
+    assert s["last_run"]["calls"] == 2 and s["today"]["calls"] == 2 and s["all_time"]["web_searches"] == 4
+    assert [d["step"] for d in s["by_step"]] == ["verify", "classify"] and s["by_day"][0]["calls"] == 2 and (tmp_path / "usage.csv").exists()
