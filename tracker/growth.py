@@ -221,18 +221,21 @@ def fit_and_report(data: list[dict[str, Any]]) -> dict[str, Any]:
     model = cands[best]
     model.fit(np.array([d["x"] for d in data]), np.array([d["y"] for d in data]))
     # feature importance: coefficients for the logistic, permutation importance on the test set for the GBM
-    if best == "logistic":
-        imp = [abs(c) for c in model.named_steps["logisticregression"].coef_[0].tolist()]
-    else:
-        from sklearn.inspection import permutation_importance
-        cands["gbm"].fit(Xtr, ytr)
-        pi_ = permutation_importance(cands["gbm"], Xte, np.array(yte), scoring="roc_auc", n_repeats=3, random_state=7)
-        imp = pi_.importances_mean.tolist()
+    try:
+        if best == "logistic":
+            imp = [abs(c) for c in model.named_steps["logisticregression"].coef_[0].tolist()]
+        else:
+            from sklearn.inspection import permutation_importance
+            cands["gbm"].fit(Xtr, ytr)
+            imp = permutation_importance(cands["gbm"], Xte, np.array(yte), scoring="roc_auc", n_repeats=3, random_state=7).importances_mean.tolist()
+    except Exception:
+        imp = [0.0] * len(FEATURES)
     report["importance"] = sorted(({"feature": f, "weight": round(w, 4)} for f, w in zip(FEATURES, imp)), key=lambda d: -d["weight"])[:10]
     r, h = results[best], results["heuristic"]
+    auc_s = lambda v: f"{v:.2f}" if v is not None else "n/a"  # noqa: E731
     reading = (f"Trained on {len(train):,} claim-days ({len({(d['slug'], d['asof']) for d in train})} snapshots) and tested on {len(test):,} claim-days across {test_snaps} snapshots a day or more later: "
-               f"the {best} picks' top five hit {r['p_at_5']:.0%} ({r['hits']} of {r['picks']}) against the heuristic's {h['p_at_5']:.0%} ({h['hits']} of {h['picks']}) and a base rate of {base:.1%}; "
-               f"AUC {r['auc']:.2f} vs the heuristic's {h['auc']:.2f}. Of the model's hits, {r['breakout_hits']} were claims not already in the top five by views when picked (the heuristic: {h['breakout_hits']}). ")
+               f"the {best} picks' top five hit {r['p_at_5'] or 0:.0%} ({r['hits']} of {r['picks']}) against the heuristic's {h['p_at_5'] or 0:.0%} ({h['hits']} of {h['picks']}) and a base rate of {base:.1%}; "
+               f"AUC {auc_s(r['auc'])} vs the heuristic's {auc_s(h['auc'])}. Of the model's hits, {r['breakout_hits']} were claims not already in the top five by views when picked (the heuristic: {h['breakout_hits']}). ")
     if report["use_model"]:
         reading += "The model out-picks the heuristic by enough to drive the hub's Gaining now list; the scorecard tracks both from here."
     elif edge >= MIN_EDGE:
