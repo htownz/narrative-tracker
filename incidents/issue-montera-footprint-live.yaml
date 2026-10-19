@@ -28,7 +28,7 @@ queries:
   - '("data center" OR "data centers") ("Caldwell County" OR "Lockhart, TX" OR "Lockhart Texas" OR Luling OR "Martindale, TX" OR "Martindale Texas")'
   - '(Tract OR Edged) ("Caldwell County" OR Lockhart OR Martindale) -Indianapolis -Brightwood'
   - '"Caldwell County" Texas (transmission OR "power line" OR substation OR water OR aquifer OR moratorium OR "data center")'
-  - '(from:AdrianGarciaHC OR from:LesleyBriones OR from:CommTomRamsey OR from:RodneyEllis OR from:LinaHidalgoTX OR from:HarrisCountyTX OR from:HCFCD OR from:JohnWhitmire OR from:HoustonTX) ("data center" OR "data centers" OR "large load" OR transmission OR CenterPoint)'
+  - '(from:HarrisCoPct2 OR from:AdrianGarciaHTX OR from:HCP4__Briones OR from:HCPrecinct4 OR from:LesleyBrionesTX OR from:CommTomRamsey OR from:RodneyEllis OR from:LinaHidalgoTX OR from:HarrisCountyAO OR from:AbbieKamin OR from:HarrisCountyTX OR from:HCFCD OR from:JohnWhitmire OR from:HoustonTX) ("data center" OR "data centers" OR "large load" OR transmission OR CenterPoint)'
 min_faves_hint: 0
 exclude_retweets: true
 query_type: Latest

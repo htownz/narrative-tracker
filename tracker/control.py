@@ -190,12 +190,13 @@ def table_html(rows: list[dict[str, Any]], with_color: bool = True) -> str:
         name = html.escape(r["label"])
         if with_color and r.get("color"):
             name = f'<span class="lane" style="color:{r["color"]}">{name}</span>'
+        r.setdefault("score", 0)
         tone = "#ff5252" if r["score"] >= FLAG else "#e08a2e" if r["score"] >= 40 else "var(--ink-2)"
         trs.append(
-            f'<tr><td>{name}<div class="muted">{html.escape("; ".join(r["why"])) or "nothing stands out"}</div></td>'
+            f'<tr><td>{name}<div class="muted">{html.escape("; ".join(r.get("why") or [])) or "nothing stands out"}</div></td>'
             f'<td class="n"><b style="color:{tone}">{r["score"]}</b></td><td class="n">{r["posts"]}</td>'
-            f'<td class="n">{r["copies"]:.0%}</td><td class="n">{r["new_accounts"]:.0%}</td><td class="n">{r["burst"]:.0%}</td>'
-            f'<td class="n">{r["regularity"]:.2f}</td><td class="n">{r["top5"]:.0%}</td><td class="n">{r.get("link_rings", 0):.0%}</td></tr>'
+            f'<td class="n">{r.get("copies", 0):.0%}</td><td class="n">{r.get("new_accounts", 0):.0%}</td><td class="n">{r.get("burst", 0):.0%}</td>'
+            f'<td class="n">{r.get("regularity", 0):.2f}</td><td class="n">{r.get("top5", 0):.0%}</td><td class="n">{r.get("link_rings", 0):.0%}</td></tr>'
         )
     return ('<div class="wrap"><table><thead><tr><th>Narrative</th><th class="n">Control</th><th class="n">Posts</th><th class="n">Copies</th>'
             f'<th class="n">New accts</th><th class="n">Burst</th><th class="n">Regularity</th><th class="n">Top-5 share</th><th class="n">Link rings</th></tr></thead><tbody>{"".join(trs)}</tbody></table></div>')
