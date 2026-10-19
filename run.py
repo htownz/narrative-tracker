@@ -56,7 +56,7 @@ def main() -> None:
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
     ap.add_argument("--dry-run", action="store_true", help="pull: print the search calls and stop")
     ap.add_argument("--accept", action="store_true", help="discover: write the proposed lanes into the YAML")
-    ap.add_argument("--relabel", action="store_true", help="classify: re-label posts that already have a lane")
+    ap.add_argument("--relabel", action="store_true", help="classify / all: re-label posts that already have a lane")
     ap.add_argument("--include-other", action="store_true", help="export: keep 'other' posts in the chart")
     ap.add_argument("--budget", type=float, default=None, help="pull: stop cleanly after this many seconds (resumable)")
     ap.add_argument("--seconds", type=float, default=60.0, help="video: play-through length")
@@ -228,7 +228,7 @@ def main() -> None:
             print("lanes discovered and written to the YAML:")
             for l in lanes:
                 print(f"  - {l['key']}: {l['label']}")
-        lanes_mod.classify(inc)
+        lanes_mod.classify(inc, relabel=args.relabel)
         dedup_mod.dedup(inc)
         export_mod.export(inc, include_other=args.include_other)
         render_mod.render(inc)

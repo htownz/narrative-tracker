@@ -52,10 +52,11 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
-            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | grep -v '^lookup=' | grep -vx 'brief' | tr '\n' ' ' || true)
+            INC=$(grep -v '^\s*#' .run | grep -v '^\s*$' | grep -v '^budget=' | grep -v '^lookup=' | grep -vx 'brief' | grep -vx 'relabel' | tr '\n' ' ' || true)
             LOOKUP=$(grep -o '^lookup=[0-9,]*' .run | head -1 | cut -d= -f2 || true)       # lookup=<id,id>: print those posts (text, counts, links) in the log
             BUDGET=$(grep -o '^budget=[0-9]*' .run | head -1 | cut -d= -f2 || true)     # a backfill run can ask for a longer pull per incident
             grep -qx 'brief' .run && BRIEF=true || true                                  # a line saying `brief` writes the weekly brief this run
+            grep -qx 'relabel' .run && RELABEL=--relabel || true                         # a line saying `relabel` re-sorts every stored post (after a subject or lane edit)
             case " $INC " in *" live "*) INC="$LIVE $(echo " $INC " | sed 's/ live / /g')";; esac
           fi
           case " $INC " in *" none "*) INC="";; *) INC="${INC:-$LIVE}";; esac
@@ -64,6 +65,7 @@ jobs:
           [ "$(date -u +%u%H)" = "111" ] && BRIEF=true || true                          # Monday 11:17 UTC (6:17 AM CT): the weekly brief
           echo "brief=${BRIEF:-false}" >> "$GITHUB_OUTPUT"
           echo "lookup=${LOOKUP:-}" >> "$GITHUB_OUTPUT"
+          echo "relabel=${RELABEL:-}" >> "$GITHUB_OUTPUT"
           echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
 
       - name: Check secrets
@@ -103,7 +105,7 @@ jobs:
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
             [ "$WEEKLY" = "1" ] && python run.py refresh-views "$inc"
-            if python run.py all "$inc" --budget "$PULL_BUDGET"; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
+            if python run.py all "$inc" --budget "$PULL_BUDGET" ${{ steps.pick.outputs.relabel }}; then OK=$((OK+1)); else FAILED="$FAILED $inc"; fi
             echo "::endgroup::"
           done
           if [ -n "$FAILED" ]; then echo "::warning::failed:$FAILED"; fi

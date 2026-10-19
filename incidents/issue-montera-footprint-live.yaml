@@ -6,7 +6,7 @@
 
 slug: issue-montera-footprint-live
 title: "Montera footprint: data centers in Generation Park and Caldwell County, {days} days of posts"
-subject: "data centers, transmission and water in northeast Houston / Harris County (Generation Park, Humble, Sheldon, Kingwood, Lake Houston) and Caldwell County / Martindale (Lockhart, Luling, Maxwell) — local opposition, county oversight, power and water use, tax incentives, and the developers (Montera, McCord Development, Tract, Edged)"
+subject: "data centers, transmission and water in two places only: (1) Generation Park and northeast Houston / Harris County (Humble, Sheldon, Kingwood, Atascocita, Lake Houston, Channelview) and (2) Caldwell County, Texas (Lockhart, Luling, Martindale, the Tract and Edged campuses) — local opposition, county oversight, power and water use, tax incentives, and the developers (Montera, McCord Development, Tract, Edged). STRICT RULE: a post must name or clearly concern one of these places, Harris County or Houston officials, or these developers; anything else — statewide or national data center politics (Paxton, Talarico, Abbott, senators, Forbes), other states, other cities, or posts that only share a word like Sheldon, Crosby, Humble or Martindale (Indianapolis) — is other"
 subtitle: >
   {start} to {end}, 2026. Each dot is one post with 25+ views about data centers, power or water in Generation Park,
   Harris County or Caldwell County, plus every post repeating an earlier one, in the lane for what it argues.
@@ -20,22 +20,20 @@ timezone: America/Chicago
 refresh_days: 2
 
 queries:
-  - '"Generation Park"'
+  - '"Generation Park" (Houston OR "data center" OR "data centers" OR McCord OR Montera)'
   - 'Montera ("data center" OR "data centers" OR Houston OR Stonepeak)'
   - '"McCord Development"'
-  - '("data center" OR "data centers") (Humble OR Sheldon OR Kingwood OR Atascocita OR "Lake Houston" OR Crosby OR Channelview)'
-  - '("data center" OR "data centers") ("Harris County" OR "Harris Co")'
-  - '("data center" OR "data centers") Houston (council OR permit OR neighbors OR residents OR water OR CenterPoint OR substation)'
-  - '("data center" OR "data centers") (Caldwell OR Lockhart OR Martindale OR Luling OR Maxwell)'
-  - '(Tract OR Edged) ("Caldwell County" OR Martindale OR Lockhart)'
-  - '"Caldwell County" (transmission OR "power line" OR substation OR water OR aquifer OR moratorium)'
+  - '("data center" OR "data centers") (Kingwood OR Atascocita OR "Lake Houston" OR Channelview OR "Humble ISD" OR "Sheldon ISD" OR "Humble, TX" OR "Humble Texas" OR "northeast Houston" OR "NE Houston")'
+  - '("data center" OR "data centers") ("Harris County" OR "Harris Co" OR "Houston City Council" OR "Commissioners Court")'
+  - '("data center" OR "data centers") ("Caldwell County" OR "Lockhart, TX" OR "Lockhart Texas" OR Luling OR "Martindale, TX" OR "Martindale Texas")'
+  - '(Tract OR Edged) ("Caldwell County" OR Lockhart OR Martindale) -Indianapolis -Brightwood'
+  - '"Caldwell County" Texas (transmission OR "power line" OR substation OR water OR aquifer OR moratorium OR "data center")'
   - '(from:AdrianGarciaHC OR from:LesleyBriones OR from:CommTomRamsey OR from:RodneyEllis OR from:LinaHidalgoTX OR from:HarrisCountyTX OR from:HCFCD OR from:JohnWhitmire OR from:HoustonTX) ("data center" OR "data centers" OR "large load" OR transmission OR CenterPoint)'
-
 min_faves_hint: 0
 exclude_retweets: true
 query_type: Latest
 min_views: 25
-fetch_referenced: true
+fetch_referenced: false   # quoted/replied-to statewide posts are noise for a local tracker
 
 discover_hint: >
   This is a client-footprint tracker, not a statewide debate. Posts must concern data centers, power or water in

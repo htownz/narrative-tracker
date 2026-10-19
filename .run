@@ -1,3 +1,4 @@
-# backfill the new Montera footprint tracker from Oct 1
+# Montera footprint tracker: tightened queries + strict local subject; re-sort the posts already pulled
 incidents/issue-montera-footprint-live.yaml
-budget=2400
+relabel
+budget=1500
