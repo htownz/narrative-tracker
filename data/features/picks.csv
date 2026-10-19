@@ -293,7 +293,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible,method,p_gr
 2026-10-19T06:06+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0,,
 2026-10-19T06:06+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0,,
 2026-10-19T06:15+00:00,2026-10-18T19:50:25+00:00,issue-housing-live,49,Republicans have governed Texas for 30 years.,1,34.8,223384,2,0,,
-2026-10-19T06:20+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166762,2,0,,
 2026-10-19T11:32+00:00,2026-10-19T10:10:10+00:00,governor-race-live,2510,A CBS/YouGov poll of Texas likely voters shows Greg Abbott leading Gina Hinojosa 52% to 48%.,1,29.39,2884,5,0,,
 2026-10-19T11:32+00:00,2026-10-19T10:10:10+00:00,governor-race-live,2565,A poll has Greg Abbott ahead of Gina Hinojosa 49% to 46%.,2,26.52,11946,2,0,,
 2026-10-19T11:32+00:00,2026-10-19T10:10:10+00:00,governor-race-live,2568,"A University of Houston Hobby School poll of likely voters, Oct 10-14, has Greg Abbott at 49%, Gina Hinojosa at 46% and ",3,25.07,7151,2,0,,
@@ -308,3 +307,89 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible,method,p_gr
 2026-10-19T11:50+00:00,2026-10-19T11:29:05+00:00,trump-texas-live,2338,"The Republican Senate candidate in Texas, Ken Paxton, wants to intimidate Democrats.",3,27.64,17722,2,0,,
 2026-10-19T11:50+00:00,2026-10-19T11:29:05+00:00,trump-texas-live,2214,The CBS/YouGov poll shows Greg Abbott at 52% and Gina Hinojosa at 48% in the Texas governor's race.,4,22.68,3068,2,0,,
 2026-10-19T11:52+00:00,2026-10-19T01:56:31+00:00,vance-texas-live,159,The Texas Senate race between Ken Paxton and James Talarico is a toss-up.,1,32.73,12179,4,0,,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,291,Texans should vote for Greg Abbott.,1,45.46,8930,20,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,1049,A poll shows Gina Hinojosa at 48% and Greg Abbott at 47% in the Texas governor's race.,2,42.27,13844,11,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,84,Gina Hinojosa voted no when the Texas House voted to permanently ban a state income tax.,3,36.9,4895,10,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2584,Greg Abbott announced endorsements from 12 Democratic sheriffs in Texas.,4,33.51,15272,4,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2260,Texas is considering selling a state park to Elon Musk.,5,31.21,7865,4,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2589,Greg Abbott took about $9 million from data center-related donors while threatening to regulate the industry.,6,31.02,7447,4,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,1317,"Texans should vote early, between October 19 and 30.",7,30.45,6336,4,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,494,Texans' electricity bills have skyrocketed.,8,24.84,6578,2,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,351,James Talarico and Gina Hinojosa have the momentum and will win.,9,24.32,5472,2,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2557,"Texans should vote for Ken Paxton, Greg Abbott and all Republicans on the ballot to keep Texas red.",10,22.98,3409,2,0,heuristic,
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,84,Gina Hinojosa voted no when the Texas House voted to permanently ban a state income tax.,1,36.9,4895,10,0,model,0.91
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2260,Texas is considering selling a state park to Elon Musk.,2,31.21,7865,4,0,model,0.866
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,1049,A poll shows Gina Hinojosa at 48% and Greg Abbott at 47% in the Texas governor's race.,3,42.27,13844,11,0,model,0.839
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,494,Texans' electricity bills have skyrocketed.,4,24.84,6578,2,0,model,0.804
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2568,"A University of Houston Hobby School poll of likely voters, Oct 10-14, has Greg Abbott at 49%, Gina Hinojosa at 46% and ",5,7.07,25774,4,0,model,0.571
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,1317,"Texans should vote early, between October 19 and 30.",6,30.45,6336,4,0,model,0.424
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,291,Texans should vote for Greg Abbott.,7,45.46,8930,20,0,model,0.402
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,688,"Greg Abbott, Ken Paxton and Dan Patrick are cowards for not acting on this.",8,21.85,2280,2,0,model,0.305
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,2584,Greg Abbott announced endorsements from 12 Democratic sheriffs in Texas.,9,33.51,15272,4,0,model,0.232
+2026-10-19T17:34+00:00,2026-10-19T17:26:13+00:00,governor-race-live,351,James Talarico and Gina Hinojosa have the momentum and will win.,10,24.32,5472,2,0,model,0.103
+2026-10-19T17:36+00:00,2026-10-19T16:31:54+00:00,patrick-live,188,Texans should vote for Vikki Goodwin for Lieutenant Governor.,1,29.46,2936,5,0,heuristic,
+2026-10-19T17:36+00:00,2026-10-19T16:31:54+00:00,patrick-live,188,Texans should vote for Vikki Goodwin for Lieutenant Governor.,1,29.46,2936,5,0,model,0.949
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,229,Ken Paxton has to win the Senate race.,1,62.12,43010,48,1,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,5369,Elon Musk said James Talarico hates Texas.,2,48.02,3178666,3,1,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,39,Ken Paxton has declined the debate invitations that James Talarico accepted.,3,47.65,2444,65,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,2353,Texas will not elect James Talarico.,4,45.97,14840,16,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,195,James Talarico hates Texans.,5,45.87,21857,13,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,2932,Ken Paxton will win the Texas Senate race by about 2 to 4 points.,6,42.44,3096,27,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,603,James Talarico said 'God is non-binary.',7,41.15,5417,16,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,2643,Ken Paxton let the attorney who admitted child sexual abuse avoid the sex offender registry.,8,39.64,19828,7,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,158,Texans should vote for Ken Paxton.,9,36.0,14840,149,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,4079,A Senate win by James Talarico would be a disaster for Texas.,10,34.22,43010,3,0,heuristic,
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,5369,Elon Musk said James Talarico hates Texas.,1,48.02,3178666,3,0,model,1.0
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,5343,Early voting in Texas starts tomorrow.,2,24.53,5907,2,0,model,0.797
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,5345,"James Talarico says America should look to other countries, especially in Western Europe, for inspiration.",3,28.23,21857,2,0,model,0.067
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,603,James Talarico said 'God is non-binary.',4,41.15,5417,16,0,model,0.047
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,195,James Talarico hates Texans.,5,45.87,21857,13,0,model,0.036
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,654,A Marist poll has James Talarico at 50% and Ken Paxton at 44% in the Texas Senate race.,6,34.06,3061,9,0,model,0.033
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,39,Ken Paxton has declined the debate invitations that James Talarico accepted.,7,47.65,2444,65,0,model,0.009
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,2353,Texas will not elect James Talarico.,8,45.97,14840,16,0,model,0.004
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,229,Ken Paxton has to win the Senate race.,9,62.12,43010,48,0,model,0.003
+2026-10-19T17:52+00:00,2026-10-19T17:27:59+00:00,paxton-live,2932,Ken Paxton will win the Texas Senate race by about 2 to 4 points.,10,42.44,3096,27,0,model,0.003
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2367,A Black Trump-supporting TikTok influencer was kicked out of Ken Paxton's San Antonio rally.,1,38.29,60308,4,1,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,844,James Talarico has no chance of winning the Texas Senate race.,2,32.62,6926,5,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1521,James Talarico would bring oil drilling in Texas to a halt.,3,32.56,6803,5,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1536,Republican Eric Flores is demanding that Rep. Vicente Gonzalez take down a billboard promoting Flores's Trump endorsemen,4,31.99,5836,5,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2366,Donald Trump and other conservatives are calling James Talarico a gay freak.,5,31.35,65887,2,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1136,A poll shows James Talarico ahead of Ken Paxton by 6 points in an electorate that leans Trump by 12.,6,29.75,3178,5,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2085,"Donald Trump is blaming senior aides for Republicans' worsening midterm prospects, according to Reuters.",7,27.41,2640,4,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2086,Donald Trump has questioned why his $200 million super PAC spending and Texas redistricting push have not delivered gain,8,27.41,2640,4,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1214,James Talarico has said God is nonbinary and that there are six sexes.,9,26.47,11742,2,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1436,Donald Trump's approval rating has hit a new low of -27 on The Economist's tracker.,10,24.69,6234,2,0,heuristic,
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1536,Republican Eric Flores is demanding that Rep. Vicente Gonzalez take down a billboard promoting Flores's Trump endorsemen,1,31.99,5836,5,0,model,0.705
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1436,Donald Trump's approval rating has hit a new low of -27 on The Economist's tracker.,2,24.69,6234,2,0,model,0.677
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,844,James Talarico has no chance of winning the Texas Senate race.,3,32.62,6926,5,0,model,0.586
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1521,James Talarico would bring oil drilling in Texas to a halt.,4,32.56,6803,5,0,model,0.303
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2367,A Black Trump-supporting TikTok influencer was kicked out of Ken Paxton's San Antonio rally.,5,38.29,60308,4,0,model,0.302
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,808,A University of Houston poll of likely voters shows Ken Paxton at 48% and James Talarico at 47% in the Texas US Senate r,6,6.71,34903,3,0,model,0.267
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2366,Donald Trump and other conservatives are calling James Talarico a gay freak.,7,31.35,65887,2,0,model,0.256
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,1136,A poll shows James Talarico ahead of Ken Paxton by 6 points in an electorate that leans Trump by 12.,8,29.75,3178,5,0,model,0.237
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2086,Donald Trump has questioned why his $200 million super PAC spending and Texas redistricting push have not delivered gain,9,27.41,2640,4,0,model,0.229
+2026-10-19T17:57+00:00,2026-10-19T17:36:23.911000+00:00,trump-texas-live,2085,"Donald Trump is blaming senior aides for Republicans' worsening midterm prospects, according to Reuters.",10,27.41,2640,4,0,model,0.228
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,19,Cybercabs are now everywhere in Austin.,1,33.64,4426,7,0,heuristic,
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,49,"There were 868 Cybercab sightings in Austin yesterday, 670 of them driverless.",2,26.63,4031,3,0,heuristic,
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,447,The poster saw about 60 Tesla robotaxis (Cybercabs and Model Ys) over a couple of hours in downtown Austin.,3,25.14,7331,2,0,heuristic,
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,75,Tesla Cybercab may expand to new markets next.,4,22.53,2905,2,0,heuristic,
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,49,"There were 868 Cybercab sightings in Austin yesterday, 670 of them driverless.",1,26.63,4031,3,0,model,0.999
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,19,Cybercabs are now everywhere in Austin.,2,33.64,4426,7,0,model,0.992
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,75,Tesla Cybercab may expand to new markets next.,3,22.53,2905,2,0,model,0.978
+2026-10-19T18:02+00:00,2026-10-19T15:12:24+00:00,issue-av-live,447,The poster saw about 60 Tesla robotaxis (Cybercabs and Model Ys) over a couple of hours in downtown Austin.,4,25.14,7331,2,0,model,0.868
+2026-10-19T18:06+00:00,2026-10-19T11:39:13+00:00,issue-broadband-live,12,AST SpaceMobile plans to build the first and only space-based broadband network connecting directly to standard mobile p,1,30.85,15034,3,0,heuristic,
+2026-10-19T18:06+00:00,2026-10-19T11:39:13+00:00,issue-broadband-live,18,"Deutsche Telekom, Orange, Telefónica and Vodafone signed a Letter of Intent related to AST SpaceMobile's space-based cel",2,27.17,15034,2,0,heuristic,
+2026-10-19T18:06+00:00,2026-10-19T11:39:13+00:00,issue-broadband-live,12,AST SpaceMobile plans to build the first and only space-based broadband network connecting directly to standard mobile p,1,30.85,15034,3,0,model,0.983
+2026-10-19T18:06+00:00,2026-10-19T11:39:13+00:00,issue-broadband-live,18,"Deutsche Telekom, Orange, Telefónica and Vodafone signed a Letter of Intent related to AST SpaceMobile's space-based cel",2,27.17,15034,2,0,model,0.963
+2026-10-19T18:09+00:00,2026-10-19T17:09:27.161000+00:00,issue-data-centers-live,281,Greg Abbott has raised about $9 million from data center-related donors this cycle while calling for data center regulat,1,31.61,8844,4,0,heuristic,
+2026-10-19T18:09+00:00,2026-10-19T17:09:27.161000+00:00,issue-data-centers-live,112,Power plants proposed for Meta's El Paso data center and Project Jupiter could emit as much greenhouse gas as about 2 mi,2,24.8,6490,2,0,heuristic,
+2026-10-19T18:09+00:00,2026-10-19T17:09:27.161000+00:00,issue-data-centers-live,112,Power plants proposed for Meta's El Paso data center and Project Jupiter could emit as much greenhouse gas as about 2 mi,1,24.8,6490,2,0,model,0.911
+2026-10-19T18:09+00:00,2026-10-19T17:09:27.161000+00:00,issue-data-centers-live,281,Greg Abbott has raised about $9 million from data center-related donors this cycle while calling for data center regulat,2,31.61,8844,4,0,model,0.805
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,264,"Voters should vote early and in person, or deliver mail ballots directly or mail them at the earliest possible date rath",1,30.18,43583,2,0,heuristic,
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,38,Polls show Donald Trump is not doing well ahead of the midterms.,2,28.18,6538,3,0,heuristic,
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,446,"Texas has a record 19 million registered voters, according to the Texas Secretary of State.",3,23.22,3709,2,0,heuristic,
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,38,Polls show Donald Trump is not doing well ahead of the midterms.,1,28.18,6538,3,0,model,0.983
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,264,"Voters should vote early and in person, or deliver mail ballots directly or mail them at the earliest possible date rath",2,30.18,43583,2,0,model,0.969
+2026-10-19T18:15+00:00,2026-10-19T17:20:14+00:00,issue-election-integrity-live,446,"Texas has a record 19 million registered voters, according to the Texas Secretary of State.",3,23.22,3709,2,0,model,0.883
+2026-10-19T18:51+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166798,2,0,heuristic,
+2026-10-19T18:51+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166798,2,0,model,0.995

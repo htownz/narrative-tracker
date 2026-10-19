@@ -1,5 +1,6 @@
 run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,first_followers,views_1h,views_6h,views_24h,momentum_6h,control,new_accounts,burst,event_follow,event_type,market_price,market_change_24h,news_sources_48h,news_before_x,first_reliability,first_early_lift,gain_24h,gain_72h,top5_24h,measured
-2026-10-19T06:16+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,teacher_pay_exodus,"Texas teacher pay lags, exodus",0.0,1,10420,1,0,10420,3078,10420,10420,10420,99.0,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-19T06:16+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,vouchers_drain_public_schools,Vouchers drain public school funds,318.3,1,0,1,0,0,0,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-19T06:16+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,vote_out_for_schools,Fix schools at the ballot box,125.9,1,0,1,0,0,0,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-19T06:16+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,district_waste_audit,District deficits are mismanagement,199.3,1,1315,1,0,1315,384,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-19T18:40+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,teacher_pay_exodus,"Texas teacher pay lags, exodus",0.0,1,10421,1,0,10421,3078,10421,10421,10421,99.0,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-19T18:40+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,vouchers_drain_public_schools,Vouchers drain public school funds,319.2,2,1325,2,0,1325,0,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-19T18:40+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,vote_out_for_schools,Fix schools at the ballot box,225.5,2,11836,2,0,11836,0,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-19T18:40+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,district_waste_audit,District deficits are mismanagement,199.3,1,1315,1,0,1315,384,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-19T18:40+00:00,2026-10-15T20:00:50+00:00,issue-k12-live,lane,state_funding_shortfall,"State underfunds schools, basic allotment",312.7,1,1262,1,0,1262,0,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
