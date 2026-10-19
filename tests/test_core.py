@@ -637,11 +637,13 @@ def test_news_feeds_store_relevance_and_lean(tmp_path, monkeypatch):
         def get(self, url, timeout=0): return Resp(rss) if "ok" in url else Resp(b"", 503)
     feeds = tmp_path / "feeds.yaml"
     feeds.write_text('feeds:\n  - {name: Good, url: "https://ok.example/rss", kind: press}\n  - {name: Dead, url: "https://dead.example/rss", kind: press}\n')
+    from datetime import datetime, timezone
+    before = datetime.now(timezone.utc).isoformat(timespec="minutes")
     got = nf.pull_feeds(feeds, db, session=Sess())
     assert got == {"Good": 2, "Dead": 0}
     assert nf.pull_feeds(feeds, db, session=Sess()) == {"Good": 0, "Dead": 0}                  # idempotent
     st = nf.status(db)
-    assert st["articles"] == 2 and st["feeds_ok"] == 1 and st["since"] == st["last"]                 # coverage starts at the first fetch, not the oldest item
+    assert st["articles"] == 2 and st["feeds_ok"] == 1 and before <= st["since"] <= st["last"]     # coverage starts at the first fetch (not Oct 9, the oldest item)
     claim, ents, subj = "James Talarico was in a mental health facility, the Lindner Center, during his absence.", ["James Talarico", "Lindner Center"], {"talarico", "paxton"}
     from datetime import datetime, timezone
     hits = nf.search(claim, ents, datetime(2026, 10, 1, tzinfo=timezone.utc), db=db, subjects=subj)
