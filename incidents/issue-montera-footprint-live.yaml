@@ -1,0 +1,136 @@
+# Live issue tracker for the Montera Infrastructure client: social talk about data centers, power and water in the
+# places Montera's projects touch — Generation Park in northeast Houston (Harris County: Humble, Sheldon, Kingwood,
+# Lake Houston) and Caldwell County / Martindale (Lockhart, Luling, Maxwell; the Tract and Edged campuses).
+# Hyperlocal, so the view floor is low (25) and there is no likes floor: a 200-view post from a Sheldon resident matters here.
+# The weekday Montera Data Center Scan reads this tracker's data.json each morning. Runs with the other issue trackers.
+
+slug: issue-montera-footprint-live
+title: "Montera footprint: data centers in Generation Park and Caldwell County, {days} days of posts"
+subject: "data centers, transmission and water in northeast Houston / Harris County (Generation Park, Humble, Sheldon, Kingwood, Lake Houston) and Caldwell County / Martindale (Lockhart, Luling, Maxwell) — local opposition, county oversight, power and water use, tax incentives, and the developers (Montera, McCord Development, Tract, Edged)"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 25+ views about data centers, power or water in Generation Park,
+  Harris County or Caldwell County, plus every post repeating an earlier one, in the lane for what it argues.
+  Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line
+  back to it. Coloured lines link a post to the post it quoted or replied to. Updated twice a day.
+
+window:
+  start: "2026-10-01"
+  end: today
+timezone: America/Chicago
+refresh_days: 2
+
+queries:
+  - '"Generation Park"'
+  - 'Montera ("data center" OR "data centers" OR Houston OR Stonepeak)'
+  - '"McCord Development"'
+  - '("data center" OR "data centers") (Humble OR Sheldon OR Kingwood OR Atascocita OR "Lake Houston" OR Crosby OR Channelview)'
+  - '("data center" OR "data centers") ("Harris County" OR "Harris Co")'
+  - '("data center" OR "data centers") Houston (council OR permit OR neighbors OR residents OR water OR CenterPoint OR substation)'
+  - '("data center" OR "data centers") (Caldwell OR Lockhart OR Martindale OR Luling OR Maxwell)'
+  - '(Tract OR Edged) ("Caldwell County" OR Martindale OR Lockhart)'
+  - '"Caldwell County" (transmission OR "power line" OR substation OR water OR aquifer OR moratorium)'
+  - '(from:AdrianGarciaHC OR from:LesleyBriones OR from:CommTomRamsey OR from:RodneyEllis OR from:LinaHidalgoTX OR from:HarrisCountyTX OR from:HCFCD OR from:JohnWhitmire OR from:HoustonTX) ("data center" OR "data centers" OR "large load" OR transmission OR CenterPoint)'
+
+min_faves_hint: 0
+exclude_retweets: true
+query_type: Latest
+min_views: 25
+fetch_referenced: true
+
+discover_hint: >
+  This is a client-footprint tracker, not a statewide debate. Posts must concern data centers, power or water in
+  Generation Park / northeast Houston / Harris County or in Caldwell County / Martindale. Posts about data centers
+  elsewhere with no tie to these places are off-topic, as are posts that mention Generation Park for unrelated
+  reasons (restaurants, events, offices).
+
+lanes:
+- key: neighbors_oppose_nuisance
+  label: Neighbors oppose (noise, land, quality of life)
+  description: Residents and local groups object to a data center near them — noise, lights, traffic, construction,
+    property values, rural character or flooding — and organize to stop or delay it.
+  keywords:
+  - neighbors
+  - residents
+  - noise
+  - our community
+  - property values
+  - rural
+  - stop the data center
+  - petition
+- key: water_strain
+  label: Water use and aquifers
+  description: Data centers will drain local water — aquifers, river supply, Lake Houston, groundwater districts —
+    or need cooling water the area can't spare.
+  keywords:
+  - water
+  - aquifer
+  - groundwater
+  - drought
+  - cooling
+  - carrizo
+  - lake houston
+  - gbra
+- key: power_grid_transmission
+  label: Power, grid and transmission lines
+  description: Data center load strains the grid, raises power bills or brings new transmission lines and substations
+    (CenterPoint, Bluebonnet, LCRA, ERCOT large-load queue).
+  keywords:
+  - grid
+  - ercot
+  - centerpoint
+  - transmission
+  - substation
+  - power bills
+  - large load
+  - bluebonnet
+- key: local_control_oversight
+  label: Counties need authority over data centers
+  description: Harris County, Caldwell County or cities say they need power to regulate data center siting —
+    oversight motions, moratorium calls, permit notifications, asks to the Legislature.
+  keywords:
+  - commissioners court
+  - moratorium
+  - zoning
+  - oversight
+  - authority
+  - legislature
+  - permits
+  - county attorney
+- key: incentives_who_pays
+  label: Tax breaks and who pays
+  description: Abatements, tax incentives, campaign money and secrecy mean taxpayers and ratepayers subsidize
+    developers; code-named deals hide who is behind a project.
+  keywords:
+  - tax break
+  - abatement
+  - incentives
+  - project hercules
+  - secret
+  - donors
+  - taxpayers
+  - who pays
+- key: jobs_growth_investment
+  label: Jobs, tax base and growth
+  description: Data center and infrastructure investment brings jobs, tax base and growth to Generation Park,
+    northeast Houston or Caldwell County, and the region should welcome it.
+  keywords:
+  - jobs
+  - investment
+  - tax base
+  - economic development
+  - growth
+  - billion
+  - campus
+  - announcement
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

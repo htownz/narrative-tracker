@@ -157,7 +157,7 @@ clients:
     practice: energy and electricity
     areas:
       - area: Hyperscale data center siting, power and water
-        trackers: [issue-data-centers-live, issue-grid-live]
+        trackers: [issue-montera-footprint-live, issue-data-centers-live, issue-grid-live]
         why: Local moratoria (seven jurisdictions and counting), Abbott's data center standards, PUCT/ERCOT large-load rules, Harris County sentiment
         legislation: Large-load interconnection rules (SB 6 implementation); data center transparency; county moratorium authority; water-use reporting
         voices: [PUCTX, ERCOT_ISO, GregAbbott_TX, Harris County Commissioners Court, Sen. Phil King, Sen. Charles Schwertner]
