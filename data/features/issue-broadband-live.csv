@@ -2,6 +2,6 @@ run_at,asof,slug,kind,key,label,age_h,posts,views,accounts,copies,first_views,fi
 2026-10-18T05:52+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,satellite_fills_gap,Satellite connects remote Texas,166.3,1,74303,1,0,74303,56728,0,0,0,,15,0.0,1.0,0,,,,,,,,0,0,,0
 2026-10-18T05:52+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,texas_space_hub,Texas builds the connectivity,135.7,2,70855,2,0,66976,3258,0,0,0,,12,0.0,0.5,0,,,,,,,,0,0,,0
 2026-10-18T05:52+00:00,2026-10-12T11:28:44+00:00,issue-broadband-live,lane,spectrum_competition,Spectrum and FCC open competition,117.0,3,133763,3,0,127601,1148409,4668,4668,4668,99.0,7,0.0,0.333,0,,,,,,,,4671,4671,,0
-2026-10-18T17:55+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,satellite_fills_gap,Satellite connects remote Texas,307.4,1,74303,1,0,74303,56728,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
-2026-10-18T17:55+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,texas_space_hub,Texas builds the connectivity,276.8,2,70855,2,0,66976,3258,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
-2026-10-18T17:55+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,spectrum_competition,Spectrum and FCC open competition,258.1,3,133766,3,0,127601,1148409,0,0,0,,7,0.0,0.333,0,,,,,,,,,,,
+2026-10-19T05:59+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,satellite_fills_gap,Satellite connects remote Texas,307.4,1,74303,1,0,74303,56728,0,0,0,,15,0.0,1.0,0,,,,,,,,,,,
+2026-10-19T05:59+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,texas_space_hub,Texas builds the connectivity,276.8,2,70855,2,0,66976,3258,0,0,0,,12,0.0,0.5,0,,,,,,,,,,,
+2026-10-19T05:59+00:00,2026-10-18T08:37:12.660000+00:00,issue-broadband-live,lane,spectrum_competition,Spectrum and FCC open competition,258.1,3,133771,3,0,127601,1148409,0,0,0,,7,0.0,0.333,0,,,,,,,,,,,

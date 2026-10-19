@@ -246,10 +246,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T17:55+00:00,2026-10-18T13:33:00+00:00,issue-border-live,27,Greg Abbott has renewed or amended his 2021 border emergency proclamation at least 69 times.,1,30.96,2267,7,0
 2026-10-18T17:55+00:00,2026-10-18T13:33:00+00:00,issue-border-live,28,The border emergency proclamation greatly expanded Abbott's powers without going through the Texas Legislature.,2,26.88,2267,4,0
 2026-10-18T18:02+00:00,2026-10-18T15:30:29.004000+00:00,issue-election-integrity-live,359,"Texas early voting for the 2026 general election does not start until Monday, October 19.",1,22.71,3092,2,0
-2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,42.11,90545,5,1
-2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
-2026-10-18T18:03+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
-2026-10-18T18:21+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166720,2,0
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,251,Greg Abbott is not fit to be governor if he will not debate Gina Hinojosa.,1,54.2,20137,33,1
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,114,Republicans have led Texas for more than three decades.,2,45.99,96644,7,1
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,488,Texas Republicans have had decades in power and have no credibility promising to fix problems they have not fixed.,3,42.35,96644,5,1
@@ -259,7 +255,6 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,2524,Kalshi traders forecast Greg Abbott to win the Texas governor's race by 4.6%.,7,15.71,22911,2,0
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,1049,A poll shows Gina Hinojosa at 48% and Greg Abbott at 47% in the Texas governor's race.,8,7.69,7011,10,0
 2026-10-18T23:28+00:00,2026-10-18T22:00:01+00:00,governor-race-live,1954,Texans should vote for Ken Paxton and Greg Abbott to save Texas and America.,9,7.1,26932,4,0
-2026-10-18T23:29+00:00,2026-10-18T21:00:00+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,1,31.4,2531,7,0
 2026-10-18T23:41+00:00,2026-10-18T23:24:44+00:00,paxton-live,1419,James Talarico has a radical record.,1,37.09,7904,8,0
 2026-10-18T23:41+00:00,2026-10-18T23:24:44+00:00,paxton-live,5233,Greg Abbott and Ken Paxton deliberately broke Texas for 30 years and now campaign on fixing it.,2,32.5,99042,2,0
 2026-10-18T23:41+00:00,2026-10-18T23:24:44+00:00,paxton-live,3715,Ken Paxton is extremely unpopular with traditional Republicans.,3,28.45,23645,2,0
@@ -273,4 +268,29 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible
 2026-10-18T23:46+00:00,2026-10-18T22:00:03+00:00,trump-texas-live,14,"If Republicans lose Texas, it is over for them.",2,40.66,61162,5,1
 2026-10-18T23:46+00:00,2026-10-18T22:00:03+00:00,trump-texas-live,1101,Donald Trump is increasingly unpopular.,3,32.84,7351,5,0
 2026-10-18T23:46+00:00,2026-10-18T22:00:03+00:00,trump-texas-live,795,Republican Leigh Wambsganss no longer describes herself as ultra-MAGA in her rematch with Democrat Taylor Rehmet in a di,4,26.8,2216,4,0
-2026-10-18T23:48+00:00,2026-10-18T21:00:44+00:00,vance-texas-live,41,Brandon Gill is a rising star in the Republican Party.,1,22.38,2757,2,0
+2026-10-19T05:34+00:00,2026-10-19T00:58:16.167000+00:00,governor-race-live,251,Greg Abbott is not fit to be governor if he will not debate Gina Hinojosa.,1,56.93,31445,34,1
+2026-10-19T05:34+00:00,2026-10-19T00:58:16.167000+00:00,governor-race-live,114,Republicans have led Texas for more than three decades.,2,49.17,213898,7,1
+2026-10-19T05:34+00:00,2026-10-19T00:58:16.167000+00:00,governor-race-live,488,Texas Republicans have had decades in power and have no credibility promising to fix problems they have not fixed.,3,45.28,213898,5,1
+2026-10-19T05:34+00:00,2026-10-19T00:58:16.167000+00:00,governor-race-live,929,Texans should vote for Democrats.,4,31.21,2412,7,0
+2026-10-19T05:34+00:00,2026-10-19T00:58:16.167000+00:00,governor-race-live,164,Gina Hinojosa would save Texas schools and put money in Texans' pockets.,5,5.75,2412,5,0
+2026-10-19T05:36+00:00,2026-10-18T21:00:00+00:00,patrick-live,180,Texans should vote to keep Texas red.,1,34.91,53355,3,1
+2026-10-19T05:36+00:00,2026-10-18T21:00:00+00:00,patrick-live,2,A UT poll shows Vikki Goodwin leading Dan Patrick 49% to 46% in the Lieutenant Governor race.,2,33.16,3930,7,0
+2026-10-19T05:47+00:00,2026-10-19T04:10:29.852000+00:00,paxton-live,229,Ken Paxton has to win the Senate race.,1,48.82,4640,46,0
+2026-10-19T05:47+00:00,2026-10-19T04:10:29.852000+00:00,paxton-live,41,The Wall Street Journal published a video of Ken Paxton partying in Dubai with two American fugitives indicted on embezz,2,45.17,7759,21,0
+2026-10-19T05:47+00:00,2026-10-19T04:10:29.852000+00:00,paxton-live,4936,Most of Ken Paxton's campaign donations come from Elon Musk.,3,24.25,5346,2,0
+2026-10-19T05:47+00:00,2026-10-19T04:10:29.852000+00:00,paxton-live,116,Ken Paxton is corrupt.,4,11.93,11223,88,0
+2026-10-19T05:47+00:00,2026-10-19T04:10:29.852000+00:00,paxton-live,195,James Talarico hates Texans.,5,7.25,3080,12,0
+2026-10-19T05:51+00:00,2026-10-19T04:10:29.852000+00:00,trump-texas-live,123,The claim that James Talarico was at a mental health facility in Ohio is a lie spread by MAGA grifters.,1,42.22,16689,10,0
+2026-10-19T05:51+00:00,2026-10-19T04:10:29.852000+00:00,trump-texas-live,937,Donald Trump said at a Denton rally that Republicans need Ken Paxton badly.,2,25.32,7794,2,0
+2026-10-19T05:51+00:00,2026-10-19T04:10:29.852000+00:00,trump-texas-live,2012,The Wall Street Journal reports that Ken Paxton partied in Dubai with fugitives ahead of the Texas Senate race.,3,25.32,7794,2,0
+2026-10-19T05:53+00:00,2026-10-18T21:00:44+00:00,vance-texas-live,41,Brandon Gill is a rising star in the Republican Party.,1,25.05,7083,2,0
+2026-10-19T05:57+00:00,2026-10-18T21:08:48+00:00,issue-av-live,443,"On a Sunday afternoon in Austin, Tesla Robotaxi prices and wait times beat UberX, with a Cybercab at $9.53 and a 1 minut",1,24.17,5202,2,0
+2026-10-19T06:02+00:00,2026-10-18T20:34:13+00:00,issue-data-centers-live,102,El Paso and New Mexico each spent millions of dollars on plans to address climate change and cut greenhouse gas emission,1,27.42,16402,2,0
+2026-10-19T06:02+00:00,2026-10-18T20:34:13+00:00,issue-data-centers-live,103,Neither the El Paso plan nor the New Mexico plan considered how three new data centers could upend their climate goals.,2,27.42,16402,2,0
+2026-10-19T06:05+00:00,2026-10-19T05:23:00.413000+00:00,issue-election-integrity-live,405,The Republican Party is going to do badly in the midterm elections.,1,25.06,2472,3,0
+2026-10-19T06:05+00:00,2026-10-19T05:23:00.413000+00:00,issue-election-integrity-live,448,"In July, Donald Trump gave a primetime address from the White House saying US elections are rigged.",2,22.07,2472,2,0
+2026-10-19T06:06+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,6,"Dillard's, a $10 billion retailer, moved its primary listing to the Texas Stock Exchange after nearly four decades (37 y",1,42.11,90545,5,1
+2026-10-19T06:06+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,2,"The Texas Stock Exchange in Dallas is emerging as a challenger and rival to the NYSE, Nasdaq and Wall Street.",2,33.01,13217,4,0
+2026-10-19T06:06+00:00,2026-10-09T19:07:58+00:00,issue-financial-services-live,16,"Primary listings are moving out of New York and into Texas, with more companies following.",3,23.91,4742,2,0
+2026-10-19T06:15+00:00,2026-10-18T19:50:25+00:00,issue-housing-live,49,Republicans have governed Texas for 30 years.,1,34.8,223384,2,0
+2026-10-19T06:20+00:00,2026-10-12T21:25:22+00:00,issue-victim-services-live,1,"Ken Paxton's office negotiated a plea deal reducing felony charges against Adam Hoffman, a former Waco attorney, to misd",1,33.97,166762,2,0
