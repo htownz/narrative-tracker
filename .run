@@ -1,12 +1,2 @@
-# first run of the eleven roster-driven issue trackers (queued behind the run in progress)
-incidents/issue-border-live.yaml
-incidents/issue-broadband-live.yaml
-incidents/issue-centerpoint-live.yaml
-incidents/issue-economic-development-live.yaml
-incidents/issue-financial-services-live.yaml
-incidents/issue-food-security-live.yaml
-incidents/issue-k12-live.yaml
-incidents/issue-local-control-live.yaml
-incidents/issue-oil-gas-live.yaml
-incidents/issue-tort-reform-live.yaml
-incidents/issue-victim-services-live.yaml
+# deploy only: rebuild the site with the mistruth model (hub queue, insights section 11)
+none
