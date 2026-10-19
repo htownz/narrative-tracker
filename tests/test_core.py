@@ -803,3 +803,71 @@ def test_mistruth_priors_are_out_of_time_and_the_model_scores_unverified_claims(
     picked = verify.candidates(st, 100, 4, {"1": 0.1, "2": 0.2, "3": 0.3, "4": 0.4, "5": 0.9, "6": 0.8})
     assert [c["id"] for c in picked] == [1, 2, 5, 6] and picked[2]["mistruth"] == 0.9
     st.close()
+
+
+def test_growth_model_validates_in_time_order_and_shadows_the_heuristic(tmp_path, monkeypatch):
+    import random
+    from tracker import growth, scorecard
+    from tracker.features import COLUMNS
+    monkeypatch.setattr(growth, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(growth, "DATA_DIR", tmp_path / "data")
+    monkeypatch.setattr(scorecard, "DATA_DIR", tmp_path / "data")
+    (tmp_path / "data" / "features").mkdir(parents=True)
+    random.seed(11)
+    rows = []
+    # 48 snapshots of 60 claims on two trackers, four a day for six days; the claims that gain are the ones with
+    # many accounts and a burst — something the heuristic only half sees
+    for s in range(48):
+        asof = f"2026-10-{1 + s // 8:02d}T{(s % 8) * 3:02d}:00:00+00:00"
+        for slug in ("a", "b"):
+            claims = []
+            for i in range(60):
+                accounts, burst = random.randint(2, 40), round(random.random(), 2)
+                strength = accounts / 40 + burst + random.gauss(0, 0.25)
+                claims.append({**{c: "" for c in COLUMNS}, "run_at": asof, "asof": asof, "slug": slug, "kind": "claim", "key": f"{slug}{s}-{i}", "label": f"claim {i}",
+                               "age_h": random.randint(1, 200), "posts": accounts * 2, "views": random.randint(1_000, 900_000), "accounts": accounts, "copies": 0,
+                               "first_views": 1000, "first_followers": 500, "views_1h": 100, "views_6h": random.randint(0, 60_000), "views_24h": 20_000,
+                               "momentum_6h": round(random.uniform(0.5, 3), 2), "control": random.randint(0, 60), "new_accounts": 0.1, "burst": burst, "event_follow": 0,
+                               "_strength": strength})
+            top = {c["key"] for c in sorted(claims, key=lambda c: -c["_strength"])[:5]}
+            for c in claims:
+                c["gain_24h"] = int(c["_strength"] * 1000) if c["key"] in top else 10
+                c["top5_24h"] = int(c["key"] in top)
+                c["measured"] = 1
+                del c["_strength"]
+            rows += claims
+    with (tmp_path / "data" / "features" / "a.csv").open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=COLUMNS); w.writeheader(); w.writerows(rows)
+    with (tmp_path / "data" / "features" / "picks.csv").open("w", encoding="utf-8", newline="") as f:
+        f.write("run_at,asof\n")                              # the scorecard's log is not a feature table
+    data = growth.dataset(growth.feature_rows())
+    assert len(data) == 48 * 2 * 60 and data == sorted(data, key=lambda d: d["asof"])
+    report = growth.fit_and_report(data)
+    sp = report["split"]
+    from datetime import datetime as dt, timedelta as td
+    gap_rows = [d for d in data if dt.fromisoformat(sp["cutoff"]) <= dt.fromisoformat(d["asof"]) < dt.fromisoformat(sp["cutoff"]) + td(hours=24)]
+    assert gap_rows and sp["train"] + sp["test"] + len(gap_rows) == len(data)          # a full day between the last training label and the first test row
+    m = report["models"]
+    assert m[report["chosen"]]["p_at_5"] > m["heuristic"]["p_at_5"] and m[report["chosen"]]["auc"] > 0.8 and report["use_model"] is True
+    out = growth.growth()
+    assert (tmp_path / "out" / "growth" / "model.pkl").exists() and "_model" not in json.loads(out.read_text(encoding="utf-8"))
+    # a new snapshot: both rankings come back, the model's drives the hub, both are logged with their method
+    snap = [r for r in rows if r["asof"] == rows[-1]["asof"] and r["slug"] == "a"]
+    new_rows = [scorecard._num(r) for r in snap]
+    for r in new_rows:
+        r["burst"] = float(r["burst"]); r["views"] = int(r["views"]); r["posts"] = int(r["posts"]); r["copies"] = 0
+    rk = growth.rank_with_model(new_rows)
+    assert rk["method"] == "model" and rk["model"][0]["p_grow"] >= rk["model"][1]["p_grow"] and "heuristic" in rk["model"][0] and len(rk["heuristic"]) == len(rk["model"])
+    scorecard.log_picks("a", rk["heuristic"], "snap", "r", "heuristic", shown=False)
+    scorecard.log_picks("a", rk["model"], "snap", "r", "model", shown=True)
+    with (tmp_path / "data" / "features" / "picks.csv").open(encoding="utf-8", newline="") as f:
+        logged = list(csv.DictReader(f))
+    assert len(logged) == 20 and {r["method"] for r in logged} == {"heuristic", "model"} and all(r["eligible"] == "0" for r in logged if r["method"] == "heuristic")
+    assert logged[10]["p_grow"] and not logged[0]["p_grow"]
+    # without a trusted model the heuristic keeps the hub, and the model is still ranked in shadow
+    rk2 = growth.rank_with_model(new_rows, {**growth.load_model(), "use_model": False})
+    assert rk2["method"] == "heuristic" and rk2["model"] is not None
+    # the scorecard reads both methods on the same snapshots
+    labelled = [{**r, "asof": "snap"} for r in snap]
+    s = scorecard.scorecard(labelled)
+    assert s["model"]["picks"]["n"] == 10 and s["model"]["heuristic_same_snapshots"]["n"] == 10 and s["model"]["snapshots"] == 1 and s["model"]["live"] > 0

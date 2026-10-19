@@ -37,7 +37,7 @@ def trackers() -> list[dict[str, Any]]:
     """Every rendered, non-synthetic tracker with its title, group and which pages exist."""
     out = []
     for d in sorted(OUT_DIR.iterdir()):
-        if not d.is_dir() or d.name in ("accounts", "insights", "clients", "mistruth") or not (d / "index.html").exists() or not (d / "data.json").exists():
+        if not d.is_dir() or d.name in ("accounts", "insights", "clients", "mistruth", "growth") or not (d / "index.html").exists() or not (d / "data.json").exists():
             continue
         try:
             meta = json.loads((d / "data.json").read_text(encoding="utf-8")).get("meta", {})

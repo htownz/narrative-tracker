@@ -352,6 +352,23 @@ def mistruth_block() -> dict[str, Any]:
             "n_labelled": m.get("n_labelled"), "base_rate": m.get("base_rate"), "threshold": thr, "trained_at": m.get("trained_at")}
 
 
+def growth_block() -> dict[str, Any]:
+    """The growth model's last report (tracker/growth.py writes out/growth/model.json), read, not retrained."""
+    m = _load(OUT_DIR / "growth" / "model.json")
+    empty = {"reading": "No growth model yet: python run.py growth fits it from the feature tables.", "models": [], "calibration": [], "importance": [], "use_model": False}
+    if not m:
+        return empty
+    if not m.get("models"):
+        return {**empty, "reading": m.get("status") or "Not enough labelled claim-days yet."}
+    chosen = m.get("chosen")
+    order = ["heuristic", "logistic", "gbm"]
+    models = [{"model": k + (" (kept)" if k == chosen else ""), "auc": v.get("auc"), "brier": v.get("brier"), "p_at_5": v.get("p_at_5"), "p_at_3": v.get("p_at_3"),
+               "breakouts": f'{v.get("breakout_hits", 0)} of {v.get("breakout_picks", 0)}'} for k in order for v in [m["models"].get(k)] if v]
+    sp = m.get("split") or {}
+    return {"reading": m["reading"], "models": models, "calibration": m["models"].get(chosen, {}).get("calibration", []), "importance": m.get("importance", []),
+            "use_model": bool(m.get("use_model")), "split": sp, "trained_at": m.get("trained_at"), "n_labelled": m.get("n_labelled")}
+
+
 def markets(trackers: list[str]) -> dict[str, Any]:
     rows = []
     titles = _titles()
@@ -386,7 +403,7 @@ def insights() -> Path:
         "first_poster": first_poster_size(rows), "early_touch": early_touch(rows, claims_by_tracker), "control": control_vs_growth(rows),
         "events": event_response(trackers), "lead_lag": lane_lead_lag(trackers), "verdicts": verdicts_by_lane(trackers, claims_by_tracker),
         "pushback": pushback_vs_reach(trackers), "news": news_crossover(trackers, claims_by_tracker), "markets": markets(trackers),
-        "platforms": platforms(trackers, claims_by_tracker), "mistruth": mistruth_block(),
+        "platforms": platforms(trackers, claims_by_tracker), "mistruth": mistruth_block(), "growth": growth_block(),
     }
     (OUT_DIR / "insights.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     page = render(out)
@@ -428,6 +445,9 @@ def render(out: dict[str, Any]) -> Path:
     e = html.escape
     sc = out["scorecard"]
     sc_rows = [{"set": "All picks", **sc["all"]}, {"set": "Ranks 1–3", **sc["top3"]}, {"set": "Ranks 4–10", **sc["rank4_10"]}, {"set": "Shown on the hub", **sc["shown"]}]
+    scm = sc.get("model") or {}
+    if scm.get("picks", {}).get("n"):
+        sc_rows += [{"set": f"Growth model picks ({'live' if scm.get('live') else 'shadow'})", **scm["picks"]}, {"set": "Heuristic on the same snapshots", **scm["heuristic_same_snapshots"]}]
     sc_latest = [{"tracker": r["slug"], "rank": r["rank"], "claim": r["label"], "views_6h": r["views_6h"], "gain_24h": r["gain_24h"], "result": "top five" if r["hit"] else "—"} for r in sc["latest"]]
     secs = [
         ("0. Scorecard: did the flagged claims grow?", sc["reading"],
@@ -453,6 +473,15 @@ def render(out: dict[str, Any]) -> Path:
             f'Trained {html.escape(str(out["mistruth"].get("trained_at") or "")[:16])} on {out["mistruth"].get("n_labelled")} verified claims, base rate {(out["mistruth"].get("base_rate") or 0):.0%} false.</p>' if out["mistruth"]["models"] else "")
          + (("<h3 style=\"font-size:13px;margin:14px 0 4px\">Verify first</h3><p class=\"muted\">The highest-scored unverified claims across trackers (20,000+ views). A queue for checking, not a judgment; the verify step takes half its slots from here.</p>"
              + _table([("Tracker", "tracker", False), ("Claim", "claim", False), ("Views", "views", True), ("First poster", "first", False), ("Score", "score", True)], out["mistruth"]["queue"])) if out["mistruth"]["queue"] else "")),
+        ("12. Growth model: can tomorrow's top five be picked today, better than the one-line heuristic?", out["growth"]["reading"],
+         _table([("Ranker", "model", False), ("AUC", "auc", True), ("Brier", "brier", True), ("Top-5 picks that hit", "p_at_5", True), ("Top-3 picks that hit", "p_at_3", True), ("Hits not already top 5 by views", "breakouts", False)], out["growth"]["models"])
+         + (_table([("Score bin (held out)", "bin", True), ("Claim-days", "n", True), ("Mean probability", "mean_score", True), ("Reached top 5", "top5_share", True)], out["growth"]["calibration"]) if out["growth"]["calibration"] else "")
+         + (_table([("Feature", "feature", False), ("Weight", "weight", True)], out["growth"]["importance"]) if out["growth"]["importance"] else "")
+         + (f'<p class="muted">Outcome: the claim is in its tracker\'s top five by views gained over the next 24 hours, on snapshots where {MIN_FIELD}+ claims competed. Features are the feature-table row (views, accounts, momentum, control, burst, '
+            f'event-follow, press coverage, the first poster\'s registry stats, the heuristic itself) and the claim\'s standing inside its snapshot (rank and share by six-hour views, rank by total views, momentum and accounts; field size). '
+            f'Time-ordered validation with a day\'s gap: trained on {out["growth"]["split"].get("train", 0):,} claim-days before {html.escape(str(out["growth"]["split"].get("cutoff", ""))[:16])}, tested on the {out["growth"]["split"].get("test", 0):,} after; '
+            f'{"the model drives the hub" if out["growth"]["use_model"] else "the heuristic still drives the hub; the model" + chr(39) + "s picks are logged in shadow and scored in section 0"}. '
+            f'Refit every run on everything labelled ({out["growth"].get("n_labelled") or 0:,} claim-days as of {html.escape(str(out["growth"].get("trained_at") or "")[:16])}).</p>' if out["growth"]["models"] else "")),
     ]
     body = "".join(f"<h2>{e(t)}</h2><p class=\"read\">{e(r)}</p>{tbl}" for t, r, tbl in secs)
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">

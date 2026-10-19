@@ -50,7 +50,7 @@ from tracker.store import Store  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "clients", "mistruth", "refresh-views", "bsky", "youtube", "lookup", "phrases", "all", "synth"])
+    ap.add_argument("command", choices=["pull", "discover", "classify", "dedup", "export", "render", "report", "video", "accounts", "analysis", "alerts", "review", "claims", "verify", "news", "rings", "control", "features", "compact", "brief", "insights", "registry", "clients", "mistruth", "growth", "refresh-views", "bsky", "youtube", "lookup", "phrases", "all", "synth"])
     ap.add_argument("incident", nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="accounts: aggregate every incident into out/accounts/")
     ap.add_argument("--days", type=int, default=7, help="brief: length of the window in days (default 7)")
@@ -83,6 +83,10 @@ def main() -> None:
     if args.command == "mistruth":                     # train the mistruth-at-first-sight model on every verified claim; score the unverified ones
         from tracker import mistruth
         mistruth.mistruth()
+        return
+    if args.command == "growth":                       # fit the growth model on the feature tables; features() uses it when it beats the heuristic
+        from tracker import growth
+        growth.growth()
         return
     if args.command == "lookup":                       # print posts by id (the incident argument carries the ids, comma-separated)
         import json as _json

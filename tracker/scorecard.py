@@ -23,7 +23,7 @@ from .config import DATA_DIR
 PICKS_PER_RUN = 10
 HUB_RANK, HUB_MIN_ACCOUNTS, HUB_MIN_VIEWS_6H = 3, 3, 20_000       # what tracker/hub.py shows as "Gaining now"
 MIN_FIELD = 10                                                   # a top-five is only a result when 10+ claims competed
-PICK_COLUMNS = ["run_at", "asof", "slug", "key", "label", "rank", "heuristic", "views_6h", "accounts", "eligible"]
+PICK_COLUMNS = ["run_at", "asof", "slug", "key", "label", "rank", "heuristic", "views_6h", "accounts", "eligible", "method", "p_grow"]
 
 
 def _picks_path() -> Path:
@@ -36,18 +36,21 @@ def hub_eligible(r: dict[str, Any], rank: int) -> bool:
     return rank <= HUB_RANK and int(r["accounts"]) >= HUB_MIN_ACCOUNTS and int(r["views_6h"]) >= HUB_MIN_VIEWS_6H
 
 
-def log_picks(slug: str, ranked: list[dict[str, Any]], asof: str, run_at: str) -> int:
-    """Append this run's picks for one tracker, replacing any earlier rows for the same snapshot."""
+def log_picks(slug: str, ranked: list[dict[str, Any]], asof: str, run_at: str, method: str = "heuristic", shown: bool = True) -> int:
+    """Append this run's picks for one tracker, replacing any earlier rows for the same snapshot and method.
+    method: "heuristic" or "model" (tracker/growth.py); shown: whether this method's picks drove the hub this
+    run — a method logged in shadow has eligible=0 so the "shown on the hub" block counts only what was shown."""
     path = _picks_path()
     rows: list[dict[str, Any]] = []
     if path.exists():
         with path.open(encoding="utf-8", newline="") as f:
-            rows = [r for r in csv.DictReader(f) if not (r["slug"] == slug and r["asof"] == asof)]
+            rows = [r for r in csv.DictReader(f) if not (r["slug"] == slug and r["asof"] == asof and (r.get("method") or "heuristic") == method)]
     new = [{"run_at": run_at, "asof": asof, "slug": slug, "key": r["key"], "label": str(r["label"])[:120], "rank": i + 1,
-            "heuristic": r["heuristic"], "views_6h": r["views_6h"], "accounts": r["accounts"], "eligible": int(hub_eligible(r, i + 1))}
+            "heuristic": r["heuristic"], "views_6h": r["views_6h"], "accounts": r["accounts"], "eligible": int(shown and hub_eligible(r, i + 1)),
+            "method": method, "p_grow": r.get("p_grow", "")}
            for i, r in enumerate(ranked[:PICKS_PER_RUN])]
     with path.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=PICK_COLUMNS)
+        w = csv.DictWriter(f, fieldnames=PICK_COLUMNS, restval="")
         w.writeheader()
         w.writerows(rows + new)
     return len(new)
@@ -86,7 +89,7 @@ def scorecard(feature_rows: list[dict[str, Any]], picks: list[dict[str, Any]] | 
         if o is None or len(by_snap[(p["slug"], p["asof"])]) < MIN_FIELD:
             continue
         scored.append({**p, "rank": int(p["rank"]), "eligible": int(p["eligible"]), "hit": int(str(o["top5_24h"]) == "1"), "gain_24h": int(float(o["gain_24h"])),
-                       "measured": str(o.get("measured")) == "1", "source": "logged"})
+                       "measured": str(o.get("measured")) == "1", "source": "logged", "method": p.get("method") or "heuristic"})
     for (slug, asof), rows in by_snap.items():
         if (slug, asof) in logged_snaps or len(rows) < MIN_FIELD or not any(r["gain_24h"] not in ("", None) for r in rows):
             continue
@@ -96,7 +99,7 @@ def scorecard(feature_rows: list[dict[str, Any]], picks: list[dict[str, Any]] | 
                 continue
             scored.append({"run_at": r["run_at"], "asof": asof, "slug": slug, "key": r["key"], "label": r["label"], "rank": i + 1, "heuristic": r["heuristic"],
                            "views_6h": r["views_6h"], "accounts": r["accounts"], "eligible": int(hub_eligible(r, i + 1)),
-                           "hit": int(str(o["top5_24h"]) == "1"), "gain_24h": int(float(o["gain_24h"])), "measured": str(o.get("measured")) == "1", "source": "backtest"})
+                           "hit": int(str(o["top5_24h"]) == "1"), "gain_24h": int(float(o["gain_24h"])), "measured": str(o.get("measured")) == "1", "source": "backtest", "method": "heuristic"})
     field = [r for (slug, asof), rows in by_snap.items() if len(rows) >= MIN_FIELD for r in rows if r["gain_24h"] not in ("", None)]
     base = (sum(int(str(r["top5_24h"]) == "1") for r in field) / len(field)) if field else None
 
@@ -108,13 +111,20 @@ def scorecard(feature_rows: list[dict[str, Any]], picks: list[dict[str, Any]] | 
     by_tracker: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in scored:
         by_tracker[r["slug"]].append(r)
-    latest_asof = max((r["asof"] for r in scored), default=None)
-    latest = sorted((r for r in scored if r["asof"] == latest_asof), key=lambda r: (r["slug"], r["rank"])) if latest_asof else []
+    # the growth model's picks (logged live or in shadow by tracker/growth.py) against the heuristic's on the same snapshots
+    model_rows = [r for r in scored if r["method"] == "model"]
+    model_snaps = {(r["slug"], r["asof"]) for r in model_rows}
+    heur_same = [r for r in scored if r["method"] == "heuristic" and (r["slug"], r["asof"]) in model_snaps]
+    heuristic_rows = [r for r in scored if r["method"] == "heuristic"]
+    latest_asof = max((r["asof"] for r in heuristic_rows), default=None)
+    latest = sorted((r for r in heuristic_rows if r["asof"] == latest_asof), key=lambda r: (r["slug"], r["rank"])) if latest_asof else []
     out = {
-        "n_scored": len(scored), "n_logged": sum(1 for r in scored if r["source"] == "logged"), "base_rate": round(base, 3) if base is not None else None,
-        "field_n": len(field), "snapshots": len({(r["slug"], r["asof"]) for r in scored}),
-        "all": block(scored), "top3": block([r for r in scored if r["rank"] <= 3]), "rank4_10": block([r for r in scored if r["rank"] > 3]),
+        "n_scored": len(heuristic_rows), "n_logged": sum(1 for r in heuristic_rows if r["source"] == "logged"), "base_rate": round(base, 3) if base is not None else None,
+        "field_n": len(field), "snapshots": len({(r["slug"], r["asof"]) for r in heuristic_rows}),
+        "all": block(heuristic_rows), "top3": block([r for r in heuristic_rows if r["rank"] <= 3]), "rank4_10": block([r for r in heuristic_rows if r["rank"] > 3]),
         "shown": block([r for r in scored if r["eligible"]]),
+        "model": {"picks": block(model_rows), "heuristic_same_snapshots": block(heur_same), "snapshots": len(model_snaps),
+                  "live": sum(1 for r in model_rows if r["eligible"]), "top3": block([r for r in model_rows if r["rank"] <= 3])},
         "by_tracker": sorted(({"tracker": slug, **block(rows)} for slug, rows in by_tracker.items()), key=lambda t: -t["n"]),
         "latest_asof": latest_asof, "latest": [{k: r[k] for k in ("slug", "rank", "label", "views_6h", "hit", "gain_24h", "eligible")} for r in latest][:30],
         "median_gain_hits": int(statistics.median(r["gain_24h"] for r in scored if r["hit"])) if any(r["hit"] for r in scored) else None,
@@ -136,6 +146,11 @@ def reading(s: dict[str, Any]) -> str:
         text += f"The top three picks hit {t3['hit_rate']:.0%}; ranks four to ten, {s['rank4_10']['hit_rate']:.0%}. "
     if shown["n"] >= 10:
         text += f"The picks the hub actually showed hit {shown['hit_rate']:.0%} (N={shown['n']}). "
+    m = s.get("model") or {}
+    if m.get("picks", {}).get("n", 0) >= 20:
+        mp, hs = m["picks"], m["heuristic_same_snapshots"]
+        text += (f"The growth model's picks, logged {'live' if m.get('live') else 'in shadow'} since the model was fit, hit {mp['hit_rate']:.0%} (N={mp['n']}) "
+                 f"against the heuristic's {hs['hit_rate']:.0%} on the same {m['snapshots']} snapshots. ")
     if a["lift"] is not None:
         verdict = ("The heuristic earns its place on the hub." if a["lift"] >= 2 else "The heuristic is better than nothing, not by much." if a["lift"] >= 1.3
                    else "The heuristic is not beating chance; the hub's flags should be read as activity, not prediction.")

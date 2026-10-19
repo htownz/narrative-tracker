@@ -343,7 +343,9 @@ whether the hub's "Gaining now" list showed it). A day later the feature table h
 page scores them: how often the picks reached the tracker's top five within 24h against the base rate of every
 claim competing that day, overall, by rank, and for the hub-shown picks only; snapshots older than the log are
 backtested with the same heuristic. The verdict line holds until 50 picks are scored. This is the bar the growth
-model has to beat (`tracker/scorecard.py`).
+model has to beat (`tracker/scorecard.py`). Picks carry a `method` column: the growth model's picks are logged
+beside the heuristic's every run (in shadow until the model earns the hub), and the scorecard shows both on
+the same snapshots.
 
 ## Poll releases as events
 
@@ -428,6 +430,29 @@ whether it followed a calendar event, and the Kalshi price and its 24h change. T
 the row's moment, so after two or three weeks the file is a labelled training set. Until then, a heuristic
 (6h views × momentum × accounts, unexplained bursts up-weighted) ranks claims "likely to grow" into
 `out/<slug>/features.json`, and the hub shows the strongest across trackers as "Gaining now".
+
+## Growth model
+
+`python run.py growth` (the job runs it before the per-tracker loop and again at assembly) fits a model on the
+feature tables for the outcome the scorecard measures: will this claim be in its tracker's top five by views
+gained over the next 24 hours, on snapshots where ten or more claims competed. Features are the row's own
+numbers (views, accounts, momentum, control, burst, event-follow, press coverage, the first poster's registry
+stats, the heuristic score itself) and the claim's standing inside its snapshot — rank and share by six-hour
+views, rank by total views, momentum and accounts, field size — because the outcome is a rank. Logistic
+regression and gradient boosting are tried; validation is time-ordered with a day's gap (train on snapshots
+before the cutoff, test on the newest quarter of claim-days starting 24 hours after it, so no training label
+is computed from the test period). The report (`out/growth/model.json`) gives, for the heuristic and each
+learner, the number that matters — of the five claims each ranks highest per snapshot, how many hit — plus
+AUC, Brier, calibration, the top features, and how many hits were breakouts (not already top five by views).
+
+The switch is earned, not assumed: the model drives the hub's "Gaining now" list only when it beats the
+heuristic's precision@5 by 10 points across at least 20 held-out snapshots (`use_model` in the report). Until
+then the heuristic keeps the hub and `features` logs the model's picks in shadow, so the scorecard (insights
+section 0) shows both methods live on the same snapshots; section 12 carries the report. First fit (Oct 19,
+26,343 labelled claim-days over four days): the model's top-five picks hit 38–40% against the heuristic's 20%
+on 13 test snapshots, AUC 0.89 vs 0.59, with most of its hits claims that were not yet leaders — enough edge,
+not yet enough snapshots. The fitted model is pickled to `out/growth/model.pkl` for the same job's
+`features` step; nothing in `out/growth/` is committed.
 
 ## Next
 

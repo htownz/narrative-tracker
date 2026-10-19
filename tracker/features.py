@@ -233,15 +233,21 @@ def features(inc: Incident) -> Path:
         w.writeheader()
         for r in existing + new_rows:
             w.writerow({c: ("" if r.get(c) is None else r.get(c)) for c in COLUMNS})
-    ranked = rank_now(new_rows)[:10]
+    from .growth import rank_with_model
     from .scorecard import log_picks
-    log_picks(inc.slug, ranked, asof.isoformat(), run_at)          # scored a day later against this table (tracker/scorecard.py)
+    rankings = rank_with_model(new_rows)                           # the heuristic, and the growth model's ranking when one is on disk
+    method = rankings["method"]
+    log_picks(inc.slug, rankings["heuristic"], asof.isoformat(), run_at, "heuristic", shown=method == "heuristic")   # scored a day later (tracker/scorecard.py)
+    if rankings["model"] is not None:
+        log_picks(inc.slug, rankings["model"], asof.isoformat(), run_at, "model", shown=method == "model")          # live, or in shadow until it earns the hub
+    ranked = rankings[method][:10]
     labelled = sum(1 for r in existing if r.get("gain_24h") not in ("", None))
     out = {"generated_at": run_at, "asof": asof.isoformat(), "slug": inc.slug, "title": inc.title,
-           "rows_total": len(existing) + len(new_rows), "rows_labelled_24h": labelled,
-           "likely_to_grow": [{k: r[k] for k in ("key", "label", "views", "views_6h", "momentum_6h", "accounts", "control", "event_follow", "heuristic")} for r in ranked]}
+           "rows_total": len(existing) + len(new_rows), "rows_labelled_24h": labelled, "method": method,
+           "likely_to_grow": [{k: r.get(k) for k in ("key", "label", "views", "views_6h", "momentum_6h", "accounts", "control", "event_follow", "heuristic", "p_grow")} for r in ranked]}
     (inc.out_dir / "features.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {path}  (+{len(new_rows)} rows this run, {len(existing) + len(new_rows)} total, {filled} outcomes filled, {labelled} rows with a 24h outcome)")
     for r in ranked[:5]:
-        print(f"  gaining: {r['label'][:70]}  6h={r['views_6h']:,} momentum={r['momentum_6h']} accounts={r['accounts']} control={r['control']}")
+        print(f"  gaining ({method}): {r['label'][:70]}  6h={r['views_6h']:,} momentum={r['momentum_6h']} accounts={r['accounts']} control={r['control']}"
+              + (f" p={r['p_grow']}" if r.get("p_grow") is not None else ""))
     return path

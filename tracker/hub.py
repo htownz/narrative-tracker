@@ -76,7 +76,7 @@ def sources_line() -> str:
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     cards = []
     for d in sorted(OUT_DIR.iterdir()):
-        if d.name in ("accounts", "insights", "clients", "mistruth"):
+        if d.name in ("accounts", "insights", "clients", "mistruth", "growth"):
             continue
         data_path = d / "data.json"
         if not (d / "index.html").exists() or not data_path.exists():
@@ -162,15 +162,20 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
             fj = json.loads(fp.read_text(encoding="utf-8"))
         except ValueError:
             continue
+        by_model = fj.get("method") == "model"
         for r in fj.get("likely_to_grow", [])[:3]:
             if r["accounts"] >= 3 and r["views_6h"] >= 20_000:
-                gaining.append((r["heuristic"], d.name, r))
+                gaining.append((r.get("p_grow") if by_model and r.get("p_grow") is not None else r["heuristic"], d.name, r, by_model))
     gaining.sort(key=lambda g: -g[0])
     if gaining:
         lis = "".join(f'<li><b>{html.escape(r["label"])}</b> <span style="color:#7c7c78">in <a href="{html.escape(slug)}/claims.html" style="color:#8cf">{html.escape(slug)}</a> · {r["views_6h"]:,} views in 6h'
-                      f'{" · " + str(r["momentum_6h"]) + "× the prior 6h" if r["momentum_6h"] not in (None, 99.0) else " · new"} · {r["accounts"]} accounts{" · after a calendar event" if r["event_follow"] else ""}</span></li>'
-                      for _, slug, r in gaining[:6])
-        alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#8fb4ff">Gaining now</h2><p class="lead" style="margin:0 0 6px">Claims with the most momentum over the last six hours of data, from more than one account.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
+                      f'{" · " + str(r["momentum_6h"]) + "× the prior 6h" if r["momentum_6h"] not in (None, 99.0) else " · new"} · {r["accounts"]} accounts{" · after a calendar event" if r["event_follow"] else ""}'
+                      f'{" · " + format(r["p_grow"], ".0%") + " chance of the top five" if by_model and r.get("p_grow") is not None else ""}</span></li>'
+                      for _, slug, r, by_model in gaining[:6])
+        any_model = any(g[3] for g in gaining)
+        lead = ("Claims the growth model gives the best chance of reaching their tracker's top five by tomorrow (<a href=\"insights/\" style=\"color:#8cf\">how it scores</a>)." if any_model
+                else "Claims with the most momentum over the last six hours of data, from more than one account.")
+        alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#8fb4ff">Gaining now</h2><p class="lead" style="margin:0 0 6px">' + lead + '</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
     # what electeds said: the biggest official posts across trackers this week
     try:
         from .officials import said_everywhere

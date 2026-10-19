@@ -97,6 +97,7 @@ jobs:
           WEEKLY=$([ "$(date -u +%u%H)" = "711" ] && echo 1 || echo 0)   # Sunday 11:17 UTC run: also refresh view counts
           python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
           python run.py mistruth || true      # the mistruth-at-first-sight model from every verified claim; scores decide half of what gets verified this run
+          python run.py growth || true        # the growth model from the feature tables; features() ranks by it once it beats the heuristic, logs it in shadow before
           python -m tracker.newsfeeds || true  # the Texas and national press into data/news.sqlite (bucket-synced), for claim coverage
           python -m tracker.truth || true      # Trump's Truth Social posts (archive feed) into the same store: events + posts
           for inc in ${{ steps.pick.outputs.incidents }}; do
@@ -155,6 +156,7 @@ jobs:
           python -m tracker.status site || true
           python run.py accounts --all || true
           python run.py mistruth || true       # refresh the verify-first queue from this run's verdicts (the hub and insights read it)
+          python run.py growth || true         # refresh the growth model report with this run's outcomes (insights section 12)
           python run.py insights || true       # cross-tracker correlations page, from out/ and the feature tables
           python run.py clients || true        # the client desk, from incidents/clients.yaml and the trackers' outputs
           python -m tracker.site site      # copies every tracker's pages, puts the navigation bar on each, builds the hub

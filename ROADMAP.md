@@ -153,9 +153,11 @@ link-ring and control scores on every lane, a weekly brief. Everything below bui
    plain-language reading written by rule. First readings (N=647 claim-days): a first poster with 1M+ followers
    doubles the chance of the top five (12% vs 6%); polls move lanes most (median 1.67×); 75 of 210 verified
    claims were unsupported or misleading; the lanes answered fastest are the biggest ones.
-2. **Growth model (data ≥ 2 weeks, ~Nov 1).** Gradient-boosted classifier for O1 on the feature table with
-   time-ordered validation; calibration shown on the hub; "Likely to grow" switches from the heuristic to model
-   probability. AUC reported honestly, including when it is near 0.5.
+2. **Growth model — first fit Oct 19 (`tracker/growth.py`), ahead of the ~Nov 1 plan.** Logistic vs gradient
+   boosting for O1 on the feature table plus within-snapshot rank features; time-ordered validation with a
+   day's gap. First fit: top-five picks 38–40% vs the heuristic's 20% (base 1%), AUC 0.89 vs 0.59, on 13 test
+   snapshots. The hub switches to model probability only once the edge holds across 20 snapshots; until then
+   the model's picks are logged in shadow and scored beside the heuristic's. Re-read ~Oct 22.
 3. **Mistruth-at-first-sight — built Oct 19 (`tracker/mistruth.py`).** Logistic regression vs gradient
    boosting on wording, stance, first poster, platform, event-follow and out-of-time poster/lane/tracker
    false-share priors; time-ordered 70/30 validation. First fit on 536 verdicts: AUC 0.69, top fifth 66% false
