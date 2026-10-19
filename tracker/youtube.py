@@ -23,8 +23,9 @@ from .config import Incident
 from .store import Store, parse_created_at
 
 API = "https://www.googleapis.com/youtube/v3"
-PULL_EVERY_H = 20
-PAGES_FIRST_RUN = 2          # 100 newest videos per query on the first pull; 50 per day after (11 trackers must fit the 10,000-unit day)
+PULL_EVERY_H = 40            # every other day per tracker: 26 trackers x 4 queries x 100 units / 2 days fits the 10,000-unit day
+PAGES_FIRST_RUN = 2          # 100 newest videos per query on the first pull; 50 per pull after
+MAX_QUERIES = 4              # the first four queries of a tracker (the broadest come first)
 QUOTA_SEARCHES_PER_DAY = 60  # 6,000 units, leaving room for the statistics calls
 
 
@@ -122,7 +123,7 @@ def pull(inc: Incident, force: bool = False) -> int:
     ids: list[str] = []
     searches = 0
     try:
-        for q in inc.queries:
+        for q in inc.queries[:MAX_QUERIES]:
             if searches >= QUOTA_SEARCHES_PER_DAY:
                 break
             pages = 1 if last else PAGES_FIRST_RUN
