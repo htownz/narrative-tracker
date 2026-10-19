@@ -156,9 +156,13 @@ link-ring and control scores on every lane, a weekly brief. Everything below bui
 2. **Growth model (data ≥ 2 weeks, ~Nov 1).** Gradient-boosted classifier for O1 on the feature table with
    time-ordered validation; calibration shown on the hub; "Likely to grow" switches from the heuristic to model
    probability. AUC reported honestly, including when it is near 0.5.
-3. **Mistruth-at-first-sight (verdicts ≥ 300).** Classifier for O3 from claim type, specificity, lane,
-   originator reliability, account mix, source presence. Flags claims to verify first, which also cuts
-   verification cost.
+3. **Mistruth-at-first-sight — built Oct 19 (`tracker/mistruth.py`).** Logistic regression vs gradient
+   boosting on wording, stance, first poster, platform, event-follow and out-of-time poster/lane/tracker
+   false-share priors; time-ordered 70/30 validation. First fit on 536 verdicts: AUC 0.69, top fifth 66% false
+   vs 42% base. Scores order half of each run's verification slots, mark "verify first" on claims pages and
+   the hub, and are reported with calibration on the insights page. Never shown as a verdict. Re-read after
+   ~1,000 verdicts: if AUC has not moved past 0.7 the wording features have said what they can and the next
+   lever is the originator prior as the registry fills.
 4a. **Platforms beyond X — built Oct 16.** Bluesky (official API, signed in), YouTube (Data API, daily,
    behind a key), Trump's Truth Social (archive feed) share each tracker's store with a `source` column;
    per-platform first-seen and lag on every canonical claim; the Texas and national press in an RSS store

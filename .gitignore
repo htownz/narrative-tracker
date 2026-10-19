@@ -13,3 +13,5 @@ data/*.sqlite-journal
 out/insights.json
 out/insights/
 out/clients/
+out/mistruth/
+out/*/mistruth.json

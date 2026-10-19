@@ -749,3 +749,57 @@ def test_message_doc_phrases_are_counted_across_posts_and_press(tmp_path, monkey
     assert {x["phrase"]: x["posts"] for x in data["phrases"]}["93 to 197"] == 0
     html_text = ph.section_html(data)
     assert "press first" in html_text and "@GovAbbott" in html_text
+
+
+def test_mistruth_priors_are_out_of_time_and_the_model_scores_unverified_claims(tmp_path, monkeypatch):
+    import random
+    from tracker import mistruth as mt, verify
+    monkeypatch.setattr(mt, "OUT_DIR", tmp_path / "out")
+    random.seed(3)
+    # 240 verified claims on two trackers: absolutes posted against the subject fail checking far more often
+    def claim(i, slug):
+        absolute = i % 3 == 0
+        text = ("Ken Paxton has never once attended a hearing" if absolute else f"Ken Paxton attended {i} hearings in 2026")
+        y_false = random.random() < (0.8 if absolute else 0.15)
+        return {"id": i, "text": text, "type": "fact", "checkable": True, "stance": "against" if absolute else "neutral", "entities": ["Ken Paxton"],
+                "verdict": "misleading" if y_false else "supported", "first_seen": f"2026-10-{1 + (i // 24) % 28:02d}T{i % 24:02d}:{i % 60:02d}:00+00:00",
+                "first_handle": f"h{i % 7}", "first_views": 1000 * i, "first_source": "x", "event": None, "views": 50_000 + i, "lanes": [{"key": "lane_a"}]}
+    for slug, ids in (("a", range(0, 160)), ("b", range(160, 240))):
+        (tmp_path / "out" / slug).mkdir(parents=True)
+        clusters = [claim(i, slug) for i in ids]
+        clusters.append({**claim(1000 + ids[0], slug), "verdict": None, "text": "Ken Paxton has never answered a single question", "stance": "against", "views": 90_000})
+        clusters.append({**claim(1001 + ids[0], slug), "verdict": None, "text": "Ken Paxton answered 4 questions on Oct 2", "stance": "neutral", "views": 95_000})
+        clusters.append({**claim(1002 + ids[0], slug), "verdict": "unverifiable"})      # left out of training
+        (tmp_path / "out" / slug / "claims.json").write_text(json.dumps({"clusters": clusters}), encoding="utf-8")
+        (tmp_path / "out" / slug / "data.json").write_text(json.dumps({"meta": {}}), encoding="utf-8")
+    rows, meta = mt.rows()
+    assert meta["n_labelled"] == 240 and rows == sorted(rows, key=lambda r: r["first_seen"])
+    first = rows[0]
+    pi = mt.FEATURES.index("poster_prior"); ni = mt.FEATURES.index("poster_n")
+    assert first["x"][ni] == 0 and abs(first["x"][pi] - 0.4) < 1e-9        # nothing verified before the first claim: the smoothed prior only
+    seen = [r for r in rows if r["x"][ni] >= 5]
+    assert seen and all(r["x"][ni] <= sum(1 for q in rows if q["y"] is not None and q["first_handle"] == r["first_handle"] and q["first_seen"] < r["first_seen"]) for r in seen)
+    f = mt.text_features("Paxton has never met a tax increase he didn't love, said 40% of voters", ["Paxton"])
+    assert f["absolute"] == 1 and f["has_percent"] == 1 and f["attribution"] == 1 and f["n_entities"] == 1
+    report = mt.fit_and_report(rows)
+    assert report["chosen"] in ("logistic", "gbm") and report["models"][report["chosen"]]["auc"] > 0.75 and "AUC" in report["reading"]
+    out = mt.mistruth()
+    m = json.loads(out.read_text(encoding="utf-8"))
+    assert m["n_labelled"] == 240 and "_model" not in m and m["verify_first_threshold"] is not None
+    scores, thr = mt.scores_for("a")
+    assert set(scores) == {"1000", "1001"} and scores["1000"] > scores["1001"]       # the absolute attack scores above the specific count
+    q = json.loads((tmp_path / "out" / "mistruth" / "queue.json").read_text(encoding="utf-8"))["queue"]
+    assert q[0]["text"].startswith("Ken Paxton has never") and all(x["views"] >= 20_000 for x in q)
+    # the verify queue: half the slots by views, the rest by score
+    inc = _incident(tmp_path, lanes_literal="lanes:\n  - {key: x, label: X}")
+    st = Store(inc.db_path)
+    st.upsert_posts([flatten_tweet({"id": str(i), "text": f"post {i}", "createdAt": f"Mon Oct 12 {10 + i:02d}:00:00 +0000 2026", "viewCount": 1_000_000 - 100_000 * i,
+                                    "author": {"userName": "u"}}) for i in range(6)])
+    for i in range(6):
+        cid = st.add_cluster(f"claim {i}", "fact", True, "neutral", [], "2026-10-12T00:00:00+00:00")
+        st.add_claims(str(i), [{"text": f"claim {i}", "type": "fact", "checkable": True, "stance": "neutral"}], "2026-10-12T00:00:00+00:00")
+        st.assign_clusters({cid: cid})
+    assert [c["id"] for c in verify.candidates(st, 100, 4)] == [1, 2, 3, 4]                                   # no scores: biggest first
+    picked = verify.candidates(st, 100, 4, {"1": 0.1, "2": 0.2, "3": 0.3, "4": 0.4, "5": 0.9, "6": 0.8})
+    assert [c["id"] for c in picked] == [1, 2, 5, 6] and picked[2]["mistruth"] == 0.9
+    st.close()

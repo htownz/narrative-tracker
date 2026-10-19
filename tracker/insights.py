@@ -334,6 +334,24 @@ def platforms(trackers: list[str], claims_by_tracker: dict[str, dict[str, Any]])
 
 
 # ---- 9: markets ----------------------------------------------------------------------------------
+def mistruth_block() -> dict[str, Any]:
+    """The mistruth-at-first-sight model's last report (tracker/mistruth.py writes out/mistruth/), read, not retrained."""
+    m = _load(OUT_DIR / "mistruth" / "model.json")
+    q = _load(OUT_DIR / "mistruth" / "queue.json")
+    if not m:
+        return {"reading": "No model yet: python run.py mistruth trains it from the verified claims.", "models": [], "calibration": [], "importance": [], "queue": []}
+    if not m.get("models"):
+        return {"reading": m.get("status") or "Not enough verified claims yet.", "models": [], "calibration": [], "importance": [], "queue": []}
+    chosen = m.get("chosen")
+    models = [{"model": k + (" (kept)" if k == chosen else ""), "auc": v["auc"], "brier": v["brier"], "precision_top_fifth": v["precision_top_fifth"]} for k, v in m["models"].items()]
+    cal = m["models"][chosen]["calibration"] if chosen else []
+    thr = (q or {}).get("threshold")
+    queue = [{"tracker": x["slug"], "claim": x["text"], "views": x["views"], "first": "@" + x["first_handle"], "score": x["score"]}
+             for x in (q or {}).get("queue", []) if thr is None or x["score"] >= thr][:12]
+    return {"reading": m["reading"], "models": models, "calibration": cal, "importance": m.get("importance", []), "queue": queue,
+            "n_labelled": m.get("n_labelled"), "base_rate": m.get("base_rate"), "threshold": thr, "trained_at": m.get("trained_at")}
+
+
 def markets(trackers: list[str]) -> dict[str, Any]:
     rows = []
     titles = _titles()
@@ -368,7 +386,7 @@ def insights() -> Path:
         "first_poster": first_poster_size(rows), "early_touch": early_touch(rows, claims_by_tracker), "control": control_vs_growth(rows),
         "events": event_response(trackers), "lead_lag": lane_lead_lag(trackers), "verdicts": verdicts_by_lane(trackers, claims_by_tracker),
         "pushback": pushback_vs_reach(trackers), "news": news_crossover(trackers, claims_by_tracker), "markets": markets(trackers),
-        "platforms": platforms(trackers, claims_by_tracker),
+        "platforms": platforms(trackers, claims_by_tracker), "mistruth": mistruth_block(),
     }
     (OUT_DIR / "insights.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     page = render(out)
@@ -426,6 +444,15 @@ def render(out: dict[str, Any]) -> Path:
         ("8. Crossing into the news", out["news"]["reading"], _table([("Verdict", "verdict", False), ("Checked", "n", True), ("3+ outlets in 48h", "p_crossover", True)], out["news"]["table"]) + _table([("Claim", "claim", False), ("Outlets in 48h", "outlets_48h", True), ("By lean", "sides", False), ("Verdict", "verdict", False), ("Views", "views", True)], out["news"].get("top", []))),
         ("9. Where claims start: X, Bluesky, YouTube", out["platforms"]["reading"], _table([("Platform", "platform", False), ("First on cross-platform claims", "first_on_cross_claims", True), ("Share", "share", True), ("Median lead h", "median_lag_h", True)], out["platforms"]["table"])),
         ("10. Markets", out["markets"]["reading"], _table([("Tracker", "tracker", False), ("Market", "market", False), ("Lane", "lane", False), ("Best lag h", "lag_h", True), ("r", "r", True)], out["markets"]["table"])),
+        ("11. Mistruth at first sight: can a claim be flagged before anyone checks it?", out["mistruth"]["reading"],
+         _table([("Learner", "model", False), ("AUC", "auc", True), ("Brier", "brier", True), ("Top fifth false", "precision_top_fifth", True)], out["mistruth"]["models"])
+         + (_table([("Score bin (held out)", "bin", True), ("Claims", "n", True), ("Mean score", "mean_score", True), ("Actually false", "false_share", True)], out["mistruth"]["calibration"]) if out["mistruth"]["calibration"] else "")
+         + (_table([("Feature", "feature", False), ("Weight", "weight", True)], out["mistruth"]["importance"]) if out["mistruth"]["importance"] else "")
+         + (f'<p class="muted">Features are only what is visible when the claim first appears: wording (numbers, quotes, attribution, absolutes), stance, the first poster\'s size, platform and whether they are an official, '
+            f'whether it followed a calendar event, and the first poster\'s and lane\'s share of false claims among claims verified before this one appeared. Validation is time-ordered (train on the earliest 70%, test on the latest 30%). '
+            f'Trained {html.escape(str(out["mistruth"].get("trained_at") or "")[:16])} on {out["mistruth"].get("n_labelled")} verified claims, base rate {(out["mistruth"].get("base_rate") or 0):.0%} false.</p>' if out["mistruth"]["models"] else "")
+         + (("<h3 style=\"font-size:13px;margin:14px 0 4px\">Verify first</h3><p class=\"muted\">The highest-scored unverified claims across trackers (20,000+ views). A queue for checking, not a judgment; the verify step takes half its slots from here.</p>"
+             + _table([("Tracker", "tracker", False), ("Claim", "claim", False), ("Views", "views", True), ("First poster", "first", False), ("Score", "score", True)], out["mistruth"]["queue"])) if out["mistruth"]["queue"] else "")),
     ]
     body = "".join(f"<h2>{e(t)}</h2><p class=\"read\">{e(r)}</p>{tbl}" for t, r, tbl in secs)
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">

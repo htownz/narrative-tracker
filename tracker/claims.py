@@ -345,7 +345,7 @@ def summarise(inc: Incident, store: Store) -> dict[str, Any]:
                       for k, n in sorted(lane_counts.items(), key=lambda kv: -kv[1])],
             "first_seen": first["created_at"], "first_handle": first["author_handle"], "first_handles": first_handles, "first_url": first["url"],
             "first_source": first_source, "first_name": first.get("author_name") or "", "sources": sources, "cross_platform": len(sources) > 1, "platform_lag_h": lag_h,
-            "first_views": int(first["view_count"] or 0), "last_seen": ps[-1]["created_at"],
+            "first_views": int(first["view_count"] or 0), "first_followers": int(first.get("author_followers") or 0), "last_seen": ps[-1]["created_at"],
             "views_24h": last24, "series": series,
             "top_post": max(ps, key=lambda p: int(p["view_count"] or 0))["url"],
         })
@@ -391,6 +391,7 @@ EXTRA_CSS = """
   .pill.fact { border-color:#5b8def66; color:#8fb4ff; } .pill.prediction { border-color:#c084fc66; color:#d8b4fe; } .pill.call_to_action { border-color:#2fbf8c66; color:#5fd9a8; }
   .pill.check { border-color:#e08a2e66; color:#f0b06a; } .pill.against { color:#ff8a80; } .pill.for { color:#7fd9a2; }
   .pill.unsupported, .pill.misleading { background:#5a1d1d; border-color:#ff5252; color:#ffb3b3; } .pill.supported { background:#163d2a; border-color:#2fbf8c; color:#9ff0c9; }
+  .pill.verify { border-color:#f0b06a; color:#f0b06a; border-style:dashed; }
   .claim { font-size:13px; line-height:1.35; max-width:52ch; } .chips span { display:inline-block; font-size:10.5px; margin:2px 6px 0 0; }
   .chips i { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:4px; vertical-align:-1px; } svg.spark { display:block; }
   .filters { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; } .filters button { background:var(--surface); color:var(--ink-2); border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:11.5px; cursor:pointer; }
@@ -467,11 +468,19 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
     except ValueError:
         pass
     s = data["stats"]
+    from .mistruth import scores_for
+    mscores, mthr = scores_for(inc.slug)
     trs = []
+    n_verify_first = 0
     for r in rows:
         pills = f'<span class="pill {r["type"]}">{html.escape((r["type"] or "").replace("_", " "))}</span>'
         if r["checkable"]:
             pills += '<span class="pill check">checkable</span>'
+        msc = mscores.get(str(r["id"])) if not r["verdict"] else None
+        verify_first = msc is not None and mthr is not None and msc >= mthr
+        if verify_first:
+            n_verify_first += 1
+            pills += f'<span class="pill verify" title="mistruth model score {msc:.2f}: this claim\'s wording, stance and first poster resemble the claims that failed verification so far. A queue for checking, not a verdict.">verify first</span>'
         if r["stance"] in ("for", "against"):
             pills += f'<span class="pill {r["stance"]}">{r["stance"]}</span>'
         if r["verdict"]:
@@ -482,7 +491,7 @@ def render_html(inc: Incident, data: dict[str, Any], top_n: int = 200) -> Path:
             src = " ".join(f'<a href="{html.escape(u)}" style="color:var(--ink-2)">[{i + 1}]</a>' for i, u in enumerate(r["verdict_sources"][:4]))
             verdict_html = f'<details><summary>why</summary><div class="muted" style="max-width:52ch">{html.escape(r.get("verdict_basis") or "")} {src}</div></details>'
         trs.append(
-            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}" data-cross="{int(bool(r.get("cross_platform")))}">'
+            f'<tr data-type="{r["type"]}" data-check="{int(r["checkable"])}" data-stance="{r["stance"]}" data-verdict="{r["verdict"] or ""}" data-verify="{int(verify_first)}" data-news="{int(bool(r.get("news") and (r["news"]["sources_48h"] or 0) >= 3))}" data-cross="{int(bool(r.get("cross_platform")))}">'
             f'<td><div class="claim">{html.escape(r["text"])}</div><div style="margin-top:4px">{pills}</div>'
             + (f'<div class="muted">after: {html.escape(r["event"])}</div>' if r.get("event") else "") + f'{verdict_html}</td>'
             f'<td><a href="{html.escape(r["first_url"] or "#")}" style="color:var(--ink)">{html.escape(_who(r))}</a><div class="muted">{fmt(r["first_seen"])} · {_fmt(r["first_views"])} views</div></td>'
@@ -509,6 +518,7 @@ Checkable means a reporter could confirm or refute it from public records. Verdi
   <button data-f="type:prediction">Predictions</button><button data-f="type:call_to_action">Calls to action</button>
   <button data-f="check:1">Checkable</button><button data-f="stance:against">Against</button><button data-f="stance:for">For</button>
   <button data-f="verdict:unsupported">Unsupported</button><button data-f="news:1">In the news</button><button data-f="cross:1">On two platforms</button>
+  {f'<button data-f="verify:1" title="unverified claims the mistruth model scores like the ones that failed checking">Verify first ({n_verify_first})</button>' if n_verify_first else ""}
 </div>
 <div class="wrap"><table id="t"><thead><tr><th>Claim</th><th>First made by</th><th class="n">Posts</th><th class="n">Views</th><th class="n">Last 24h</th><th class="n">Accounts</th><th class="n">Copies</th><th>Lanes</th><th>Platforms</th><th>News</th><th>Spread</th></tr></thead>
 <tbody>{"".join(trs)}</tbody></table></div>

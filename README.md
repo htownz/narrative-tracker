@@ -231,6 +231,31 @@ so the per-run cap is what bounds the cost.
 verify: { min_views: 100000, per_run: 5, max_searches: 5 }   # all optional
 ```
 
+## Mistruth at first sight
+
+`python run.py mistruth` (the job runs it before the per-tracker loop and again at assembly) trains a classifier
+on every verified canonical claim across trackers — label 1 for `unsupported` or `misleading`, 0 for
+`supported`; `unverifiable` is left out — from only what is visible when the claim first appears: its wording
+(numbers, percentages, money, years, quotes, attribution words, absolutes, negation, length, entity count), its
+stance, the first poster (log followers, whether an official from `incidents/officials.yaml`, which platform,
+first-post views), whether it followed a calendar event, the hour, and three out-of-time priors — the first
+poster's, the lane's and the tracker's share of false claims among claims verified *before* this one appeared,
+so no row sees its own verdict. Validation is time-ordered (train on the earliest 70%, test on the latest 30%);
+logistic regression and gradient boosting are both tried and the better held-out AUC is kept, then refit on
+everything. The report (`out/mistruth/model.json`) carries AUC, Brier, the precision of the top-scored fifth,
+a five-bin calibration table and the top features, and its reading says plainly when the model is not beating
+the base rate. Needs 150 verified claims; below that it writes a status line and nothing is flagged.
+
+What the scores do: every unverified checkable claim gets a score (`out/<slug>/mistruth.json`); the top fifth
+across trackers is "verify first". On each tracker's `claims.html` those carry a dashed **verify first** pill
+and a filter; the hub lists the biggest under "Claims to verify first"; the insights page shows the model
+report (section 11); and `verify` takes half its slots by views as before and the other half from the
+highest-scored claims above `min_views`, so verification spends on what looks most likely to be false as well
+as on what is spreading most. Scores are a queue for checking, never a verdict: nothing on the site calls an
+unverified claim false. One caveat the page states: the training set is the claims verification chose — the
+biggest ones — so scores on smaller claims are extrapolation. First fit (Oct 19, 536 verdicts): AUC 0.69, the
+top fifth 66% false against a 42% base rate; stance against the subject, entity count and absolutes carry it.
+
 ## Weekly brief
 
 `python run.py brief` (the job runs it on the Monday 6:17 AM CT run, or any run whose `.run` has a line saying

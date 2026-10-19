@@ -45,14 +45,24 @@ def _settings(inc: Incident) -> dict[str, Any]:
             "max_searches": int(v.get("max_searches", 5)), "model": v.get("model") or inc.classifier.get("model", "claude-sonnet-5-5")}
 
 
-def candidates(store: Store, min_views: int, limit: int) -> list[dict[str, Any]]:
-    rows = store.conn.execute(
+def candidates(store: Store, min_views: int, limit: int, scores: dict[str, float] | None = None) -> list[dict[str, Any]]:
+    """Unverified checkable fact claims above min_views. Biggest first; when the mistruth model has scored this
+    tracker (scores: cluster id -> score), half the slots go to the biggest claims and the rest to the highest-scored
+    of the next tier, so the queue checks both what is spreading most and what looks most likely to be false."""
+    pool = limit if not scores else limit * 6
+    rows = [dict(r) for r in store.conn.execute(
         "SELECT cl.id, cl.text, cl.type, cl.checkable, MIN(p.created_at) first_seen, SUM(p.view_count) views, COUNT(DISTINCT p.id) posts "
         "FROM claim_clusters cl JOIN claims c ON c.cluster_id = cl.id JOIN posts p ON p.id = c.post_id "
         "WHERE cl.verdict IS NULL AND cl.checkable = 1 AND cl.type = 'fact' "
         "AND cl.text NOT LIKE 'The author%' AND cl.text NOT LIKE 'The poster%' "
-        "GROUP BY cl.id HAVING views >= ? ORDER BY views DESC LIMIT ?", (min_views, limit)).fetchall()
-    return [dict(r) for r in rows]
+        "GROUP BY cl.id HAVING views >= ? ORDER BY views DESC LIMIT ?", (min_views, pool)).fetchall()]
+    if not scores or len(rows) <= limit:
+        return rows[:limit]
+    by_views = rows[:(limit + 1) // 2]
+    rest = sorted((r for r in rows if r not in by_views and str(r["id"]) in scores), key=lambda r: (-scores[str(r["id"])], -r["views"]))
+    for r in rest:
+        r["mistruth"] = scores[str(r["id"])]
+    return (by_views + rest)[:limit]
 
 
 def ask(client, model: str, claim: str, first_seen: str, subject: str, max_searches: int) -> dict[str, Any]:
@@ -99,7 +109,8 @@ def verify(inc: Incident) -> int:
         return 0
     st = _settings(inc)
     store = Store(inc.db_path)
-    todo = candidates(store, st["min_views"], st["per_run"])
+    from .mistruth import scores_for
+    todo = candidates(store, st["min_views"], st["per_run"], scores_for(inc.slug)[0])
     if not todo:
         print("verify: nothing to verify")
         store.close()
@@ -114,7 +125,7 @@ def verify(inc: Incident) -> int:
             break
         store.set_verdict(int(c["id"]), r["verdict"], r["basis"], r["sources"], datetime.now(timezone.utc).isoformat())
         done += 1
-        print(f"  {r['verdict']:<12} {c['text'][:90]}  ({int(c['views']):,} views, {len(r['sources'])} sources)")
+        print(f"  {r['verdict']:<12} {c['text'][:90]}  ({int(c['views']):,} views, {len(r['sources'])} sources{', mistruth ' + format(c['mistruth'], '.2f') if c.get('mistruth') is not None else ''})")
     store.close()
     print(f"verify: {done} claims verified this run ({len(todo) - done} left for next run)")
     return done

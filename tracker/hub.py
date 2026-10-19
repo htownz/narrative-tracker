@@ -76,7 +76,7 @@ def sources_line() -> str:
 def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
     cards = []
     for d in sorted(OUT_DIR.iterdir()):
-        if d.name in ("accounts", "insights", "clients"):
+        if d.name in ("accounts", "insights", "clients", "mistruth"):
             continue
         data_path = d / "data.json"
         if not (d / "index.html").exists() or not data_path.exists():
@@ -203,6 +203,22 @@ def build(site_dir: Path, tz: str = "America/Chicago") -> Path:
                       f'{" · still spreading: " + format(v24, ",") + " views in the last day" if v24 else ""}</span><br><span style="color:#b9b9b3;font-size:12px">{html.escape((r.get("verdict_basis") or "")[:220])}…</span></li>'
                       for v24, _, slug, r in bad[:6])
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff8a80">Debunked but spreading</h2><p class="lead" style="margin:0 0 6px">Claims that checked out as unsupported or misleading against records and reporting (sources on each tracker\'s claims page), biggest still-moving first.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>"
+    # verify first: unverified checkable claims the mistruth model scores like the ones that failed checking (a queue, not a verdict)
+    try:
+        qp = OUT_DIR / "mistruth" / "queue.json"
+        mp = OUT_DIR / "mistruth" / "model.json"
+        if qp.exists() and mp.exists():
+            q = json.loads(qp.read_text(encoding="utf-8"))
+            m = json.loads(mp.read_text(encoding="utf-8"))
+            thr = q.get("threshold")
+            top = [x for x in q.get("queue", []) if thr is not None and x["score"] >= thr][:8]
+            if top and m.get("reading"):
+                lis = "".join(f'<li><b>{html.escape(x["text"])}</b> <span style="color:#7c7c78">in <a href="{html.escape(x["slug"])}/claims.html" style="color:#8cf">{html.escape(x["slug"])}</a> · '
+                              f'{x["views"]:,} views · first @{html.escape(x["first_handle"])} · score {x["score"]:.2f}</span></li>' for x in top)
+                alerts_html += ('<h2 style="font-size:15px;margin:22px 0 6px;color:#f0b06a">Claims to verify first</h2><p class="lead" style="margin:0 0 6px">Unverified claims whose wording, stance and first poster look like the claims that failed checking so far '
+                                f'(<a href="insights/" style="color:#8cf">the model</a>: {html.escape(m["reading"].split(":", 1)[-1].split(". ")[0].strip())}). A queue for checking, not a judgment.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + lis + "</ul>")
+    except Exception:
+        pass
     if pushes:
         alerts_html += '<h2 style="font-size:15px;margin:22px 0 6px;color:#ff5252">Coordinated pushes</h2><p class="lead" style="margin:0 0 6px">Lanes and claims whose spread looks engineered: copies across accounts, new accounts, bursts, clockwork timing.</p><ul style="font-size:13px;line-height:1.5;padding-left:18px">' + "".join(pushes) + "</ul>"
     # run health strip from status.json (written by tracker.status just before the hub)
