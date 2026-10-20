@@ -399,5 +399,13 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible,method,p_gr
 2026-10-20T05:32+00:00,2026-10-20T03:30:31.400000+00:00,issue-data-centers-live,299,"Texas regulators kept approving data center permits after Greg Abbott ordered a pause, so the pause is not real.",1,28.02,6214,3,0,model,0.958
 2026-10-20T05:32+00:00,2026-10-20T03:30:31.400000+00:00,issue-data-centers-live,293,"The records sought from Greg Abbott reportedly cover state incentives, broadband, AI, data-center development and enviro",2,26.49,11794,2,0,model,0.926
 2026-10-20T05:32+00:00,2026-10-20T03:30:31.400000+00:00,issue-data-centers-live,292,"Gina Hinojosa sued Greg Abbott seeking more than 1,000 pages of unredacted communications with Elon Musk.",3,26.49,11794,2,0,model,0.925
-2026-10-20T05:33+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,26.5,11853,2,0,heuristic,
-2026-10-20T05:33+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,26.5,11853,2,0,model,0.995
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,179,Elon Musk is trying to buy the Texas election.,1,36.23,80410,3,1,heuristic,
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,310,Elon Musk wants Texas land and water and is trying to buy Texas.,2,36.23,80410,3,1,heuristic,
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,312,Texas voters should reject Elon Musk's attempt to buy the Senate seat on November 3rd.,3,31.91,80410,2,0,heuristic,
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,299,"Texas regulators kept approving data center permits after Greg Abbott ordered a pause, so the pause is not real.",4,30.24,5949,4,0,heuristic,
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,310,Elon Musk wants Texas land and water and is trying to buy Texas.,1,36.23,80410,3,0,model,0.997
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,312,Texas voters should reject Elon Musk's attempt to buy the Senate seat on November 3rd.,2,31.91,80410,2,0,model,0.997
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,179,Elon Musk is trying to buy the Texas election.,3,36.23,80410,3,0,model,0.995
+2026-10-20T17:31+00:00,2026-10-20T16:29:01+00:00,issue-data-centers-live,299,"Texas regulators kept approving data center permits after Greg Abbott ordered a pause, so the pause is not real.",4,30.24,5949,4,0,model,0.954
+2026-10-20T17:32+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,27.29,15655,2,0,heuristic,
+2026-10-20T17:32+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,27.29,15655,2,0,model,0.996
