@@ -30,3 +30,13 @@ at,run_id,slug,step,model,input_tokens,output_tokens,cache_write_tokens,cache_re
 2026-10-21T05:34:25+00:00,39549694638,issue-montera-footprint-live,extract,claude-sonnet-5-5,885,193,0,0,0,0.00555
 2026-10-21T05:34:30+00:00,39549694638,issue-montera-footprint-live,cluster,claude-sonnet-5-5,1750,566,0,0,0,0.01374
 2026-10-21T05:34:32+00:00,39549694638,issue-montera-footprint-live,alerts,claude-sonnet-5-5,1143,10,0,0,0,0.00358
+2026-10-21T17:28:51+00:00,39643600022,issue-data-centers-live,classify,claude-sonnet-5-5,4636,1024,0,0,0,0.02927
+2026-10-21T17:29:05+00:00,39643600022,issue-data-centers-live,extract,claude-sonnet-5-5,1980,2096,0,0,0,0.03738
+2026-10-21T17:29:18+00:00,39643600022,issue-data-centers-live,cluster,claude-sonnet-5-5,6756,1971,0,0,0,0.04983
+2026-10-21T17:29:55+00:00,39643600022,issue-data-centers-live,alerts,claude-sonnet-5-5,2497,1575,0,0,0,0.03112
+2026-10-21T17:30:36+00:00,39643600022,issue-grid-live,classify,claude-sonnet-5-5,1824,175,0,0,0,0.0081
+2026-10-21T17:30:42+00:00,39643600022,issue-grid-live,extract,claude-sonnet-5-5,750,558,0,0,0,0.01062
+2026-10-21T17:30:47+00:00,39643600022,issue-grid-live,cluster,claude-sonnet-5-5,4929,875,0,0,0,0.02791
+2026-10-21T17:30:52+00:00,39643600022,issue-grid-live,alerts,claude-sonnet-5-5,1053,368,0,0,0,0.00868
+2026-10-21T17:31:54+00:00,39643600022,issue-montera-footprint-live,classify,claude-sonnet-5-5,1299,41,0,0,0,0.00451
+2026-10-21T17:32:01+00:00,39643600022,issue-montera-footprint-live,alerts,claude-sonnet-5-5,1254,10,0,0,0,0.00391

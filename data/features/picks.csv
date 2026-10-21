@@ -413,3 +413,15 @@ run_at,asof,slug,key,label,rank,heuristic,views_6h,accounts,eligible,method,p_gr
 2026-10-21T05:32+00:00,2026-10-21T02:00:16+00:00,issue-data-centers-live,316,Texas's environmental regulatory agency kept issuing data center permits despite Greg Abbott's call to stop.,2,25.25,2622,3,0,model,0.914
 2026-10-21T05:33+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,27.29,15655,2,0,heuristic,
 2026-10-21T05:33+00:00,2026-10-19T23:21:17+00:00,issue-grid-live,97,"The ERCOT figures cited are forecast load demand, not supply or generation, so they do not show that power is sufficient",1,27.29,15655,2,0,model,0.996
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,341,Elon Musk is trying to buy a state park in South Texas.,1,46.81,75092,3,1,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,310,Elon Musk wants Texas land and water and is trying to buy Texas.,2,43.35,75092,6,1,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,348,Elon Musk thinks he can get his own US senator through Ken Paxton.,3,35.59,16159,2,0,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,345,Soluna and Applied Digital are partnering on a 50 MW wind-powered AI data center at Project Dorothy 3 in Texas.,4,33.3,32255,3,0,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,338,Donald Trump said new and large data centers must generate their own power.,5,31.95,81491,2,0,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,351,"Applied Digital is expected to own 51% and Soluna 49% of the Project Dorothy 3 joint venture, with Applied Digital suppl",6,24.54,5926,2,0,heuristic,
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,310,Elon Musk wants Texas land and water and is trying to buy Texas.,1,43.35,75092,6,0,model,0.848
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,338,Donald Trump said new and large data centers must generate their own power.,2,31.95,81491,2,0,model,0.178
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,345,Soluna and Applied Digital are partnering on a 50 MW wind-powered AI data center at Project Dorothy 3 in Texas.,3,33.3,32255,3,0,model,0.13
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,341,Elon Musk is trying to buy a state park in South Texas.,4,46.81,75092,3,0,model,0.07
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,351,"Applied Digital is expected to own 51% and Soluna 49% of the Project Dorothy 3 joint venture, with Applied Digital suppl",5,24.54,5926,2,0,model,0.025
+2026-10-21T17:29+00:00,2026-10-21T17:13:19.618000+00:00,issue-data-centers-live,348,Elon Musk thinks he can get his own US senator through Ken Paxton.,6,35.59,16159,2,0,model,0.02
