@@ -1,0 +1,134 @@
+# Weekly client tracker for Edged (Edged US, formerly Edged Energy): social talk about data centers, power and water
+# around its Caldwell County campus (11255 Hwy 142, Maxwell, near Martindale) and the rest of the county — Lockhart,
+# Luling, Martindale, Maxwell, and the Tract park. Hyperlocal, so the view floor is low (25). Pulled once a week
+# (Sunday night) for the Monday social scan email.
+
+slug: issue-edged-footprint-live
+title: "Edged footprint: data centers in Caldwell County and Martindale, {days} days of posts"
+subject: "data centers, transmission and water in Caldwell County, Texas (Lockhart, Luling, Martindale, Maxwell, Hwy 142) — the Edged campus and other projects (Tract's Caldwell Valley Technology Park, code-named county projects), local opposition including the Caldwell Data Center Action Team, county and city oversight, tax abatements, Bluebonnet/LCRA power and groundwater use. STRICT RULE: a post must name or clearly concern Caldwell County, Lockhart, Luling, Martindale, Maxwell or these developers; anything else — statewide or national data center politics, Hays County or San Marcos with no Caldwell tie, other states, or Martindale in Indianapolis (Martindale-Brightwood) — is other"
+subtitle: >
+  {start} to {end}, 2026. Each dot is one post with 25+ views about data centers, power or water in Caldwell County
+  or Martindale, plus every post repeating an earlier one, in the lane for what it argues.
+  Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line
+  back to it. Coloured lines link a post to the post it quoted or replied to. Updated weekly.
+
+window:
+  rolling_days: 14
+  end: today
+timezone: America/Chicago
+refresh_days: 8   # weekly run: re-pull the past 8 days
+
+queries:
+  - 'Edged ("data center" OR "data centers" OR Caldwell OR Maxwell OR Martindale OR Lockhart OR Texas) -Indianapolis'
+  - '("data center" OR "data centers") ("Caldwell County" OR "Lockhart, TX" OR "Lockhart Texas" OR Luling OR "Martindale, TX" OR "Martindale Texas" OR "Maxwell, TX" OR "Maxwell Texas")'
+  - '(Tract OR Edged OR "Caldwell Valley") ("Caldwell County" OR Lockhart OR Martindale OR Maxwell) -Indianapolis -Brightwood'
+  - '"Caldwell County" Texas (transmission OR "power line" OR substation OR water OR aquifer OR moratorium OR "data center" OR abatement)'
+  - '("Caldwell County" OR Lockhart) ("Project Hercules" OR "Project Lumiere" OR "Project Cowgirl" OR "commissioners court") ("data center" OR abatement OR project)'
+  - '("data center" OR "data centers") (Bluebonnet OR "Plum Creek" OR Timmerman OR "Hwy 142" OR "SH 142")'
+  - '"Caldwell Data Center Action Team" OR caldwelldcat'
+min_faves_hint: 0
+exclude_retweets: true
+query_type: Latest
+min_views: 25
+fetch_referenced: false   # quoted/replied-to statewide posts are noise for a local tracker
+
+discover_hint: >
+  This is a client-footprint tracker, not a statewide debate. Posts must concern data centers, power or water in
+  Caldwell County, Texas (Lockhart, Luling, Martindale, Maxwell). Posts about data centers elsewhere with no tie to
+  these places are off-topic, as are posts about Martindale-Brightwood in Indianapolis.
+
+lanes:
+- key: neighbors_oppose_nuisance
+  label: Neighbors oppose (noise, land, quality of life)
+  description: Residents and local groups object to a data center near them — noise, lights, traffic, construction,
+    property values, rural character or flooding — and organize to stop or delay it.
+  keywords:
+  - neighbors
+  - residents
+  - noise
+  - our community
+  - property values
+  - rural
+  - stop the data center
+  - petition
+- key: water_strain
+  label: Water use and aquifers
+  description: Data centers will drain local water — aquifers, the San Marcos River, Plum Creek and Gonzales groundwater districts —
+    or need cooling water the area can't spare.
+  keywords:
+  - water
+  - aquifer
+  - groundwater
+  - drought
+  - cooling
+  - carrizo
+  - plum creek
+  - gbra
+- key: power_grid_transmission
+  label: Power, grid and transmission lines
+  description: Data center load strains the grid, raises power bills or brings new transmission lines and substations
+    (Bluebonnet, LCRA, the Timmerman plant, ERCOT large-load queue).
+  keywords:
+  - grid
+  - ercot
+  - lcra
+  - transmission
+  - substation
+  - power bills
+  - large load
+  - bluebonnet
+- key: local_control_oversight
+  label: Counties need authority over data centers
+  description: Caldwell County, Martindale, Lockhart or nearby cities say they need power to regulate data center siting —
+    oversight motions, moratorium calls, permit notifications, asks to the Legislature.
+  keywords:
+  - commissioners court
+  - moratorium
+  - zoning
+  - oversight
+  - authority
+  - legislature
+  - permits
+  - county attorney
+- key: incentives_who_pays
+  label: Tax breaks and who pays
+  description: Abatements, tax incentives, campaign money and secrecy mean taxpayers and ratepayers subsidize
+    developers; code-named deals hide who is behind a project.
+  keywords:
+  - tax break
+  - abatement
+  - incentives
+  - project hercules
+  - secret
+  - donors
+  - taxpayers
+  - who pays
+- key: jobs_growth_investment
+  label: Jobs, tax base and growth
+  description: Data center and infrastructure investment brings jobs, tax base and growth to Caldwell County, and the region should welcome it.
+  keywords:
+  - jobs
+  - investment
+  - tax base
+  - economic development
+  - growth
+  - billion
+  - campus
+  - announcement
+pushback:
+  label: Pushback
+  description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+# weekly client tracker: no claim extraction, fact-checks or emerging-story alerts (the costly Claude steps)
+claims: { per_run: 0 }
+verify: { per_run: 0 }
+alerts: { min_posts: 100000 }
+
+classifier:
+  provider: claude
+  model: claude-sonnet-5-5
+  batch_size: 40
+
+dedup:
+  shingle_size: 3
+  similarity: 0.90

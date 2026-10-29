@@ -1,6 +1,7 @@
 # Live issue tracker: the data center fight in Texas (Abbott's moratorium, water, power, tax breaks). Runs daily with the other *-live incidents.
 
 slug: issue-data-centers-live
+paused: true   # Oct 29, 2026: social tracking narrowed to the weekly Montera, Edged and Waymo client trackers
 title: "Texas data centers, {days} days of posts"
 subject: "data centers in Texas — Gov. Abbott's freeze on new data center projects, grid and water demand, tax incentives, rural opposition"
 subtitle: >

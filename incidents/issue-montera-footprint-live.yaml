@@ -1,23 +1,23 @@
-# Live issue tracker for the Montera Infrastructure client: social talk about data centers, power and water in the
-# places Montera's projects touch — Generation Park in northeast Houston (Harris County: Humble, Sheldon, Kingwood,
-# Lake Houston) and Caldwell County / Martindale (Lockhart, Luling, Maxwell; the Tract and Edged campuses).
-# Hyperlocal, so the view floor is low (25) and there is no likes floor: a 200-view post from a Sheldon resident matters here.
-# The weekday Montera Data Center Scan reads this tracker's data.json each morning. Runs with the other issue trackers.
+# Weekly client tracker for Montera Infrastructure: social talk about data centers, power and water around Generation Park
+# in northeast Houston / Harris County (Humble, Sheldon, Kingwood, Atascocita, Lake Houston, Channelview).
+# Caldwell County / Martindale moved to issue-edged-footprint-live (Edged is a separate client).
+# Hyperlocal, so the view floor is low (25) and there is no likes floor. Pulled once a week (Sunday night) for the
+# Monday social scan email.
 
 slug: issue-montera-footprint-live
-title: "Montera footprint: data centers in Generation Park and Caldwell County, {days} days of posts"
-subject: "data centers, transmission and water in two places only: (1) Generation Park and northeast Houston / Harris County (Humble, Sheldon, Kingwood, Atascocita, Lake Houston, Channelview) and (2) Caldwell County, Texas (Lockhart, Luling, Martindale, the Tract and Edged campuses) — local opposition, county oversight, power and water use, tax incentives, and the developers (Montera, McCord Development, Tract, Edged). STRICT RULE: a post must name or clearly concern one of these places, Harris County or Houston officials, or these developers; anything else — statewide or national data center politics (Paxton, Talarico, Abbott, senators, Forbes), other states, other cities, or posts that only share a word like Sheldon, Crosby, Humble or Martindale (Indianapolis) — is other"
+title: "Montera footprint: data centers in Generation Park and Harris County, {days} days of posts"
+subject: "data centers, transmission and water in Generation Park and northeast Houston / Harris County (Humble, Sheldon, Kingwood, Atascocita, Lake Houston, Channelview) — local opposition, county oversight, power and water use, tax incentives, and the developers (Montera, McCord Development). STRICT RULE: a post must name or clearly concern Generation Park, northeast Houston, Harris County or Houston officials, or these developers; anything else — statewide or national data center politics (Paxton, Talarico, Abbott, senators, Forbes), Caldwell County, other states, other cities, or posts that only share a word like Sheldon, Crosby or Humble — is other"
 subtitle: >
-  {start} to {end}, 2026. Each dot is one post with 25+ views about data centers, power or water in Generation Park,
-  Harris County or Caldwell County, plus every post repeating an earlier one, in the lane for what it argues.
+  {start} to {end}, 2026. Each dot is one post with 25+ views about data centers, power or water in Generation Park
+  or Harris County, plus every post repeating an earlier one, in the lane for what it argues.
   Higher and bigger means more views. White means 90% or more the same words as an earlier post, with a white line
-  back to it. Coloured lines link a post to the post it quoted or replied to. Updated twice a day.
+  back to it. Coloured lines link a post to the post it quoted or replied to. Updated weekly.
 
 window:
-  start: "2026-10-01"
+  rolling_days: 14
   end: today
 timezone: America/Chicago
-refresh_days: 2
+refresh_days: 8   # weekly run: re-pull the past 8 days
 
 queries:
   - '"Generation Park" (Houston OR "data center" OR "data centers" OR McCord OR Montera)'
@@ -25,9 +25,6 @@ queries:
   - '"McCord Development"'
   - '("data center" OR "data centers") (Kingwood OR Atascocita OR "Lake Houston" OR Channelview OR "Humble ISD" OR "Sheldon ISD" OR "Humble, TX" OR "Humble Texas" OR "northeast Houston" OR "NE Houston")'
   - '("data center" OR "data centers") ("Harris County" OR "Harris Co" OR "Houston City Council" OR "Commissioners Court")'
-  - '("data center" OR "data centers") ("Caldwell County" OR "Lockhart, TX" OR "Lockhart Texas" OR Luling OR "Martindale, TX" OR "Martindale Texas")'
-  - '(Tract OR Edged) ("Caldwell County" OR Lockhart OR Martindale) -Indianapolis -Brightwood'
-  - '"Caldwell County" Texas (transmission OR "power line" OR substation OR water OR aquifer OR moratorium OR "data center")'
   - '(from:HarrisCoPct2 OR from:AdrianGarciaHTX OR from:HCP4__Briones OR from:HCPrecinct4 OR from:LesleyBrionesTX OR from:CommTomRamsey OR from:RodneyEllis OR from:LinaHidalgoTX OR from:HarrisCountyAO OR from:AbbieKamin OR from:HarrisCountyTX OR from:HCFCD OR from:JohnWhitmire OR from:HoustonTX) ("data center" OR "data centers" OR "large load" OR transmission OR CenterPoint)'
 min_faves_hint: 0
 exclude_retweets: true
@@ -37,7 +34,7 @@ fetch_referenced: false   # quoted/replied-to statewide posts are noise for a lo
 
 discover_hint: >
   This is a client-footprint tracker, not a statewide debate. Posts must concern data centers, power or water in
-  Generation Park / northeast Houston / Harris County or in Caldwell County / Martindale. Posts about data centers
+  Generation Park / northeast Houston / Harris County. Posts about data centers
   elsewhere with no tie to these places are off-topic, as are posts that mention Generation Park for unrelated
   reasons (restaurants, events, offices).
 
@@ -123,6 +120,11 @@ lanes:
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+# weekly client tracker: no claim extraction, fact-checks or emerging-story alerts (the costly Claude steps)
+claims: { per_run: 0 }
+verify: { per_run: 0 }
+alerts: { min_posts: 100000 }
 
 classifier:
   provider: claude

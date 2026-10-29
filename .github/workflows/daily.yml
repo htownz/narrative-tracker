@@ -2,7 +2,7 @@ name: Pull and publish
 
 on:
   schedule:
-    - cron: "17 5,11,17,23 * * *"   # 12:17a, 6:17a, 12:17p, 6:17p CT — early warning needs more than one look a day
+    - cron: "17 3 * * 1"   # weekly: Monday 03:17 UTC = Sunday ~9-10 PM CT, ahead of the Monday social scan email
   workflow_dispatch:            # run it by hand from the Actions tab
     inputs:
       incidents:
@@ -34,14 +34,8 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Fetch the stores from the bucket
-        env:
-          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
-          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
-          BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
-        run: python -m tracker.bucket pull     # no-op without the BUCKET_* secrets (stores then come from git)
+      # Oct 29, 2026: the Railway bucket is no longer used. The client trackers' stores are small and live in git
+      # (data/<slug>.sqlite, force-added below); the older statewide stores stay in the bucket, untouched.
 
       - name: Pick the incidents
         id: pick
@@ -50,7 +44,7 @@ jobs:
           unpaused() { for f in "$@"; do grep -q '^paused: true' "$f" || printf '%s ' "$f"; done; }
           RACES="$(unpaused $(ls incidents/*-live.yaml | grep -v '/issue-'))"
           ISSUES="$(unpaused $(ls incidents/issue-*-live.yaml 2>/dev/null))"
-          case "$(date -u +%H)" in 05|17) LIVE="$RACES $ISSUES";; *) LIVE="$RACES";; esac   # races every run; the issue trackers twice a day (refresh_days covers the gap)
+          LIVE="$RACES $ISSUES"   # weekly schedule: every unpaused tracker each run
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
@@ -103,8 +97,6 @@ jobs:
           python run.py registry || true      # account reliability from last run's claims, so this run's feature rows can carry it
           python run.py mistruth || true      # the mistruth-at-first-sight model from every verified claim; scores decide half of what gets verified this run
           python run.py growth || true        # the growth model from the feature tables; features() ranks by it once it beats the heuristic, logs it in shadow before
-          python -m tracker.newsfeeds || true  # the Texas and national press into data/news.sqlite (bucket-synced), for claim coverage
-          python -m tracker.truth || true      # Trump's Truth Social posts (archive feed) into the same store: events + posts
           for inc in ${{ steps.pick.outputs.incidents }}; do
             echo "::group::$inc"
             [ "$WEEKLY" = "1" ] && python run.py refresh-views "$inc"
@@ -123,28 +115,15 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python run.py brief || echo "::warning::brief failed"
 
-      - name: Save the stores to the bucket, commit the outputs
+      - name: Commit the stores and outputs
         if: ${{ always() && steps.pick.outcome == 'success' }}   # save pull progress even on failure or timeout
-        env:
-          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
-          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
-          BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
         run: |
           git config user.name "narrative-tracker bot"
           git config user.email "actions@users.noreply.github.com"
           STORES=""
-          if [ -n "$BUCKET_NAME" ]; then
-            if python -m tracker.bucket push; then
-              [ "$(date -u +%u%H)" = "711" ] && python -m tracker.bucket snapshot || true     # Sunday: dated snapshot
-            else
-              echo "::warning::bucket push failed — committing the stores to git so this run's work is not lost"
-              STORES="$(ls data/*.sqlite 2>/dev/null | tr '\n' ' ')"
-            fi
-          else
-            STORES="$(ls data/*.sqlite 2>/dev/null | tr '\n' ' ')"     # no bucket configured: stores stay in git
-          fi
+          for inc in ${{ steps.pick.outputs.incidents }}; do      # only the stores of the trackers this run touched
+            f="data/$(basename "$inc" .yaml).sqlite"; [ -f "$f" ] && STORES="$STORES $f"
+          done
           git add out/ incidents/ data/features/ data/usage.csv 2>/dev/null || true
           [ -n "$STORES" ] && git add -f $STORES
           git diff --cached --quiet || git commit -m "pull $(date -u +%Y-%m-%dT%H:%MZ)"

@@ -1,6 +1,7 @@
 # Live issue tracker: the Texas power grid (ERCOT, prices, reliability, demand growth). Runs daily with the other *-live incidents.
 
 slug: issue-grid-live
+paused: true   # Oct 29, 2026: social tracking narrowed to the weekly Montera, Edged and Waymo client trackers
 title: "Texas grid, {days} days of posts"
 subject: "the Texas electric grid — ERCOT reliability, electricity prices, demand growth from data centers and industry, winterization, generation mix"
 subtitle: >

@@ -1,21 +1,20 @@
 # Live issue tracker: Waymo, Tesla robotaxi and other autonomous vehicles on Texas streets — incidents, city council reactions, state permitting and liability rules. Long-term tracker through the 2027 session.
-# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+# Weekly client tracker for Waymo (pulled Sunday night for the Monday social scan email); lanes are frozen.
 
 slug: issue-av-live
-paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
 title: "Autonomous vehicles in Texas, {days} days of posts"
 subject: "autonomous vehicles and robotaxis in Texas — Waymo and Tesla robotaxi operations in Austin, Houston, Dallas and San Antonio, incidents and safety stories, city council and legislative reactions, state permitting at the DMV, and liability and insurance rules"
 subtitle: >
   {start} to {end}, 2026. Each dot is one post with 1K+ views about autonomous vehicles and robotaxis in Texas, plus
   every post repeating an earlier one, in the lane for what it argues. Higher and bigger means more views.
   White means 90% or more the same words as an earlier post, with a white line back to it.
-  Coloured lines link a post to the post it quoted or replied to. Updated daily.
+  Coloured lines link a post to the post it quoted or replied to. Updated weekly.
 
 window:
-  start: "2026-10-01"
+  rolling_days: 14
   end: today
 timezone: America/Chicago
-refresh_days: 2
+refresh_days: 8   # weekly run: re-pull the past 8 days
 live: true
 
 queries:
@@ -23,17 +22,16 @@ queries:
   - 'Waymo Austin'
   - 'Waymo Houston'
   - 'Waymo Dallas'
-  - '"robotaxi" Texas'
-  - '"robotaxi" Austin'
+  - 'Waymo "San Antonio"'
+  - '"robotaxi" (Texas OR Austin OR Houston OR Dallas OR "San Antonio")'
   - 'Tesla robotaxi Austin'
-  - '"self-driving" Texas'
-  - '"driverless" Texas'
-
+  - '("self-driving" OR driverless OR "autonomous vehicle" OR "autonomous vehicles") (Texas OR Austin OR Houston OR Dallas OR "San Antonio")'
+  - '("Waymo" OR robotaxi OR "autonomous vehicle") ("city council" OR TxDMV OR "SB 2807" OR legislature OR txlege)'
 min_faves_hint: 10
 exclude_retweets: true
 query_type: Latest
-min_views: 1000
-fetch_referenced: true
+min_views: 500
+fetch_referenced: false
 
 discover_hint: >
   This is a policy issue, not a candidate. Lanes are the durable arguments people make about it — for and
@@ -124,6 +122,11 @@ lanes:
 pushback:
   label: Pushback
   description: Posts doubting, mocking, fact-checking or arguing against the dominant framings.
+
+# weekly client tracker: no claim extraction, fact-checks or emerging-story alerts (the costly Claude steps)
+claims: { per_run: 0 }
+verify: { per_run: 0 }
+alerts: { min_posts: 100000 }
 
 classifier:
   provider: claude
