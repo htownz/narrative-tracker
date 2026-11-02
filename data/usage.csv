@@ -76,3 +76,15 @@ at,run_id,slug,step,model,input_tokens,output_tokens,cache_write_tokens,cache_re
 2026-10-29T21:27:17+00:00,40955637081,issue-av-live,classify,claude-sonnet-5-5,4034,672,0,0,0,0.02218
 2026-10-29T21:27:21+00:00,40955637081,issue-av-live,classify,claude-sonnet-5-5,4676,689,0,0,0,0.02436
 2026-10-29T21:27:30+00:00,40955637081,issue-av-live,alerts,claude-sonnet-5-5,1346,680,0,0,0,0.01424
+2026-11-02T03:30:41+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,5304,2283,0,0,0,0.05016
+2026-11-02T03:30:45+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,5497,740,0,0,0,0.02759
+2026-11-02T03:30:51+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,6241,802,0,0,0,0.03075
+2026-11-02T03:31:03+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,5803,1934,0,0,0,0.04642
+2026-11-02T03:31:07+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,5615,754,0,0,0,0.02815
+2026-11-02T03:31:13+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,4295,818,0,0,0,0.02516
+2026-11-02T03:31:14+00:00,41383092518,issue-av-live,classify,claude-sonnet-5-5,1304,94,0,0,0,0.00532
+2026-11-02T03:31:23+00:00,41383092518,issue-av-live,alerts,claude-sonnet-5-5,2138,504,0,0,0,0.01397
+2026-11-02T03:33:52+00:00,41383092518,issue-edged-footprint-live,classify,claude-sonnet-5-5,6031,819,0,0,0,0.03038
+2026-11-02T03:33:56+00:00,41383092518,issue-edged-footprint-live,classify,claude-sonnet-5-5,2147,414,0,0,0,0.01265
+2026-11-02T03:34:01+00:00,41383092518,issue-edged-footprint-live,alerts,claude-sonnet-5-5,1389,10,0,0,0,0.00432
+2026-11-02T03:35:24+00:00,41383092518,issue-montera-footprint-live,classify,claude-sonnet-5-5,1377,290,0,0,0,0.00848
