@@ -1,0 +1,192 @@
+# Race registry overlay for the 2026 general election.
+#
+# The SOS feed supplies every contest, candidate and party; this file adds what the feed does not know: the
+# firm report's framing (which races are competitive, which are open seats, the region they belong to, the
+# report section their table sits in) and, later, the baselines the dashboard compares against. Keys are the
+# short race keys from election/sos.py (us-senate, governor, sd-9, hd-26, cd-15, scotx-chief, ...). Any race the
+# feed carries but this file does not mention is still tracked, with defaults.
+#
+# Sources: Texas General Election Report 2026 (Grey Havens Strategies, Nov 4, 2026 draft) for the competitive
+# lists, open seats and regions; Texas SOS ENR for contests and candidates.
+
+defaults:
+  track_sections: [Federal, StateWide, Districted]   # feed sections to keep (district judges/DAs are keyed out)
+
+# The `baseline:` figures below were entered from memory on election night as placeholders for the comparison
+# view. Verify every one against the SOS canvass (elections.sos.state.tx.us/elchist) before any client sees
+# them, then flip this to true. The dashboard shows them as "unverified" until it is.
+baselines_verified: false
+
+races:
+  # --- federal and statewide -------------------------------------------------------------------------------
+  us-senate:
+    title: U.S. Senate
+    report_section: Federal
+    competitive: true
+    open_seat: true
+    note: Paxton beat Cornyn in the May 26 runoff; Talarico beat Crockett in the March primary. Closest Senate race benchmark is Cruz–O'Rourke 2018 (R+2.6).
+    baseline: {"2018": {"R": 50.9, "D": 48.3, "margin": 2.6, "label": "Cruz vs O'Rourke"}, "2024": {"R": 53.1, "D": 44.6, "margin": 8.5, "label": "Cruz vs Allred"}}
+  governor:
+    title: Governor
+    report_section: Statewide
+    competitive: true
+    note: Abbott seeking a fourth term vs State Rep. Gina Hinojosa. Abbott $148M+ spent Jul 2025–Sep 2026; Hinojosa ~$17.7M.
+    baseline: {"2022": {"R": 54.8, "D": 43.8, "margin": 11.0, "label": "Abbott vs O'Rourke"}, "2018": {"R": 55.8, "D": 42.5, "margin": 13.3, "label": "Abbott vs Valdez"}}
+  lt-governor:
+    title: Lieutenant Governor
+    report_section: Statewide
+    competitive: true
+    note: Patrick seeking a fourth term vs State Rep. Vikki Goodwin. ~$14.5M vs ~$26K in ads as of mid-October.
+    baseline: {"2022": {"R": 53.6, "D": 43.4, "margin": 10.2, "label": "Patrick vs Collier"}, "2018": {"R": 51.3, "D": 46.5, "margin": 4.8, "label": "Patrick vs Collier"}}
+  comptroller:
+    title: Comptroller of Public Accounts
+    report_section: Statewide
+    competitive: true
+    note: Huffines (appointed Aug 2026 after Hancock resigned) vs Sen. Sarah Eckhardt.
+    baseline: {"2022": {"R": 56.4, "D": 41.1, "margin": 15.3, "label": "Hegar vs Dudding"}}
+  attorney-general:
+    title: Attorney General
+    report_section: Statewide
+    competitive: true
+    open_seat: true
+    note: Open seat (Paxton ran for Senate). Sen. Mayes Middleton vs Sen. Nathan Johnson.
+    baseline: {"2022": {"R": 53.4, "D": 43.7, "margin": 9.7, "label": "Paxton vs Garza"}}
+  ag-commissioner:
+    title: Commissioner of Agriculture
+    report_section: Statewide
+    open_seat: true
+    note: Open seat; Nate Sheets beat incumbent Sid Miller in the primary. Vs Clayton Tucker.
+  railroad-commissioner:
+    title: Railroad Commissioner
+    report_section: Statewide
+    open_seat: true
+    note: Bo French beat incumbent Jim Wright in the May runoff. Vs State Rep. Jon Rosenthal.
+  land-commissioner:
+    title: Land Commissioner
+    report_section: Statewide
+    note: Buckingham (I) vs Bay City council member Benjamin Flores.
+  scotx-chief:
+    title: Texas Supreme Court, Chief Justice (Place 1)
+    report_section: Statewide
+    note: Blacklock (I) vs Maggie Ellis.
+  scotx-2:
+    title: Texas Supreme Court, Place 2 (unexpired term)
+    report_section: Statewide
+    note: Sullivan (I, appointed 2025) vs Chari Kelly.
+  scotx-7:
+    title: Texas Supreme Court, Place 7
+    report_section: Statewide
+    note: Kyle Hawkins (I, appointed 2025) vs Kristen Hawkins.
+  scotx-8:
+    title: Texas Supreme Court, Place 8
+    report_section: Statewide
+    note: Busby (I) vs Gisela Triana.
+
+  # --- Texas Senate (16 of 31 seats) ------------------------------------------------------------------------
+  sd-3:
+    report_section: Texas Senate
+    open_seat: true
+    competitive: true
+    region: East Texas
+    note: Open (Sen. Robert Nichols retired). Rep. Trent Ashby (R) vs Bobby Tillman (D).
+  sd-9:
+    report_section: Texas Senate
+    competitive: true
+    region: Tarrant County
+    note: Rematch of the Jan 2026 special, which Rehmet (D) won by 14.4 in a Trump+17 district. Rehmet (I) vs Wambsganss (R).
+  sd-11:
+    report_section: Texas Senate
+    open_seat: true
+    competitive: true
+    region: Harris & Galveston
+    note: Open (Middleton ran for AG). Rep. Dennis Paul (R) vs Shannon Dicely (D).
+  sd-19:
+    report_section: Texas Senate
+    competitive: true
+    region: Bexar & South Texas
+    note: Gutierrez (D, I) vs Marcus Cardenas (R).
+  sd-22:
+    report_section: Texas Senate
+    open_seat: true
+    region: Tarrant & Central Texas
+    note: Open (Birdwell retired). Rep. David Cook (R) vs Amy Martinez-Salas (D).
+  sd-1: {report_section: Texas Senate}
+  sd-2: {report_section: Texas Senate}
+  sd-4: {report_section: Texas Senate}
+  sd-5: {report_section: Texas Senate}
+  sd-13: {report_section: Texas Senate}
+  sd-18: {report_section: Texas Senate}
+  sd-21: {report_section: Texas Senate}
+  sd-24: {report_section: Texas Senate}
+  sd-26: {report_section: Texas Senate}
+  sd-28: {report_section: Texas Senate}
+  sd-31: {report_section: Texas Senate}
+
+  # --- Texas House: the 21 Republican-held districts the report calls competitive (3 open) -----------------
+  hd-26:  {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Morgan (R, I) vs Markowitz}
+  hd-28:  {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Gates (R, I; chairs Land & Resource Management) vs Ibanez}
+  hd-127: {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Cunningham (R, I) vs Williams}
+  hd-129: {report_section: Texas House, competitive: true, open_seat: true, region: Harris & Fort Bend, note: Open (Dennis Paul ran for SD 11). Bowen (R) vs Wittliff (D)}
+  hd-132: {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Schofield (R, I; lost 2018, regained 2020) vs McGee}
+  hd-133: {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: DeAyala (R, I) vs Wallenstein}
+  hd-138: {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Hull (R, I) vs Smith}
+  hd-150: {report_section: Texas House, competitive: true, region: Harris & Fort Bend, note: Swanson (R, I) vs Kellum}
+  hd-61:  {report_section: Texas House, competitive: true, region: Dallas, Collin & Denton, note: Richardson (R, I) vs Black}
+  hd-63:  {report_section: Texas House, competitive: true, region: Dallas, Collin & Denton, note: Bumgarner (R, I) vs Wooten}
+  hd-108: {report_section: Texas House, competitive: true, region: Dallas, Collin & Denton, note: Meyer (R, I; chairs Ways & Means) vs Mitchell}
+  hd-112: {report_section: Texas House, competitive: true, region: Dallas, Collin & Denton, note: Button (R, I; chairs Trade, Workforce & Economic Development) vs Herbert}
+  hd-94:  {report_section: Texas House, competitive: true, open_seat: true, region: Tarrant, note: Open (Tinderholt ran for Tarrant commissioner). Bean (R) vs Duzan (D)}
+  hd-96:  {report_section: Texas House, competitive: true, open_seat: true, region: Tarrant, note: Open (David Cook ran for SD 22). Fleischmann (R) vs Turner (D)}
+  hd-97:  {report_section: Texas House, competitive: true, region: Tarrant, note: McQueeney (R, I; State Affairs) vs McLaughlin}
+  hd-52:  {report_section: Texas House, competitive: true, region: Bexar & Williamson, note: Harris Davila (R, I) vs Jimenez}
+  hd-121: {report_section: Texas House, competitive: true, region: Bexar & Williamson, note: LaHood (R, I) vs Dunn}
+  hd-122: {report_section: Texas House, competitive: true, region: Bexar & Williamson, note: Dorazio (R, I) vs Nickels}
+  hd-34:  {report_section: Texas House, competitive: true, region: South Texas, note: Villalobos (R, I) vs Saenz}
+  hd-37:  {report_section: Texas House, competitive: true, region: South Texas, note: Lopez (R, I) vs Ochoa}
+  hd-80:  {report_section: Texas House, competitive: true, region: South Texas, note: McLaughlin (R, I; former Uvalde mayor) vs Castellano}
+
+  # --- Congress: competitive after the 2025 mid-decade redistricting, plus open/notable seats ---------------
+  cd-9:  {report_section: Congress, competitive: true, open_seat: true, note: Redrawn R-leaning. Mealer (R) vs Gutierrez (D)}
+  cd-15: {report_section: Congress, competitive: true, note: Cook toss-up. De La Cruz (R, I) vs Bobby Pulido (D)}
+  cd-23: {report_section: Congress, competitive: true, open_seat: true, note: Gonzales withdrew after the primary. Herrera (R) vs Padilla Stout (D)}
+  cd-28: {report_section: Congress, competitive: true, note: Redrawn to favor R. Cuellar (D, I) vs Tijerina (R)}
+  cd-34: {report_section: Congress, competitive: true, note: Cook toss-up; redrawn to favor R. Gonzalez (D, I) vs Flores (R)}
+  cd-35: {report_section: Congress, competitive: true, open_seat: true, note: Redrawn; Casar moved to CD 37. De La Cruz (R) vs Garcia (D)}
+  cd-2:  {report_section: Congress, open_seat: true, note: Toth beat Crenshaw in the primary. Toth (R) vs Finnie (D)}
+  cd-8:  {report_section: Congress, open_seat: true, note: Steinmann (R) vs Jones (D)}
+  cd-10: {report_section: Congress, open_seat: true, note: Gober (R) vs Rourk (D)}
+  cd-18: {report_section: Congress, note: Menefee (D, I) vs Whitfield (R)}
+  cd-19: {report_section: Congress, open_seat: true, note: Sell (R) vs Rable (D)}
+  cd-21: {report_section: Congress, open_seat: true, note: Teixeira (R) vs Hook (D)}
+  cd-22: {report_section: Congress, open_seat: true, note: Trever Nehls (R) vs Greene-Scott (D)}
+  cd-33: {report_section: Congress, note: Allred (D) vs Gillespie (R)}
+  cd-37: {report_section: Congress, note: Casar (D) vs Peña (R)}
+  cd-38: {report_section: Congress, open_seat: true, note: Bonck (R) vs McDonough (D)}
+
+# Races the SOS feed does not carry (county-run elections). Phase 2: county adapters.
+local:
+  harris-county-judge:  {title: Harris County Judge, county: Harris, open_seat: true, competitive: true, note: Hidalgo not running. Plummer (D) vs Sanchez (R)}
+  harris-commissioner-2: {title: Harris County Commissioner, Pct. 2, county: Harris, note: Garcia (D, I) vs Vega (R)}
+  harris-commissioner-4: {title: Harris County Commissioner, Pct. 4, county: Harris, competitive: true, note: Briones (D, I) vs Radack (R)}
+  bexar-county-judge:   {title: Bexar County Judge, county: Bexar, open_seat: true, note: Sakai lost the primary. Nirenberg (D) vs Von Dohlen (R)}
+  bexar-commissioner-2: {title: Bexar County Commissioner, Pct. 2, county: Bexar, note: Rodriguez (D, I) vs Hill (R)}
+  bexar-commissioner-4: {title: Bexar County Commissioner, Pct. 4, county: Bexar, note: Calvert (D, I) vs Anthony (Ind.)}
+  tarrant-county-judge: {title: Tarrant County Judge, county: Tarrant, competitive: true, note: O'Hare (R, I) vs Simmons (D)}
+  tarrant-commissioner-2: {title: Tarrant County Commissioner, Pct. 2, county: Tarrant, open_seat: true, competitive: true, note: Tinderholt (R) vs Williams (D)}
+  tarrant-commissioner-4: {title: Tarrant County Commissioner, Pct. 4, county: Tarrant, note: Ramirez (R, I) vs Cárdenas (D)}
+  austin-council-1: {title: Austin City Council, District 1, county: Travis, open_seat: true, runoff_possible: true}
+  austin-council-3: {title: Austin City Council, District 3, county: Travis, runoff_possible: true, note: Velásquez (I)}
+  austin-council-5: {title: Austin City Council, District 5, county: Travis, runoff_possible: true, note: Alter (I)}
+  austin-council-8: {title: Austin City Council, District 8, county: Travis, open_seat: true, runoff_possible: true, note: Ellis failed to qualify}
+  austin-council-9: {title: Austin City Council, District 9, county: Travis, runoff_possible: true, note: Qadri (I)}
+
+# Counties the report singles out for turnout (the early-vote table) — the turnout view leads with these.
+focus_counties: [Harris, Dallas, Tarrant, Bexar, Travis, Collin, Denton, Fort Bend, Williamson, Hays, Montgomery, Galveston, Brazoria, Hidalgo, Cameron, Webb, Nueces, El Paso]
+
+# Turnout benchmarks from the report.
+turnout_benchmarks:
+  registered_2026: 19041684
+  early_vote_2026: 7730000
+  total_2018: 8370000
+  registered_2018: 15800000
+  turnout_pct_2018: 53.0

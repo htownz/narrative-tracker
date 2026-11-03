@@ -1,0 +1,102 @@
+name: Election night
+
+# Polls the Texas SOS election-night returns every 5 minutes (python -m election snapshot), commits the JSON
+# exports every 30 minutes and the SQLite store every two hours and at the end. One run lasts ~5.5 hours; the
+# half-hourly schedule queues the next run behind it (concurrency group), so coverage is continuous until the
+# schedule window ends. Start one by hand from the Actions tab or by committing a change to election/.run.
+
+on:
+  schedule:
+    - cron: "*/30 23 3 11 *"      # Nov 3, 23:00–23:59 UTC (5–6 PM CT): first run ahead of poll close
+    - cron: "*/30 * 4-6 11 *"     # Nov 4–6 UTC: queue a follow-on run every half hour (one runs at a time)
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long this run polls (max ~345)"
+        default: "340"
+      every:
+        description: "Seconds between polls"
+        default: "300"
+  push:
+    paths: ["election/.run"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-night
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+      BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+      BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
+      BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+      BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install requests pyyaml boto3
+
+      - name: Settings
+        id: cfg
+        run: |
+          MIN="${{ github.event.inputs.minutes }}"; EVERY="${{ github.event.inputs.every }}"
+          if [ "${{ github.event_name }}" = "push" ] && [ -f election/.run ]; then
+            M=$(grep -o '^minutes=[0-9]*' election/.run | head -1 | cut -d= -f2 || true); [ -n "$M" ] && MIN="$M"
+            E=$(grep -o '^every=[0-9]*' election/.run | head -1 | cut -d= -f2 || true); [ -n "$E" ] && EVERY="$E"
+            grep -qx 'stop' election/.run && { echo "election/.run says stop — not polling"; echo "stop=true" >> "$GITHUB_OUTPUT"; }
+          fi
+          echo "minutes=${MIN:-340}" >> "$GITHUB_OUTPUT"
+          echo "every=${EVERY:-300}" >> "$GITHUB_OUTPUT"
+          echo "polling for ${MIN:-340} minutes, every ${EVERY:-300}s"
+
+      - name: Newer store in the bucket?
+        if: ${{ steps.cfg.outputs.stop != 'true' }}
+        run: python -m election.bucket pull || true
+
+      - name: Poll, export, commit
+        if: ${{ steps.cfg.outputs.stop != 'true' }}
+        run: |
+          git config user.name "election-night bot"
+          git config user.email "actions@users.noreply.github.com"
+          commit_json() {   # the text exports: cheap to commit often
+            git add out/election/ 2>/dev/null || true
+            git diff --cached --quiet && return 0
+            git commit -q -m "election: $(date -u +%Y-%m-%dT%H:%MZ) $(python -c "import json;d=json.load(open('out/election/status.json'));a=d['as_of'];print('counties',*a['reporting']['counties'],'feed',a['source_updated'])")"
+            git pull -q --rebase -X theirs --autostash origin "${{ github.ref_name }}" || { git rebase --abort 2>/dev/null || true; }
+            git push -q origin HEAD:"${{ github.ref_name }}" || echo "::warning::push failed (another job pushed?); will retry next interval"
+          }
+          commit_store() {  # the SQLite store: every two hours and at the end
+            git add -f data/election/*.sqlite 2>/dev/null || true
+            commit_json
+            python -m election.bucket push || true
+          }
+          END=$(( $(date +%s) + ${{ steps.cfg.outputs.minutes }} * 60 ))
+          EVERY=${{ steps.cfg.outputs.every }}
+          i=0
+          while [ "$(date +%s)" -lt "$END" ]; do
+            i=$((i+1))
+            python -m election snapshot || echo "::warning::poll $i failed"
+            if [ $((i % 24)) -eq 0 ]; then commit_store; elif [ $((i % 6)) -eq 0 ]; then commit_json; fi
+            LEFT=$(( END - $(date +%s) ))
+            [ "$LEFT" -gt "$EVERY" ] || break
+            sleep "$EVERY"
+          done
+          python -m election status
+          commit_store
+
+      - name: Summary
+        if: ${{ always() && steps.cfg.outputs.stop != 'true' }}
+        run: |
+          { echo "### Election night poll"; echo; echo '```'; python -m election status 2>/dev/null || true; echo '```';
+            echo; echo "Competitive races:"; echo '```'; python -m election races --competitive 2>/dev/null | head -60 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"

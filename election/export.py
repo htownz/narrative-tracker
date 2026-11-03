@@ -1,0 +1,139 @@
+"""Writes out/election/*.json from the store — what the dashboard front end reads.
+
+  latest.json    every tracked race as of the newest snapshot: candidates, votes, pct, leader, margin, reporting
+  series.json    per race: one row per snapshot [fetched_at, total, precincts_pct, leader_party, margin_pct, votes-by-party]
+  counties.json  newest county-level rows for the statewide races + county turnout
+  status.json    store counts, last poll, last change
+"""
+from __future__ import annotations
+
+import json
+from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from . import OUT_DIR
+from .registry import load_registry, sort_key
+from .store import Store
+
+COUNTY_RACES = ["us-senate", "governor", "lt-governor", "attorney-general", "comptroller"]   # county rows exported in full
+
+
+def _pct(n: int, d: int) -> float | None:
+    return round(100.0 * n / d, 2) if d else None
+
+
+def _party_votes(cands: list[dict[str, Any]]) -> dict[str, int]:
+    pv: dict[str, int] = defaultdict(int)
+    for c in cands:
+        pv[c["party"] if c["party"] in ("R", "D") else "O"] += c["votes"]
+    return dict(pv)
+
+
+def _leader(cands: list[dict[str, Any]], total: int) -> dict[str, Any]:
+    if not cands or not total:
+        return {"leader": None, "runner_up": None, "margin_votes": 0, "margin_pct": None}
+    top = sorted(cands, key=lambda c: -c["votes"])
+    lead, second = top[0], (top[1] if len(top) > 1 else None)
+    mv = lead["votes"] - (second["votes"] if second else 0)
+    return {"leader": lead["id"], "leader_party": lead["party"], "runner_up": second["id"] if second else None,
+            "margin_votes": mv, "margin_pct": _pct(mv, total)}
+
+
+def export(store: Store, out_dir: Path = OUT_DIR) -> dict[str, Any]:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    reg = load_registry()
+    snaps = store.snapshots()
+    last = snaps[-1] if snaps else None
+    calls = store.calls()
+    races_rows = store.races()
+
+    latest_races: list[dict[str, Any]] = []
+    series: dict[str, list[list[Any]]] = {}
+    for rr in sorted(races_rows, key=lambda r: sort_key(r["key"])):
+        key = rr["key"]
+        cands_meta = {c["cand_id"]: dict(c) for c in store.candidates(key)}
+        rows = store.race_series(key)
+        by_snap: dict[int, dict[str, Any]] = {}
+        for row in rows:
+            s = by_snap.setdefault(row["id"], {"fetched_at": row["fetched_at"], "source_updated": row["source_updated"], "votes": {},
+                                                "early": {}, "total": row["total"], "pr": row["precincts_reporting"],
+                                                "pt": row["precincts_total"], "cr": row["counties_reporting"], "ct": row["counties_total"]})
+            s["votes"][row["cand_id"]] = row["votes"]
+            s["early"][row["cand_id"]] = row["early_votes"]
+        ser = []
+        newest: dict[str, Any] | None = None
+        for sid in sorted(by_snap):
+            s = by_snap[sid]
+            cands = [{"id": cid, "name": m["name"], "party": m["party"], "incumbent": bool(m["incumbent"]),
+                      "votes": s["votes"].get(cid, 0), "early_votes": s["early"].get(cid, 0)} for cid, m in cands_meta.items()]
+            total = sum(c["votes"] for c in cands) or (s["total"] or 0)
+            lead = _leader(cands, total)
+            ser.append([s["fetched_at"], total, _pct(s["pr"] or 0, s["pt"] or 0), lead.get("leader_party"), lead["margin_pct"], _party_votes(cands)])
+            newest = {"snapshot_id": sid, **s, "cands": cands, "total": total, "lead": lead}
+        series[key] = ser
+        meta = json.loads(rr["meta"] or "{}")
+        if newest:
+            for c in newest["cands"]:
+                c["pct"] = _pct(c["votes"], newest["total"])
+            newest["cands"].sort(key=lambda c: (-c["votes"], c["name"]))
+        call = calls.get(key)
+        latest_races.append({
+            "key": key, "title": rr["title"], "chamber": rr["chamber"], "report_section": rr["report_section"],
+            "region": rr["region"], "competitive": bool(rr["competitive"]), "open_seat": bool(rr["open_seat"]),
+            "note": rr["note"], "sos_name": rr["sos_name"], "baseline": meta.get("baseline"),
+            "candidates": newest["cands"] if newest else [{"id": cid, "name": m["name"], "party": m["party"], "incumbent": bool(m["incumbent"]), "votes": 0, "early_votes": 0, "pct": None} for cid, m in cands_meta.items()],
+            "total": newest["total"] if newest else 0,
+            "reporting": {"precincts": [newest["pr"], newest["pt"]] if newest else [0, 0],
+                          "precincts_pct": _pct(newest["pr"] or 0, newest["pt"] or 0) if newest else None,
+                          "counties": [newest["cr"], newest["ct"]] if newest else [0, 0]},
+            **(newest["lead"] if newest else _leader([], 0)),
+            "updated": newest["source_updated"] if newest else None,
+            "call": dict(call) if call else None,
+        })
+
+    as_of = {"fetched_at": last["fetched_at"] if last else None, "source_updated": last["source_updated"] if last else None,
+             "version": last["version"] if last else None,
+             "reporting": {"counties": [last["counties_reporting"], last["counties_total"]] if last else [0, 0],
+                           "precincts": [last["precincts_reporting"], last["precincts_total"]] if last else [0, 0],
+                           "polling": [last["polling_reporting"], last["polling_total"]] if last else [0, 0]}}
+    latest = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "as_of": as_of,
+              "snapshots": len(snaps), "races": latest_races,
+              "benchmarks": reg.get("turnout_benchmarks") or {}, "focus_counties": reg.get("focus_counties") or [],
+              "local_races": reg.get("local") or {}, "baselines_verified": bool(reg.get("baselines_verified"))}
+    (out_dir / "latest.json").write_text(json.dumps(latest, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (out_dir / "series.json").write_text(json.dumps({"generated_at": latest["generated_at"], "series": series}, separators=(",", ":")), encoding="utf-8")
+
+    # county level
+    turnout = {}
+    for t in store.latest_turnout():
+        turnout[t["county"]] = {"code": t["code"], "registered": t["registered"], "votes_cast": t["votes_cast"],
+                                "turnout_pct": _pct(t["votes_cast"], t["registered"]), "precincts": [t["precincts_reporting"], t["precincts_total"]],
+                                "polling": [t["polling_reporting"], t["polling_total"]]}
+    county_races: dict[str, dict[str, Any]] = {}
+    for key in COUNTY_RACES:
+        cmeta = {c["cand_id"]: dict(c) for c in store.candidates(key)}
+        if not cmeta:
+            continue
+        rows = store.latest_county_votes(key)
+        per: dict[str, dict[str, Any]] = {}
+        for r in rows:
+            d = per.setdefault(r["county"], {"votes": {}, "precincts": [r["precincts_reporting"], r["precincts_total"]], "total": 0, "snapshot_id": r["snapshot_id"]})
+            party = cmeta.get(r["cand_id"], {}).get("party") or "O"
+            party = party if party in ("R", "D") else "O"
+            d["votes"][party] = d["votes"].get(party, 0) + r["votes"]
+            d["votes"][f"{party}_early"] = d["votes"].get(f"{party}_early", 0) + r["early_votes"]
+            d["total"] += r["votes"]
+            d["snapshot_id"] = max(d["snapshot_id"], r["snapshot_id"])
+        for d in per.values():
+            rv, dv = d["votes"].get("R", 0), d["votes"].get("D", 0)
+            d["margin_pct"] = _pct(rv - dv, d["total"]) if d["total"] else None
+        county_races[key] = per
+    counties = {"generated_at": latest["generated_at"], "as_of": as_of, "turnout": turnout, "races": county_races}
+    (out_dir / "counties.json").write_text(json.dumps(counties, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    status = {"generated_at": latest["generated_at"], "store": str(store.path.name), "counts": store.counts(), "as_of": as_of,
+              "last_poll": dict(store.db.execute("SELECT * FROM polls ORDER BY fetched_at DESC LIMIT 1").fetchone() or {}) or None}
+    (out_dir / "status.json").write_text(json.dumps(status, ensure_ascii=False, indent=1), encoding="utf-8")
+    return latest

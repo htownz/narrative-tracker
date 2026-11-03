@@ -1,0 +1,5 @@
+# Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
+# Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
+# Nov 3, 2026: first run, ahead of the 7 PM CT poll close.
+minutes=340
+every=300

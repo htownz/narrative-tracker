@@ -16,3 +16,6 @@ out/clients/
 out/mistruth/
 out/*/mistruth.json
 out/growth/
+
+# election layer: raw feed archive stays out of git (data/election/*.sqlite and out/election/ are committed by the election-night job)
+data/election/raw/
