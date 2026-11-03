@@ -91,7 +91,8 @@ jobs:
           i=0
           while [ "$(date +%s)" -lt "$END" ]; do
             i=$((i+1))
-            python -m election snapshot || echo "::warning::poll $i failed"
+            python -m election snapshot || { echo "::warning::poll $i failed"; cat out/election/status.json 2>/dev/null | tail -c 600; }
+            if [ "$i" -eq 1 ]; then commit_json; fi                                                         # first poll: commit at once so the status is visible
             if [ $((i % 12)) -eq 0 ]; then commit_store; elif [ $((i % 6)) -eq 0 ]; then commit_json; fi   # JSON every 30 min, store every hour
             LEFT=$(( END - $(date +%s) ))
             [ "$LEFT" -gt "$EVERY" ] || break

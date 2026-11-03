@@ -44,10 +44,30 @@ def _archive_raw(doc: dict, snap: dict) -> Path:
     return p
 
 
+def _write_error(stage: str, err: Exception) -> None:
+    """Leave a trace in out/election/status.json even when the feed cannot be fetched, so the job's commits show
+    what went wrong without anyone reading the Actions log."""
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    p = OUT_DIR / "status.json"
+    try:
+        cur = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    except Exception:  # noqa: BLE001
+        cur = {}
+    errs = cur.get("errors") or []
+    errs.append({"at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "stage": stage, "error": f"{type(err).__name__}: {str(err)[:300]}"})
+    cur["errors"] = errs[-20:]
+    cur["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    p.write_text(json.dumps(cur, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def snapshot(counties: bool = True, quiet: bool = False, local: bool = True) -> bool:
     """One poll. Returns True when the feed had changed and a snapshot was stored."""
-    doc = sos.fetch(counties=counties)
-    snap = sos.normalize(doc)
+    try:
+        doc = sos.fetch(counties=counties)
+        snap = sos.normalize(doc)
+    except Exception as e:  # noqa: BLE001
+        _write_error("sos.fetch", e)
+        raise
     st = _store()
     try:
         keyed = tracked_races(snap)
@@ -74,6 +94,7 @@ def snapshot(counties: bool = True, quiet: bool = False, local: bool = True) -> 
             except Exception as e:  # noqa: BLE001
                 print(f"[local] failed: {type(e).__name__}: {e}", file=sys.stderr)
         export(st)
+        # keep any earlier fetch errors visible in status.json until a run with none
         return changed
     finally:
         st.close()

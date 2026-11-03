@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 5:20 PM CT: restart with the county adapters (Harris/Tarrant PDFs, Travis Clarity, Bexar HTML).
+# Nov 3, 2026 6:10 PM CT: restart — commit status after the first poll so a fetch failure on the runner is visible.
 minutes=340
 every=300
