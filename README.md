@@ -90,6 +90,14 @@ Abbott hiding / dodging debates, Flags for Israel not Uvalde, Abbott serves dono
 Abbott strong / Hinojosa too left, Abbott vs Sharia courts. 365 posts drawn, 80 links, 41 pushback.
 Only 4 near-verbatim repeats — this week's Abbott discourse was quote-driven, not copy-paste-driven.
 
+## Election layer
+
+`election/` polls the Texas Secretary of State's election-night returns and the Harris, Tarrant, Travis and Bexar
+county reports every five minutes on election night, stores every change in `data/election/election-2026.sqlite`
+and exports `out/election/latest.json`, `series.json`, `counties.json` and `status.json` for the election
+dashboard. `.github/workflows/election-night.yml` runs it; `election/README.md` has the sources, the store, and
+the plan for the results → turnout → money → narrative → litigation → reactions → implications dashboard.
+
 ## Live trackers and the scheduled job
 
 `incidents/*-live.yaml` use `window.end: today` (the window grows each run; the last `refresh_days` days are
