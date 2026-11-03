@@ -44,6 +44,14 @@ CREATE TABLE IF NOT EXISTS county_turnout (
     PRIMARY KEY (snapshot_id, county));
 CREATE TABLE IF NOT EXISTS calls (
     race_key TEXT PRIMARY KEY, winner_cand_id TEXT, called_by TEXT, called_at TEXT, note TEXT);
+CREATE TABLE IF NOT EXISTS local_votes (
+    fetched_at TEXT, race_key TEXT, cand_id TEXT, votes INTEGER, early_votes INTEGER, eday_votes INTEGER,
+    precincts_reporting INTEGER, precincts_total INTEGER, run_time TEXT, digest TEXT,
+    PRIMARY KEY (fetched_at, race_key, cand_id));
+CREATE TABLE IF NOT EXISTS local_polls (
+    fetched_at TEXT, county TEXT, ok INTEGER, pending INTEGER, contests INTEGER, matched INTEGER, note TEXT,
+    PRIMARY KEY (fetched_at, county));
+CREATE INDEX IF NOT EXISTS ix_local_votes_race ON local_votes (race_key, fetched_at);
 CREATE INDEX IF NOT EXISTS ix_race_votes_race ON race_votes (race_key, snapshot_id);
 CREATE INDEX IF NOT EXISTS ix_county_votes_race ON county_votes (race_key, county, snapshot_id);
 CREATE INDEX IF NOT EXISTS ix_county_turnout_county ON county_turnout (county, snapshot_id);
@@ -203,8 +211,42 @@ class Store:
         self.db.execute("INSERT OR REPLACE INTO calls VALUES (?,?,?,?,?)", (race_key, winner_cand_id, called_by, called_at, note))
         self.db.commit()
 
+    # -- county-run (local) races ----------------------------------------------------------------------------
+    def write_local(self, fetched_at: str, races: list[dict[str, Any]], status: dict[str, Any]) -> int:
+        """Store each matched local race when its parsed block changed since the last stored one. Also keeps
+        the race/candidate metadata rows so the exporter treats them like any other race."""
+        n = 0
+        for county, s in status.items():
+            self.db.execute("INSERT OR REPLACE INTO local_polls VALUES (?,?,?,?,?,?,?)",
+                            (fetched_at, county, int(bool(s.get("ok"))), int(bool(s.get("pending"))), s.get("contests", 0), s.get("matched", 0),
+                             s.get("note") or s.get("error")))
+        for r in races:
+            last = self.db.execute("SELECT digest FROM local_votes WHERE race_key=? ORDER BY fetched_at DESC LIMIT 1", (r["key"],)).fetchone()
+            self.upsert_races([{"key": r["key"], "sos_id": None, "sos_name": r["contest"], "section": "Local", "title": r["title"],
+                                "chamber": "city" if r["key"].startswith("austin") else "county", "competitive": r["competitive"],
+                                "open_seat": r["open_seat"], "region": r["county"], "report_section": "Local",
+                                "note": r.get("note"), "meta": {"county": r["county"], "source": r["source"], "runoff_possible": r.get("runoff_possible")},
+                                "candidates": [{"id": c["id"], "name": c["name"], "party": c["party"], "incumbent": False, "order": i + 1}
+                                               for i, c in enumerate(r["candidates"])]}])
+            if last and last["digest"] == r["digest"]:
+                continue
+            for c in r["candidates"]:
+                self.db.execute("INSERT OR REPLACE INTO local_votes VALUES (?,?,?,?,?,?,?,?,?,?)",
+                                (fetched_at, r["key"], c["id"], c["votes"], c["early_votes"], c["eday_votes"], r["precincts"][0], r["precincts"][1],
+                                 r.get("run_time"), r["digest"]))
+            n += 1
+        self.db.commit()
+        return n
+
+    def local_series(self, race_key: str) -> list[sqlite3.Row]:
+        return self.db.execute("SELECT * FROM local_votes WHERE race_key=? ORDER BY fetched_at, cand_id", (race_key,)).fetchall()
+
+    def local_status(self) -> list[sqlite3.Row]:
+        return self.db.execute("""SELECT * FROM local_polls lp WHERE fetched_at = (SELECT MAX(fetched_at) FROM local_polls l2 WHERE l2.county = lp.county)
+                                  ORDER BY county""").fetchall()
+
     def counts(self) -> dict[str, int]:
         out = {}
-        for t in ("polls", "snapshots", "races", "candidates", "race_votes", "county_votes", "county_turnout", "calls"):
+        for t in ("polls", "snapshots", "races", "candidates", "race_votes", "county_votes", "county_turnout", "calls", "local_votes", "local_polls"):
             out[t] = self.db.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
         return out

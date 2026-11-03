@@ -1,9 +1,11 @@
 name: Election night
 
-# Polls the Texas SOS election-night returns every 5 minutes (python -m election snapshot), commits the JSON
-# exports every 30 minutes and the SQLite store every two hours and at the end. One run lasts ~5.5 hours; the
-# half-hourly schedule queues the next run behind it (concurrency group), so coverage is continuous until the
-# schedule window ends. Start one by hand from the Actions tab or by committing a change to election/.run.
+# Polls the Texas SOS election-night returns and the county reports every 5 minutes (python -m election
+# snapshot), commits the JSON exports every 30 minutes and the SQLite store every hour and at the end. One run
+# lasts ~5.5 hours; the half-hourly schedule queues the next run behind it (concurrency group), so coverage is
+# continuous until the schedule window ends. Start one by hand from the Actions tab or by committing a change
+# to election/.run (that restarts the live run with the new code; anything not yet committed is lost, so push
+# right after a commit lands).
 
 on:
   schedule:
@@ -25,7 +27,7 @@ permissions:
 
 concurrency:
   group: election-night
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'push' }}   # a push to election/.run restarts polling with the new code; scheduled runs queue behind the live one
 
 jobs:
   watch:
@@ -46,6 +48,9 @@ jobs:
           cache: pip
 
       - run: pip install requests pyyaml boto3
+
+      - name: pdftotext for the county cumulative-report PDFs (Harris, Tarrant)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils >/dev/null
 
       - name: Settings
         id: cfg
@@ -87,7 +92,7 @@ jobs:
           while [ "$(date +%s)" -lt "$END" ]; do
             i=$((i+1))
             python -m election snapshot || echo "::warning::poll $i failed"
-            if [ $((i % 24)) -eq 0 ]; then commit_store; elif [ $((i % 6)) -eq 0 ]; then commit_json; fi
+            if [ $((i % 12)) -eq 0 ]; then commit_store; elif [ $((i % 6)) -eq 0 ]; then commit_json; fi   # JSON every 30 min, store every hour
             LEFT=$(( END - $(date +%s) ))
             [ "$LEFT" -gt "$EVERY" ] || break
             sleep "$EVERY"

@@ -54,14 +54,20 @@ def export(store: Store, out_dir: Path = OUT_DIR) -> dict[str, Any]:
     for rr in sorted(races_rows, key=lambda r: sort_key(r["key"])):
         key = rr["key"]
         cands_meta = {c["cand_id"]: dict(c) for c in store.candidates(key)}
-        rows = store.race_series(key)
-        by_snap: dict[int, dict[str, Any]] = {}
-        for row in rows:
-            s = by_snap.setdefault(row["id"], {"fetched_at": row["fetched_at"], "source_updated": row["source_updated"], "votes": {},
-                                                "early": {}, "total": row["total"], "pr": row["precincts_reporting"],
-                                                "pt": row["precincts_total"], "cr": row["counties_reporting"], "ct": row["counties_total"]})
-            s["votes"][row["cand_id"]] = row["votes"]
-            s["early"][row["cand_id"]] = row["early_votes"]
+        by_snap: dict[Any, dict[str, Any]] = {}
+        if rr["section"] == "Local":
+            for row in store.local_series(key):
+                s = by_snap.setdefault(row["fetched_at"], {"fetched_at": row["fetched_at"], "source_updated": row["run_time"], "votes": {},
+                                                           "early": {}, "total": 0, "pr": row["precincts_reporting"], "pt": row["precincts_total"], "cr": None, "ct": None})
+                s["votes"][row["cand_id"]] = row["votes"]
+                s["early"][row["cand_id"]] = row["early_votes"]
+        else:
+            for row in store.race_series(key):
+                s = by_snap.setdefault(row["id"], {"fetched_at": row["fetched_at"], "source_updated": row["source_updated"], "votes": {},
+                                                    "early": {}, "total": row["total"], "pr": row["precincts_reporting"],
+                                                    "pt": row["precincts_total"], "cr": row["counties_reporting"], "ct": row["counties_total"]})
+                s["votes"][row["cand_id"]] = row["votes"]
+                s["early"][row["cand_id"]] = row["early_votes"]
         ser = []
         newest: dict[str, Any] | None = None
         for sid in sorted(by_snap):
@@ -83,6 +89,8 @@ def export(store: Store, out_dir: Path = OUT_DIR) -> dict[str, Any]:
             "key": key, "title": rr["title"], "chamber": rr["chamber"], "report_section": rr["report_section"],
             "region": rr["region"], "competitive": bool(rr["competitive"]), "open_seat": bool(rr["open_seat"]),
             "note": rr["note"], "sos_name": rr["sos_name"], "baseline": meta.get("baseline"),
+            "source": "county" if rr["section"] == "Local" else "sos", "county": meta.get("county"),
+            "no_incumbent_on_ballot": meta.get("no_incumbent_on_ballot"),
             "candidates": newest["cands"] if newest else [{"id": cid, "name": m["name"], "party": m["party"], "incumbent": bool(m["incumbent"]), "votes": 0, "early_votes": 0, "pct": None} for cid, m in cands_meta.items()],
             "total": newest["total"] if newest else 0,
             "reporting": {"precincts": [newest["pr"], newest["pt"]] if newest else [0, 0],
@@ -134,6 +142,7 @@ def export(store: Store, out_dir: Path = OUT_DIR) -> dict[str, Any]:
     (out_dir / "counties.json").write_text(json.dumps(counties, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     status = {"generated_at": latest["generated_at"], "store": str(store.path.name), "counts": store.counts(), "as_of": as_of,
-              "last_poll": dict(store.db.execute("SELECT * FROM polls ORDER BY fetched_at DESC LIMIT 1").fetchone() or {}) or None}
+              "last_poll": dict(store.db.execute("SELECT * FROM polls ORDER BY fetched_at DESC LIMIT 1").fetchone() or {}) or None,
+              "local": [dict(r) for r in store.local_status()]}
     (out_dir / "status.json").write_text(json.dumps(status, ensure_ascii=False, indent=1), encoding="utf-8")
     return latest

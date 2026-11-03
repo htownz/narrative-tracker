@@ -1,15 +1,17 @@
 {
- "generated_at": "2026-11-03T23:03:01+00:00",
+ "generated_at": "2026-11-03T23:16:13+00:00",
  "store": "election-2026.sqlite",
  "counts": {
-  "polls": 1,
+  "polls": 2,
   "snapshots": 1,
-  "races": 227,
-  "candidates": 474,
+  "races": 230,
+  "candidates": 483,
   "race_votes": 474,
   "county_votes": 14987,
   "county_turnout": 254,
-  "calls": 0
+  "calls": 0,
+  "local_votes": 9,
+  "local_polls": 4
  },
  "as_of": {
   "fetched_at": "2026-11-03T23:02:58+00:00",
@@ -31,10 +33,48 @@
   }
  },
  "last_poll": {
-  "fetched_at": "2026-11-03T23:02:58+00:00",
+  "fetched_at": "2026-11-03T23:16:08+00:00",
   "version": "enr/53815/5/",
   "source_updated": "2026-10-29T22:13:17-05:00",
-  "changed": 1,
+  "changed": 0,
   "note": "counties 0/254 polling 0/5302"
- }
+ },
+ "local": [
+  {
+   "fetched_at": "2026-11-03T23:16:08+00:00",
+   "county": "Bexar",
+   "ok": 1,
+   "pending": 1,
+   "contests": 0,
+   "matched": 0,
+   "note": "page still shows: Summary Results Report Joint General, Special, Charter and Bond Election November 5, 2024 UNOFFICIAL RESULTS Vote Center"
+  },
+  {
+   "fetched_at": "2026-11-03T23:16:08+00:00",
+   "county": "Harris",
+   "ok": 1,
+   "pending": 0,
+   "contests": 188,
+   "matched": 3,
+   "note": null
+  },
+  {
+   "fetched_at": "2026-11-03T23:16:08+00:00",
+   "county": "Tarrant",
+   "ok": 1,
+   "pending": 1,
+   "contests": 0,
+   "matched": 0,
+   "note": null
+  },
+  {
+   "fetched_at": "2026-11-03T23:16:08+00:00",
+   "county": "Travis",
+   "ok": 1,
+   "pending": 1,
+   "contests": 0,
+   "matched": 0,
+   "note": "no election dated 11/3/2026 on Clarity yet"
+  }
+ ]
 }

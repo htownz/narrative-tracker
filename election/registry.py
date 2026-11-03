@@ -30,6 +30,10 @@ def chamber_of(key: str) -> str:
         return "sboe"
     if key.startswith(("scotx-", "cca-")):
         return "courts"
+    if key.startswith(("harris-", "bexar-", "tarrant-", "dallas-", "travis-")):
+        return "county"
+    if key.startswith(("austin-", "houston-", "san-antonio-", "dallas-council", "fort-worth-")):
+        return "city"
     return "statewide"
 
 
@@ -84,6 +88,6 @@ def tracked_races(snap: dict[str, Any], reg: dict[str, Any] | None = None) -> di
 
 
 def sort_key(key: str) -> tuple:
-    order = {"us-senate": 0, "statewide": 1, "courts": 2, "us-house": 3, "tx-senate": 4, "tx-house": 5, "sboe": 6}
+    order = {"us-senate": 0, "statewide": 1, "courts": 2, "us-house": 3, "tx-senate": 4, "tx-house": 5, "sboe": 6, "county": 7, "city": 8}
     m = re.search(r"(\d+)$", key)
     return (order.get(chamber_of(key), 9), key.split("-")[0], int(m.group(1)) if m else 0, key)

@@ -44,7 +44,7 @@ def _archive_raw(doc: dict, snap: dict) -> Path:
     return p
 
 
-def snapshot(counties: bool = True, quiet: bool = False) -> bool:
+def snapshot(counties: bool = True, quiet: bool = False, local: bool = True) -> bool:
     """One poll. Returns True when the feed had changed and a snapshot was stored."""
     doc = sos.fetch(counties=counties)
     snap = sos.normalize(doc)
@@ -63,6 +63,16 @@ def snapshot(counties: bool = True, quiet: bool = False) -> bool:
                 print(f"snapshot #{sid}: feed updated {snap['source_updated_raw']} ({snap['version']}) — {note}; {len(keyed)} races, {len(snap['counties'])} counties")
         elif not quiet:
             print(f"no change: feed still {snap['source_updated_raw']} ({snap['version']}) — {note}")
+        if local:
+            try:   # county-run races (Harris, Tarrant, Travis, Bexar); each county is best-effort
+                from . import county
+                races, status = county.pull()
+                n = st.write_local(snap["fetched_at"], races, status)
+                if not quiet:
+                    summ = ", ".join(f"{c}: " + ("pending" if s.get("pending") else (f"{s['matched']} matched" if s.get("ok") else "ERR " + s.get("error", "")[:60])) for c, s in status.items())
+                    print(f"local: {n} race(s) changed — {summ}")
+            except Exception as e:  # noqa: BLE001
+                print(f"[local] failed: {type(e).__name__}: {e}", file=sys.stderr)
         export(st)
         return changed
     finally:

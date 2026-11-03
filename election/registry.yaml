@@ -165,20 +165,20 @@ races:
 
 # Races the SOS feed does not carry (county-run elections). Phase 2: county adapters.
 local:
-  harris-county-judge:  {title: Harris County Judge, county: Harris, open_seat: true, competitive: true, note: Hidalgo not running. Plummer (D) vs Sanchez (R)}
-  harris-commissioner-2: {title: Harris County Commissioner, Pct. 2, county: Harris, note: Garcia (D, I) vs Vega (R)}
-  harris-commissioner-4: {title: Harris County Commissioner, Pct. 4, county: Harris, competitive: true, note: Briones (D, I) vs Radack (R)}
-  bexar-county-judge:   {title: Bexar County Judge, county: Bexar, open_seat: true, note: Sakai lost the primary. Nirenberg (D) vs Von Dohlen (R)}
-  bexar-commissioner-2: {title: Bexar County Commissioner, Pct. 2, county: Bexar, note: Rodriguez (D, I) vs Hill (R)}
-  bexar-commissioner-4: {title: Bexar County Commissioner, Pct. 4, county: Bexar, note: Calvert (D, I) vs Anthony (Ind.)}
-  tarrant-county-judge: {title: Tarrant County Judge, county: Tarrant, competitive: true, note: O'Hare (R, I) vs Simmons (D)}
-  tarrant-commissioner-2: {title: Tarrant County Commissioner, Pct. 2, county: Tarrant, open_seat: true, competitive: true, note: Tinderholt (R) vs Williams (D)}
-  tarrant-commissioner-4: {title: Tarrant County Commissioner, Pct. 4, county: Tarrant, note: Ramirez (R, I) vs Cárdenas (D)}
-  austin-council-1: {title: Austin City Council, District 1, county: Travis, open_seat: true, runoff_possible: true}
-  austin-council-3: {title: Austin City Council, District 3, county: Travis, runoff_possible: true, note: Velásquez (I)}
-  austin-council-5: {title: Austin City Council, District 5, county: Travis, runoff_possible: true, note: Alter (I)}
-  austin-council-8: {title: Austin City Council, District 8, county: Travis, open_seat: true, runoff_possible: true, note: Ellis failed to qualify}
-  austin-council-9: {title: Austin City Council, District 9, county: Travis, runoff_possible: true, note: Qadri (I)}
+  harris-county-judge:  {title: Harris County Judge, county: Harris, match: '^County Judge$', open_seat: true, competitive: true, note: Hidalgo not running. Plummer (D) vs Sanchez (R)}
+  harris-commissioner-2: {title: Harris County Commissioner, Pct. 2, county: Harris, match: '^County Commissioner,? Precinct (No\.? )?2$', note: Garcia (D, I) vs Vega (R)}
+  harris-commissioner-4: {title: Harris County Commissioner, Pct. 4, county: Harris, match: '^County Commissioner,? Precinct (No\.? )?4$', competitive: true, note: Briones (D, I) vs Radack (R)}
+  bexar-county-judge:   {title: Bexar County Judge, county: Bexar, match: '^County Judge$', open_seat: true, note: Sakai lost the primary. Nirenberg (D) vs Von Dohlen (R)}
+  bexar-commissioner-2: {title: Bexar County Commissioner, Pct. 2, county: Bexar, match: '^County Commissioner,? Precinct (No\.? )?2$', note: Rodriguez (D, I) vs Hill (R)}
+  bexar-commissioner-4: {title: Bexar County Commissioner, Pct. 4, county: Bexar, match: '^County Commissioner,? Precinct (No\.? )?4$', note: Calvert (D, I) vs Anthony (Ind.)}
+  tarrant-county-judge: {title: Tarrant County Judge, county: Tarrant, match: '^County Judge$', competitive: true, note: O'Hare (R, I) vs Simmons (D)}
+  tarrant-commissioner-2: {title: Tarrant County Commissioner, Pct. 2, county: Tarrant, match: '^County Commissioner,? Precinct (No\.? )?2$', open_seat: true, competitive: true, note: Tinderholt (R) vs Williams (D)}
+  tarrant-commissioner-4: {title: Tarrant County Commissioner, Pct. 4, county: Tarrant, match: '^County Commissioner,? Precinct (No\.? )?4$', note: Ramirez (R, I) vs Cárdenas (D)}
+  austin-council-1: {title: Austin City Council, District 1, county: Travis, match: '^(City of Austin )?Council Member,? District 1$', open_seat: true, runoff_possible: true}
+  austin-council-3: {title: Austin City Council, District 3, county: Travis, match: '^(City of Austin )?Council Member,? District 3$', runoff_possible: true, note: Velásquez (I)}
+  austin-council-5: {title: Austin City Council, District 5, county: Travis, match: '^(City of Austin )?Council Member,? District 5$', runoff_possible: true, note: Alter (I)}
+  austin-council-8: {title: Austin City Council, District 8, county: Travis, match: '^(City of Austin )?Council Member,? District 8$', open_seat: true, runoff_possible: true, note: Ellis failed to qualify}
+  austin-council-9: {title: Austin City Council, District 9, county: Travis, match: '^(City of Austin )?Council Member,? District 9$', runoff_possible: true, note: Qadri (I)}
 
 # Counties the report singles out for turnout (the early-vote table) — the turnout view leads with these.
 focus_counties: [Harris, Dallas, Tarrant, Bexar, Travis, Collin, Denton, Fort Bend, Williamson, Hays, Montgomery, Galveston, Brazoria, Hidalgo, Cameron, Webb, Nueces, El Paso]
