@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-03T23:59:26+00:00",
+ "generated_at": "2026-11-04T00:11:10+00:00",
  "store": "election-2026.sqlite",
  "counts": {
   "polls": 3,
@@ -33,7 +33,7 @@
   }
  },
  "last_poll": {
-  "fetched_at": "2026-11-03T23:59:23+00:00",
+  "fetched_at": "2026-11-04T00:11:07+00:00",
   "version": "enr/53815/5/",
   "source_updated": "2026-10-29T22:13:17-05:00",
   "changed": 0,
@@ -41,7 +41,7 @@
  },
  "local": [
   {
-   "fetched_at": "2026-11-03T23:59:23+00:00",
+   "fetched_at": "2026-11-04T00:11:07+00:00",
    "county": "Bexar",
    "ok": 1,
    "pending": 1,
@@ -50,7 +50,7 @@
    "note": "page still shows: Summary Results Report Joint General, Special, Charter and Bond Election November 5, 2024 UNOFFICIAL RESULTS Vote Center"
   },
   {
-   "fetched_at": "2026-11-03T23:59:23+00:00",
+   "fetched_at": "2026-11-04T00:11:07+00:00",
    "county": "Harris",
    "ok": 1,
    "pending": 0,
@@ -59,7 +59,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-03T23:59:23+00:00",
+   "fetched_at": "2026-11-04T00:11:07+00:00",
    "county": "Tarrant",
    "ok": 1,
    "pending": 1,
@@ -68,7 +68,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-03T23:59:23+00:00",
+   "fetched_at": "2026-11-04T00:11:07+00:00",
    "county": "Travis",
    "ok": 0,
    "pending": 0,
