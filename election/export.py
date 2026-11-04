@@ -192,6 +192,17 @@ def export(store: Store, out_dir: Path = OUT_DIR) -> dict[str, Any]:
             d["votes"][f"{party}_early"] = d["votes"].get(f"{party}_early", 0) + r["early_votes"]
             d["total"] += r["votes"]
             d["snapshot_id"] = max(d["snapshot_id"], r["snapshot_id"])
+        # county-first: a county's own report replaces its SOS row when it carries more votes (see blend())
+        rep: dict[str, dict[str, Any]] = {}
+        for r in store.latest_county_reports(key):
+            d = rep.setdefault(r["county"], {"votes": {}, "precincts": [r["precincts_reporting"], r["precincts_total"]], "total": 0})
+            pty = r["party"] if r["party"] in ("R", "D") else "O"
+            d["votes"][pty] = d["votes"].get(pty, 0) + r["votes"]
+            d["total"] += r["votes"]
+        for county, d in rep.items():
+            cur = per.get(county)
+            if d["total"] and (cur is None or d["total"] > cur["total"]):
+                per[county] = {"votes": d["votes"], "precincts": d["precincts"], "total": d["total"], "snapshot_id": cur["snapshot_id"] if cur else 0, "source": "county report"}
         for d in per.values():
             rv, dv = d["votes"].get("R", 0), d["votes"].get("D", 0)
             d["margin_pct"] = _pct(rv - dv, d["total"]) if d["total"] else None

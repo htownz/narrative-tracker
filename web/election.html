@@ -83,10 +83,9 @@
   /* race rows (races to watch) */
   .race { display: grid; grid-template-columns: 74px minmax(0, 1fr) 110px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule2); }
   .race .who { font-size: 0.78rem; color: var(--muted); line-height: 1.25; } .race .who b { display: block; font-family: var(--serif); font-size: 1.05rem; color: var(--ink); font-weight: 700; }
-  .duel { position: relative; height: 54px; border-radius: 6px; overflow: hidden; display: flex; background: var(--rule2); }
-  .duel .side { position: relative; display: flex; align-items: center; min-width: 0; height: 100%; }
-  .duel .side.D { background: var(--dem2); justify-content: flex-start; padding-left: 8px; } .duel .side.R { background: var(--rep2); justify-content: flex-end; padding-right: 8px; margin-left: auto; }
-  .duel .side.D.lead { background: var(--dem); } .duel .side.R.lead { background: var(--rep); }
+  .duel { position: relative; height: 54px; border-radius: 6px; overflow: hidden; background: var(--rule2); }
+  .duel .side { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; min-width: 0; max-width: 60%; }
+  .duel .side.D { left: 0; justify-content: flex-start; padding-left: 8px; } .duel .side.R { right: 0; justify-content: flex-end; padding-right: 8px; }
   .duel .nm { color: #fff; font-weight: 600; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 1px rgba(0,0,0,.18); }
   .duel .nm small { display: block; font-family: var(--mono); font-weight: 500; font-size: 0.78rem; opacity: .95; }
   .duel .side.R .nm { text-align: right; }
@@ -146,6 +145,28 @@
   .date { background: var(--paper); border: 1px solid var(--rule); padding: 10px 12px; border-radius: 6px; }
   .date .d { font-family: var(--mono); font-size: 0.78rem; color: var(--royal); } .date .w { font-size: 0.86rem; margin-top: 2px; }
   ul.list { margin: 6px 0 0; padding-left: 18px; font-size: 0.86rem; }
+  /* county map */
+  .mapwrap { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px 12px; margin-top: 16px; }
+  .mapwrap .ctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 8px; }
+  .mapwrap .ctl h2 { font-size: 1.15rem; margin: 0; margin-right: auto; }
+  .mapwrap select { font: inherit; font-size: 0.84rem; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 5px 8px; }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+  .seg button { font: inherit; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.03em; color: var(--muted); background: var(--bg); border: 0; padding: 6px 10px; cursor: pointer; }
+  .seg button.on { background: var(--ink); color: var(--bg); } .seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .mapgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 860px) { .mapgrid { grid-template-columns: 1fr; } }
+  .mapbox { position: relative; min-width: 0; }
+  .mapbox svg { width: 100%; height: auto; display: block; max-width: 100%; }
+  .mapbox path.c { stroke: var(--paper); stroke-width: 0.6; cursor: pointer; } .mapbox path.c:hover { stroke: var(--ink); stroke-width: 1.4; }
+  .tipbox { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.76rem; line-height: 1.4; padding: 7px 9px; border-radius: 4px; max-width: 240px; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+  .tipbox b { font-weight: 600; } .tipbox .mono { font-family: var(--mono); }
+  .lg { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 0.68rem; color: var(--muted); margin-top: 6px; align-items: center; }
+  .lg i { display: inline-block; width: 14px; height: 10px; vertical-align: -1px; margin-right: 3px; border-radius: 1px; }
+  .mapwrap table.ct { width: 100%; border-collapse: collapse; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+  .mapwrap table.ct th { text-align: left; font-weight: 500; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  .mapwrap table.ct td { padding: 4px 6px; border-bottom: 1px solid var(--rule2); white-space: nowrap; } .mapwrap table.ct td.n { text-align: right; font-family: var(--mono); font-size: 0.76rem; }
+  .mapwrap table.ct tr:last-child td { border-bottom: 0; } .mapwrap table.ct td.d { font-weight: 600; color: var(--ink); }
+  .mapwrap .foot { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
   @media (prefers-reduced-motion: no-preference) { .strip i, .duel .side, .gc .needle { transition: all 500ms ease; } }
 </style>
 <div class="bar"><div class="in">
@@ -162,6 +183,15 @@
     <div class="head"><div class="eyebrow">Texas general election · November 3, 2026 · live results</div><h1>The Texas midterms</h1>
       <div class="dek">Official Secretary of State counts as they come in, county by county. The needles move with the margins and the votes still out; nothing is called unless marked.</div></div>
     <div class="gauges" id="gauges"></div>
+    <div class="mapwrap" id="mapwrap">
+      <div class="ctl"><h2>County map</h2>
+        <select id="map-race" aria-label="Race"><option value="us-senate">U.S. Senate</option><option value="governor">Governor</option><option value="lt-governor">Lieutenant Governor</option><option value="attorney-general">Attorney General</option><option value="comptroller">Comptroller</option></select>
+        <span class="seg" id="map-mode"><button data-m="lead" class="on">Leader &amp; margin</button><button data-m="swing">Swing vs last</button><button data-m="prec">Precincts in</button></span>
+      </div>
+      <div class="mapgrid"><div class="mapbox" id="mapbox"><div class="empty">drawing the map…</div></div><div id="map-side"></div></div>
+      <div class="lg" id="map-legend"></div>
+      <div class="foot" id="map-foot"></div>
+    </div>
     <div class="cols">
       <div>
         <h3>Statewide offices <span>U.S. Senate first · Texas totals</span></h3>
@@ -243,6 +273,8 @@
 
   <p class="src" style="margin-top:30px">Statewide, congressional and legislative counts: Texas Secretary of State election-night returns, unofficial until canvassed. Shift figures compare the current margin with the same office's last result (2018 SOS canvass; certified 2022 and 2024 tables). Page refreshes itself every minute; the data behind it updates about every five minutes.</p>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script>
 (function () {
   /* the raw GitHub files are refreshed every five minutes by the polling job; the copies next to the page (GitHub Pages) are the fallback */
@@ -257,7 +289,12 @@
       .replace(/\bMc([a-z])/g, function (m, b) { return "Mc" + b.toUpperCase(); }).replace(/\b(Ii|Iii|Iv|Jr|Sr)\b/g, function (m) { return m.toUpperCase(); })
       .replace(/\bDeayala\b/g, "DeAyala").replace(/\bLahood\b/g, "LaHood").replace(/\bMcqueeney\b/g, "McQueeney");
   }
-  function surname(n) { var s = tcase(n).replace(/\s*\(.*?\)\s*/g, " ").replace(/,?\s+(Jr|Sr|II|III|IV)\.?$/i, "").trim().split(/\s+/); return s[s.length - 1] || ""; }
+  function surname(n) {
+    var s = tcase(n).replace(/\s*\(.*?\)\s*/g, " ").replace(/["'].*?["']\s*/g, "").replace(/,?\s+(Jr|Sr|II|III|IV)\.?$/i, "").trim().split(/\s+/);
+    var i = s.length - 1;                                   /* keep particles: De La Cruz, Van Deaver, St. John */
+    while (i > 0 && /^(De|Del|Della|Da|Di|La|Le|Van|Von|Der|St\.?|San|Mc|O')$/i.test(s[i - 1])) i--;
+    return s.slice(Math.max(i, 1)).join(" ") || s[0] || "";
+  }
   function initials(n) { var s = tcase(n).replace(/["'].*?["']/g, "").trim().split(/\s+/).filter(Boolean); return ((s[0] || "")[0] || "") + ((s[s.length - 1] || "")[0] || ""); }
   function when(iso, opts) { if (!iso) return "–"; var d = new Date(iso); if (isNaN(d)) return iso; return d.toLocaleString("en-US", Object.assign({ hour: "numeric", minute: "2-digit", timeZone: "America/Chicago" }, opts || {})) + (opts && opts.noZone ? "" : " CT"); }
   function Phi(z) { var t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
@@ -284,7 +321,7 @@
             ["May 13, 2027", "Last day for the House to consider House bills on second reading"], ["May 31, 2027", "Sine die"], ["Jun 20, 2027", "Last day for the governor to veto bills"]]
   };
 
-  var DATA = { latest: null, counties: null, series: null, lit: null };
+  var DATA = { latest: null, counties: null, series: null, lit: null, base: null };
   var byKey = {};
 
   /* ---- race helpers ---- */
@@ -390,14 +427,15 @@
     var lead = r.leader_party;
     var label = r.title.replace(/^Texas Senate District /, "SD ").replace(/^Texas House District /, "HD ").replace(/^U\.S\. House District /, "CD ").replace(/^U\.S\. Senate$/, "U.S. Sen.").replace(/^Lieutenant Governor$/, "Lt. Gov.").replace(/^Attorney General$/, "AG").replace(/^Comptroller of Public Accounts$/, "Comptroller").replace(/^Commissioner of Agriculture$/, "Ag Comm.").replace(/^Railroad Commissioner$/, "RRC").replace(/^Land Commissioner$/, "GLO").replace(/^Texas Supreme Court, /, "SCOTX ");
     var sub = r.region || (r.chamber === "us-house" ? "Congress" : r.chamber === "tx-senate" ? "Texas Senate" : r.chamber === "tx-house" ? "Texas House" : r.chamber === "county" || r.chamber === "city" ? r.county : "Statewide");
-    var side = function (c, P, w) {
+    var side = function (c, P) {
       if (!c) return "";
-      var isLead = total && lead === P;
       var inner = (P === "D" ? '<span class="av">' + esc(initials(c.name)) + "</span>" : "") + '<span class="nm">' + esc(surname(c.name)) + (c.incumbent ? '<span class="in"> (I)</span>' : "") + "<small>" + (total ? pct(c.pct) : "–") + "</small></span>" + (P === "R" ? '<span class="av">' + esc(initials(c.name)) + "</span>" : "");
-      return '<div class="side ' + P + (isLead ? " lead" : "") + '" style="width:' + w.toFixed(1) + '%">' + inner + "</div>";
+      return '<div class="side ' + P + '">' + inner + "</div>";
     };
+    var dcol = total && lead === "D" ? "var(--dem)" : "var(--dem2)", rcol = total && lead === "R" ? "var(--rep)" : "var(--rep2)";
+    var grad = "linear-gradient(90deg, " + dcol + " 0 " + dw.toFixed(1) + "%, var(--rule2) " + dw.toFixed(1) + "% " + (100 - rw).toFixed(1) + "%, " + rcol + " " + (100 - rw).toFixed(1) + "% 100%)";
     var right = total ? "<b>" + pct(r.reporting.precincts_pct, 0) + " in</b>" + marginHtml(r) + (r.call ? '<br>called · ' + esc(r.call.called_by) : projected(r) ? "<br>projected" : "") : "<b>Awaiting votes</b>" + (r.reporting && r.reporting.precincts && r.reporting.precincts[1] ? r.reporting.precincts[1] + " precincts" : "");
-    return '<div class="race' + (small ? " small" : "") + '"><div class="who"><b>' + esc(label) + "</b>" + esc(sub || "") + (r.open_seat ? "<br>open seat" : "") + '</div><div class="duel">' + side(t.D, "D", dw) + side(t.R, "R", rw) + '<i class="tie"></i></div><div class="rt">' + right + "</div></div>";
+    return '<div class="race' + (small ? " small" : "") + '"><div class="who"><b>' + esc(label) + "</b>" + esc(sub || "") + (r.open_seat ? "<br>open seat" : "") + '</div><div class="duel" style="background:' + grad + '">' + side(t.D, "D") + side(t.R, "R") + '<i class="tie"></i></div><div class="rt">' + right + "</div></div>";
   }
 
   /* ---- latest: calls, projections, lead changes from the series ---- */
@@ -556,6 +594,88 @@
     $("lit-tbl").innerHTML = '<table><thead><tr><th>Matter</th><th>What it seeks</th><th class="n">Filed</th><th>Latest</th><th>Coverage</th></tr></thead><tbody>' + rows + "</tbody></table>";
   }
 
+  /* ---- county map ---- */
+  var GEO = null, MAP = { race: "us-senate", mode: "lead" };
+  var BASE_FOR = { "us-senate": ["us-senate", "2024"], "governor": ["governor", "2022"], "lt-governor": ["lt-governor", "2022"], "attorney-general": ["attorney-general", "2022"], "comptroller": ["comptroller", "2022"] };
+  var REP_BANDS = ["#f3d6d3", "#e8aaa4", "#d97b72", "#c6504a", "#9f2e27"], DEM_BANDS = ["#d6e0f3", "#aec1e8", "#7f9edb", "#4f73c4", "#2a4c9b"];
+  var SW_R = ["#efcfcc", "#de9c95", "#c85f55", "#a3322a"], SW_D = ["#cfdbf1", "#9db5e3", "#6586cf", "#3356a8"];
+  function nk(name) { return String(name || "").toLowerCase().replace(/[^a-z]/g, ""); }
+  function band(m) { var a = Math.abs(m); return a < 4 ? 0 : a < 8 ? 1 : a < 16 ? 2 : a < 32 ? 3 : 4; }
+  function sband(m) { var a = Math.abs(m); return a < 2 ? 0 : a < 5 ? 1 : a < 10 ? 2 : 3; }
+  function loadGeo() {
+    if (GEO) return Promise.resolve(GEO);
+    var tries = ["./tx-counties.json", "https://raw.githubusercontent.com/htownz/narrative-tracker/main/web/tx-counties.json"], i = 0;
+    function attempt() { if (i >= tries.length) return Promise.reject(new Error("no geometry")); var u = tries[i++]; return fetch(u).then(function (r) { if (!r.ok) throw 0; return r.json(); }).catch(function () { return attempt(); }); }
+    return attempt().then(function (t) { GEO = t; return t; });
+  }
+  function countyRows(race) {
+    var live = ((DATA.counties || {}).races || {})[race] || {}, tn = (DATA.counties || {}).turnout || {};
+    var bf = BASE_FOR[race], base = bf && DATA.base ? (((DATA.base.offices || {})[bf[0]] || {})[bf[1]] || {}).counties || {} : {};
+    var baseBy = {}; Object.keys(base).forEach(function (c) { baseBy[nk(c)] = base[c]; });
+    var tnBy = {}; Object.keys(tn).forEach(function (c) { tnBy[nk(c)] = tn[c]; });
+    var rows = {};
+    Object.keys(live).forEach(function (c) {
+      var v = live[c], b = baseBy[nk(c)] || null, t = tnBy[nk(c)] || {};
+      var m = v.total ? 100 * ((v.votes.R || 0) - (v.votes.D || 0)) / v.total : null;
+      rows[nk(c)] = { name: c, R: v.votes.R || 0, D: v.votes.D || 0, O: v.votes.O || 0, total: v.total, margin: m, prec: v.precincts, precPct: v.precincts && v.precincts[1] ? 100 * v.precincts[0] / v.precincts[1] : null,
+                      base: b, swing: (m != null && b && b.margin != null) ? m - b.margin : null, registered: t.registered || 0, source: v.source || "SOS" };
+    });
+    return { rows: rows, baseLabel: bf ? bf[1] : "", baseYear: bf ? bf[1] : "" };
+  }
+  function renderMap() {
+    var box = $("mapbox"); if (!box || !DATA.counties) return;
+    var race = MAP.race, mode = MAP.mode, cr = countyRows(race), rows = cr.rows;
+    loadGeo().then(function (topo) {
+      var feats = topojson.feature(topo, topo.objects.counties).features;
+      var W = 760, H = 700;
+      var proj = d3.geoConicConformal().parallels([27.5, 35]).rotate([99.5, 0]).fitExtent([[6, 6], [W - 6, H - 6]], { type: "FeatureCollection", features: feats });
+      var path = d3.geoPath(proj);
+      var fill = function (f) {
+        var r = rows[nk(f.properties.name)];
+        if (!r || !r.total) return "url(#nores)";
+        if (mode === "lead") { var m = r.margin; return (m >= 0 ? REP_BANDS : DEM_BANDS)[band(m)]; }
+        if (mode === "swing") { if (r.swing == null) return "url(#nores)"; return (r.swing >= 0 ? SW_R : SW_D)[sband(r.swing)]; }
+        var p = r.precPct == null ? 0 : r.precPct; var g = Math.round(235 - 1.6 * p); return "rgb(" + g + "," + g + "," + (g + 10) + ")";
+      };
+      var svg = d3.select(box).selectAll("svg").data([0]).join(function (e) {
+        var s = e.append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img").attr("aria-label", "Texas counties");
+        var defs = s.append("defs"); var pat = defs.append("pattern").attr("id", "nores").attr("width", 6).attr("height", 6).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)");
+        pat.append("rect").attr("width", 6).attr("height", 6).attr("fill", "var(--rule2)"); pat.append("line").attr("x1", 0).attr("y1", 0).attr("x2", 0).attr("y2", 6).attr("stroke", "var(--rule)").attr("stroke-width", 2);
+        s.append("g").attr("class", "counties"); return s;
+      });
+      box.querySelectorAll(".empty").forEach(function (e) { e.remove(); });
+      var tip = box.querySelector(".tipbox") || (function () { var t = document.createElement("div"); t.className = "tipbox"; t.hidden = true; box.appendChild(t); return t; })();
+      svg.select("g.counties").selectAll("path.c").data(feats, function (f) { return f.id; }).join("path").attr("class", "c").attr("d", path).attr("fill", fill)
+        .on("mousemove", function (ev, f) {
+          var r = rows[nk(f.properties.name)], b = r && r.base;
+          var html = "<b>" + esc(f.properties.name) + " County</b>";
+          if (r && r.total) {
+            html += '<br><span class="mono">R ' + fmt(r.R) + " (" + pct(100 * r.R / r.total) + ") · D " + fmt(r.D) + " (" + pct(100 * r.D / r.total) + ")</span>" +
+              "<br>Margin " + (r.margin >= 0 ? "R+" : "D+") + Math.abs(r.margin).toFixed(1) + (b && b.margin != null ? " · " + cr.baseYear + " " + (b.margin >= 0 ? "R+" : "D+") + Math.abs(b.margin).toFixed(1) + " · swing " + (r.swing >= 0 ? "R+" : "D+") + Math.abs(r.swing).toFixed(1) : "") +
+              "<br>" + (r.prec && r.prec[1] ? r.prec[0] + " of " + r.prec[1] + " precincts" : "") + (r.source !== "SOS" ? " · " + esc(r.source) : "") + (r.registered ? " · " + fmt(r.registered) + " registered" : "");
+          } else { html += "<br>No returns yet" + (b && b.margin != null ? " · " + cr.baseYear + " " + (b.margin >= 0 ? "R+" : "D+") + Math.abs(b.margin).toFixed(1) : ""); }
+          tip.innerHTML = html; tip.hidden = false;
+          var bb = box.getBoundingClientRect(); var x = ev.clientX - bb.left + 12, y = ev.clientY - bb.top + 12;
+          if (x + 250 > bb.width) x = ev.clientX - bb.left - 250; tip.style.left = x + "px"; tip.style.top = y + "px";
+        }).on("mouseleave", function () { tip.hidden = true; });
+      /* legend */
+      var lg = $("map-legend");
+      if (mode === "lead") lg.innerHTML = "<span>Dem</span>" + DEM_BANDS.slice().reverse().map(function (c) { return "<i style=\"background:" + c + "\"></i>"; }).join("") + "<span>0–4 · 4–8 · 8–16 · 16–32 · 32+ pts</span>" + REP_BANDS.map(function (c) { return "<i style=\"background:" + c + "\"></i>"; }).join("") + "<span>Rep</span><span><i style=\"background:repeating-linear-gradient(45deg,var(--rule2),var(--rule2) 2px,var(--rule) 2px,var(--rule) 4px)\"></i>no returns yet</span>";
+      else if (mode === "swing") lg.innerHTML = "<span>Toward Dem</span>" + SW_D.slice().reverse().map(function (c) { return "<i style=\"background:" + c + "\"></i>"; }).join("") + "<span>0–2 · 2–5 · 5–10 · 10+ pts vs " + esc(cr.baseYear) + "</span>" + SW_R.map(function (c) { return "<i style=\"background:" + c + "\"></i>"; }).join("") + "<span>Toward Rep</span>";
+      else lg.innerHTML = "<span>0%</span><i style=\"background:rgb(235,235,245)\"></i><i style=\"background:rgb(155,155,165)\"></i><i style=\"background:rgb(75,75,85)\"></i><span>100% of precincts in</span>";
+      /* side table: the biggest counties */
+      var list = Object.keys(rows).map(function (k) { return rows[k]; }).sort(function (a, b) { return (b.registered || 0) - (a.registered || 0); }).slice(0, 14);
+      var inCount = Object.keys(rows).filter(function (k) { return rows[k].total > 0; }).length;
+      $("map-side").innerHTML = '<table class="ct"><thead><tr><th>County</th><th class="n">R</th><th class="n">D</th><th class="n">Margin</th><th class="n">vs ' + esc(cr.baseYear) + '</th><th class="n">In</th></tr></thead><tbody>' +
+        list.map(function (r) { var has = r.total > 0; return '<tr><td class="d">' + esc(r.name) + '</td><td class="n">' + (has ? pct(100 * r.R / r.total) : "–") + '</td><td class="n">' + (has ? pct(100 * r.D / r.total) : "–") + '</td><td class="n">' + (has ? '<span class="mg ' + (r.margin >= 0 ? "R" : "D") + '">' + (r.margin >= 0 ? "R+" : "D+") + Math.abs(r.margin).toFixed(1) + "</span>" : "–") + '</td><td class="n">' + (r.swing != null ? (r.swing >= 0 ? "R+" : "D+") + Math.abs(r.swing).toFixed(1) : (r.base && r.base.margin != null ? '<span class="in">' + (r.base.margin >= 0 ? "R+" : "D+") + Math.abs(r.base.margin).toFixed(1) + "</span>" : "–")) + '</td><td class="n">' + pct(r.precPct, 0) + "</td></tr>"; }).join("") + "</tbody></table>";
+      $("map-foot").textContent = inCount + " of 254 counties with returns · baselines: " + (cr.baseYear ? "the same office in " + cr.baseYear + " (Texas Legislative Council VTD returns)" : "none") + " · hover a county for its numbers; the fourteen largest by registration are listed.";
+    }).catch(function () { box.innerHTML = '<div class="empty">The county geometry did not load.</div>'; });
+  }
+  function wireMap() {
+    var sel = $("map-race"); if (sel && !sel._wired) { sel._wired = true; sel.addEventListener("change", function () { MAP.race = sel.value; renderMap(); }); }
+    var seg = $("map-mode"); if (seg && !seg._wired) { seg._wired = true; seg.addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; MAP.mode = b.dataset.m; Array.prototype.forEach.call(seg.querySelectorAll("button"), function (x) { x.classList.toggle("on", x === b); }); renderMap(); }); }
+  }
+
   function renderAll() {
     var d = DATA.latest; if (!d) return;
     byKey = {}; (d.races || []).forEach(function (r) { byKey[r.key] = r; });
@@ -564,6 +684,7 @@
     pill.title = "SOS feed updated " + when(a.source_updated) + "; fetched " + when(a.fetched_at) + "; " + (rep.polling || [0])[0] + " of " + (rep.polling || [0, 5302])[1] + " polling places in";
     renderOverview(); renderStatewide(); renderSenate(); renderHouse(); renderCongress(); renderLocal(); renderAhead();
     if (DATA.lit) renderLit(DATA.lit);
+    wireMap(); renderMap();
   }
   function route() {
     var h = (location.hash || "#overview").replace("#", ""); if (!$("v-" + h)) h = "overview";
@@ -582,6 +703,7 @@
       DATA.latest = res[0]; DATA.counties = res[1]; DATA.series = res[2]; $("err").hidden = true; renderAll();
     }).catch(function (e) { $("err").hidden = false; $("err").textContent = "Could not load the results file (" + e.message + "). The polling job may not have committed yet; the page retries every minute."; });
     fetchJson("litigation.json").then(function (d) { DATA.lit = d; if (DATA.latest) { renderLit(d); renderLitList(); } }).catch(function () {});
+    if (!DATA.base) fetchJson("baselines.json").then(function (d) { DATA.base = d; if (DATA.counties) renderMap(); }).catch(function () {});
   }
   window.addEventListener("hashchange", route);
   route(); load(); setInterval(load, 60000);
