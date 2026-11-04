@@ -130,6 +130,8 @@ def assemble(site_dir: Path) -> int:
         (site_dir / "election" / "index.html").write_text(skeleton + election_page.read_text(encoding="utf-8") + "</body></html>", encoding="utf-8")
         for f in (OUT_DIR / "election").glob("*.json") if (OUT_DIR / "election").exists() else []:
             shutil.copy(f, site_dir / "election" / f.name)
+        if (ROOT / "web" / "tx-counties.json").exists():
+            shutil.copy(ROOT / "web" / "tx-counties.json", site_dir / "election" / "tx-counties.json")
         n += 1
     from .hub import build
     hub = build(site_dir)

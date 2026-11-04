@@ -1,0 +1,48 @@
+name: Publish site
+
+# Rebuilds the GitHub Pages site whenever the election exports or the dashboard page change (the election-night
+# job commits every 30 minutes), so htownz.github.io/narrative-tracker/election/ stays current between the
+# tracker job's own deploys. Election-night data on the page itself comes from the raw GitHub files (5-minute
+# cadence); the deploy keeps the page, the JSON fallback and the hub link fresh.
+
+on:
+  push:
+    branches: [main]
+    paths: ["out/election/**", "web/**", "tracker/site.py", "tracker/hub.py"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install requests pyyaml
+      - name: Assemble site
+        run: |
+          mkdir -p site
+          python -m tracker.status site || true
+          python run.py accounts --all || true
+          python run.py clients || true
+          python -m tracker.site site
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

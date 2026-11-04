@@ -245,7 +245,8 @@
 </div>
 <script>
 (function () {
-  var BASES = ["./", "https://raw.githubusercontent.com/htownz/narrative-tracker/main/out/election/"];
+  /* the raw GitHub files are refreshed every five minutes by the polling job; the copies next to the page (GitHub Pages) are the fallback */
+  var BASES = ["https://raw.githubusercontent.com/htownz/narrative-tracker/main/out/election/", "./"];
   var $ = function (id) { return document.getElementById(id); };
   var fmt = function (n) { return (n || 0).toLocaleString("en-US"); };
   var pct = function (x, d) { return x == null ? "–" : x.toFixed(d == null ? 1 : d) + "%"; };
