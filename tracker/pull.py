@@ -188,6 +188,11 @@ def pull(inc: Incident, dry_run: bool = False, budget: float | None = None, paus
             log(f"live mode: re-pulling {reset} queries covering the last {inc.refresh_days} days")
         store.set_meta("refs_fetched", False)
 
+    if inc.live:
+        # newest days first, so a run that hits its time budget has covered the present and leaves the backfill
+        # (a tracker resumed after a pause) for the next run; progress is per query, so order is free to change
+        queries = list(reversed(queries))
+
     done_before = sum(1 for q in queries if progress.get(q, {}).get("done"))
     if done_before:
         log(f"resuming: {done_before}/{len(queries)} queries already complete")

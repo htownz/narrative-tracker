@@ -4,10 +4,13 @@
 # rolls. The example that started it: @unusual_whales, Oct 16 2026, "Trump's longtime outside allies are urging
 # him to take control of the midterms, with martial law being considered, if they deem 'midterms rigged'".
 # Long-term tracker through the 2027 session (election bills follow every cycle).
-# Runs every six hours with the other *-live incidents; lanes are discovered on the first run and then frozen.
+# Paused Oct 19 with the rest while costs were tuned; resumed election night, Nov 3, 2026, for the count and
+# certification period: `cadence: 6h` puts it on the six-hourly election-week schedule in daily.yml (the other
+# trackers stay weekly). Lanes were discovered Oct 16 and are frozen; the post-election queries below were added
+# Nov 3 (recounts, refusals to certify, hand counts, "stolen"), the lanes absorb them.
 
 slug: issue-election-integrity-live
-paused: true   # Oct 19, 2026: scheduled runs narrowed to the Montera trackers while costs are tuned; delete this line to resume
+cadence: 6h    # election week (Nov 4–20, 2026): runs every six hours; remove to fall back to the weekly schedule
 title: "Election integrity and the 'rigged midterms' narrative, {days} days of posts"
 subject: "claims and counter-claims about the integrity of the 2026 midterm elections — that they are or will be rigged, calls for federal intervention or martial law, and in Texas the administration of the election: Harris County, the Secretary of State, Attorney General Paxton's election-fraud cases, mail ballots, voter rolls, poll watchers and certification"
 subtitle: >
@@ -36,6 +39,12 @@ queries:
   - '"election integrity" Texas'
   - 'Texas election "poll watchers"'
   - 'Texas election certification'
+  # added Nov 3, 2026 for the count and certification period
+  - 'Texas recount'
+  - '"refuse to certify" Texas'
+  - '"hand count" Texas ballots'
+  - 'Texas election "stolen"'
+  - 'Talarico Paxton fraud'
 
 min_faves_hint: 10
 exclude_retweets: true

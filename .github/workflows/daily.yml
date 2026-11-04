@@ -3,6 +3,7 @@ name: Pull and publish
 on:
   schedule:
     - cron: "17 3 * * 1"   # weekly: Monday 03:17 UTC = Sunday ~9-10 PM CT, ahead of the Monday social scan email
+    - cron: "17 */6 4-20 11 *"   # election week, Nov 4-20 2026: every six hours, only trackers whose YAML says `cadence: 6h`
   workflow_dispatch:            # run it by hand from the Actions tab
     inputs:
       incidents:
@@ -45,6 +46,10 @@ jobs:
           RACES="$(unpaused $(ls incidents/*-live.yaml | grep -v '/issue-'))"
           ISSUES="$(unpaused $(ls incidents/issue-*-live.yaml 2>/dev/null))"
           LIVE="$RACES $ISSUES"   # weekly schedule: every unpaused tracker each run
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "17 */6 4-20 11 *" ]; then
+            INC="$(for f in $LIVE; do grep -q '^cadence: 6h' "$f" && printf '%s ' "$f"; done)"   # the six-hourly schedule runs only the election-week trackers
+            [ -n "$INC" ] || INC="none"
+          fi
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.incidents }}" ]; then
             INC="${{ github.event.inputs.incidents }}"
           elif [ "${{ github.event_name }}" = "push" ] && [ -f .run ]; then
@@ -64,6 +69,39 @@ jobs:
           echo "relabel=${RELABEL:-}" >> "$GITHUB_OUTPUT"
           echo "running: ${INC:-<deploy only>} (pull budget ${BUDGET:-780}s per incident)"
           echo "paused: $(grep -l '^paused: true' incidents/*-live.yaml 2>/dev/null | tr '\n' ' ')"
+
+      - name: Fetch a resumed tracker's store from the bucket
+        # Nov 3, 2026: trackers paused on Oct 19 left their stores in the Railway bucket (the job stopped syncing it
+        # Oct 29). When a run includes a tracker whose store is neither in git nor on disk, pull that one store from
+        # the bucket so the resume keeps its history; from then on the commit step keeps it in git like the others.
+        if: ${{ steps.pick.outputs.incidents != '' }}
+        env:
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
+          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          BUCKET_REGION: ${{ secrets.BUCKET_REGION }}
+        run: |
+          python - <<'EOF' ${{ steps.pick.outputs.incidents }}
+          import sys
+          from pathlib import Path
+          from tracker import bucket as tb
+          from tracker.config import env
+          if not tb.configured():
+              print("bucket: not configured; stores on disk only"); sys.exit(0)
+          c, b = tb._client(), env("BUCKET_NAME")
+          remote = tb._remote(c, b, tb.PREFIX_STORES)
+          for inc in sys.argv[1:]:
+              slug = Path(inc).stem
+              dest = Path("data") / f"{slug}.sqlite"
+              key = tb.PREFIX_STORES + dest.name
+              if dest.exists():
+                  continue
+              if key not in remote:
+                  print(f"{slug}: no store in git or the bucket; starting fresh"); continue
+              c.download_file(b, key, str(dest), Config=tb._xfer())
+              print(f"{slug}: pulled {dest.stat().st_size / 1e6:.1f} MB from the bucket")
+          EOF
 
       - name: Check secrets
         if: ${{ steps.pick.outputs.incidents != '' }}
