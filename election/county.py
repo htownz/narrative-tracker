@@ -74,8 +74,9 @@ def county_race_key(contest: str) -> str | None:
 PARTY = {"REP": "R", "DEM": "D", "LIB": "L", "GRN": "G", "GRE": "G", "IND": "I", "W": "W", "": ""}
 
 
-def _get(url: str, timeout: int = 60, tries: int = 3) -> requests.Response:
-    """Election-night servers throw 502s and queue pages under load: retry briefly."""
+def _get(url: str, timeout: int = 20, tries: int = 2) -> requests.Response:
+    """Election-night servers throw 502s and queue pages under load: one quick retry, short timeouts, so a slow
+    county cannot stall the five-minute poll (the counties are fetched in parallel with a budget, see pull())."""
     import time as _t
     last: Exception | None = None
     for i in range(tries):
@@ -85,8 +86,8 @@ def _get(url: str, timeout: int = 60, tries: int = 3) -> requests.Response:
             return r
         except Exception as e:  # noqa: BLE001
             last = e
-            _t.sleep(1.5 * (i + 1))
-    raise RuntimeError(f"{url}: {last}")
+            _t.sleep(1.0)
+    raise RuntimeError(f"{url}: {str(last)[:160]}")
 
 
 def _json(url: str) -> Any:
@@ -123,7 +124,7 @@ def parse_hart_pdf(pdf_bytes: bytes) -> dict[str, Any]:
     with tempfile.TemporaryDirectory() as d:
         p = Path(d) / "r.pdf"
         p.write_bytes(pdf_bytes)
-        txt = subprocess.run(["pdftotext", "-layout", str(p), "-"], capture_output=True, text=True, timeout=120).stdout
+        txt = subprocess.run(["pdftotext", "-layout", str(p), "-"], capture_output=True, text=True, timeout=60).stdout
     if "will be posted when it becomes" in txt:
         return {"pending": True, "contests": [], "precincts": [0, 0], "run_time": None}
     prec = [0, 0]
@@ -353,21 +354,31 @@ def keyed_contests(county: str, parsed: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-def pull(counties: list[str] | None = None, reg: dict[str, Any] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
-    """All matched local races, a per-county status dict, and every keyed contest from the county reports."""
+def pull(counties: list[str] | None = None, reg: dict[str, Any] | None = None, budget_seconds: float = 90) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    """All matched local races, a per-county status dict, and every keyed contest from the county reports. The
+    counties are fetched in parallel and anything still running after `budget_seconds` is reported as timed out."""
     reg = reg or load_registry()
     races: list[dict[str, Any]] = []
     reports: list[dict[str, Any]] = []
     status: dict[str, Any] = {}
-    for county in counties or list(SOURCES):
-        try:
-            parsed = fetch_county(county)
-            matched = match_local(reg, county, parsed)
-            races.extend(matched)
-            keyed = keyed_contests(county, parsed)
-            reports.extend(keyed)
-            status[county] = {"ok": True, "pending": parsed.get("pending", False), "contests": len(parsed["contests"]), "matched": len(matched), "keyed": len(keyed),
-                              "precincts": parsed["precincts"], "run_time": parsed.get("run_time"), "note": parsed.get("note")}
-        except Exception as e:  # noqa: BLE001 - one county failing must not stop the others
-            status[county] = {"ok": False, "error": f"{type(e).__name__}: {e}"}
+    from concurrent.futures import ThreadPoolExecutor, wait
+    names = counties or list(SOURCES)
+    with ThreadPoolExecutor(max_workers=min(8, len(names))) as ex:
+        futs = {ex.submit(fetch_county, c): c for c in names}
+        done, pending = wait(list(futs), timeout=budget_seconds)
+        for f in pending:
+            status[futs[f]] = {"ok": False, "error": f"timed out after {budget_seconds}s"}
+            f.cancel()
+        for f in done:
+            county = futs[f]
+            try:
+                parsed = f.result()
+                matched = match_local(reg, county, parsed)
+                races.extend(matched)
+                keyed = keyed_contests(county, parsed)
+                reports.extend(keyed)
+                status[county] = {"ok": True, "pending": parsed.get("pending", False), "contests": len(parsed["contests"]), "matched": len(matched), "keyed": len(keyed),
+                                  "precincts": parsed["precincts"], "run_time": parsed.get("run_time"), "note": parsed.get("note")}
+            except Exception as e:  # noqa: BLE001 - one county failing must not stop the others
+                status[county] = {"ok": False, "error": f"{type(e).__name__}: {str(e)[:200]}"}
     return races, status, reports

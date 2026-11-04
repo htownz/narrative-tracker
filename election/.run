@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 8:32 PM CT: restart — Dallas County (Clarity) added to the county-first blend.
+# Nov 3, 2026 8:52 PM CT: restart — county fetches run in parallel with a 90 s budget (Clarity's slow responses were stalling the poll).
 minutes=340
 every=300
