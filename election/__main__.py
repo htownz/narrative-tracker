@@ -128,11 +128,12 @@ def main() -> None:
     ap.add_argument("--competitive", action="store_true", help="races: only the competitive ones")
     ap.add_argument("--by", default="manual", help="call: who called it (AP, DDHQ, NYT, SOS canvass, manual)")
     ap.add_argument("--note", default="")
+    ap.add_argument("--export", action="store_true", help="litigation: rewrite the JSON without pulling")
     a = ap.parse_args()
 
     if a.command == "litigation":                   # election suits and processes -> out/election/litigation.json
         from . import litigation
-        rep = litigation.pull(export_only="--export" in a.args)
+        rep = litigation.pull(export_only=a.export)
         bad = {k: v["error"] for k, v in rep["sources"].items() if not v.get("ok")}
         print(f"litigation: {rep['matters']} matters, {rep['items']} items; " + ", ".join(f"{k}: +{v.get('new', 0)}" for k, v in rep["sources"].items() if v.get("ok")))
         if bad:
