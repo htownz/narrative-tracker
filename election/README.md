@@ -86,11 +86,15 @@ the site under `/election/`. Order is the build order; each layer is useful on i
    score, the verified claims, and "what electeds said" from the officials registry. The election-integrity
    tracker (`issue-election-integrity-live`) is the first one to un-pause: certification, Harris County, mail
    ballots and the "rigged" frame are the post-election story.
-5. **Litigation** — a tracker of election-related suits and processes: CourtListener / RECAP (free API) for federal
-   dockets, re:SearchTX for state courts, the AG's press releases, SOS notices, Democracy Docket and Election
-   Law Blog as feeds. Each matter: court, parties, what is at stake, status, next date, the narrative lane it
-   feeds. Stored like events (`incidents/events.yaml` style), shown on the results page next to the race it
-   touches.
+5. **Litigation** — built Nov 3 (`election/litigation.py`, `election/litigation.yaml`, `.github/workflows/litigation.yml`,
+   every two hours): matters from Democracy Docket's Texas case list (71 cases, each page parsed: parties, status,
+   filed/decided, updates, documents, next scheduled date) plus hand-kept matters (the AG's election-fraud
+   prosecutions); coverage from the four Texas federal districts' public ECF RSS feeds (every new docket entry,
+   filtered to election matters), the AG's and SOS's releases, Election Law Blog, the Texas Tribune and Votebeat,
+   attached to matters by party names and per-case keywords (`dd_overrides`). Each matter carries the registry
+   races it touches and the narrative tracker it feeds. Output: `out/election/litigation.json`. Open items:
+   CourtListener once a token is set (`COURTLISTENER_TOKEN`), state-court dockets (re:SearchTX needs a login),
+   confirming courts and cause numbers from the filings, and Claude summaries of new filings.
 6. **Reactions** — the morning-after statements: Trump (Truth Social archive feed already wired), Abbott,
    Patrick, Burrows, Paxton/Talarico, the Texas delegation, via the officials registry and the news feeds;
    grouped by who is claiming the mandate for what.

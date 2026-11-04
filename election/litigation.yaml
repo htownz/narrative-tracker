@@ -1,0 +1,106 @@
+# Election litigation tracker: where suits and processes around the 2026 Texas election are found, and the
+# matters we watch by hand. `python -m election litigation` pulls every source, keeps the election-related
+# items, attaches them to matters, and writes out/election/litigation.json.
+#
+# Matters come from two places: Democracy Docket's Texas case list (parsed automatically, every case page:
+# parties, court, status, filed/decided dates, updates, documents) and the `matters:` list below for anything
+# it does not carry (the AG's own suits, criminal election-fraud cases, state-court matters). Democracy Docket
+# is an advocacy outlet: its "pro-voting / anti-voting" framing is stored as its description and labelled as
+# theirs; the dashboard shows parties, court, status and relief sought as the facts.
+
+sources:
+  - name: Democracy Docket — Texas cases
+    kind: dd_cases
+    url: https://www.democracydocket.com/cases/?state=texas
+    pages: 7                     # list pages to walk (about 10 cases each); case pages are fetched when new or stale
+    refetch_hours: 6
+  - name: W.D. Tex. new filings (ECF RSS)
+    kind: pacer_rss
+    court: txwd
+    url: https://ecf.txwd.uscourts.gov/cgi-bin/rss_outside.pl
+  - name: N.D. Tex. new filings (ECF RSS)
+    kind: pacer_rss
+    court: txnd
+    url: https://ecf.txnd.uscourts.gov/cgi-bin/rss_outside.pl
+  - name: S.D. Tex. new filings (ECF RSS)
+    kind: pacer_rss
+    court: txsd
+    url: https://ecf.txsd.uscourts.gov/cgi-bin/rss_outside.pl
+  - name: E.D. Tex. new filings (ECF RSS)
+    kind: pacer_rss
+    court: txed
+    url: https://ecf.txed.uscourts.gov/cgi-bin/rss_outside.pl
+  - name: Texas Attorney General — news releases
+    kind: ag_releases
+    url: https://www.texasattorneygeneral.gov/news/releases
+  - name: Texas Secretary of State — press releases
+    kind: rss
+    url: https://www.sos.state.tx.us/rss/press.xml
+    require_texas: false
+  - name: Election Law Blog
+    kind: rss
+    url: https://electionlawblog.org/?feed=rss2
+    require_texas: true
+  - name: Texas Tribune
+    kind: rss
+    url: https://feeds.texastribune.org/feeds/main/
+    require_texas: false
+  - name: Votebeat
+    kind: rss
+    url: https://www.votebeat.org/arc/outboundfeeds/rss/
+    require_texas: true
+
+# Items older than this are dropped at pull time (the SOS feed goes back years). ISO date.
+since: "2026-09-01"
+
+# An item is election-related when its title or summary matches this (case-insensitive). PACER docket
+# text is also required to not be routine mail/service noise (see litigation.py NOISE_RE).
+relevance: >-
+  \b(election|elections|electoral|ballot|ballots|voter|voters|voting|vote\b|canvass|certif(y|ies|ied|ication)|recount|hand count|poll(ing)? (place|hours|watcher)|precinct|mail ballot|absentee|
+  secretary of state|howden|election administrator|county clerk|voter roll|registration|redistrict|voting rights act|
+  lulac|naacp|league of women voters|republican party|democratic party|dscc|dccc|rnc|dnc|election code|sb ?1\b|poll watcher)\b
+
+# Hand-maintained matters. `match` is a regex applied to item titles/summaries to attach coverage.
+# `races` are election registry keys the matter bears on; `trackers` are narrative-tracker slugs.
+matters:
+  - id: oag-illegal-voting-arrests-2026
+    title: OAG election-integrity arrests (convicted felons voting)
+    case_name: State of Texas v. various (criminal election-fraud prosecutions)
+    court: Texas state courts (various counties)
+    category: Criminal election-fraud enforcement
+    status: Announced arrests before the election
+    summary: The Attorney General announced arrests of convicted felons for illegally voting in Texas. Prosecutions feed the election-integrity narrative and the 2027 election bills.
+    source: Texas Attorney General news releases
+    source_url: https://www.texasattorneygeneral.gov/news/releases
+    match: (illegal(ly)? vot|election fraud|voter fraud|felons? .{0,20}vot)
+    races: [us-senate, attorney-general]
+    trackers: [issue-election-integrity-live]
+
+# Which registry races a matter touches when only a county is known.
+county_races:
+  Harris: [harris-county-judge, harris-commissioner-2, harris-commissioner-4, cd-18, cd-38, hd-132, hd-133, hd-138]
+  Tarrant: [tarrant-county-judge, tarrant-commissioner-2, tarrant-commissioner-4, sd-9, hd-94, hd-96, hd-97]
+  Bexar: [bexar-county-judge, bexar-commissioner-2, bexar-commissioner-4, sd-19, hd-121, hd-122]
+  Dallas: [hd-108, hd-112, cd-33]
+  Travis: [austin-council-1, austin-council-3, austin-council-5, austin-council-8, austin-council-9, cd-37]
+  statewide: [us-senate, governor, lt-governor, attorney-general, comptroller]
+
+# Per-case additions for Democracy Docket matters (keyed by the case slug in its URL): extra coverage keywords,
+# a court or docket number once confirmed from the filings, extra registry races.
+dd_overrides:
+  texas-election-certification-challenge:
+    keywords: ["hand count", "hand-count", "hand counted", "Potter County Republican", "certification of the November"]
+  texas-voter-registration-delay-challenge:
+    keywords: ["registration delay", "registration backlog", "backlog of voter"]
+  texas-tarrant-county-polling-place-closure-challenge:
+    keywords: ["polling place closure", "Tarrant County polling", "UTA polling", "campus polling"]
+  texas-save-system-voter-purge-challenge:
+    keywords: ["SAVE system", "SAVE database", "noncitizen voter", "voter purge"]
+  texas-harris-county-mail-ballot-accessibility-challenge:
+    keywords: ["mail ballot accessib", "print disabilit", "National Federation of the Blind"]
+  texas-targeted-ads-challenge:              # Texas v. Hudspeth — the OAG's suit over Harris County's targeted get-out-the-vote ads
+    keywords: ["get-out-the-vote ad", "ad tags", "targeted ads", "Harris County Clerk", "Hudspeth", "voter suppression scheme", "racially discriminatory"]
+    category: Election administration
+    filed: "2026-10-29"
+    court: Texas state district court (Harris County)   # per the OAG release; confirm the court and cause number from the petition
+    races: [harris-county-judge, harris-commissioner-2, harris-commissioner-4]

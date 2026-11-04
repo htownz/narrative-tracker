@@ -1,0 +1,52 @@
+name: Election litigation
+
+# Pulls the election-litigation sources (election/litigation.yaml) and commits data/election/litigation.sqlite
+# and out/election/litigation.json. Every two hours through the certification period; by hand from the Actions
+# tab; or by committing a change to election/litigation.yaml.
+
+on:
+  schedule:
+    - cron: "23 */2 * 11 *"       # November: every two hours at :23 UTC
+  workflow_dispatch:
+  push:
+    paths: ["election/litigation.yaml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-litigation
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install requests pyyaml
+      - name: Pull sources and export
+        run: python -m election litigation
+      - name: Commit
+        run: |
+          git config user.name "election-night bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f data/election/litigation.sqlite out/election/litigation.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -q -m "litigation: $(date -u +%Y-%m-%dT%H:%MZ) $(python -c "import json;d=json.load(open('out/election/litigation.json'));print(len(d['matters']),'matters,',d['item_count'],'items')")"
+          git pull -q --rebase -X theirs --autostash origin "${{ github.ref_name }}" || { git rebase --abort 2>/dev/null || true; }
+          git push -q origin HEAD:"${{ github.ref_name }}"
+      - name: Summary
+        if: always()
+        run: |
+          { echo "### Election litigation"; echo '```'; python - <<'EOF'
+          import json
+          d = json.load(open('out/election/litigation.json'))
+          for m in d['matters'][:15]:
+              print(f"{m.get('activity') or '-':10s} {str(m.get('status'))[:9]:9s} {m['title'][:60]:60s} {str(m.get('case_name'))[:45]}")
+          EOF
+          echo '```'; } >> "$GITHUB_STEP_SUMMARY"

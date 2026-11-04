@@ -8,6 +8,7 @@
   python -m election status                      # store counts and the last poll
   python -m election races [--competitive]       # the tracked race list with current totals
   python -m election call <race-key> <candidate-name> --by "AP" [--note ...]   # record a race call
+  python -m election litigation [--export]       # election suits and processes -> out/election/litigation.json
 """
 from __future__ import annotations
 
@@ -119,7 +120,7 @@ def watch(minutes: float, every: float, counties: bool = True) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["probe", "snapshot", "watch", "export", "status", "races", "call"])
+    ap.add_argument("command", choices=["probe", "snapshot", "watch", "export", "status", "races", "call", "litigation"])
     ap.add_argument("args", nargs="*")
     ap.add_argument("--no-counties", action="store_true", help="skip the 4 MB county file (statewide totals only)")
     ap.add_argument("--minutes", type=float, default=340, help="watch: how long to keep polling")
@@ -129,6 +130,14 @@ def main() -> None:
     ap.add_argument("--note", default="")
     a = ap.parse_args()
 
+    if a.command == "litigation":                   # election suits and processes -> out/election/litigation.json
+        from . import litigation
+        rep = litigation.pull(export_only="--export" in a.args)
+        bad = {k: v["error"] for k, v in rep["sources"].items() if not v.get("ok")}
+        print(f"litigation: {rep['matters']} matters, {rep['items']} items; " + ", ".join(f"{k}: +{v.get('new', 0)}" for k, v in rep["sources"].items() if v.get("ok")))
+        if bad:
+            print("  failed: " + "; ".join(f"{k} ({v[:80]})" for k, v in bad.items()), file=sys.stderr)
+        return
     if a.command == "probe":
         doc = sos.fetch(counties=not a.no_counties)
         snap = sos.normalize(doc)
