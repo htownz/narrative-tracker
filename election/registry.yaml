@@ -12,10 +12,11 @@
 defaults:
   track_sections: [Federal, StateWide, Districted]   # feed sections to keep (district judges/DAs are keyed out)
 
-# The `baseline:` figures below were entered from memory on election night as placeholders for the comparison
-# view. Verify every one against the SOS canvass (elections.sos.state.tx.us/elchist) before any client sees
-# them, then flip this to true. The dashboard shows them as "unverified" until it is.
-baselines_verified: false
+# The statewide `baseline:` figures were verified on election night (Nov 3, 2026) against the SOS 2018 canvass
+# (elections.sos.state.tx.us/elchist331_state.htm) and Ballotpedia's certified 2022/2024 tables; each carries its
+# source. District-level baselines (SDs, HDs, CDs after the 2025 redistricting) and county-level 2024 margins
+# are still to be loaded this week from the SOS archive; add them with a source line, never from memory.
+baselines_verified: true
 
 races:
   # --- federal and statewide -------------------------------------------------------------------------------
@@ -25,32 +26,32 @@ races:
     competitive: true
     open_seat: true
     note: Paxton beat Cornyn in the May 26 runoff; Talarico beat Crockett in the March primary. Closest Senate race benchmark is Cruz–O'Rourke 2018 (R+2.6).
-    baseline: {"2018": {"R": 50.9, "D": 48.3, "margin": 2.6, "label": "Cruz vs O'Rourke"}, "2024": {"R": 53.1, "D": 44.6, "margin": 8.5, "label": "Cruz vs Allred"}}
+    baseline: {"2018": {"R": 50.9, "D": 48.3, "margin": 2.6, "total": 8371655, "label": "Cruz vs O'Rourke", "source": "SOS canvass (elchist331)"}, "2024": {"R": 53.1, "D": 44.6, "margin": 8.5, "total": 11291854, "label": "Cruz vs Allred", "source": "Ballotpedia, certified"}}
   governor:
     title: Governor
     report_section: Statewide
     competitive: true
     note: Abbott seeking a fourth term vs State Rep. Gina Hinojosa. Abbott $148M+ spent Jul 2025–Sep 2026; Hinojosa ~$17.7M.
-    baseline: {"2022": {"R": 54.8, "D": 43.8, "margin": 11.0, "label": "Abbott vs O'Rourke"}, "2018": {"R": 55.8, "D": 42.5, "margin": 13.3, "label": "Abbott vs Valdez"}}
+    baseline: {"2022": {"R": 54.8, "D": 43.9, "margin": 10.9, "total": 8102908, "label": "Abbott vs O'Rourke", "source": "Ballotpedia, certified"}, "2018": {"R": 55.8, "D": 42.5, "margin": 13.3, "total": 8343443, "label": "Abbott vs Valdez", "source": "SOS canvass (elchist331)"}}
   lt-governor:
     title: Lieutenant Governor
     report_section: Statewide
     competitive: true
     note: Patrick seeking a fourth term vs State Rep. Vikki Goodwin. ~$14.5M vs ~$26K in ads as of mid-October.
-    baseline: {"2022": {"R": 53.6, "D": 43.4, "margin": 10.2, "label": "Patrick vs Collier"}, "2018": {"R": 51.3, "D": 46.5, "margin": 4.8, "label": "Patrick vs Collier"}}
+    baseline: {"2022": {"R": 53.8, "D": 43.5, "margin": 10.3, "total": 8032444, "label": "Patrick vs Collier", "source": "Ballotpedia, certified"}, "2018": {"R": 51.3, "D": 46.5, "margin": 4.8, "total": 8305371, "label": "Patrick vs Collier", "source": "SOS canvass (elchist331)"}}
   comptroller:
     title: Comptroller of Public Accounts
     report_section: Statewide
     competitive: true
     note: Huffines (appointed Aug 2026 after Hancock resigned) vs Sen. Sarah Eckhardt.
-    baseline: {"2022": {"R": 56.4, "D": 41.1, "margin": 15.3, "label": "Hegar vs Dudding"}}
+    baseline: {"2022": {"R": 56.4, "D": 40.9, "margin": 15.5, "total": 7973593, "label": "Hegar vs Dudding", "source": "Ballotpedia, certified"}}
   attorney-general:
     title: Attorney General
     report_section: Statewide
     competitive: true
     open_seat: true
     note: Open seat (Paxton ran for Senate). Sen. Mayes Middleton vs Sen. Nathan Johnson.
-    baseline: {"2022": {"R": 53.4, "D": 43.7, "margin": 9.7, "label": "Paxton vs Garza"}}
+    baseline: {"2022": {"R": 53.4, "D": 43.7, "margin": 9.7, "total": 8010003, "label": "Paxton vs Garza", "source": "Ballotpedia, certified"}}
   ag-commissioner:
     title: Commissioner of Agriculture
     report_section: Statewide
