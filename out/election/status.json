@@ -1,48 +1,48 @@
 {
- "generated_at": "2026-11-04T08:34:59+00:00",
+ "generated_at": "2026-11-04T09:00:47+00:00",
  "store": "election-2026.sqlite",
  "counts": {
-  "polls": 75,
-  "snapshots": 56,
+  "polls": 83,
+  "snapshots": 62,
   "races": 230,
   "candidates": 486,
-  "race_votes": 26544,
-  "county_votes": 43234,
-  "county_turnout": 764,
+  "race_votes": 29388,
+  "county_votes": 43479,
+  "county_turnout": 767,
   "calls": 0,
   "local_votes": 45,
-  "local_polls": 601,
+  "local_polls": 673,
   "county_reports": 540
  },
  "as_of": {
-  "fetched_at": "2026-11-04T08:34:56+00:00",
-  "source_updated": "2026-11-04T08:33:56+00:00",
-  "version": "enr/53815/79/",
+  "fetched_at": "2026-11-04T09:00:44+00:00",
+  "source_updated": "2026-11-04T08:59:02+00:00",
+  "version": "enr/53815/84/",
   "reporting": {
    "counties": [
     253,
     254
    ],
    "precincts": [
-    1,
-    18
+    253,
+    253
    ],
    "polling": [
-    4036,
+    4077,
     5302
    ]
   }
  },
  "last_poll": {
-  "fetched_at": "2026-11-04T08:34:56+00:00",
-  "version": "enr/53815/79/",
-  "source_updated": "2026-11-04T08:33:56+00:00",
+  "fetched_at": "2026-11-04T09:00:44+00:00",
+  "version": "enr/53815/84/",
+  "source_updated": "2026-11-04T08:59:02+00:00",
   "changed": 1,
-  "note": "counties 253/254 polling 4036/5302"
+  "note": "counties 253/254 polling 4077/5302"
  },
  "local": [
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Bexar",
    "ok": 1,
    "pending": 1,
@@ -51,7 +51,7 @@
    "note": "page still shows: Summary Results Report Joint General, Special, Charter and Bond Election November 5, 2024 UNOFFICIAL RESULTS Vote Center"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Dallas",
    "ok": 1,
    "pending": 1,
@@ -60,7 +60,7 @@
    "note": "Clarity returned an error page for current_ver.txt (busy)"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Denton",
    "ok": 0,
    "pending": 0,
@@ -69,7 +69,7 @@
    "note": "RuntimeError: https://results.enr.clarityelections.com/TX/Denton/elections.json: non-JSON response (text/html; charset=UTF-8; queue or error page)"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "El Paso",
    "ok": 0,
    "pending": 0,
@@ -78,7 +78,7 @@
    "note": "RuntimeError: https://results.enr.clarityelections.com/TX/El_Paso/elections.json: non-JSON response (text/html; charset=UTF-8; queue or error page)"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Galveston",
    "ok": 0,
    "pending": 0,
@@ -87,7 +87,7 @@
    "note": "RuntimeError: https://results.enr.clarityelections.com/TX/Galveston/elections.json: non-JSON response (text/html; charset=UTF-8; queue or error page)"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Harris",
    "ok": 1,
    "pending": 0,
@@ -96,7 +96,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Tarrant",
    "ok": 1,
    "pending": 0,
@@ -105,7 +105,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Travis",
    "ok": 0,
    "pending": 0,
@@ -114,7 +114,7 @@
    "note": "RuntimeError: https://results.enr.clarityelections.com/TX/Travis/elections.json: non-JSON response (text/html; charset=UTF-8; queue or error page)"
   },
   {
-   "fetched_at": "2026-11-04T08:34:56+00:00",
+   "fetched_at": "2026-11-04T09:00:44+00:00",
    "county": "Williamson",
    "ok": 0,
    "pending": 0,
