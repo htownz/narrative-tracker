@@ -288,8 +288,12 @@
 
   /* ---- race helpers ---- */
   function top2(r) { var c = (r.candidates || []).slice(); return { R: c.filter(function (x) { return x.party === "R"; })[0], D: c.filter(function (x) { return x.party === "D"; })[0], all: c }; }
+  /* party holding the seat going in, for the pre-count prior: open Texas House seats per the 89th Legislature's roster */
+  var PRIOR = { "hd-1": "R", "hd-3": "R", "hd-9": "R", "hd-15": "R", "hd-21": "R", "hd-41": "D", "hd-47": "D", "hd-50": "D", "hd-62": "R", "hd-71": "R", "hd-85": "R", "hd-86": "R", "hd-93": "R",
+                "hd-98": "R", "hd-118": "R", "hd-125": "D", "hd-126": "R", "hd-128": "R", "hd-130": "R", "hd-131": "D", "hd-135": "D", "hd-149": "D" };
   function heldBy(r) {
     var inc = (r.candidates || []).filter(function (c) { return c.incumbent; })[0]; if (inc) return party(inc.party);
+    if (PRIOR[r.key]) return PRIOR[r.key];
     var m = /\((R|D), I\)/.exec(r.note || ""); if (m) return m[1];
     if (/^hd-/.test(r.key) && r.competitive) return "R";
     if (/^cd-(9|23|35|2|8|10|19|21|22|38)$/.test(r.key)) return "R";
@@ -360,14 +364,14 @@
       '<text x="18" y="156" font-size="9" fill="var(--dem)" font-weight="600">DEM</text><text x="322" y="156" font-size="9" fill="var(--rep)" font-weight="600" text-anchor="end">REP</text>' + needle + "</svg>";
   }
   function gaugeCard(ch, s, big) {
-    var p = s.pMajR, fav = p >= 0.5 ? "R" : "D", chance = Math.round(100 * (p >= 0.5 ? p : 1 - p));
-    var allDone = s.toCall === 0;
-    var state = allDone ? '<span class="st called">Decided</span>' : '<span class="st counting">Counting</span>';
+    var p = s.pMajR, fav = p >= 0.5 ? "R" : "D", q = p >= 0.5 ? p : 1 - p, chance = q > 0.995 ? ">99%" : Math.round(100 * q) + "%";
+    var allDone = s.toCall === 0, preCount = s.awaiting === s.contested;
+    var state = allDone ? '<span class="st called">Decided</span>' : preCount ? '<span class="st">Awaiting votes</span>' : '<span class="st counting">Counting</span>';
     var tot = ch.total, w = function (n) { return (100 * n / tot).toFixed(2) + "%"; };
     var notUpD = ch.hold.D, notUpR = ch.hold.R;
     return '<div class="gc"><div class="top"><h2>' + esc(ch.name) + "</h2>" + state + "</div>" +
-      '<div class="cap">Live estimate · chance ' + esc(ch.control) + "</div>" + gaugeSvg(p) +
-      '<div class="chance ' + (Math.abs(p - 0.5) < 0.1 ? "T" : fav) + '">' + (Math.abs(p - 0.5) < 0.1 ? "Tossup" : chance + "% " + (fav === "R" ? "Republicans" : "Democrats")) + "</div>" +
+      '<div class="cap">' + (preCount ? "Pre-count estimate from seats held" : "Live estimate") + ' · chance ' + esc(ch.control) + "</div>" + gaugeSvg(p) +
+      '<div class="chance ' + (Math.abs(p - 0.5) < 0.1 ? "T" : fav) + '">' + (Math.abs(p - 0.5) < 0.1 ? "Tossup" : chance + " " + (fav === "R" ? "Republicans" : "Democrats")) + "</div>" +
       '<div class="counts"><div><div class="big D">' + s.D + '</div><div class="cl">Democrats · ' + s.Dwon + " won · " + s.Dahead + ' ahead</div></div>' +
       '<div class="mid">' + s.toCall + "<small>to call</small></div>" +
       '<div><div class="big R">' + s.R + '</div><div class="cl r">Republicans · ' + s.Rwon + " won · " + s.Rahead + " ahead</div></div></div>" +
