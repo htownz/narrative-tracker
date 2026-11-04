@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 6:10 PM CT: restart — commit status after the first poll so a fetch failure on the runner is visible.
+# Nov 3, 2026 6:32 PM CT: restart to pick up the verified statewide baselines before the first returns post.
 minutes=340
 every=300
