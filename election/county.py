@@ -33,7 +33,42 @@ SOURCES: dict[str, dict[str, Any]] = {
     "Tarrant": {"kind": "hart_pdf", "url": "https://www.tarrantcountytx.gov/content/dam/main/elections/2026/1126/reports/cumulative.pdf"},
     "Travis": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Travis/", "date": "11/3/2026"},
     "Bexar": {"kind": "electionware_html", "url": "https://home.bexar.org/el45a.html"},
+    # Nov 3, 7:30 PM: counties whose own reports run ahead of their SOS upload early in the night; their statewide,
+    # congressional and legislative contests are blended into the totals (election/export.py) until the SOS catches up
+    "Denton": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Denton/", "date": "11/3/2026"},
+    "Williamson": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Williamson/", "date": "11/3/2026"},
+    "El Paso": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/El_Paso/", "date": "11/3/2026"},
+    "Galveston": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Galveston/", "date": "11/3/2026"},
 }
+
+# county contest names vary ("United States Senator", "US Senator", "U.S. Senator"); map them to the registry race keys
+_CK = [
+    (r"^(u\.?\s?s\.?|united states) senator\b", lambda m: "us-senate"),
+    (r"^(u\.?\s?s\.?|united states) representative,? (?:district )?(\d+)", lambda m: f"cd-{int(m.group(2))}"),
+    (r"^governor\b", lambda m: "governor"),
+    (r"^lieutenant governor\b", lambda m: "lt-governor"),
+    (r"^attorney general\b", lambda m: "attorney-general"),
+    (r"^comptroller of public accounts\b", lambda m: "comptroller"),
+    (r"^commissioner of the general land office\b", lambda m: "land-commissioner"),
+    (r"^commissioner of agriculture\b", lambda m: "ag-commissioner"),
+    (r"^railroad commissioner\b", lambda m: "railroad-commissioner"),
+    (r"^chief justice,? supreme court\b", lambda m: "scotx-chief"),
+    (r"^justice,? supreme court,? place (\d+)", lambda m: f"scotx-{int(m.group(1))}"),
+    (r"^judge,? court of criminal appeals,? place (\d+)", lambda m: f"cca-{int(m.group(1))}"),
+    (r"^state senator,? district (\d+)", lambda m: f"sd-{int(m.group(1))}"),
+    (r"^state representative,? district (\d+)", lambda m: f"hd-{int(m.group(1))}"),
+    (r"^(?:member,? )?state board of education,? district (\d+)", lambda m: f"sboe-{int(m.group(1))}"),
+]
+
+
+def county_race_key(contest: str) -> str | None:
+    n = re.sub(r"\s+", " ", str(contest or "")).strip().lower().replace("dist.", "district")
+    n = re.sub(r"^(rep|dem)\s+", "", n)
+    for pat, fn in _CK:
+        m = re.match(pat, n)
+        if m:
+            return fn(m)
+    return None
 
 PARTY = {"REP": "R", "DEM": "D", "LIB": "L", "GRN": "G", "GRE": "G", "IND": "I", "W": "W", "": ""}
 
@@ -44,8 +79,14 @@ def _get(url: str, timeout: int = 60) -> requests.Response:
     return r
 
 
-def _n(s: str) -> int:
-    return int(str(s).replace(",", "") or 0)
+def _n(s: Any) -> int:
+    """int from '1,234', 1234, or Clarity's one-element lists like [0]."""
+    if isinstance(s, (list, tuple)):
+        return sum(_n(x) for x in s)
+    try:
+        return int(float(str(s).replace(",", "").strip() or 0))
+    except ValueError:
+        return 0
 
 
 def cand_id(name: str) -> str:
@@ -152,7 +193,8 @@ def parse_clarity(base: str, date: str) -> dict[str, Any]:
     for c in summary:
         cands = []
         for name, party, votes in zip(c.get("CH") or [], c.get("P") or [], c.get("V") or []):
-            cands.append({"id": cand_id(name), "name": name, "party": PARTY.get(str(party or "").upper(), str(party or "")),
+            nm = re.sub(r"\s*\((REP|DEM|LIB|GRN|GRE|IND|NON|W)\)\s*$", "", str(name or "")).strip()
+            cands.append({"id": cand_id(nm), "name": nm, "party": PARTY.get(str(party or "").upper(), str(party or "")),
                           "votes": _n(votes), "early_votes": 0, "eday_votes": 0})
         contests.append({"contest": str(c.get("C") or "").strip(), "candidates": cands, "precincts": [_n(c.get("PR")), _n(c.get("TP"))], "cast_votes": _n(c.get("T"))})
         tp, pr = max(tp, _n(c.get("TP"))), max(pr, _n(c.get("PR")))
@@ -255,18 +297,35 @@ def match_local(reg: dict[str, Any], county: str, parsed: dict[str, Any]) -> lis
     return out
 
 
-def pull(counties: list[str] | None = None, reg: dict[str, Any] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """All matched local races plus a per-county status dict."""
+def keyed_contests(county: str, parsed: dict[str, Any]) -> list[dict[str, Any]]:
+    """Every contest in a county report that maps to a registry race key (statewide, congressional, legislative)."""
+    out = []
+    for c in parsed["contests"]:
+        key = county_race_key(c["contest"])
+        if not key:
+            continue
+        prec = c.get("precincts") or parsed["precincts"]
+        out.append({"key": key, "county": county, "contest": c["contest"], "precincts": prec, "run_time": parsed.get("run_time"),
+                    "candidates": c["candidates"], "total": sum(x["votes"] for x in c["candidates"]),
+                    "digest": hashlib.md5(json.dumps([c["candidates"], prec], sort_keys=True).encode()).hexdigest()})
+    return out
+
+
+def pull(counties: list[str] | None = None, reg: dict[str, Any] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    """All matched local races, a per-county status dict, and every keyed contest from the county reports."""
     reg = reg or load_registry()
     races: list[dict[str, Any]] = []
+    reports: list[dict[str, Any]] = []
     status: dict[str, Any] = {}
     for county in counties or list(SOURCES):
         try:
             parsed = fetch_county(county)
             matched = match_local(reg, county, parsed)
             races.extend(matched)
-            status[county] = {"ok": True, "pending": parsed.get("pending", False), "contests": len(parsed["contests"]), "matched": len(matched),
+            keyed = keyed_contests(county, parsed)
+            reports.extend(keyed)
+            status[county] = {"ok": True, "pending": parsed.get("pending", False), "contests": len(parsed["contests"]), "matched": len(matched), "keyed": len(keyed),
                               "precincts": parsed["precincts"], "run_time": parsed.get("run_time"), "note": parsed.get("note")}
         except Exception as e:  # noqa: BLE001 - one county failing must not stop the others
             status[county] = {"ok": False, "error": f"{type(e).__name__}: {e}"}
-    return races, status
+    return races, status, reports

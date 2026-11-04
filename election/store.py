@@ -52,6 +52,11 @@ CREATE TABLE IF NOT EXISTS local_polls (
     fetched_at TEXT, county TEXT, ok INTEGER, pending INTEGER, contests INTEGER, matched INTEGER, note TEXT,
     PRIMARY KEY (fetched_at, county));
 CREATE INDEX IF NOT EXISTS ix_local_votes_race ON local_votes (race_key, fetched_at);
+CREATE TABLE IF NOT EXISTS county_reports (
+    fetched_at TEXT, county TEXT, race_key TEXT, cand TEXT, name TEXT, party TEXT, votes INTEGER, early_votes INTEGER, eday_votes INTEGER,
+    precincts_reporting INTEGER, precincts_total INTEGER, run_time TEXT, digest TEXT,
+    PRIMARY KEY (fetched_at, county, race_key, cand));
+CREATE INDEX IF NOT EXISTS ix_county_reports ON county_reports (county, race_key, fetched_at);
 CREATE INDEX IF NOT EXISTS ix_race_votes_race ON race_votes (race_key, snapshot_id);
 CREATE INDEX IF NOT EXISTS ix_county_votes_race ON county_votes (race_key, county, snapshot_id);
 CREATE INDEX IF NOT EXISTS ix_county_turnout_county ON county_turnout (county, snapshot_id);
@@ -249,6 +254,32 @@ class Store:
         self.db.commit()
         return n
 
+    def write_county_reports(self, fetched_at: str, reports: list[dict[str, Any]]) -> int:
+        """Store each county's keyed contests when the parsed block changed since the last stored one."""
+        n = 0
+        for r in reports:
+            last = self.db.execute("SELECT digest FROM county_reports WHERE county=? AND race_key=? ORDER BY fetched_at DESC LIMIT 1", (r["county"], r["key"])).fetchone()
+            if last and last["digest"] == r["digest"]:
+                continue
+            for c in r["candidates"]:
+                self.db.execute("INSERT OR REPLACE INTO county_reports VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                (fetched_at, r["county"], r["key"], c["id"], c["name"], c.get("party"), c["votes"], c.get("early_votes", 0), c.get("eday_votes", 0),
+                                 r["precincts"][0], r["precincts"][1], r.get("run_time"), r["digest"]))
+            n += 1
+        self.db.commit()
+        return n
+
+    def latest_county_reports(self, race_key: str) -> list[sqlite3.Row]:
+        return self.db.execute(
+            """SELECT county, cand, name, party, votes, early_votes, eday_votes, precincts_reporting, precincts_total, run_time, fetched_at
+               FROM county_reports cr
+               WHERE race_key = ? AND fetched_at = (SELECT MAX(fetched_at) FROM county_reports c2 WHERE c2.county = cr.county AND c2.race_key = cr.race_key)
+               ORDER BY county, cand""", (race_key,)).fetchall()
+
+    def latest_county_votes_all(self, race_key: str) -> list[sqlite3.Row]:
+        """Newest SOS county rows for one race, all counties (the exporter blends these with the county reports)."""
+        return self.latest_county_votes(race_key)
+
     def local_series(self, race_key: str) -> list[sqlite3.Row]:
         return self.db.execute("SELECT * FROM local_votes WHERE race_key=? ORDER BY fetched_at, cand_id", (race_key,)).fetchall()
 
@@ -258,6 +289,6 @@ class Store:
 
     def counts(self) -> dict[str, int]:
         out = {}
-        for t in ("polls", "snapshots", "races", "candidates", "race_votes", "county_votes", "county_turnout", "calls", "local_votes", "local_polls"):
+        for t in ("polls", "snapshots", "races", "candidates", "race_votes", "county_votes", "county_turnout", "calls", "local_votes", "local_polls", "county_reports"):
             out[t] = self.db.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
         return out
