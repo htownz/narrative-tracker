@@ -39,6 +39,7 @@ SOURCES: dict[str, dict[str, Any]] = {
     "Williamson": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Williamson/", "date": "11/3/2026"},
     "El Paso": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/El_Paso/", "date": "11/3/2026"},
     "Galveston": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Galveston/", "date": "11/3/2026"},
+    "Dallas": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Dallas/", "date": "11/3/2026", "eid": "127396"},   # its elections.json is empty; the EID is on dallascountyvotes.org
 }
 
 # county contest names vary ("United States Senator", "US Senator", "U.S. Senator"); map them to the registry race keys
@@ -218,8 +219,8 @@ def clarity_election(base: str, date: str) -> dict[str, Any] | None:
     return None
 
 
-def parse_clarity(base: str, date: str) -> dict[str, Any]:
-    e = clarity_election(base, date)
+def parse_clarity(base: str, date: str, eid: str | None = None) -> dict[str, Any]:
+    e = {"EID": eid, "ElectionName": f"Clarity election {eid}"} if eid else clarity_election(base, date)
     if not e:
         return {"pending": True, "contests": [], "precincts": [0, 0], "run_time": None, "note": f"no election dated {date} on Clarity yet"}
     eid = e["EID"]
@@ -309,7 +310,7 @@ def fetch_county(county: str) -> dict[str, Any]:
     elif src["kind"] == "hart_pdf":
         out = parse_hart_pdf(_get(src["url"]).content)
     elif src["kind"] == "clarity":
-        out = parse_clarity(src["base"], src["date"])
+        out = parse_clarity(src["base"], src["date"], src.get("eid"))
     elif src["kind"] == "electionware_html":
         out = parse_electionware_html(_get(src["url"]).text)
     else:

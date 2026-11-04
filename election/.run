@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 8:00 PM CT: restart — Harris County's results JSON (resultsbyballot.json) replaces the PDF; Clarity retries.
+# Nov 3, 2026 8:32 PM CT: restart — Dallas County (Clarity) added to the county-first blend.
 minutes=340
 every=300
