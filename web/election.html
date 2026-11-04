@@ -1,0 +1,466 @@
+<title>Texas General Election 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: the firm's election report as a live page — the report's sections in its order, its tables in its
+     shape (Candidate | Party | Total Votes | Percent), Grey Havens navy/gold, serif section heads like the Word doc. */
+  :root {
+    --bg: #F5F2F1; --paper: #ffffff; --ink: #071945; --body: #1d2440; --muted: #5d6478; --rule: #d8d4cf; --rule2: #ebe7e2;
+    --royal: #003A96; --gold: #FFCB05; --rep: #b8322a; --dem: #2457b0; --oth: #8e95a6; --good: #1f7a4d;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #0a1024; --paper: #121a33; --ink: #f2f3f8; --body: #dfe3ee; --muted: #a3abc2; --rule: #2a3454; --rule2: #1d2642;
+    --royal: #8db0ff; --gold: #FFCB05; --rep: #ff7a6b; --dem: #78a6ff; --oth: #7f879c; --good: #5cc48f; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #0a1024; --paper: #121a33; --ink: #f2f3f8; --body: #dfe3ee; --muted: #a3abc2; --rule: #2a3454; --rule2: #1d2642;
+    --royal: #8db0ff; --gold: #FFCB05; --rep: #ff7a6b; --dem: #78a6ff; --oth: #7f879c; --good: #5cc48f; color-scheme: dark }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--body); font-family: var(--sans); margin: 0; padding-block: 0 56px;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); line-height: 1.45; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  a { color: var(--royal); }
+  /* masthead */
+  .mast { padding: 26px 0 16px; border-bottom: 4px solid var(--gold); display: grid; grid-template-columns: 1fr auto; gap: 12px 28px; align-items: end; }
+  .mast .firm { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .mast h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(1.5rem, 3.2vw, 2.1rem); color: var(--ink); margin: 0; line-height: 1.1; text-wrap: balance; }
+  .mast .sub { font-size: 0.86rem; color: var(--muted); margin-top: 6px; }
+  .asof { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); text-align: right; line-height: 1.6; }
+  .asof b { color: var(--ink); font-weight: 500; }
+  @media (max-width: 680px) { .mast { grid-template-columns: 1fr; } .asof { text-align: left; } }
+  /* section nav */
+  nav.secs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--rule); margin: 0 -16px; padding: 8px max(16px, env(safe-area-inset-left, 0px)); display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  nav.secs a { white-space: nowrap; text-decoration: none; color: var(--muted); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 10px; border-radius: 3px; }
+  nav.secs a:hover, nav.secs a:focus-visible { color: var(--ink); background: var(--rule2); outline: none; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+  /* sections */
+  section { padding-top: 34px; scroll-margin-top: 56px; }
+  h2 { font-family: var(--serif); font-weight: 700; font-size: 1.35rem; color: var(--ink); margin: 0 0 4px; letter-spacing: 0.01em; }
+  h2 small { font-family: var(--sans); font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-left: 10px; letter-spacing: 0; }
+  .lede { font-size: 0.92rem; color: var(--body); max-width: 72ch; margin: 6px 0 14px; }
+  h3 { font-family: var(--sans); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; display: flex; align-items: center; gap: 10px; }
+  h3::after { content: ""; flex: 1; border-top: 1px solid var(--rule); }
+  /* tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; }
+  .tile { background: var(--paper); border: 1px solid var(--rule); padding: 12px 14px; min-width: 0; }
+  .tile .k { font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+  .tile .v { font-family: var(--mono); font-size: 1.45rem; font-weight: 500; color: var(--ink); margin-top: 4px; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .tile .s { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+  .tile.gold { border-top: 3px solid var(--gold); }
+  /* race cards (the report's "General Election Candidates" tables) */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+  .card { background: var(--paper); border: 1px solid var(--rule); padding: 12px 14px 10px; min-width: 0; }
+  .card.wide { grid-column: 1 / -1; }
+  .card .h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .card .h .t { font-weight: 600; color: var(--ink); font-size: 0.98rem; }
+  .card .h .r { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .card .lead { font-size: 0.86rem; margin: 4px 0 8px; color: var(--body); }
+  .card .lead b { color: var(--ink); }
+  .card table { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+  .card th { text-align: left; font-weight: 500; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 4px 6px 5px; border-bottom: 1px solid var(--rule); }
+  .card td { padding: 5px 6px; border-bottom: 1px solid var(--rule2); white-space: nowrap; }
+  .card tr:last-child td { border-bottom: 0; }
+  .card td.n, .card th.n { text-align: right; font-family: var(--mono); font-size: 0.82rem; }
+  .card tr.win td.c { font-weight: 600; color: var(--ink); }
+  .card .bar { height: 5px; background: var(--rule2); margin: 8px 0 2px; position: relative; overflow: hidden; }
+  .card .bar i { position: absolute; top: 0; bottom: 0; } .card .bar .r { left: 0; background: var(--rep); } .card .bar .d { right: 0; background: var(--dem); }
+  .card .foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 0.74rem; color: var(--muted); margin-top: 6px; }
+  .card .note { font-size: 0.78rem; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+  .p { display: inline-block; min-width: 1.4em; text-align: center; font-size: 0.66rem; font-weight: 600; color: #fff; border-radius: 2px; padding: 0 3px; line-height: 1.45; margin-right: 6px; vertical-align: 1px; }
+  .p.R { background: var(--rep); } .p.D { background: var(--dem); } .p.O { background: var(--oth); }
+  .pill { display: inline-block; font-size: 0.64rem; letter-spacing: 0.04em; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--rule); color: var(--muted); margin-left: 6px; vertical-align: middle; text-transform: uppercase; }
+  .pill.call { background: var(--gold); color: #071945; border-color: transparent; font-weight: 600; }
+  .pill.flip { background: var(--ink); color: var(--bg); border-color: transparent; font-weight: 600; }
+  .pill.runoff { border-color: var(--gold); color: var(--ink); }
+  .mg.R { color: var(--rep); } .mg.D { color: var(--dem); }
+  /* district tables (the report's Senate / House / Congress tables) */
+  .tbl { overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); }
+  .tbl table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  .tbl th { text-align: left; font-weight: 500; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; background: var(--paper); }
+  .tbl td { padding: 7px 10px; border-bottom: 1px solid var(--rule2); white-space: nowrap; vertical-align: middle; }
+  .tbl tr:last-child td { border-bottom: 0; }
+  .tbl tr.hot td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
+  .tbl td.d { font-weight: 600; color: var(--ink); }
+  .tbl td.n { text-align: right; font-family: var(--mono); font-size: 0.8rem; }
+  .tbl td .in { color: var(--muted); font-size: 0.74rem; }
+  .tbl td.sub { white-space: normal; font-size: 0.78rem; color: var(--muted); max-width: 40ch; }
+  .tbl td .c.lead { font-weight: 600; color: var(--ink); }
+  .region { font-family: var(--serif); font-weight: 600; font-size: 0.95rem; color: var(--ink); margin: 18px 0 6px; }
+  /* chamber strips */
+  .chamber { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .ch { background: var(--paper); border: 1px solid var(--rule); padding: 12px 14px; display: grid; grid-template-columns: 170px 1fr auto; gap: 12px 16px; align-items: center; min-width: 0; }
+  .ch .nm { font-weight: 600; color: var(--ink); } .ch .nm small { display: block; font-weight: 400; color: var(--muted); font-size: 0.74rem; }
+  .ch .strip { height: 14px; display: flex; overflow: hidden; border-radius: 2px; background: var(--rule2); }
+  .ch .strip i { display: block; height: 100%; } .ch .strip .r { background: var(--rep); } .ch .strip .d { background: var(--dem); } .ch .strip .u { background: repeating-linear-gradient(45deg, var(--rule), var(--rule) 3px, var(--rule2) 3px, var(--rule2) 6px); }
+  .ch .num { font-family: var(--mono); font-size: 0.82rem; text-align: right; white-space: nowrap; }
+  .ch .num b { color: var(--ink); font-weight: 500; }
+  @media (max-width: 640px) { .ch { grid-template-columns: 1fr; } .ch .num { text-align: left; } }
+  /* misc */
+  .dates { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+  .date { background: var(--paper); border: 1px solid var(--rule); padding: 10px 12px; }
+  .date .d { font-family: var(--mono); font-size: 0.78rem; color: var(--royal); } .date .w { font-size: 0.86rem; color: var(--body); margin-top: 2px; }
+  .src { font-size: 0.76rem; color: var(--muted); max-width: 80ch; line-height: 1.5; margin-top: 10px; }
+  .err { background: var(--paper); border: 1px solid var(--rep); padding: 10px 12px; margin: 14px 0; font-size: 0.86rem; }
+  .empty { color: var(--muted); font-size: 0.86rem; padding: 10px 2px; }
+  ul.list { margin: 6px 0 0; padding-left: 18px; font-size: 0.86rem; } ul.list li { margin: 3px 0; }
+  @media (prefers-reduced-motion: no-preference) { .card .bar i, .ch .strip i { transition: width 400ms ease; } }
+</style>
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="firm">Grey Havens Strategies</div>
+      <h1>Texas General Election Report 2026</h1>
+      <div class="sub">Tuesday, November 3, 2026 · live returns in the report's order: turnout, federal and statewide, Texas Senate, Texas House, Congress, local races, the 90th Legislature.</div>
+    </div>
+    <div class="asof" id="asof">loading the results file…</div>
+  </header>
+  <nav class="secs" aria-label="Sections">
+    <a href="#turnout">Turnout</a><a href="#statewide">Federal &amp; statewide</a><a href="#senate">Texas Senate</a><a href="#house">Texas House</a><a href="#congress">Congress</a><a href="#local">Local</a><a href="#ahead">90th Legislature</a><a href="#litigation">Litigation</a>
+  </nav>
+  <div id="err" class="err" hidden></div>
+
+  <section id="turnout">
+    <h2>Voting statistics <small>registered voters, early vote, Election Day turnout</small></h2>
+    <p class="lede">Texas had a record 19,041,684 registered voters. An estimated 7.73 million (40.6%) voted during the 12-day early voting period, a midterm record. The comparable midterm is 2018: 8.37 million voters, 53.0% of 15.8 million registered.</p>
+    <div class="tiles" id="turnout-tiles"></div>
+    <h3>Turnout in counties with competitive races</h3>
+    <div class="tbl" id="turnout-tbl"></div>
+    <p class="src">Early-vote figures are the report's (Texas Secretary of State; Texas Tribune; preliminary). Votes cast and precincts are the SOS election-night county file and update through the night.</p>
+  </section>
+
+  <section id="statewide">
+    <h2>Federal and statewide <small>U.S. Senate, governor, the executive offices, the Supreme Court</small></h2>
+    <div class="cards" id="statewide-cards"></div>
+    <h3>Texas Supreme Court</h3>
+    <div class="cards" id="court-cards"></div>
+  </section>
+
+  <section id="senate">
+    <h2>Texas Senate <small>16 of 31 seats</small></h2>
+    <p class="lede" id="senate-lede"></p>
+    <div class="chamber" id="senate-chamber"></div>
+    <h3>All 16 seats</h3>
+    <div class="tbl" id="senate-tbl"></div>
+    <h3>Notable Senate races</h3>
+    <div class="cards" id="senate-cards"></div>
+  </section>
+
+  <section id="house">
+    <h2>Texas House of Representatives <small>all 150 seats; 21 Republican-held districts rated competitive</small></h2>
+    <p class="lede" id="house-lede"></p>
+    <div class="chamber" id="house-chamber"></div>
+    <h3>Competitive districts by region</h3>
+    <div id="house-regions"></div>
+    <h3>Incumbents trailing or defeated</h3>
+    <div class="tbl" id="house-incumbents"></div>
+    <h3>Other districts inside 8 points</h3>
+    <div class="tbl" id="house-close"></div>
+  </section>
+
+  <section id="congress">
+    <h2>Congress, Texas delegation <small>38 seats, redrawn in 2025</small></h2>
+    <p class="lede" id="congress-lede"></p>
+    <div class="chamber" id="congress-chamber"></div>
+    <h3>Competitive congressional races</h3>
+    <div class="tbl" id="congress-comp"></div>
+    <h3>Open-seat and notable congressional races</h3>
+    <div class="tbl" id="congress-other"></div>
+  </section>
+
+  <section id="local">
+    <h2>Local races <small>Austin City Council; Harris, Bexar and Tarrant counties</small></h2>
+    <div id="local-blocks"></div>
+    <p class="src">County-run races come from each county's own election-night report (Harris and Tarrant cumulative reports, Travis County's results site, Bexar County's summary report). Austin council seats go to a December 12 runoff when no candidate passes 50%.</p>
+  </section>
+
+  <section id="ahead">
+    <h2>Looking ahead to the 90th Legislature</h2>
+    <div class="tbl" id="ahead-tbl"></div>
+    <h3>Upcoming dates of interest</h3>
+    <div class="dates" id="dates"></div>
+  </section>
+
+  <section id="litigation">
+    <h2>Election litigation <small>active matters</small></h2>
+    <div class="tbl" id="lit-tbl"><div class="empty">loading…</div></div>
+    <p class="src">Matters from Democracy Docket's Texas case list (its descriptions summarized; its labels dropped), the Attorney General's and Secretary of State's releases, the Texas federal courts' public docket feeds and the press. Parties, court, dates and filings are the facts to use.</p>
+  </section>
+
+  <p class="src" style="margin-top:30px">Statewide, congressional and legislative counts: Texas Secretary of State election-night returns, unofficial until canvassed. Nothing is a race call unless marked. Shift figures compare the current margin with the same office's last result (2018 SOS canvass; certified 2022 and 2024 tables). Page refreshes itself every minute; the data behind it updates about every five minutes.</p>
+</div>
+<script>
+(function () {
+  var BASES = ["./", "https://raw.githubusercontent.com/htownz/narrative-tracker/main/out/election/"];
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = function (n) { return (n || 0).toLocaleString("en-US"); };
+  var pct = function (x, d) { return x == null ? "–" : x.toFixed(d == null ? 1 : d) + "%"; };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var party = function (p) { return p === "R" || p === "D" ? p : "O"; };
+  function tcase(s) {
+    return String(s || "").toLowerCase().replace(/(^|[\s\-"'(\.])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); })
+      .replace(/\bMc([a-z])/g, function (m, b) { return "Mc" + b.toUpperCase(); }).replace(/\b(Ii|Iii|Iv|Jr|Sr)\b/g, function (m) { return m.toUpperCase(); })
+      .replace(/\bDe La\b/g, "De La").replace(/\bDeayala\b/g, "DeAyala").replace(/\bLahood\b/g, "LaHood").replace(/\bMcqueeney\b/g, "McQueeney");
+  }
+  function when(iso) { if (!iso) return "–"; var d = new Date(iso); if (isNaN(d)) return iso; return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago" }) + " CT"; }
+
+  /* The report's fixed figures (its Nov 4, 2026 draft) */
+  var REPORT = {
+    registered: 19041684, early: 7730000, earlyPct: 40.6, t2018: 8370000, r2018: 15800000, p2018: 53.0,
+    earlyCounties: [["Harris", 1080364, 39.2, 2752965], ["Dallas", 628301, 42.0, 1496386], ["Tarrant", 592645, 44.2, 1339932], ["Bexar", 526502, 39.7, 1327713], ["Travis", 444436, 46.9, 947157],
+                    ["Collin", 387093, 49.0, 789839], ["Denton", 326776, 47.4, 688876], ["Fort Bend", 277439, 47.7, 581778], ["Williamson", 233097, 49.2, 474070], ["Hays", 95524, 46.8, 204234]],
+    /* chamber arithmetic: seats not on the ballot (Texas Senate holdovers per the 89th Legislature, after the Jan 2026 SD 9 special) and the splits going in */
+    senateHold: { R: 8, D: 7 }, senateBefore: { R: 19, D: 12 }, houseBefore: { R: 88, D: 62 }, congressBefore: { R: 25, D: 13 },
+    senateNotable: ["sd-3", "sd-9", "sd-11", "sd-19", "sd-22"],
+    congressComp: ["cd-9", "cd-15", "cd-23", "cd-28", "cd-34", "cd-35"],
+    congressOther: ["cd-2", "cd-8", "cd-10", "cd-18", "cd-19", "cd-21", "cd-22", "cd-33", "cd-37", "cd-38"],
+    houseRegions: [["Harris & Fort Bend Counties", ["hd-26", "hd-28", "hd-127", "hd-129", "hd-132", "hd-133", "hd-138", "hd-150"]],
+                   ["Dallas, Collin & Denton Counties", ["hd-61", "hd-63", "hd-108", "hd-112"]],
+                   ["Tarrant County", ["hd-94", "hd-96", "hd-97"]],
+                   ["Bexar & Williamson Counties", ["hd-52", "hd-121", "hd-122"]],
+                   ["South Texas", ["hd-34", "hd-37", "hd-80"]]],
+    statewideOrder: ["us-senate", "governor", "lt-governor", "comptroller", "attorney-general", "ag-commissioner", "railroad-commissioner", "land-commissioner"],
+    courts: ["scotx-chief", "scotx-2", "scotx-7", "scotx-8"],
+    local: [["Austin City Council", ["austin-council-1", "austin-council-3", "austin-council-5", "austin-council-8", "austin-council-9"], true],
+            ["Harris County", ["harris-county-judge", "harris-commissioner-2", "harris-commissioner-4"], false],
+            ["Bexar County", ["bexar-county-judge", "bexar-commissioner-2", "bexar-commissioner-4"], false],
+            ["Tarrant County", ["tarrant-county-judge", "tarrant-commissioner-2", "tarrant-commissioner-4"], false]],
+    dates: [["Nov 9, 2026", "Bill prefiling opens for the 90th Legislature"], ["Dec 12, 2026", "Local runoff elections, where needed"], ["Jan 12, 2027", "First day of the 90th regular session"],
+            ["Mar 12, 2027", "Deadline to file bills"], ["May 13, 2027", "Last day for the House to consider House bills on second reading"], ["May 31, 2027", "Sine die"], ["Jun 20, 2027", "Last day for the governor to veto bills"]]
+  };
+
+  var DATA = { latest: null, counties: null, lit: null };
+  var byKey = {};
+
+  /* ---- helpers over a race record ---- */
+  function top2(r) {
+    var c = (r.candidates || []).slice();
+    var R = c.filter(function (x) { return x.party === "R"; })[0], D = c.filter(function (x) { return x.party === "D"; })[0];
+    return { R: R, D: D, all: c };
+  }
+  function leaderWord(r) {
+    if (r.call) return "won";
+    if (r.total) return "leads";
+    return "no returns yet";
+  }
+  function candName(c, withParty) {
+    if (!c) return "–";
+    return (withParty ? '<span class="p ' + party(c.party) + '">' + party(c.party) + "</span>" : "") + esc(tcase(c.name)) + (c.incumbent ? ' <span class="in">(I)</span>' : "");
+  }
+  function marginHtml(r) {
+    if (!r.total || r.margin_pct == null) return '<span class="mg">–</span>';
+    return '<span class="mg ' + (r.leader_party || "") + '">' + (r.leader_party || "") + "+" + r.margin_pct.toFixed(1) + "</span>";
+  }
+  function shift(r) {
+    var b = r.baseline; if (!b || !r.total || r.margin_pct == null) return "";
+    var yrs = Object.keys(b).sort(), last = yrs[yrs.length - 1], bl = b[last]; if (!bl || bl.margin == null) return "";
+    var now = (r.leader_party === "D" ? -1 : 1) * r.margin_pct, d = now - bl.margin;
+    return (d > 0 ? "R+" : "D+") + Math.abs(d).toFixed(1) + " vs " + last + " (" + esc(bl.label) + ", R+" + bl.margin.toFixed(1) + ")";
+  }
+  function flipPill(r, heldBy) {
+    if (!r.total || !heldBy) return "";
+    var lp = r.leader_party; if (!lp || lp === heldBy) return "";
+    return '<span class="pill flip">' + (r.call ? "flip" : "flip if held") + "</span>";
+  }
+  function heldBy(r) {           /* party holding the seat going in: the incumbent's party, else the registry note's "(R, I)"/"(D, I)" or an open seat's prior party where the note says */
+    var inc = (r.candidates || []).filter(function (c) { return c.incumbent; })[0];
+    if (inc) return party(inc.party);
+    var m = /\((R|D), I\)/.exec(r.note || ""); if (m) return m[1];
+    if (/^hd-/.test(r.key) && r.competitive) return "R";                 /* the report's 21 competitive House seats are all Republican-held */
+    if (/^cd-(9|23|35|2|8|10|19|21|22|38)$/.test(r.key)) return "R";    /* open seats drawn or held Republican */
+    if (/^sd-(3|11|22)$/.test(r.key)) return "R";
+    return null;
+  }
+  function statusPill(r) {
+    if (r.call) return '<span class="pill call">Called · ' + esc(r.call.called_by) + "</span>";
+    return "";
+  }
+
+  /* ---- renderers ---- */
+  function raceCard(r, opts) {
+    opts = opts || {};
+    var t = top2(r), total = r.total || 0;
+    var rows = t.all.filter(function (c) { return c.party === "R" || c.party === "D" || (c.votes / (total || 1)) > 0.02; }).slice(0, 4);
+    var rp = total && t.R ? 100 * t.R.votes / total : 0, dp = total && t.D ? 100 * t.D.votes / total : 0;
+    var lead = t.all[0];
+    var leadLine = total && lead ? "<b>" + esc(tcase(lead.name)) + "</b> " + leaderWord(r) + " with " + pct(lead.pct) + " (" + marginHtml(r) + ")" : "No returns posted yet.";
+    var sh = shift(r);
+    return '<div class="card' + (opts.wide ? " wide" : "") + '"><div class="h"><div class="t">' + esc(r.title) + statusPill(r) + (r.open_seat ? '<span class="pill">open seat</span>' : "") + '</div><div class="r">' + pct(r.reporting && r.reporting.precincts_pct) + " precincts · " + fmt(total) + " votes</div></div>" +
+      '<div class="lead">' + leadLine + "</div>" +
+      '<div class="bar"><i class="r" style="width:' + rp.toFixed(1) + '%"></i><i class="d" style="width:' + dp.toFixed(1) + '%"></i></div>' +
+      "<table><thead><tr><th>General election candidates</th><th>Party</th><th class=\"n\">Total votes</th><th class=\"n\">Percent</th></tr></thead><tbody>" +
+      rows.map(function (c) { return "<tr" + (total && c === lead ? ' class="win"' : "") + '><td class="c">' + esc(tcase(c.name)) + (c.incumbent ? " (I)" : "") + "</td><td>" + esc(c.party) + '</td><td class="n">' + fmt(c.votes) + '</td><td class="n">' + pct(c.pct) + "</td></tr>"; }).join("") +
+      "</tbody></table>" +
+      '<div class="foot"><span>' + (sh ? "Shift " + sh : "") + "</span><span>" + (r.reporting && r.reporting.counties && r.reporting.counties[1] ? r.reporting.counties[0] + " of " + r.reporting.counties[1] + " counties fully in" : "") + "</span></div>" +
+      (opts.note && r.note ? '<div class="note">' + esc(r.note) + "</div>" : "") + "</div>";
+  }
+
+  function districtTable(keys, opts) {
+    opts = opts || {};
+    var rows = keys.map(function (k) { return byKey[k]; }).filter(Boolean);
+    if (!rows.length) return '<div class="empty">No races in this group yet.</div>';
+    var head = "<tr><th>District</th><th>Republican</th><th>Democrat</th><th>" + (opts.leaderLabel || "Leader") + "</th>" + (opts.total ? '<th class="n">Total vote</th>' : "") + '<th class="n">% of vote</th><th class="n">Margin</th><th class="n">Precincts</th></tr>';
+    var body = rows.map(function (r) {
+      var t = top2(r), lead = r.total ? t.all[0] : null, hb = heldBy(r);
+      var dist = r.title.replace(/^Texas Senate District /, "SD ").replace(/^Texas House District /, "HD ").replace(/^U\.S\. House District /, "CD ");
+      var sub = [r.region, r.open_seat ? "open seat" : ""].filter(Boolean).join(" · ");
+      return "<tr" + (r.competitive ? ' class="hot"' : "") + '><td class="d">' + esc(dist) + statusPill(r) + flipPill(r, hb) + (sub ? '<br><span class="in">' + esc(sub) + "</span>" : "") + "</td>" +
+        '<td><span class="c' + (lead && lead.party === "R" ? " lead" : "") + '">' + candName(t.R || null) + "</span></td>" +
+        '<td><span class="c' + (lead && lead.party === "D" ? " lead" : "") + '">' + candName(t.D || null) + "</span></td>" +
+        "<td>" + (lead ? '<span class="p ' + party(lead.party) + '">' + party(lead.party) + "</span>" + esc(tcase(lead.name)) : '<span class="in">–</span>') + "</td>" +
+        (opts.total ? '<td class="n">' + fmt(r.total) + "</td>" : "") +
+        '<td class="n">' + (lead ? pct(lead.pct) : "–") + "</td>" +
+        '<td class="n">' + marginHtml(r) + "</td>" +
+        '<td class="n">' + pct(r.reporting && r.reporting.precincts_pct, 0) + "</td></tr>";
+    }).join("");
+    return "<table><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
+  }
+
+  function chamber(id, name, total, before, hold, keys) {
+    var R = hold.R || 0, D = hold.D || 0, und = 0, Rled = 0, Dled = 0, called = 0;
+    keys.forEach(function (k) {
+      var r = byKey[k]; if (!r) { und++; return; }
+      if (!r.total || !r.leader_party) { und++; return; }
+      if (r.leader_party === "R") { Rled++; } else if (r.leader_party === "D") { Dled++; } else { und++; }
+      if (r.call) called++;
+    });
+    var Rt = R + Rled, Dt = D + Dled, u = total - Rt - Dt;
+    var w = function (n) { return (100 * n / total).toFixed(2) + "%"; };
+    $(id).innerHTML = '<div class="ch"><div class="nm">' + esc(name) + "<small>" + (hold.R || hold.D ? fmt(hold.R + hold.D) + " seats not on the ballot · " : "") + fmt(keys.length) + " contested · " + fmt(called) + " called</small></div>" +
+      '<div class="strip" title="' + Rt + " R, " + Dt + " D, " + u + ' undecided"><i class="r" style="width:' + w(Rt) + '"></i><i class="u" style="width:' + w(u) + '"></i><i class="d" style="width:' + w(Dt) + '"></i></div>' +
+      '<div class="num"><b>' + Rt + " R</b> · <b>" + Dt + " D</b> · " + u + " open<br><span>was " + before.R + " R – " + before.D + " D · net " + (Rt - before.R >= 0 ? "R+" + (Rt - before.R) : "D+" + (before.R - Rt)) + (u ? " so far" : "") + "</span></div></div>";
+    return { R: Rt, D: Dt, undecided: u };
+  }
+
+  function renderTurnout() {
+    var tn = (DATA.counties && DATA.counties.turnout) || {};
+    var cast = 0, reg = 0, pr = 0, pt = 0;
+    Object.keys(tn).forEach(function (c) { cast += tn[c].votes_cast || 0; reg += tn[c].registered || 0; pr += tn[c].precincts[0] || 0; pt += tn[c].precincts[1] || 0; });
+    var regShown = reg || REPORT.registered;
+    $("turnout-tiles").innerHTML =
+      '<div class="tile gold"><div class="k">2026 votes cast so far</div><div class="v">' + (cast ? (cast / 1e6).toFixed(2) + " M" : "–") + '</div><div class="s">' + (cast ? pct(100 * cast / regShown) + " of registered · " + pct(pt ? 100 * pr / pt : null, 0) + " of precincts" : "county file not yet updated") + "</div></div>" +
+      '<div class="tile"><div class="k">Early vote (12 days)</div><div class="v">7.73 M</div><div class="s">40.6% of registered · midterm record</div></div>' +
+      '<div class="tile"><div class="k">Registered voters</div><div class="v">' + (regShown / 1e6).toFixed(2) + ' M</div><div class="s">record; 15.8 M in 2018</div></div>' +
+      '<div class="tile"><div class="k">2018 general turnout</div><div class="v">8.37 M</div><div class="s">53.0% of registered</div></div>';
+    var rows = REPORT.earlyCounties.map(function (c) {
+      var live = tn[c[0]] || {};
+      var vc = live.votes_cast || 0, rv = live.registered || c[3];
+      return '<tr><td class="d">' + esc(c[0]) + '</td><td class="n">' + fmt(c[1]) + '</td><td class="n">' + pct(c[2]) + '</td><td class="n">' + (vc ? fmt(vc) : "–") + '</td><td class="n">' + (vc ? pct(100 * vc / rv) : "–") + '</td><td class="n">' + (live.precincts ? pct(live.precincts[1] ? 100 * live.precincts[0] / live.precincts[1] : null, 0) : "–") + '</td><td class="n">' + fmt(rv) + "</td></tr>";
+    }).join("");
+    $("turnout-tbl").innerHTML = '<table><thead><tr><th>County</th><th class="n">2026 early votes</th><th class="n">% of registered</th><th class="n">Votes cast (live)</th><th class="n">Turnout (live)</th><th class="n">Precincts in</th><th class="n">Registered</th></tr></thead><tbody>' + rows + "</tbody></table>";
+  }
+
+  function renderStatewide() {
+    $("statewide-cards").innerHTML = REPORT.statewideOrder.map(function (k) { var r = byKey[k]; return r ? raceCard(r, { wide: k === "us-senate", note: true }) : ""; }).join("");
+    $("court-cards").innerHTML = REPORT.courts.map(function (k) { var r = byKey[k]; return r ? raceCard(r) : ""; }).join("");
+  }
+
+  function renderSenate() {
+    var keys = Object.keys(byKey).filter(function (k) { return /^sd-\d+$/.test(k); }).sort(function (a, b) { return +a.slice(3) - +b.slice(3); });
+    var s = chamber("senate-chamber", "Texas Senate (31)", 31, REPORT.senateBefore, REPORT.senateHold, keys);
+    $("senate-lede").textContent = "Texas senators serve staggered four-year terms; 16 of 31 seats were on the ballot. Entering the election the chamber stood 19 R – 12 D after Democrat Taylor Rehmet won the January SD 9 special election. The 15 seats not on the ballot split 8 R – 7 D.";
+    $("senate-tbl").innerHTML = districtTable(keys, { leaderLabel: "Leader / winner" });
+    $("senate-cards").innerHTML = REPORT.senateNotable.map(function (k) { var r = byKey[k]; return r ? raceCard(r, { note: true }) : ""; }).join("");
+  }
+
+  function renderHouse() {
+    var keys = Object.keys(byKey).filter(function (k) { return /^hd-\d+$/.test(k); }).sort(function (a, b) { return +a.slice(3) - +b.slice(3); });
+    chamber("house-chamber", "Texas House (150)", 150, REPORT.houseBefore, { R: 0, D: 0 }, keys);
+    $("house-lede").textContent = "All 150 seats were on the ballot; 24 were open. Entering November, 21 Republican-held districts (three of them open) were rated competitive, concentrated in suburban Harris, Fort Bend, Dallas, Collin, Denton, Tarrant, Bexar and Williamson counties and in South Texas. In 2018 Republicans lost 12 House seats in similar districts.";
+    $("house-regions").innerHTML = REPORT.houseRegions.map(function (g) { return '<div class="region">' + esc(g[0]) + '</div><div class="tbl">' + districtTable(g[1], { total: true }) + "</div>"; }).join("");
+    var inc = keys.map(function (k) { return byKey[k]; }).filter(function (r) {
+      var i = (r.candidates || []).filter(function (c) { return c.incumbent; })[0];
+      return i && r.total && r.leader !== i.id && (r.reporting.precincts_pct || 0) >= 40;
+    }).map(function (r) { return r.key; });
+    $("house-incumbents").innerHTML = inc.length ? districtTable(inc, { total: true }) : '<div class="empty">No incumbent is trailing with 40% or more of precincts in.</div>';
+    var close = keys.map(function (k) { return byKey[k]; }).filter(function (r) { return !r.competitive && r.total && r.margin_pct != null && r.margin_pct < 8 && (r.candidates || []).filter(function (c) { return c.party === "R" || c.party === "D"; }).length >= 2; }).map(function (r) { return r.key; });
+    $("house-close").innerHTML = close.length ? districtTable(close, { total: true }) : '<div class="empty">No district outside the competitive list is inside 8 points.</div>';
+  }
+
+  function renderCongress() {
+    var keys = Object.keys(byKey).filter(function (k) { return /^cd-\d+$/.test(k); }).sort(function (a, b) { return +a.slice(3) - +b.slice(3); });
+    chamber("congress-chamber", "U.S. House, Texas (38)", 38, REPORT.congressBefore, { R: 0, D: 0 }, keys);
+    $("congress-lede").textContent = "The 2025 second special session redrew the congressional map to favor Republicans in up to five more seats, from 25–13 toward as much as 30–8. House Majority PAC spent more than $20 million against Republican-held seats in the Rio Grande Valley and other targets.";
+    $("congress-comp").innerHTML = districtTable(REPORT.congressComp, { total: true });
+    $("congress-other").innerHTML = districtTable(REPORT.congressOther, { total: true });
+  }
+
+  function renderLocal() {
+    $("local-blocks").innerHTML = REPORT.local.map(function (g) {
+      var name = g[0], keys = g[1], runoff = g[2];
+      var rows = keys.map(function (k) { return byKey[k]; });
+      var body = rows.map(function (r, i) {
+        var key = keys[i];
+        if (!r) return '<tr><td class="d">' + esc((DATA.latest.local_races[key] || {}).title || key) + '</td><td colspan="5" class="sub">Not yet in the county report.</td></tr>';
+        var t = top2(r), lead = r.total ? t.all[0] : null;
+        var ro = runoff && lead && lead.pct != null && lead.pct < 50 && (r.reporting.precincts_pct || 0) >= 50 ? '<span class="pill runoff">runoff likely</span>' : "";
+        var opp = t.all.filter(function (c) { return c !== lead; }).slice(0, 2).map(function (c) { return candName(c, true) + " " + pct(c.pct); }).join("<br>");
+        return '<tr><td class="d">' + esc(r.title.replace(name + ", ", "").replace(name + " ", "")) + statusPill(r) + ro + (r.open_seat ? '<span class="pill">open</span>' : "") + "</td>" +
+          "<td>" + (lead ? candName(lead, true) + " <b>" + pct(lead.pct) + "</b>" : '<span class="in">no returns yet</span>') + "</td>" +
+          "<td>" + (opp || "–") + "</td>" +
+          '<td class="n">' + fmt(r.total) + '</td><td class="n">' + marginHtml(r) + '</td><td class="n">' + pct(r.reporting && r.reporting.precincts_pct, 0) + "</td></tr>";
+      }).join("");
+      return '<div class="region">' + esc(name) + '</div><div class="tbl"><table><thead><tr><th>Office</th><th>Leader</th><th>Others</th><th class="n">Votes</th><th class="n">Margin</th><th class="n">Precincts</th></tr></thead><tbody>' + body + "</tbody></table></div>";
+    }).join("");
+  }
+
+  function renderAhead() {
+    var sen = chamberCount(/^sd-\d+$/, REPORT.senateHold), hou = chamberCount(/^hd-\d+$/, { R: 0, D: 0 }), con = chamberCount(/^cd-\d+$/, { R: 0, D: 0 });
+    var row = function (name, c, before, total) {
+      var u = total - c.R - c.D;
+      return "<tr><td class=\"d\">" + name + '</td><td class="n">' + c.R + '</td><td class="n">' + c.D + '</td><td class="n">' + u + '</td><td class="n">' + (c.R - before.R >= 0 ? "R+" + (c.R - before.R) : "D+" + (before.R - c.R)) + '</td><td class="n">' + before.R + "–" + before.D + "</td></tr>";
+    };
+    $("ahead-tbl").innerHTML = '<table><thead><tr><th>Chamber</th><th class="n">Republicans</th><th class="n">Democrats</th><th class="n">Undecided</th><th class="n">Net change</th><th class="n">Before</th></tr></thead><tbody>' +
+      row("Texas Senate (31)", sen, REPORT.senateBefore, 31) + row("Texas House (150)", hou, REPORT.houseBefore, 150) + row("U.S. House – Texas delegation (38)", con, REPORT.congressBefore, 38) + "</tbody></table>";
+    $("dates").innerHTML = REPORT.dates.map(function (d) { return '<div class="date"><div class="d">' + esc(d[0]) + '</div><div class="w">' + esc(d[1]) + "</div></div>"; }).join("");
+  }
+  function chamberCount(re, hold) {
+    var c = { R: hold.R || 0, D: hold.D || 0 };
+    Object.keys(byKey).forEach(function (k) { if (!re.test(k)) return; var r = byKey[k]; if (r.total && (r.leader_party === "R" || r.leader_party === "D")) c[r.leader_party]++; });
+    return c;
+  }
+
+  function renderLit(d) {
+    var cutoff = new Date(Date.now() - 75 * 86400000).toISOString().slice(0, 10);
+    var ms = (d.matters || []).filter(function (m) { return (m.activity || "") >= cutoff || (m.next_date && m.status !== "Decided"); }).slice(0, 20);
+    if (!ms.length) { $("lit-tbl").innerHTML = '<div class="empty">No active matters in the store yet.</div>'; return; }
+    var rows = ms.map(function (m) {
+      var last = (m.updates || [])[0], cov = (m.coverage || [])[0];
+      var what = (m.summary || "").replace(/^An? (anti|pro)-voting lawsuit /i, "");
+      return '<tr><td class="d">' + esc(m.case_name || m.title) + '<span class="pill">' + esc(m.status || "") + "</span>" + (m.court ? '<br><span class="in">' + esc(m.court) + "</span>" : "") + "</td>" +
+        '<td class="sub">' + esc(what.charAt(0).toUpperCase() + what.slice(1)) + "</td>" + '<td class="n">' + esc(m.filed || "–") + "</td>" +
+        '<td class="sub">' + (last ? esc(last.date + ": " + last.text) : "") + (m.next_date ? "<br><b>Next:</b> " + esc(m.next_date + " " + (m.next_text || "")) : "") + "</td>" +
+        '<td class="sub">' + (cov ? '<a href="' + esc(cov.url) + '" target="_blank" rel="noopener">' + esc(cov.title.slice(0, 70)) + "</a> · " + esc(cov.source) : "") + (m.source_url ? ' <a href="' + esc(m.source_url) + '" target="_blank" rel="noopener">[case page]</a>' : "") + "</td></tr>";
+    }).join("");
+    $("lit-tbl").innerHTML = '<table><thead><tr><th>Matter</th><th>What it seeks</th><th class="n">Filed</th><th>Latest</th><th>Coverage</th></tr></thead><tbody>' + rows + "</tbody></table>";
+  }
+
+  function renderAll() {
+    var d = DATA.latest; if (!d) return;
+    byKey = {}; (d.races || []).forEach(function (r) { byKey[r.key] = r; });
+    var a = d.as_of || {}, rep = a.reporting || {};
+    $("asof").innerHTML = "SOS feed updated <b>" + esc(when(a.source_updated)) + "</b><br>fetched <b>" + esc(when(a.fetched_at)) + "</b> · snapshots <b>" + fmt(d.snapshots) + "</b><br>counties fully reported <b>" + fmt((rep.counties || [0])[0]) + " / 254</b> · polling places in <b>" + fmt((rep.polling || [0])[0]) + " / " + fmt((rep.polling || [0, 5302])[1]) + "</b>";
+    renderTurnout(); renderStatewide(); renderSenate(); renderHouse(); renderCongress(); renderLocal(); renderAhead();
+    if (DATA.lit) renderLit(DATA.lit);
+  }
+
+  function fetchJson(name) {
+    var i = 0;
+    function attempt() {
+      if (i >= BASES.length) return Promise.reject(new Error("unreachable"));
+      var url = BASES[i++] + name + "?t=" + Date.now();
+      return fetch(url, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).catch(function () { return attempt(); });
+    }
+    return attempt();
+  }
+  function load() {
+    Promise.all([fetchJson("latest.json"), fetchJson("counties.json").catch(function () { return null; })]).then(function (res) {
+      DATA.latest = res[0]; DATA.counties = res[1]; $("err").hidden = true; renderAll();
+    }).catch(function (e) { $("err").hidden = false; $("err").textContent = "Could not load the results file (" + e.message + "). The polling job may not have committed yet; the page retries every minute."; });
+    fetchJson("litigation.json").then(function (d) { DATA.lit = d; if (DATA.latest) renderLit(d); }).catch(function () {});
+  }
+  load();
+  setInterval(load, 60000);
+})();
+</script>

@@ -121,6 +121,16 @@ def assemble(site_dir: Path) -> int:
             n += 1
         if (OUT_DIR / "brief" / "latest.json").exists():
             shutil.copy(OUT_DIR / "brief" / "latest.json", site_dir / "brief" / "latest.json")
+    # the election dashboard (web/election.html) and its data (out/election/*.json) at /election/; the page reads
+    # ./latest.json first and falls back to the raw GitHub copy, so it also works published on its own
+    election_page = ROOT / "web" / "election.html"
+    if election_page.exists():
+        (site_dir / "election").mkdir(parents=True, exist_ok=True)
+        skeleton = "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\"></head><body>"
+        (site_dir / "election" / "index.html").write_text(skeleton + election_page.read_text(encoding="utf-8") + "</body></html>", encoding="utf-8")
+        for f in (OUT_DIR / "election").glob("*.json") if (OUT_DIR / "election").exists() else []:
+            shutil.copy(f, site_dir / "election" / f.name)
+        n += 1
     from .hub import build
     hub = build(site_dir)
     hub.write_text(inject(hub.read_text(encoding="utf-8"), nav_html(all_t, None, None, depth=0)), encoding="utf-8")
