@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 7:35 PM CT: restart with county-first blending (Harris, Tarrant, Bexar, Travis, Denton, Williamson, El Paso, Galveston reports).
+# Nov 3, 2026 8:00 PM CT: restart — Harris County's results JSON (resultsbyballot.json) replaces the PDF; Clarity retries.
 minutes=340
 every=300

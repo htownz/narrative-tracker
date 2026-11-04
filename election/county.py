@@ -29,7 +29,7 @@ from .registry import load_registry
 UA = "Mozilla/5.0 (compatible; grey-havens-election-dashboard/0.1; +https://github.com/htownz/narrative-tracker)"
 
 SOURCES: dict[str, dict[str, Any]] = {
-    "Harris": {"kind": "hart_pdf", "url": "https://appfiles.harrisvotes.com/harrisvotes/prd/Data/1126/cumulative.pdf"},
+    "Harris": {"kind": "harris_json", "url": "https://appfiles.harrisvotes.com/harrisvotes/prd/Data/1126/resultsbyballot.json"},   # the JSON behind app.harrisvotes.com; the cumulative PDF is the fallback
     "Tarrant": {"kind": "hart_pdf", "url": "https://www.tarrantcountytx.gov/content/dam/main/elections/2026/1126/reports/cumulative.pdf"},
     "Travis": {"kind": "clarity", "base": "https://results.enr.clarityelections.com/TX/Travis/", "date": "11/3/2026"},
     "Bexar": {"kind": "electionware_html", "url": "https://home.bexar.org/el45a.html"},
@@ -73,10 +73,27 @@ def county_race_key(contest: str) -> str | None:
 PARTY = {"REP": "R", "DEM": "D", "LIB": "L", "GRN": "G", "GRE": "G", "IND": "I", "W": "W", "": ""}
 
 
-def _get(url: str, timeout: int = 60) -> requests.Response:
-    r = requests.get(url, headers={"User-Agent": UA}, timeout=timeout)
-    r.raise_for_status()
-    return r
+def _get(url: str, timeout: int = 60, tries: int = 3) -> requests.Response:
+    """Election-night servers throw 502s and queue pages under load: retry briefly."""
+    import time as _t
+    last: Exception | None = None
+    for i in range(tries):
+        try:
+            r = requests.get(url, headers={"User-Agent": UA}, timeout=timeout)
+            r.raise_for_status()
+            return r
+        except Exception as e:  # noqa: BLE001
+            last = e
+            _t.sleep(1.5 * (i + 1))
+    raise RuntimeError(f"{url}: {last}")
+
+
+def _json(url: str) -> Any:
+    r = _get(url)
+    try:
+        return r.json()
+    except ValueError:
+        raise RuntimeError(f"{url}: non-JSON response ({r.headers.get('content-type', '?')}; queue or error page)")
 
 
 def _n(s: Any) -> int:
@@ -166,10 +183,30 @@ def parse_hart_pdf(pdf_bytes: bytes) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# Harris County's results app JSON (app.harrisvotes.com -> appfiles.harrisvotes.com/.../resultsbyballot.json)
+
+def parse_harris_json(doc: dict[str, Any]) -> dict[str, Any]:
+    contests = []
+    for c in doc.get("contests") or []:
+        names = c.get("ca") or []
+        tv, ev, ab, ed = (c.get(k) or [] for k in ("tv", "ev", "ab", "ed"))
+        cands = []
+        for i, raw in enumerate(names):
+            m = re.match(r"^(.*?)\s*\((REP|DEM|LIB|GRN|GRE|IND|W)\)\s*$", str(raw))
+            nm, party = (m.group(1).strip(), m.group(2)) if m else (str(raw).strip(), "")
+            cands.append({"id": cand_id(nm), "name": nm, "party": PARTY.get(party, party), "votes": _n(tv[i] if i < len(tv) else 0),
+                          "early_votes": _n(ev[i] if i < len(ev) else 0) + _n(ab[i] if i < len(ab) else 0), "eday_votes": _n(ed[i] if i < len(ed) else 0)})
+        contests.append({"contest": str(c.get("t") or "").strip(), "candidates": cands, "precincts": [_n(c.get("pr")), _n(c.get("tp"))], "cast_votes": sum(x["votes"] for x in cands)})
+    pr = max([c["precincts"][0] for c in contests] or [0]); tp = max([c["precincts"][1] for c in contests] or [0])
+    return {"pending": not any(c["cast_votes"] for c in contests), "contests": contests, "precincts": [pr, tp], "run_time": doc.get("dt"),
+            "registered": _n(doc.get("rv")), "votes_cast": _n(doc.get("vc"))}
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # Scytl / Clarity ENR (Travis)
 
 def clarity_election(base: str, date: str) -> dict[str, Any] | None:
-    els = _get(base.rstrip("/") + "/elections.json").json()
+    els = _json(base.rstrip("/") + "/elections.json")
     want = datetime.strptime(date, "%m/%d/%Y").date()
     for e in els:
         try:
@@ -187,7 +224,9 @@ def parse_clarity(base: str, date: str) -> dict[str, Any]:
         return {"pending": True, "contests": [], "precincts": [0, 0], "run_time": None, "note": f"no election dated {date} on Clarity yet"}
     eid = e["EID"]
     ver = _get(f"{base.rstrip('/')}/{eid}/current_ver.txt").text.strip()
-    summary = _get(f"{base.rstrip('/')}/{eid}/{ver}/json/en/summary.json").json()
+    if not re.fullmatch(r"\d+", ver):
+        return {"pending": True, "contests": [], "precincts": [0, 0], "run_time": None, "note": "Clarity returned an error page for current_ver.txt (busy)"}
+    summary = _json(f"{base.rstrip('/')}/{eid}/{ver}/json/en/summary.json")
     contests = []
     tp = pr = 0
     for c in summary:
@@ -265,7 +304,9 @@ def parse_electionware_html(text: str) -> dict[str, Any]:
 
 def fetch_county(county: str) -> dict[str, Any]:
     src = SOURCES[county]
-    if src["kind"] == "hart_pdf":
+    if src["kind"] == "harris_json":
+        out = parse_harris_json(_json(src["url"] + "?nocache=" + str(int(__import__("time").time()))))
+    elif src["kind"] == "hart_pdf":
         out = parse_hart_pdf(_get(src["url"]).content)
     elif src["kind"] == "clarity":
         out = parse_clarity(src["base"], src["date"])
