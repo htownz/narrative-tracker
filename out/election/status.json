@@ -1,48 +1,48 @@
 {
- "generated_at": "2026-11-04T01:35:34+00:00",
+ "generated_at": "2026-11-04T02:00:59+00:00",
  "store": "election-2026.sqlite",
  "counts": {
-  "polls": 15,
-  "snapshots": 3,
+  "polls": 20,
+  "snapshots": 6,
   "races": 230,
   "candidates": 483,
-  "race_votes": 1422,
-  "county_votes": 16741,
-  "county_turnout": 285,
+  "race_votes": 2844,
+  "county_votes": 20674,
+  "county_turnout": 354,
   "calls": 0,
   "local_votes": 9,
-  "local_polls": 60,
+  "local_polls": 100,
   "county_reports": 135
  },
  "as_of": {
-  "fetched_at": "2026-11-04T01:35:30+00:00",
-  "source_updated": "2026-11-04T01:28:46+00:00",
-  "version": "enr/53815/9/",
+  "fetched_at": "2026-11-04T02:00:56+00:00",
+  "source_updated": "2026-11-04T01:59:50+00:00",
+  "version": "enr/53815/12/",
   "reporting": {
    "counties": [
-    31,
+    84,
     254
    ],
    "precincts": [
     1,
-    6
+    111
    ],
    "polling": [
-    70,
+    216,
     5302
    ]
   }
  },
  "last_poll": {
-  "fetched_at": "2026-11-04T01:35:30+00:00",
-  "version": "enr/53815/9/",
-  "source_updated": "2026-11-04T01:28:46+00:00",
+  "fetched_at": "2026-11-04T02:00:56+00:00",
+  "version": "enr/53815/12/",
+  "source_updated": "2026-11-04T01:59:50+00:00",
   "changed": 1,
-  "note": "counties 31/254 polling 70/5302"
+  "note": "counties 84/254 polling 216/5302"
  },
  "local": [
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Bexar",
    "ok": 1,
    "pending": 1,
@@ -51,7 +51,7 @@
    "note": "page still shows: Summary Results Report Joint General, Special, Charter and Bond Election November 5, 2024 UNOFFICIAL RESULTS Vote Center"
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Denton",
    "ok": 0,
    "pending": 0,
@@ -60,7 +60,7 @@
    "note": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "El Paso",
    "ok": 0,
    "pending": 0,
@@ -69,7 +69,7 @@
    "note": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Galveston",
    "ok": 0,
    "pending": 0,
@@ -78,7 +78,7 @@
    "note": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Harris",
    "ok": 1,
    "pending": 0,
@@ -87,7 +87,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Tarrant",
    "ok": 1,
    "pending": 0,
@@ -96,7 +96,7 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Travis",
    "ok": 0,
    "pending": 0,
@@ -105,7 +105,7 @@
    "note": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
   },
   {
-   "fetched_at": "2026-11-04T01:35:30+00:00",
+   "fetched_at": "2026-11-04T02:00:56+00:00",
    "county": "Williamson",
    "ok": 0,
    "pending": 0,
