@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-04T00:36:26+00:00",
+ "generated_at": "2026-11-04T01:06:48+00:00",
  "store": "election-2026.sqlite",
  "counts": {
-  "polls": 8,
-  "snapshots": 1,
+  "polls": 14,
+  "snapshots": 2,
   "races": 230,
   "candidates": 483,
-  "race_votes": 474,
+  "race_votes": 948,
   "county_votes": 14987,
   "county_turnout": 254,
   "calls": 0,
   "local_votes": 9,
-  "local_polls": 28
+  "local_polls": 52
  },
  "as_of": {
-  "fetched_at": "2026-11-03T23:02:58+00:00",
-  "source_updated": "2026-10-29T22:13:17-05:00",
-  "version": "enr/53815/5/",
+  "fetched_at": "2026-11-04T01:06:44+00:00",
+  "source_updated": "2026-11-04T01:03:13-06:00",
+  "version": "enr/53815/6/",
   "reporting": {
    "counties": [
     0,
@@ -24,7 +24,7 @@
    ],
    "precincts": [
     0,
-    90
+    4
    ],
    "polling": [
     0,
@@ -33,15 +33,15 @@
   }
  },
  "last_poll": {
-  "fetched_at": "2026-11-04T00:36:24+00:00",
-  "version": "enr/53815/5/",
-  "source_updated": "2026-10-29T22:13:17-05:00",
-  "changed": 0,
+  "fetched_at": "2026-11-04T01:06:44+00:00",
+  "version": "enr/53815/6/",
+  "source_updated": "2026-11-04T01:03:13-06:00",
+  "changed": 1,
   "note": "counties 0/254 polling 0/5302"
  },
  "local": [
   {
-   "fetched_at": "2026-11-04T00:36:24+00:00",
+   "fetched_at": "2026-11-04T01:06:44+00:00",
    "county": "Bexar",
    "ok": 1,
    "pending": 1,
@@ -50,7 +50,7 @@
    "note": "page still shows: Summary Results Report Joint General, Special, Charter and Bond Election November 5, 2024 UNOFFICIAL RESULTS Vote Center"
   },
   {
-   "fetched_at": "2026-11-04T00:36:24+00:00",
+   "fetched_at": "2026-11-04T01:06:44+00:00",
    "county": "Harris",
    "ok": 1,
    "pending": 0,
@@ -59,16 +59,16 @@
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T00:36:24+00:00",
+   "fetched_at": "2026-11-04T01:06:44+00:00",
    "county": "Tarrant",
    "ok": 1,
-   "pending": 1,
+   "pending": 0,
    "contests": 0,
    "matched": 0,
    "note": null
   },
   {
-   "fetched_at": "2026-11-04T00:36:24+00:00",
+   "fetched_at": "2026-11-04T01:06:44+00:00",
    "county": "Travis",
    "ok": 0,
    "pending": 0,
