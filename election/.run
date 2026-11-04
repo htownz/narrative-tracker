@@ -1,5 +1,5 @@
 # Commit a change to this file to start an election-night polling run (see .github/workflows/election-night.yml).
 # Optional lines: minutes=340   every=300   stop   (stop = a push that runs nothing, e.g. to end the night)
-# Nov 3, 2026 6:32 PM CT: restart to pick up the verified statewide baselines before the first returns post.
+# Nov 3, 2026 7:15 PM CT: restart — the SOS LastUpdatedTime is UTC; stamps re-labelled, no returns posted yet.
 minutes=340
 every=300

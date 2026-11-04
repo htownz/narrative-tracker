@@ -98,7 +98,8 @@ _MONTHS = {m: i for i, m in enumerate("jan feb mar apr may jun jul aug sep oct n
 
 
 def parse_updated(s: str | None) -> str | None:
-    """'Oct 29, 2026 22:13:17' (Central time on the SOS site) -> ISO string with the -06:00/-05:00 offset."""
+    """'Nov 04, 2026 01:03:13' -> ISO. The SOS site shows this stamp without a zone; comparing it with the clock
+    on election night (feed said 01:03 when it was 01:12 UTC, 7:12 PM Central) shows it is UTC."""
     m = re.match(r"([A-Za-z]{3})\w*\s+(\d{1,2}),\s*(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?", s or "")
     if not m:
         return None
@@ -106,12 +107,7 @@ def parse_updated(s: str | None) -> str | None:
     if not mon:
         return None
     y, d, hh, mm, ss = int(m.group(3)), int(m.group(2)), int(m.group(4)), int(m.group(5)), int(m.group(6) or 0)
-    try:
-        from zoneinfo import ZoneInfo
-        dt = datetime(y, mon, d, hh, mm, ss, tzinfo=ZoneInfo("America/Chicago"))
-        return dt.isoformat(timespec="seconds")
-    except Exception:
-        return f"{y:04d}-{mon:02d}-{d:02d}T{hh:02d}:{mm:02d}:{ss:02d}-06:00"
+    return datetime(y, mon, d, hh, mm, ss, tzinfo=timezone.utc).isoformat(timespec="seconds")
 
 
 def _int(x: Any) -> int:

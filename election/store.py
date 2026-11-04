@@ -65,6 +65,17 @@ class Store:
         self.db = sqlite3.connect(str(path))
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """v1 (Nov 3, 2026, 7:15 PM CT): the SOS LastUpdatedTime is UTC, not Central; rows stored before the fix carried
+        a -06:00 offset on a UTC clock reading. Re-label them."""
+        v = self.db.execute("PRAGMA user_version").fetchone()[0]
+        if v < 1:
+            for t in ("snapshots", "polls"):
+                self.db.execute(f"UPDATE {t} SET source_updated = replace(source_updated, '-06:00', '+00:00') WHERE source_updated LIKE '%-06:00'")
+            self.db.execute("PRAGMA user_version = 1")
+            self.db.commit()
 
     def close(self) -> None:
         self.db.commit()
